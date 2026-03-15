@@ -1,0 +1,100 @@
+// Semantic tokens — maps roles to primitive shades.
+// Only this layer changes between modes.
+
+@mixin dark($prefix: 'bzn') {
+  // Text
+  --#{$prefix}-text: var(--#{$prefix}-neutral-50);
+  --#{$prefix}-text-muted: var(--#{$prefix}-neutral-400);
+  --#{$prefix}-text-on-primary: var(--#{$prefix}-neutral-50);
+
+  // Surfaces
+  --#{$prefix}-surface: var(--#{$prefix}-neutral-950);
+  --#{$prefix}-surface-raised: var(--#{$prefix}-neutral-900);
+  --#{$prefix}-surface-overlay: var(--#{$prefix}-neutral-800);
+
+  // Borders
+  --#{$prefix}-border: var(--#{$prefix}-neutral-700);
+  --#{$prefix}-border-muted: var(--#{$prefix}-neutral-800);
+
+  // Interactive
+  --#{$prefix}-interactive: var(--#{$prefix}-primary-600);
+  --#{$prefix}-interactive-hover: var(--#{$prefix}-primary-500);
+  --#{$prefix}-interactive-active: var(--#{$prefix}-primary-700);
+  --#{$prefix}-interactive-disabled: var(--#{$prefix}-neutral-700);
+  --#{$prefix}-interactive-disabled-text: var(--#{$prefix}-neutral-400);
+
+  // Focus
+  --#{$prefix}-focus-ring: var(--#{$prefix}-primary-400);
+
+  // Feedback
+  --#{$prefix}-success: var(--#{$prefix}-success-600);
+  --#{$prefix}-success-subtle: var(--#{$prefix}-success-700);
+  --#{$prefix}-success-text: var(--#{$prefix}-success-100);
+  --#{$prefix}-warning: var(--#{$prefix}-warning-500);
+  --#{$prefix}-warning-subtle: var(--#{$prefix}-warning-700);
+  --#{$prefix}-warning-text: var(--#{$prefix}-warning-100);
+  --#{$prefix}-error: var(--#{$prefix}-danger-500);
+  --#{$prefix}-error-subtle: var(--#{$prefix}-danger-700);
+  --#{$prefix}-error-text: var(--#{$prefix}-danger-100);
+
+  // Motion
+  --#{$prefix}-transition: 200ms;
+  --#{$prefix}-transition-fn: ease;
+
+  // Transparency
+  --#{$prefix}-overlay-opacity: 0.6;
+  --#{$prefix}-backdrop-blur: 4px;
+}
+
+@mixin light($prefix: 'bzn') {
+  // Text
+  --#{$prefix}-text: var(--#{$prefix}-neutral-950);
+  --#{$prefix}-text-muted: var(--#{$prefix}-neutral-500);
+  --#{$prefix}-text-on-primary: var(--#{$prefix}-neutral-50);
+
+  // Surfaces
+  --#{$prefix}-surface: var(--#{$prefix}-neutral-50);
+  --#{$prefix}-surface-raised: var(--#{$prefix}-neutral-100);
+  --#{$prefix}-surface-overlay: var(--#{$prefix}-neutral-50);
+
+  // Borders
+  --#{$prefix}-border: var(--#{$prefix}-neutral-200);
+  --#{$prefix}-border-muted: var(--#{$prefix}-neutral-100);
+
+  // Interactive
+  --#{$prefix}-interactive: var(--#{$prefix}-primary-700);
+  --#{$prefix}-interactive-hover: var(--#{$prefix}-primary-600);
+  --#{$prefix}-interactive-active: var(--#{$prefix}-primary-800);
+  --#{$prefix}-interactive-disabled: var(--#{$prefix}-neutral-200);
+  --#{$prefix}-interactive-disabled-text: var(--#{$prefix}-neutral-400);
+
+  // Focus
+  --#{$prefix}-focus-ring: var(--#{$prefix}-primary-700);
+
+  // Feedback
+  --#{$prefix}-success: var(--#{$prefix}-success-600);
+  --#{$prefix}-success-subtle: var(--#{$prefix}-success-100);
+  --#{$prefix}-success-text: var(--#{$prefix}-success-700);
+  --#{$prefix}-warning: var(--#{$prefix}-warning-600);
+  --#{$prefix}-warning-subtle: var(--#{$prefix}-warning-100);
+  --#{$prefix}-warning-text: var(--#{$prefix}-warning-700);
+  --#{$prefix}-error: var(--#{$prefix}-danger-600);
+  --#{$prefix}-error-subtle: var(--#{$prefix}-danger-100);
+  --#{$prefix}-error-text: var(--#{$prefix}-danger-700);
+
+  // Transparency
+  --#{$prefix}-overlay-opacity: 0.4;
+  --#{$prefix}-backdrop-blur: 4px;
+}
+
+@mixin high-contrast($prefix: 'bzn') {
+  --#{$prefix}-text-muted: var(--#{$prefix}-neutral-300);
+  --#{$prefix}-border: var(--#{$prefix}-neutral-500);
+  --#{$prefix}-border-muted: var(--#{$prefix}-neutral-600);
+}
+
+@mixin high-contrast-light($prefix: 'bzn') {
+  --#{$prefix}-text-muted: var(--#{$prefix}-neutral-700);
+  --#{$prefix}-border: var(--#{$prefix}-neutral-400);
+  --#{$prefix}-border-muted: var(--#{$prefix}-neutral-300);
+}

@@ -1,0 +1,109 @@
+@use 'sass:map';
+@use 'shade' as shade;
+@use 'semantic' as semantic;
+@use 'components' as components;
+@use 'palettes' as *;
+
+// Main theme mixin.
+// $primary, $neutral: either a shade map (50: oklch(...)) or simple (h: N, c: N)
+// $success, $warning, $danger: same format, with built-in defaults
+// $radius: base border radius
+// $transition: default transition duration
+// $prefix: CSS variable prefix
+@mixin theme(
+  $primary: $bordeaux,
+  $neutral: $slate,
+  $success: $emerald,
+  $warning: $amber,
+  $danger: $rose,
+  $transition: 200ms,
+  $prefix: 'bzn',
+) {
+  // Tier 1: Primitives
+  @include shade.shade-scale('primary', $primary, $prefix);
+  @include shade.shade-scale('neutral', $neutral, $prefix);
+  @include shade.shade-scale('success', $success, $prefix);
+  @include shade.shade-scale('warning', $warning, $prefix);
+  @include shade.shade-scale('danger', $danger, $prefix);
+
+  // Tier 2: Semantic (dark defaults)
+  @include semantic.dark($prefix);
+
+  // Override transition if non-default
+  --#{$prefix}-transition: #{$transition};
+
+  // Tier 3: Component tokens
+  @include components.tokens($prefix);
+
+  // Base styles
+  color: var(--#{$prefix}-text);
+  background-color: var(--#{$prefix}-surface);
+  font-family: -apple-system, BlinkMacSystemFont, Inter, "Segoe UI", Roboto, Oxygen, sans-serif;
+  font-size: clamp(15px, 0.9375rem + 0.25vw, 18px);
+}
+
+// Media queries and class overrides — call this at root level, outside :root.
+// Typically: @include bzn.responsive($prefix);
+@mixin responsive($prefix: 'bzn') {
+  // Light mode: auto
+  @media (prefers-color-scheme: light) {
+    :root:not(.bzn--dark) {
+      @include semantic.light($prefix);
+    }
+  }
+
+  // Light mode: forced
+  .bzn--light {
+    @include semantic.light($prefix);
+  }
+
+  // Dark mode: forced (useful inside light context)
+  .bzn--dark {
+    @include semantic.dark($prefix);
+  }
+
+  // High contrast: auto
+  @media (prefers-contrast: more) {
+    :root:not(.bzn--no-high-contrast) {
+      @include semantic.high-contrast($prefix);
+    }
+
+    // High contrast + light
+    @media (prefers-color-scheme: light) {
+      :root:not(.bzn--dark):not(.bzn--no-high-contrast) {
+        @include semantic.high-contrast-light($prefix);
+      }
+    }
+  }
+
+  // High contrast: forced
+  .bzn--high-contrast {
+    @include semantic.high-contrast($prefix);
+  }
+
+  // Reduced motion: auto
+  @media (prefers-reduced-motion: reduce) {
+    :root:not(.bzn--allow-motion) {
+      --#{$prefix}-transition: 0ms;
+    }
+  }
+
+  // Reduced motion: forced
+  .bzn--reduce-motion {
+    --#{$prefix}-transition: 0ms;
+  }
+
+  // Reduced transparency: auto
+  @media (prefers-reduced-transparency: reduce) {
+    :root:not(.bzn--allow-transparency) {
+      --#{$prefix}-overlay-opacity: 1;
+      --#{$prefix}-backdrop-blur: 0px;
+    }
+  }
+
+  // Reduced transparency: forced
+  .bzn--reduce-transparency {
+    --#{$prefix}-overlay-opacity: 1;
+    --#{$prefix}-backdrop-blur: 0px;
+  }
+}

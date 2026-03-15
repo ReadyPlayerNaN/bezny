@@ -1,0 +1,54 @@
+@use 'sass:map';
+@use 'sass:meta';
+
+// Fixed lightness curve for shade generation
+$_lightness-curve: (
+  50:  97%,
+  100: 93%,
+  200: 85%,
+  300: 73%,
+  400: 62%,
+  500: 50%,
+  600: 45%,
+  700: 38%,
+  800: 30%,
+  900: 23%,
+  950: 15%,
+);
+
+// Chroma multiplier — reduced at extremes to avoid oversaturation
+$_chroma-curve: (
+  50:  0.1,
+  100: 0.25,
+  200: 0.4,
+  300: 0.65,
+  400: 0.85,
+  500: 1.0,
+  600: 1.0,
+  700: 0.9,
+  800: 0.75,
+  900: 0.6,
+  950: 0.4,
+);
+
+// Generate shade scale CSS custom properties.
+// $name: prefix name (e.g. "primary")
+// $palette: either a shade map (50: oklch(...), ...) or a simple map (h: 10, c: 0.2)
+// $prefix: CSS variable prefix
+@mixin shade-scale($name, $palette, $prefix: 'bzn') {
+  @if map.has-key($palette, h) and map.has-key($palette, c) {
+    // Simple API: generate from hue + chroma
+    $h: map.get($palette, h);
+    $c: map.get($palette, c);
+
+    @each $shade, $lightness in $_lightness-curve {
+      $chroma-mult: map.get($_chroma-curve, $shade);
+      --#{$prefix}-#{$name}-#{$shade}: oklch(#{$lightness} #{$c * $chroma-mult} #{$h});
+    }
+  } @else {
+    // Full API: use provided shade map directly
+    @each $shade, $value in $palette {
+      --#{$prefix}-#{$name}-#{$shade}: #{$value};
+    }
+  }
+}
