@@ -1,0 +1,29 @@
+@use 'theme' as bzn;
+@use 'grid' as *;
+
+:root {
+  @include bzn.theme();
+}
+
+// Link base styles
+a {
+  color: var(--link-color);
+  text-decoration: underline;
+  text-underline-offset: size(0.5);
+  transition: color var(--bzn-transition);
+
+  &:visited {
+    color: var(--link-visited-color);
+  }
+
+  &:hover {
+    color: var(--link-hover-color);
+  }
+
+  &:active {
+    color: var(--link-active-color);
+  }
+}
+
+// Responsive overrides (media queries + class overrides)
+@include bzn.responsive();
