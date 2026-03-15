@@ -13,7 +13,7 @@ export default defineConfig({
 					items: [{ slug: "buttons/usage" }, { slug: "buttons/api" }],
 				},
 			],
-			customCss: ["@bezny/styles/theme-light.css", "@bezny/button/index.css"],
+			customCss: ["@bezny/styles/theme.css", "@bezny/button/index.css"],
 		}),
 		react(),
 	],

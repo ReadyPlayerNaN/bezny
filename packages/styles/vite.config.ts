@@ -6,7 +6,7 @@ export default defineConfig({
 		cssCodeSplit: true,
 		lib: {
 			entry: {
-				theme: resolve(import.meta.dirname, "src/theme.scss"),
+				theme: resolve(import.meta.dirname, "src/bezny.scss"),
 			},
 			formats: ["es"],
 		},

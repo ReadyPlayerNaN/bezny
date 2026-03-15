@@ -15,16 +15,8 @@ pnpm add @bezny/button @bezny/styles
 Import the theme CSS in your application entry point:
 
 ```css
-@import "@bezny/styles/theme-light.css";
+@import "@bezny/styles/theme.css";
 @import "@bezny/button/index.css";
-```
-
-Then wrap your app (or the relevant subtree) with the `data-theme` attribute:
-
-```html
-<div data-theme="light">
-  <!-- your app -->
-</div>
 ```
 
 ## Usage
