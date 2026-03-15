@@ -1,0 +1,15 @@
+@use 'grid' as *;
+
+.link {
+	color: var(--link-color);
+	text-decoration: underline;
+	transition: color var(--transition-default);
+
+	&:hover {
+		color: var(--link-hover-color);
+	}
+
+	&:active {
+		color: var(--link-active-color);
+	}
+}

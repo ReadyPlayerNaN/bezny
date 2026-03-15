@@ -1,0 +1,8 @@
+@use 'grid' as *;
+
+.overlay {
+	background-color: var(--overlay-background-color);
+	inset: 0;
+	position: fixed;
+	z-index: var(--overlay-z-index, 1000);
+}

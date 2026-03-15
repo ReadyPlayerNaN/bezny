@@ -1,0 +1,42 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.5/schema.json",
+	"root": false,
+	"extends": ["@cookielab.io/biome-config/frontend"],
+	"files": {
+		"includes": ["src/**", "astro.config.ts"]
+	},
+	"linter": {
+		"rules": {
+			"style": {
+				"useExportsLast": "off"
+			}
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["astro.config.ts", "src/content.config.ts"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noNodejsModules": "off",
+						"noUnresolvedImports": "off"
+					},
+					"style": {
+						"noDefaultExport": "off"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["src/components/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noDefaultExport": "off",
+						"useNamingConvention": "off"
+					}
+				}
+			}
+		}
+	]
+}

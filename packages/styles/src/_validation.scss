@@ -1,0 +1,9 @@
+@mixin status-border($status) {
+	--input-border-color: var(--input-#{$status}-border-color);
+	--input-hover-border-color: var(--input-#{$status}-border-color);
+	--input-active-border-color: var(--input-#{$status}-border-color);
+}
+
+@mixin status-label($status) {
+	color: var(--input-#{$status}-label-color);
+}

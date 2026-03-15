@@ -1,0 +1,60 @@
+---
+title: Button API Reference
+---
+
+## Button
+
+```tsx
+import { Button } from "@bezny/button";
+```
+
+A styled button component with variant support.
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `"primary" \| "secondary" \| "ghost"` | `"primary"` | Visual style variant |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `type` | `"button" \| "submit" \| "reset"` | `"button"` | HTML button type |
+| `children` | `ReactNode` | — | Button content |
+| `disabled` | `boolean` | `false` | Disables the button |
+| `...rest` | `ComponentPropsWithoutRef<"button">` | — | All other native button attributes |
+
+### Examples
+
+```tsx
+<Button>Default primary button</Button>
+
+<Button variant="secondary" onClick={handleClick}>
+  Secondary
+</Button>
+
+<Button variant="ghost" className="my-custom-class">
+  Ghost with custom class
+</Button>
+```
+
+## Submit
+
+```tsx
+import { Submit } from "@bezny/button";
+```
+
+A convenience wrapper around `Button` with `type="submit"`. Accepts all the same props as `Button`.
+
+### Props
+
+Identical to `Button`, except `type` is always `"submit"`.
+
+### Examples
+
+```tsx
+<form onSubmit={handleSubmit}>
+  <Submit>Send</Submit>
+</form>
+
+<form onSubmit={handleSubmit}>
+  <Submit variant="secondary">Save Draft</Submit>
+</form>
+```

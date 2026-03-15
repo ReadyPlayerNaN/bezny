@@ -1,0 +1,37 @@
+@use 'grid' as *;
+@use 'typography' as *;
+
+.heading {
+	color: var(--heading-color);
+	margin: 0;
+}
+
+.h1 {
+	font-size: font-size(2);
+	line-height: size(10);
+}
+
+.h2 {
+	font-size: font-size(1.5);
+	line-height: size(8);
+}
+
+.h3 {
+	font-size: font-size(1.25);
+	line-height: size(7);
+}
+
+.h4 {
+	font-size: font-size(1);
+	line-height: size(6);
+}
+
+.h5 {
+	font-size: font-size(0.875);
+	line-height: size(5);
+}
+
+.h6 {
+	font-size: font-size(0.75);
+	line-height: size(4);
+}

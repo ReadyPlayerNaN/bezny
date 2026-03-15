@@ -1,0 +1,21 @@
+@use 'grid' as *;
+@use 'typography' as *;
+
+.statusMessage {
+	display: block;
+	font-size: font-size(0.75);
+	line-height: size(4);
+	margin-top: size(1);
+}
+
+.error {
+	color: var(--input-error-message-color);
+}
+
+.warning {
+	color: var(--input-warning-message-color);
+}
+
+.success {
+	color: var(--input-success-message-color);
+}

@@ -1,0 +1,54 @@
+@use 'grid' as *;
+
+.dialog {
+	background-color: var(--modal-panel-background);
+	border: 1px solid var(--modal-panel-border-color);
+	border-radius: size(2);
+	box-shadow: var(--modal-panel-shadow);
+	display: flex;
+	flex-direction: column;
+	max-height: 80vh;
+	max-width: size(150);
+	padding: 0;
+	width: 100%;
+
+	&::backdrop {
+		background-color: var(--overlay-background-color);
+	}
+}
+
+.header {
+	align-items: center;
+	border-bottom: 1px solid var(--modal-header-border-color);
+	display: flex;
+	justify-content: space-between;
+	padding: size(4);
+}
+
+.body {
+	flex: 1;
+	overflow-y: auto;
+	padding: size(4);
+}
+
+.footer {
+	border-top: 1px solid var(--modal-footer-border-color);
+	display: flex;
+	gap: size(2);
+	justify-content: flex-end;
+	padding: size(4);
+}
+
+.close {
+	background: none;
+	border: none;
+	color: var(--modal-close-color);
+	font-size: size(5);
+	line-height: 1;
+	padding: size(1);
+	transition: color var(--transition-default);
+
+	&:hover {
+		color: var(--modal-close-hover-color);
+	}
+}

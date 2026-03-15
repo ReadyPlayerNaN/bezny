@@ -1,0 +1,15 @@
+@use 'breakpoints' as *;
+
+.nav {
+	display: flex;
+	flex-direction: column;
+
+	@include breakpoint-up('lg') {
+		flex-direction: row;
+		align-items: center;
+	}
+}
+
+.end {
+	margin-left: auto;
+}

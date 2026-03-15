@@ -1,0 +1,8 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"root": true,
+	"extends": ["@cookielab.io/biome-config/base"],
+	"files": {
+		"includes": ["**", "!dist", "!node_modules"]
+	}
+}

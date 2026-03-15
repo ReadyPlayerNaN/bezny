@@ -1,0 +1,36 @@
+@use 'grid' as *;
+
+.avatar {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	overflow: hidden;
+	object-fit: cover;
+	flex-shrink: 0;
+}
+
+.sm {
+	width: #{size(6)};
+	height: #{size(6)};
+	font-size: #{size(3)};
+}
+
+.md {
+	width: #{size(10)};
+	height: #{size(10)};
+	font-size: #{size(4)};
+}
+
+.lg {
+	width: #{size(16)};
+	height: #{size(16)};
+	font-size: #{size(6)};
+}
+
+.initials {
+	background-color: var(--avatar-initials-background-color);
+	color: var(--avatar-initials-color);
+	font-weight: 600;
+	user-select: none;
+}

@@ -1,0 +1,119 @@
+@use 'grid' as *;
+@use 'typography' as *;
+@use 'reactions' as *;
+@use 'validation' as *;
+
+.select {
+  --input-background-color: var(--input-default-background-color);
+  --input-border-color: var(--input-default-border-color);
+  --input-color: var(--input-default-color);
+  --input-hover-background-color: var(--input-default-hover-background-color);
+  --input-hover-border-color: var(--input-default-hover-border-color);
+  --input-hover-color: var(--input-default-hover-color);
+  --input-active-background-color: var(--input-default-active-background-color);
+  --input-active-border-color: var(--input-default-active-border-color);
+  --input-active-color: var(--input-default-active-color);
+  --input-disabled-background-color: var(
+    --input-default-disabled-background-color
+  );
+  --input-disabled-border-color: var(--input-default-disabled-border-color);
+  --input-disabled-color: var(--input-default-disabled-color);
+
+  @include input;
+
+  appearance: none;
+  border: 1px solid;
+  border-radius: size(1);
+  font-family: inherit;
+  font-size: font-size(1);
+  line-height: size(6);
+  padding: size(2) size(8) size(2) size(3);
+  width: 100%;
+
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right size(3) center;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.statusError {
+  @include status-border(error);
+}
+
+.statusWarning {
+  @include status-border(warning);
+}
+
+.statusSuccess {
+  @include status-border(success);
+}
+
+.wrapper {
+  position: relative;
+
+  .select {
+    padding: size(5) size(8) size(1) size(3);
+  }
+
+  .label {
+    position: absolute;
+    top: size(1);
+    left: size(3);
+    color: var(--input-label-color);
+    font-size: font-size(1);
+    line-height: size(6);
+    transform: translateY(size(2.25));
+    transition:
+      transform var(--transition-default),
+      font-size var(--transition-default),
+      color var(--transition-default);
+    pointer-events: none;
+  }
+
+  &:focus-within .label,
+  .label.floated {
+    transform: translateY(0);
+    font-size: size(3);
+    color: var(--input-label-focused-color);
+  }
+
+  &:not(:focus-within) .label.floated {
+    color: var(--input-label-color);
+  }
+
+  &:has(.statusError) {
+    &:focus-within .label,
+    .label.floated {
+      @include status-label(error);
+    }
+
+    &:not(:focus-within) .label.floated {
+      @include status-label(error);
+    }
+  }
+
+  &:has(.statusWarning) {
+    &:focus-within .label,
+    .label.floated {
+      @include status-label(warning);
+    }
+
+    &:not(:focus-within) .label.floated {
+      @include status-label(warning);
+    }
+  }
+
+  &:has(.statusSuccess) {
+    &:focus-within .label,
+    .label.floated {
+      @include status-label(success);
+    }
+
+    &:not(:focus-within) .label.floated {
+      @include status-label(success);
+    }
+  }
+}

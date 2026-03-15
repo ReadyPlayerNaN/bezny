@@ -1,0 +1,233 @@
+@use 'grid' as *;
+@use 'variables' as *;
+
+:root {
+	color: var(--text-color);
+	background-color: var(--text-background);
+	font-family: -apple-system, BlinkMacSystemFont, Inter, "Segoe UI", Roboto, Oxygen, sans-serif;
+	font-size: clamp(15px, 0.9375rem + 0.25vw, 18px);
+
+	// Primary color shades (bordeaux)
+	--color-primary-100: #{$color-bordeaux-200};
+	--color-primary-200: #{$color-bordeaux-300};
+	--color-primary-300: #{$color-bordeaux-400};
+
+	// Text
+	--text-color: #{$color-slate-50};
+	--text-background: #{$color-slate-950};
+	--text-muted-color: #{$color-slate-400};
+
+	// Surface
+	--surface-background: #{$color-slate-900};
+	--surface-border-color: #{$color-slate-700};
+
+	// Paragraph
+	--paragraph-color: #{$color-slate-50};
+
+	// Transitions
+	--transition-default: 200ms;
+
+	// Heading
+	--heading-color: #{$color-slate-50};
+
+	// Button
+	--button-radius: 8px;
+
+	// Button -- primary
+	--button-primary-background-color: #{$color-bordeaux-600};
+	--button-primary-border-color: #{$color-bordeaux-700};
+	--button-primary-color: #{$color-white};
+	--button-primary-hover-background-color: #{$color-bordeaux-500};
+	--button-primary-hover-border-color: #{$color-bordeaux-600};
+	--button-primary-hover-color: #{$color-white};
+	--button-primary-active-background-color: #{$color-bordeaux-700};
+	--button-primary-active-border-color: #{$color-bordeaux-800};
+	--button-primary-active-color: #{$color-white};
+	--button-primary-disabled-background-color: #{$color-slate-700};
+	--button-primary-disabled-border-color: #{$color-slate-600};
+	--button-primary-disabled-color: #{$color-slate-400};
+
+	// Button -- secondary
+	--button-secondary-background-color: #{$color-slate-700};
+	--button-secondary-border-color: #{$color-slate-600};
+	--button-secondary-color: #{$color-slate-50};
+	--button-secondary-hover-background-color: #{$color-slate-600};
+	--button-secondary-hover-border-color: #{$color-slate-500};
+	--button-secondary-hover-color: #{$color-slate-50};
+	--button-secondary-active-background-color: #{$color-slate-800};
+	--button-secondary-active-border-color: #{$color-slate-500};
+	--button-secondary-active-color: #{$color-slate-50};
+	--button-secondary-disabled-background-color: #{$color-slate-800};
+	--button-secondary-disabled-border-color: #{$color-slate-700};
+	--button-secondary-disabled-color: #{$color-slate-600};
+
+	// Button -- ghost
+	--button-ghost-background-color: transparent;
+	--button-ghost-border-color: transparent;
+	--button-ghost-color: #{$color-slate-200};
+	--button-ghost-hover-background-color: #{$color-slate-800};
+	--button-ghost-hover-border-color: transparent;
+	--button-ghost-hover-color: #{$color-slate-100};
+	--button-ghost-active-background-color: #{$color-slate-700};
+	--button-ghost-active-border-color: transparent;
+	--button-ghost-active-color: #{$color-slate-50};
+	--button-ghost-disabled-background-color: transparent;
+	--button-ghost-disabled-border-color: transparent;
+	--button-ghost-disabled-color: #{$color-slate-600};
+
+	// Input
+	--input-default-background-color: #{$color-slate-800};
+	--input-default-border-color: #{$color-slate-600};
+	--input-default-color: #{$color-slate-50};
+	--input-default-hover-background-color: #{$color-slate-800};
+	--input-default-hover-border-color: #{$color-slate-500};
+	--input-default-hover-color: #{$color-slate-50};
+	--input-default-active-background-color: #{$color-slate-800};
+	--input-default-active-border-color: #{$color-bordeaux-400};
+	--input-default-active-color: #{$color-slate-50};
+	--input-default-disabled-background-color: #{$color-slate-900};
+	--input-default-disabled-border-color: #{$color-slate-700};
+	--input-default-disabled-color: #{$color-slate-500};
+	--input-default-placeholder-color: #{$color-slate-500};
+	--input-label-color: #{$color-slate-400};
+	--input-label-focused-color: #{$color-bordeaux-300};
+
+	// Validation
+	--input-error-border-color: #{$color-rose-500};
+	--input-error-message-color: #{$color-rose-400};
+	--input-error-label-color: #{$color-rose-400};
+	--input-warning-border-color: #{$color-amber-500};
+	--input-warning-message-color: #{$color-amber-400};
+	--input-warning-label-color: #{$color-amber-400};
+	--input-success-border-color: #{$color-emerald-500};
+	--input-success-message-color: #{$color-emerald-400};
+	--input-success-label-color: #{$color-emerald-400};
+
+	// Radio
+	--radio-border-color: #{$color-slate-500};
+	--radio-checked-color: #{$color-bordeaux-400};
+	--radio-disabled-color: #{$color-slate-600};
+
+	// Checkbox
+	--checkbox-border-color: #{$color-slate-500};
+	--checkbox-checked-color: #{$color-bordeaux-400};
+	--checkbox-disabled-color: #{$color-slate-600};
+
+	// Switch
+	--switch-track-off-color: #{$color-slate-600};
+	--switch-track-on-color: #{$color-bordeaux-500};
+	--switch-thumb-color: #{$color-white};
+	--switch-disabled-opacity: 0.5;
+
+	// Card
+	--card-background-color: #{$color-slate-800};
+	--card-border-color: #{$color-slate-700};
+	--card-header-padding: #{size(3)} #{size(4)};
+	--card-body-padding: #{size(4)};
+	--card-footer-padding: #{size(3)} #{size(4)};
+	--card-header-border-color: #{$color-slate-700};
+	--card-footer-border-color: #{$color-slate-700};
+
+	// Alert
+	--alert-success-background-color: #{$color-emerald-700};
+	--alert-success-border-color: #{$color-emerald-600};
+	--alert-success-color: #{$color-emerald-100};
+	--alert-warning-background-color: #{$color-amber-700};
+	--alert-warning-border-color: #{$color-amber-600};
+	--alert-warning-color: #{$color-amber-100};
+	--alert-error-background-color: #{$color-rose-700};
+	--alert-error-border-color: #{$color-rose-600};
+	--alert-error-color: #{$color-rose-100};
+
+	// Label
+	--label-color: #{$color-slate-200};
+
+	// Link
+	--link-color: #{$color-bordeaux-300};
+	--link-hover-color: #{$color-bordeaux-200};
+	--link-active-color: #{$color-bordeaux-400};
+	--link-visited-color: #{$color-bordeaux-500};
+
+	// Breadcrumb
+	--breadcrumb-color: #{$color-slate-400};
+	--breadcrumb-active-color: #{$color-slate-50};
+	--breadcrumb-separator-color: #{$color-slate-600};
+
+	// Avatar
+	--avatar-initials-background-color: #{$color-bordeaux-700};
+	--avatar-initials-color: #{$color-white};
+
+	// AvatarStack
+	--avatar-stack-overflow-background: #{$color-slate-600};
+	--avatar-stack-overflow-color: #{$color-slate-100};
+	--avatar-stack-border-color: #{$color-slate-900};
+
+	// Sidebar
+	--sidebar-background-color: #{$color-slate-900};
+	--sidebar-border-color: #{$color-slate-700};
+	--sidebar-group-label-color: #{$color-slate-500};
+
+	// Navbar
+	--navbar-background-color: #{$color-slate-900};
+	--navbar-border-color: #{$color-slate-700};
+	--navbar-brand-color: #{$color-slate-50};
+	--navbar-brand-hover-color: #{$color-slate-200};
+	--navbar-toggle-color: #{$color-slate-300};
+	--navbar-toggle-hover-background-color: #{$color-slate-800};
+	--navlink-color: #{$color-slate-300};
+	--navlink-hover-color: #{$color-slate-100};
+	--navlink-hover-background-color: #{$color-slate-800};
+	--navlink-active-color: #{$color-bordeaux-300};
+	--navlink-active-hover-color: #{$color-bordeaux-200};
+
+	// List
+	--list-header-border-color: #{$color-slate-700};
+	--list-header-color: #{$color-slate-400};
+	--list-row-border-color: #{$color-slate-800};
+	--list-row-hover-background-color: #{$color-slate-800};
+	--list-row-active-background-color: #{$color-slate-700};
+	--list-empty-color: #{$color-slate-400};
+	--list-reloading-overlay-color: rgba(0, 0, 0, 0.3);
+
+	// Dropdown
+	--dropdown-background-color: #{$color-slate-800};
+	--dropdown-border-color: #{$color-slate-600};
+	--dropdown-shadow-color: rgba(0, 0, 0, 0.4);
+	--dropdown-border-radius: #{size(2)};
+
+	// Drawer
+	--drawer-background-color: #{$color-slate-900};
+	--drawer-backdrop-color: rgba(0, 0, 0, 0.5);
+	--drawer-border-color: #{$color-slate-700};
+	--drawer-close-button-color: #{$color-slate-400};
+	--drawer-close-button-hover-color: #{$color-slate-200};
+
+	// Modal
+	--modal-overlay-background: rgba(0, 0, 0, 0.6);
+	--modal-panel-background: #{$color-slate-900};
+	--modal-panel-border-color: #{$color-slate-700};
+	--modal-panel-shadow: 0 #{size(6)} #{size(12)} rgba(0, 0, 0, 0.4);
+	--modal-header-border-color: #{$color-slate-700};
+	--modal-footer-border-color: #{$color-slate-700};
+	--modal-close-color: #{$color-slate-400};
+	--modal-close-hover-color: #{$color-slate-200};
+}
+
+a {
+	color: var(--link-color);
+	text-decoration: underline;
+	text-underline-offset: size(0.5);
+	transition: color var(--transition-default);
+
+	&:visited {
+		color: var(--link-visited-color);
+	}
+
+	&:hover {
+		color: var(--link-hover-color);
+	}
+
+	&:active {
+		color: var(--link-active-color);
+	}
+}

@@ -1,0 +1,52 @@
+@use 'grid' as *;
+
+.stack {
+	display: inline-flex;
+	align-items: center;
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: default;
+}
+
+.item {
+	margin-left: #{size(-2)};
+	border: 2px solid var(--avatar-stack-border-color);
+	border-radius: 50%;
+	position: relative;
+
+	&:first-child {
+		margin-left: 0;
+	}
+}
+
+.overflow {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 50%;
+	margin-left: #{size(-2)};
+	background-color: var(--avatar-stack-overflow-background);
+	color: var(--avatar-stack-overflow-color);
+	font-weight: 600;
+	user-select: none;
+	flex-shrink: 0;
+}
+
+.overflowSm {
+	width: #{size(6)};
+	height: #{size(6)};
+	font-size: #{size(3)};
+}
+
+.overflowMd {
+	width: #{size(10)};
+	height: #{size(10)};
+	font-size: #{size(4)};
+}
+
+.overflowLg {
+	width: #{size(16)};
+	height: #{size(16)};
+	font-size: #{size(6)};
+}

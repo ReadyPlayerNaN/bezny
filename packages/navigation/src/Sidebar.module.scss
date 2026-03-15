@@ -1,0 +1,51 @@
+@use 'grid' as *;
+
+.sidebar {
+	background-color: var(--sidebar-background-color);
+	border-right: 1px solid var(--sidebar-border-color);
+	display: flex;
+	flex-direction: column;
+	gap: size(4);
+	min-height: 100%;
+	padding: size(4) 0;
+	width: var(--sidebar-width, #{size(60)});
+}
+
+.group {
+	display: flex;
+	flex-direction: column;
+	gap: size(1);
+}
+
+.groupLabel {
+	color: var(--sidebar-group-label-color);
+	font-size: 0.75em;
+	font-weight: 600;
+	letter-spacing: 0.05em;
+	padding: 0 size(4);
+	text-transform: uppercase;
+}
+
+.groupItems {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.item {
+	display: flex;
+}
+
+.link {
+	align-items: center;
+	display: flex;
+	flex: 1;
+	gap: size(2);
+	padding: size(2) size(4);
+}
+
+.icon {
+	align-items: center;
+	display: flex;
+	flex-shrink: 0;
+}

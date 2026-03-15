@@ -1,0 +1,28 @@
+@use 'grid' as *;
+@use 'typography' as *;
+@use 'reactions' as *;
+
+.button {
+  @include button-variant(primary);
+  @include interactive;
+
+  border-width: 1px;
+  border-style: solid;
+  border-radius: var(--button-radius);
+  font-family: inherit;
+  font-size: font-size(1);
+  line-height: size(6);
+  padding: size(2) size(4);
+}
+
+.primary {
+  @include button-variant(primary);
+}
+
+.secondary {
+  @include button-variant(secondary);
+}
+
+.ghost {
+  @include button-variant(ghost);
+}

@@ -1,0 +1,54 @@
+@use 'grid' as *;
+
+.overlay {
+	z-index: 300;
+}
+
+.panel {
+	background-color: var(--drawer-background-color);
+	border-left: 1px solid var(--drawer-border-color);
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	max-width: size(80);
+	position: fixed;
+	top: 0;
+	width: 100%;
+	z-index: 301;
+}
+
+.panelRight {
+	border-left: 1px solid var(--drawer-border-color);
+	border-right: none;
+	right: 0;
+}
+
+.panelLeft {
+	border-left: none;
+	border-right: 1px solid var(--drawer-border-color);
+	left: 0;
+}
+
+.close {
+	background: none;
+	border: none;
+	color: var(--drawer-close-button-color);
+	font-size: size(5);
+	line-height: 1;
+	padding: size(2);
+	position: absolute;
+	right: size(2);
+	top: size(2);
+	transition: color var(--transition-default);
+
+	&:hover {
+		color: var(--drawer-close-button-hover-color);
+	}
+}
+
+.content {
+	flex: 1;
+	overflow-y: auto;
+	padding: size(4);
+	padding-top: size(10);
+}

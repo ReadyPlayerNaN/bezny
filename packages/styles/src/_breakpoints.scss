@@ -1,0 +1,35 @@
+@use 'sass:map';
+
+// Responsive breakpoints
+$breakpoints: (
+	'xs': 0,
+	'sm': 576px,
+	'md': 768px,
+	'lg': 992px,
+	'xl': 1200px,
+	'xxl': 1400px,
+);
+
+@mixin breakpoint-up($name) {
+	$value: map.get($breakpoints, $name);
+
+	@if $value == 0 {
+		@content;
+	} @else {
+		@media (min-width: $value) {
+			@content;
+		}
+	}
+}
+
+@mixin breakpoint-down($name) {
+	$value: map.get($breakpoints, $name);
+
+	@if $value == 0 {
+		@content;
+	} @else {
+		@media (max-width: #{$value - 0.02px}) {
+			@content;
+		}
+	}
+}

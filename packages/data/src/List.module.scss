@@ -1,0 +1,102 @@
+@use 'grid' as *;
+@use 'typography' as *;
+@use 'breakpoints' as *;
+@use 'reactions' as *;
+
+.list {
+	display: grid;
+	position: relative;
+}
+
+.listHeader {
+	display: grid;
+	grid-template-columns: subgrid;
+	grid-column: 1 / -1;
+	border-bottom: 1px solid var(--list-header-border-color);
+}
+
+.headerCell {
+	font-weight: 600;
+	font-size: font-size(0.875);
+	color: var(--list-header-color);
+	padding: size(1) size(2);
+}
+
+.listRow {
+	display: grid;
+	grid-template-columns: subgrid;
+	grid-column: 1 / -1;
+	border-bottom: 1px solid var(--list-row-border-color);
+}
+
+.interactive {
+	@include interactive;
+	border-style: none;
+	border-radius: 0;
+	text-decoration: none;
+	color: inherit;
+
+	--interactive-background-color: transparent;
+	--interactive-border-color: transparent;
+	--interactive-color: inherit;
+	--interactive-hover-background-color: var(--list-row-hover-background-color);
+	--interactive-hover-border-color: transparent;
+	--interactive-hover-color: inherit;
+	--interactive-active-background-color: var(--list-row-active-background-color);
+	--interactive-active-border-color: transparent;
+	--interactive-active-color: inherit;
+	--interactive-disabled-background-color: transparent;
+	--interactive-disabled-border-color: transparent;
+	--interactive-disabled-color: inherit;
+}
+
+.listCell {
+	padding: size(1) size(2);
+	display: flex;
+	align-items: center;
+	min-width: 0;
+}
+
+.actionsCell {
+	justify-content: flex-end;
+	gap: size(1);
+}
+
+.hideBelowSm {
+	@include breakpoint-down(sm) {
+		display: none;
+	}
+}
+
+.hideBelowMd {
+	@include breakpoint-down(md) {
+		display: none;
+	}
+}
+
+.hideBelowLg {
+	@include breakpoint-down(lg) {
+		display: none;
+	}
+}
+
+@include breakpoint-down(md) {
+	.listRow,
+	.listHeader {
+		grid-template-columns: repeat(auto-fit, minmax(#{size(30)}, 1fr));
+	}
+}
+
+.listEmpty {
+	grid-column: 1 / -1;
+	padding: size(4) size(2);
+	text-align: center;
+	color: var(--list-empty-color);
+}
+
+.listReloading {
+	position: absolute;
+	inset: 0;
+	background-color: var(--list-reloading-overlay-color);
+	pointer-events: none;
+}

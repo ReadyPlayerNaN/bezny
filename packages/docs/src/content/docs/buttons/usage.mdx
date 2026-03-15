@@ -1,0 +1,41 @@
+---
+title: Button Usage
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Interactive examples of the Button and Submit components from `@bezny/button`.
+
+## Basic Usage
+
+<LivePreview client:load code={`<Button>Click me</Button>`} />
+
+## Variants
+
+The Button component supports three variants: `primary`, `secondary`, and `ghost`.
+
+<LivePreview client:load code={`<div style={{ display: "flex", gap: "8px" }}>
+  <Button variant="primary">Primary</Button>
+  <Button variant="secondary">Secondary</Button>
+  <Button variant="ghost">Ghost</Button>
+</div>`} />
+
+## Disabled State
+
+<LivePreview client:load code={`<div style={{ display: "flex", gap: "8px" }}>
+  <Button disabled>Disabled Primary</Button>
+  <Button variant="secondary" disabled>Disabled Secondary</Button>
+  <Button variant="ghost" disabled>Disabled Ghost</Button>
+</div>`} />
+
+## Submit Component
+
+The `Submit` component is a convenience wrapper around `Button` with `type="submit"`.
+
+<LivePreview client:load code={`<form onSubmit={(e) => { e.preventDefault(); alert("Submitted!"); }}>
+  <Submit>Submit Form</Submit>
+</form>`} />
+
+## Event Handling
+
+<LivePreview client:load code={`<Button onClick={() => alert("Clicked!")}>Click me</Button>`} />

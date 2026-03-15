@@ -1,0 +1,36 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.5/schema.json",
+	"root": false,
+	"extends": ["@cookielab.io/biome-config/frontend"],
+	"files": {
+		"includes": ["src/**", "vite.config.ts", "vitest.config.ts"]
+	},
+	"linter": {
+		"rules": {
+			"a11y": {
+				"noAutofocus": "off"
+			},
+			"performance": {
+				"noReExportAll": "off"
+			},
+			"style": {
+				"useExportsLast": "off"
+			}
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["vite.config.ts", "vitest.config.ts"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noNodejsModules": "off"
+					},
+					"style": {
+						"noDefaultExport": "off"
+					}
+				}
+			}
+		}
+	]
+}

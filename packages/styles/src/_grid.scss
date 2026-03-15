@@ -1,0 +1,4 @@
+// 4-point pixel grid
+@function size($multiplier) {
+	@return #{$multiplier * 4}px;
+}

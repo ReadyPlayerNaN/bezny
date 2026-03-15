@@ -1,0 +1,65 @@
+@use 'grid' as *;
+
+.switch {
+	display: inline-flex;
+	align-items: center;
+	gap: size(2);
+	user-select: none;
+}
+
+.input {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.track {
+	display: inline-flex;
+	align-items: center;
+	width: 44px;
+	height: 24px;
+	border-radius: 12px;
+	background-color: var(--switch-track-off-color);
+	padding: 2px;
+	flex-shrink: 0;
+	transition: background-color var(--transition-default);
+}
+
+.thumb {
+	display: block;
+	width: 20px;
+	height: 20px;
+	border-radius: 50%;
+	background-color: var(--switch-thumb-color);
+	transition: transform var(--transition-default);
+	transform: translateX(0);
+}
+
+.input:checked + .track {
+	background-color: var(--switch-track-on-color);
+
+	.thumb {
+		transform: translateX(20px);
+	}
+}
+
+.input:focus-visible + .track {
+	outline: 2px solid var(--switch-track-on-color);
+	outline-offset: 2px;
+}
+
+.label {
+	color: var(--text-color);
+	line-height: 1.4;
+}
+
+.disabled {
+	cursor: not-allowed;
+	opacity: var(--switch-disabled-opacity);
+}

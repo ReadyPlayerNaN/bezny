@@ -1,0 +1,23 @@
+{
+	"$schema": "https://biomejs.dev/schemas/2.4.5/schema.json",
+	"root": false,
+	"extends": ["@cookielab.io/biome-config/base"],
+	"files": {
+		"includes": ["src/**", "vite.config.ts"]
+	},
+	"overrides": [
+		{
+			"includes": ["vite.config.ts"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noNodejsModules": "off"
+					},
+					"style": {
+						"noDefaultExport": "off"
+					}
+				}
+			}
+		}
+	]
+}

@@ -1,0 +1,11 @@
+@use 'grid' as *;
+@use 'typography' as *;
+
+.label {
+	color: var(--label-color);
+	display: block;
+	font-size: font-size(0.875);
+	font-weight: 500;
+	line-height: size(5);
+	margin: 0;
+}

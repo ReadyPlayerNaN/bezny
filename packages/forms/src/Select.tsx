@@ -1,0 +1,89 @@
+import clsx, { type ClassValue } from "clsx";
+import { type ChangeEvent, type ComponentPropsWithoutRef, type ReactNode, useId } from "react";
+import styles from "./Select.module.scss";
+import { StatusMessage, type ValidationStatus } from "./StatusMessage";
+
+type NativeSelectProps = Omit<ComponentPropsWithoutRef<"select">, "onChange" | "className">;
+
+export type SelectProps = NativeSelectProps & {
+	children?: ReactNode;
+	className?: ClassValue;
+	label?: string;
+	onChange?: (value: string) => void;
+	status?: ValidationStatus;
+	statusMessage?: string;
+};
+
+export function Select({
+	autoFocus,
+	children,
+	className,
+	defaultValue,
+	disabled,
+	label,
+	name,
+	onChange,
+	status,
+	statusMessage,
+	value,
+	...rest
+}: SelectProps) {
+	const id = useId();
+	const useWrapper = [label, status, statusMessage].some((v) => v !== undefined && v !== "");
+
+	function handleChange(event: ChangeEvent<HTMLSelectElement>) {
+		onChange?.(event.target.value);
+	}
+
+	if (useWrapper) {
+		return (
+			<div className={clsx(styles.wrapper, className)}>
+				<select
+					{...rest}
+					autoFocus={autoFocus}
+					className={clsx(styles.select, {
+						[styles.statusError]: status === "error",
+						[styles.statusWarning]: status === "warning",
+						[styles.statusSuccess]: status === "success",
+					})}
+					defaultValue={defaultValue}
+					disabled={disabled}
+					id={id}
+					name={name}
+					onChange={handleChange}
+					value={value}
+				>
+					{label ? <option value="" disabled={true} hidden={true} /> : null}
+					{children}
+				</select>
+				{label ? (
+					<label
+						className={clsx(styles.label, {
+							[styles.floated]: value === undefined ? true : value !== "",
+						})}
+						htmlFor={id}
+					>
+						{label}
+					</label>
+				) : null}
+				{statusMessage && status ? <StatusMessage message={statusMessage} status={status} /> : null}
+			</div>
+		);
+	}
+
+	return (
+		<select
+			{...rest}
+			autoFocus={autoFocus}
+			className={clsx(styles.select, className)}
+			defaultValue={defaultValue}
+			disabled={disabled}
+			id={id}
+			name={name}
+			onChange={handleChange}
+			value={value}
+		>
+			{children}
+		</select>
+	);
+}

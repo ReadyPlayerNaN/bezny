@@ -1,0 +1,27 @@
+{
+	"name": "@bezny/docs",
+	"version": "0.1.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"start": "astro dev --port 4300",
+		"build": "astro build",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write ."
+	},
+	"dependencies": {
+		"@astrojs/react": "^4.3.0",
+		"@astrojs/starlight": "^0.35.0",
+		"@bezny/button": "workspace:*",
+		"@bezny/styles": "workspace:*",
+		"astro": "^5.10.0",
+		"react": "catalog:",
+		"react-dom": "catalog:",
+		"react-live": "^4.1.8"
+	},
+	"devDependencies": {
+		"@types/react": "catalog:",
+		"@types/react-dom": "catalog:",
+		"typescript": "catalog:"
+	}
+}

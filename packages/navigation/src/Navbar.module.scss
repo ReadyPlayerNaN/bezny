@@ -1,0 +1,10 @@
+@use 'grid' as *;
+
+.navbar {
+	align-items: center;
+	background-color: var(--navbar-background-color);
+	border-bottom: 1px solid var(--navbar-border-color);
+	display: flex;
+	flex-wrap: wrap;
+	padding: size(2) size(4);
+}

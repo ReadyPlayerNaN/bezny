@@ -1,0 +1,96 @@
+@use 'grid' as *;
+@use 'typography' as *;
+@use 'reactions' as *;
+@use 'validation' as *;
+
+.textarea {
+	--input-background-color: var(--input-default-background-color);
+	--input-border-color: var(--input-default-border-color);
+	--input-color: var(--input-default-color);
+	--input-hover-background-color: var(--input-default-hover-background-color);
+	--input-hover-border-color: var(--input-default-hover-border-color);
+	--input-hover-color: var(--input-default-hover-color);
+	--input-active-background-color: var(--input-default-active-background-color);
+	--input-active-border-color: var(--input-default-active-border-color);
+	--input-active-color: var(--input-default-active-color);
+	--input-disabled-background-color: var(--input-default-disabled-background-color);
+	--input-disabled-border-color: var(--input-default-disabled-border-color);
+	--input-disabled-color: var(--input-default-disabled-color);
+
+	@include input;
+
+	border: 1px solid;
+	border-radius: size(1);
+	font-family: inherit;
+	font-size: font-size(1);
+	line-height: size(6);
+	padding: size(2) size(3);
+	resize: vertical;
+	width: 100%;
+
+	&::placeholder {
+		color: var(--input-default-placeholder-color);
+	}
+}
+
+.statusError {
+	@include status-border(error);
+}
+
+.statusWarning {
+	@include status-border(warning);
+}
+
+.statusSuccess {
+	@include status-border(success);
+}
+
+.wrapper {
+	position: relative;
+
+	.textarea {
+		padding: size(5) size(3) size(1);
+
+		&::placeholder {
+			color: transparent;
+		}
+
+		&:focus + .label,
+		&:not(:placeholder-shown) + .label {
+			transform: translateY(0);
+			font-size: size(3);
+			color: var(--input-label-focused-color);
+		}
+
+		&:not(:focus):not(:placeholder-shown) + .label {
+			color: var(--input-label-color);
+		}
+
+		&.statusError:focus + .label,
+		&.statusError:not(:placeholder-shown) + .label {
+			@include status-label(error);
+		}
+
+		&.statusWarning:focus + .label,
+		&.statusWarning:not(:placeholder-shown) + .label {
+			@include status-label(warning);
+		}
+
+		&.statusSuccess:focus + .label,
+		&.statusSuccess:not(:placeholder-shown) + .label {
+			@include status-label(success);
+		}
+	}
+}
+
+.label {
+	position: absolute;
+	top: size(2);
+	left: size(3);
+	color: var(--input-label-color);
+	font-size: font-size(1);
+	line-height: size(6);
+	transform: translateY(size(1));
+	transition: transform var(--transition-default), font-size var(--transition-default), color var(--transition-default);
+	pointer-events: none;
+}
