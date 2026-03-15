@@ -6,8 +6,7 @@ export default defineConfig({
 		cssCodeSplit: true,
 		lib: {
 			entry: {
-				"theme-dark": resolve(import.meta.dirname, "src/theme-dark.scss"),
-				"theme-light": resolve(import.meta.dirname, "src/theme-light.scss"),
+				theme: resolve(import.meta.dirname, "src/theme.scss"),
 			},
 			formats: ["es"],
 		},

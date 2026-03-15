@@ -3,9 +3,10 @@
 	"version": "0.0.0",
 	"type": "module",
 	"exports": {
-		"./theme-dark.css": "./dist/theme-dark.css",
-		"./theme-light.css": "./dist/theme-light.css",
-		"./styles/*": "./src/_*.scss"
+		"./theme.css": "./dist/theme.css",
+		"./styles/*": "./src/_*.scss",
+		"./theme": "./src/_theme.scss",
+		"./palettes": "./src/_palettes.scss"
 	},
 	"scripts": {
 		"build": "vite build",
