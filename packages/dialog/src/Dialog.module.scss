@@ -5,15 +5,35 @@
 	border: 1px solid var(--bzn-modal-panel-border);
 	border-radius: size(2);
 	box-shadow: var(--bzn-modal-panel-shadow);
-	display: flex;
 	flex-direction: column;
+	margin: auto;
 	max-height: 80vh;
 	max-width: size(150);
+	opacity: 0;
 	padding: 0;
+	transform: scale(0.95) translateY(size(2));
+	transition:
+		opacity var(--bzn-transition),
+		transform var(--bzn-transition);
 	width: 100%;
+
+	&[open] {
+		display: flex;
+	}
+
+	&.visible {
+		opacity: 1;
+		transform: scale(1) translateY(0);
+	}
 
 	&::backdrop {
 		background-color: var(--bzn-modal-overlay-bg);
+		opacity: 0;
+		transition: opacity var(--bzn-transition);
+	}
+
+	&.visible::backdrop {
+		opacity: 1;
 	}
 }
 
