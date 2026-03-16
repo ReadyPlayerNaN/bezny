@@ -7,12 +7,15 @@ export type BreadcrumbItemOwnProps = {
 	className?: ClassValue;
 };
 
-export const BreadcrumbItem = createPolymorphic<"li", BreadcrumbItemOwnProps>(
+const BreadcrumbItemBase = createPolymorphic<"li", BreadcrumbItemOwnProps>(
 	"li",
 	(Tag, { className }, { className: _, ...rest }) => (
 		<Tag className={clsx(styles.breadcrumbItem, className)} {...rest} />
 	),
 );
+
+BreadcrumbItemBase.displayName = "BreadcrumbItem";
+export const BreadcrumbItem = BreadcrumbItemBase;
 
 export type BreadcrumbsProps = {
 	children?: ReactNode;

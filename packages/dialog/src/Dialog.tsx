@@ -98,6 +98,10 @@ export const DialogFooter = createPolymorphic<"footer", DialogFooterOwnProps>(
 	),
 );
 
+DialogHeader.displayName = "DialogHeader";
+DialogBody.displayName = "DialogBody";
+DialogFooter.displayName = "DialogFooter";
+
 Dialog.Header = DialogHeader;
 Dialog.Body = DialogBody;
 Dialog.Footer = DialogFooter;

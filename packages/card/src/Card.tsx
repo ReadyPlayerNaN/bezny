@@ -73,6 +73,11 @@ export function CardImg({ alt, className, height, position = "top", src }: CardI
 	);
 }
 
+CardBase.displayName = "Card";
+CardHeader.displayName = "CardHeader";
+CardBody.displayName = "CardBody";
+CardFooter.displayName = "CardFooter";
+
 export const Card = Object.assign(CardBase, {
 	Body: CardBody,
 	Header: CardHeader,
