@@ -1,0 +1,43 @@
+---
+title: Semantic Elements
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Semantic HTML wrappers (`Article`, `Section`, `Aside`, `Main`) that automatically manage heading levels via `HeadingLevelProvider`.
+
+```tsx
+import { Article, Section, Aside, Main } from "@bezny/layout";
+```
+
+## Examples
+
+### Nested Sections with Automatic Heading Levels
+
+`Article`, `Section`, and `Aside` wrap children in a `HeadingLevelProvider`, so nested `Heading` components automatically increment their level.
+
+<LivePreview client:load code={`<Article>
+  <Heading>Article Heading (h1)</Heading>
+  <Section>
+    <Heading>Section Heading (h2)</Heading>
+    <Paragraph>Content inside a section within an article.</Paragraph>
+  </Section>
+</Article>`} />
+
+## API Reference
+
+### Article
+
+Renders an `<article>` element wrapped in a `HeadingLevelProvider`. Accepts all native `<article>` attributes.
+
+### Section
+
+Renders a `<section>` element wrapped in a `HeadingLevelProvider`. Accepts all native `<section>` attributes.
+
+### Aside
+
+Renders an `<aside>` element wrapped in a `HeadingLevelProvider`. Accepts all native `<aside>` attributes.
+
+### Main
+
+Renders a `<main>` element. Accepts all native `<main>` attributes.

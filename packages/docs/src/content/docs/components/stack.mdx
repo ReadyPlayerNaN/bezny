@@ -1,0 +1,40 @@
+---
+title: Stack
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A flex-based layout component for arranging children vertically or horizontally with consistent spacing.
+
+```tsx
+import { Stack } from "@bezny/layout";
+```
+
+## Examples
+
+### Vertical Stack
+
+<LivePreview client:load code={`<Stack gap={2}>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 1</div>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 2</div>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 3</div>
+</Stack>`} />
+
+### Horizontal Stack
+
+<LivePreview client:load code={`<Stack direction="horizontal" gap={3}>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 1</div>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 2</div>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 3</div>
+</Stack>`} />
+
+## API Reference
+
+### Stack
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `direction` | `"vertical" \| "horizontal"` | `"vertical"` | Layout direction |
+| `gap` | `number` | — | Gap between items in 4px units (e.g. `gap={2}` = 8px) |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Stack content |

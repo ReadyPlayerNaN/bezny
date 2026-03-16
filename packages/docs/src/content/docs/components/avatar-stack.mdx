@@ -1,0 +1,39 @@
+---
+title: AvatarStack
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Displays multiple avatars in an overlapping stack with an overflow count.
+
+```tsx
+import { AvatarStack } from "@bezny/avatar";
+```
+
+## Examples
+
+### Basic Stack
+
+<LivePreview client:load code={`<AvatarStack
+  users={[
+    { name: "Alice Smith", email: "alice@example.com" },
+    { name: "Bob Jones", email: "bob@example.com" },
+    { name: "Carol White", email: "carol@example.com" },
+    { name: "Dave Brown", email: "dave@example.com" },
+    { name: "Eve Green", email: "eve@example.com" },
+    { name: "Frank Black", email: "frank@example.com" },
+  ]}
+  max={4}
+/>`} />
+
+## API Reference
+
+### AvatarStack
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `users` | `AvatarStackUser[]` | **required** | Array of user objects with `name`, `email`, and optional `avatarUrl` |
+| `max` | `number` | `4` | Maximum visible avatars before overflow |
+| `size` | `"sm" \| "md" \| "lg"` | `"sm"` | Size of each avatar |
+| `onClick` | `() => void` | — | Click handler (renders as button when provided) |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |

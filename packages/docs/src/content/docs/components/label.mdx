@@ -1,0 +1,27 @@
+---
+title: Label
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A styled label component for form elements.
+
+```tsx
+import { Label } from "@bezny/text";
+```
+
+## Examples
+
+### Basic Label
+
+<LivePreview client:load code={`<Label htmlFor="example-input">Email address</Label>`} />
+
+## API Reference
+
+### Label
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Label content |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `htmlFor` | `string` | — | ID of the associated form element |

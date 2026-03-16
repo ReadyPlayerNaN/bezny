@@ -1,0 +1,40 @@
+---
+title: Container
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A width-constraining wrapper with four size presets.
+
+```tsx
+import { Container } from "@bezny/layout";
+```
+
+## Examples
+
+### Size Variants
+
+<LivePreview client:load code={`<div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+  <Container maxWidth="sm">
+    <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>sm (576px)</div>
+  </Container>
+  <Container maxWidth="md">
+    <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>md (768px)</div>
+  </Container>
+  <Container maxWidth="lg">
+    <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>lg (992px)</div>
+  </Container>
+  <Container maxWidth="xl">
+    <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>xl (1200px)</div>
+  </Container>
+</div>`} />
+
+## API Reference
+
+### Container
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `maxWidth` | `"sm" \| "md" \| "lg" \| "xl"` | — | Maximum width (576px, 768px, 992px, 1200px) |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Container content |

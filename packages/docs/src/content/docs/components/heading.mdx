@@ -1,13 +1,13 @@
 ---
-title: Text
+title: Heading
 ---
 
 import LivePreview from "../../../components/LivePreview";
 
-Headings, paragraphs, and labels with automatic heading level management.
+Semantic heading components with automatic heading level management via context.
 
 ```tsx
-import { Heading, StaticHeading, HeadingLevelProvider, Paragraph, Label } from "@bezny/text";
+import { Heading, StaticHeading, HeadingLevelProvider, useHeadingLevel } from "@bezny/text";
 ```
 
 ## Examples
@@ -26,9 +26,7 @@ When nested inside `HeadingLevelProvider`, headings automatically increment thei
   </HeadingLevelProvider>
 </HeadingLevelProvider>`} />
 
-### Heading
-
-The `Heading` component renders semantic heading elements. It automatically determines the heading level from context, or you can set it explicitly.
+### Explicit Levels
 
 <LivePreview client:load code={`<div>
   <Heading level={1}>Heading 1</Heading>
@@ -41,20 +39,12 @@ The `Heading` component renders semantic heading elements. It automatically dete
 
 ### StaticHeading
 
-`StaticHeading` is a simpler heading component that always renders at the specified level, ignoring context.
+`StaticHeading` always renders at the specified level, ignoring context.
 
 <LivePreview client:load code={`<div>
   <StaticHeading level={2}>Always h2</StaticHeading>
   <StaticHeading level={4}>Always h4</StaticHeading>
 </div>`} />
-
-### Paragraph
-
-<LivePreview client:load code={`<Paragraph>This is a paragraph of text. It renders a styled p element.</Paragraph>`} />
-
-### Label
-
-<LivePreview client:load code={`<Label htmlFor="example-input">Email address</Label>`} />
 
 ## API Reference
 
@@ -82,21 +72,6 @@ The `Heading` component renders semantic heading elements. It automatically dete
 |------|------|---------|-------------|
 | `level` | `0 \| 1 \| 2 \| 3 \| 4 \| 5` | Current + 1 | Explicit context level. If omitted, increments from parent. |
 | `children` | `ReactNode` | — | Child components |
-
-### Paragraph
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | — | Paragraph content |
-| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
-
-### Label
-
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | — | Label content |
-| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
-| `htmlFor` | `string` | — | ID of the associated form element |
 
 ### useHeadingLevel
 
