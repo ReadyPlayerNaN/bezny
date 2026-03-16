@@ -2,6 +2,7 @@
 
 .group {
 	display: inline-flex;
+	flex-wrap: wrap;
 	border: none;
 	padding: 0;
 	margin: 0;
@@ -11,4 +12,5 @@
 	color: var(--bzn-text);
 	font-weight: 600;
 	margin-bottom: size(1);
+	flex-basis: 100%;
 }

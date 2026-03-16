@@ -101,13 +101,6 @@ const sectionHeading: React.CSSProperties = {
 	color: "var(--bzn-text)",
 };
 
-const fieldLabel: React.CSSProperties = {
-	fontSize: 12,
-	color: "var(--bzn-text-muted)",
-	display: "block",
-	marginBottom: 8,
-};
-
 export default function ThemeSettings() {
 	const [primaryHue, setPrimaryHue] = useState(DEFAULT_PRIMARY);
 	const [secondaryHue, setSecondaryHue] = useState(DEFAULT_PRIMARY + DEFAULT_OFFSET);
@@ -320,22 +313,19 @@ export default function ThemeSettings() {
 
 					<div style={{ ...sectionHeading, marginTop: 16 }}>Preferences</div>
 
-					<div style={fieldLabel}>Color scheme</div>
-					<ButtonGroup value={colorScheme} onChange={(v) => setColorScheme(v as ColorScheme)}>
+					<ButtonGroup value={colorScheme} onChange={(v) => setColorScheme(v as ColorScheme)} legend="Color scheme">
 						<ButtonGroupOption value="auto">Auto</ButtonGroupOption>
 						<ButtonGroupOption value="light">Light</ButtonGroupOption>
 						<ButtonGroupOption value="dark">Dark</ButtonGroupOption>
 					</ButtonGroup>
 
-					<div style={{ ...fieldLabel, marginTop: 12 }}>Reduced motion</div>
-					<ButtonGroup value={reducedMotion} onChange={(v) => setReducedMotion(v as TriState)}>
+					<ButtonGroup value={reducedMotion} onChange={(v) => setReducedMotion(v as TriState)} legend="Reduced motion">
 						<ButtonGroupOption value="auto">Auto</ButtonGroupOption>
 						<ButtonGroupOption value="yes">Yes</ButtonGroupOption>
 						<ButtonGroupOption value="no">No</ButtonGroupOption>
 					</ButtonGroup>
 
-					<div style={{ ...fieldLabel, marginTop: 12 }}>Reduced transparency</div>
-					<ButtonGroup value={reducedTransparency} onChange={(v) => setReducedTransparency(v as TriState)}>
+					<ButtonGroup value={reducedTransparency} onChange={(v) => setReducedTransparency(v as TriState)} legend="Reduced transparency">
 						<ButtonGroupOption value="auto">Auto</ButtonGroupOption>
 						<ButtonGroupOption value="yes">Yes</ButtonGroupOption>
 						<ButtonGroupOption value="no">No</ButtonGroupOption>
