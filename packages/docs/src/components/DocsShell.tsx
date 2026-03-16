@@ -5,7 +5,7 @@ import type { SidebarGroup } from "@bezny/navigation";
 import { Sidebar } from "@bezny/navigation";
 import { type ReactNode, useState } from "react";
 import { sidebarGroups } from "../data/sidebar.js";
-import ColourSelector from "./ColourSelector.js";
+import ThemeSettings from "./ThemeSettings.js";
 import TableOfContents from "./TableOfContents.js";
 
 type Heading = {
@@ -51,7 +51,7 @@ export default function DocsShell({
 				<NavbarBrand href="/">bezny</NavbarBrand>
 				<NavbarToggle />
 				<div style={{ marginLeft: "auto" }}>
-					<ColourSelector />
+					<ThemeSettings />
 				</div>
 				<DrawerToggle />
 			</Navbar>

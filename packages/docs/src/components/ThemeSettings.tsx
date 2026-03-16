@@ -1,15 +1,21 @@
+import { ButtonGroup, ButtonGroupOption } from "@bezny/switches";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { applyThemeOverrides, clearThemeOverrides } from "../lib/shade-generation.js";
 
 const LS_PRIMARY = "bzn-docs-primary-hue";
 const LS_SECONDARY = "bzn-docs-secondary-hue";
 const LS_OFFSET = "bzn-docs-hue-offset";
+const LS_COLOR_SCHEME = "bzn-docs-color-scheme";
+const LS_REDUCED_MOTION = "bzn-docs-reduced-motion";
+const LS_REDUCED_TRANSPARENCY = "bzn-docs-reduced-transparency";
 
 const DEFAULT_PRIMARY = 10;
 const DEFAULT_OFFSET = 60;
 const HUE_OFFSETS = [30, 60, 90, 120, 150, 180] as const;
 
 type HueOffset = (typeof HUE_OFFSETS)[number] | "unlocked";
+type TriState = "auto" | "yes" | "no";
+type ColorScheme = "auto" | "light" | "dark";
 
 function parseHueOffset(value: string | null): HueOffset {
 	if (value === "unlocked") return "unlocked";
@@ -20,18 +26,32 @@ function parseHueOffset(value: string | null): HueOffset {
 	return DEFAULT_OFFSET;
 }
 
-function readStorage(): {
-	primaryHue: number;
-	secondaryHue: number;
-	hueOffset: HueOffset;
-} {
+function readStorage() {
 	const primary = Number(localStorage.getItem(LS_PRIMARY)) || DEFAULT_PRIMARY;
 	const hueOffset = parseHueOffset(localStorage.getItem(LS_OFFSET));
 	const secondary =
 		hueOffset === "unlocked"
 			? Number(localStorage.getItem(LS_SECONDARY)) || primary + DEFAULT_OFFSET
 			: primary + hueOffset;
-	return { primaryHue: primary, secondaryHue: secondary, hueOffset: hueOffset };
+	return { primaryHue: primary, secondaryHue: secondary, hueOffset };
+}
+
+const CLASS_MAP = {
+	colorScheme: { auto: [], light: ["bzn--light"], dark: ["bzn--dark"] },
+	reducedMotion: { auto: [], yes: ["bzn--reduce-motion"], no: ["bzn--allow-motion"] },
+	reducedTransparency: { auto: [], yes: ["bzn--reduce-transparency"], no: ["bzn--allow-transparency"] },
+} as const;
+
+function applyPreferenceClass(key: keyof typeof CLASS_MAP, value: string) {
+	const el = document.documentElement;
+	const map = CLASS_MAP[key];
+	for (const classes of Object.values(map)) {
+		el.classList.remove(...classes);
+	}
+	const classes = map[value as keyof typeof map];
+	if (classes?.length) {
+		el.classList.add(...classes);
+	}
 }
 
 const sliderTrack: React.CSSProperties = {
@@ -74,24 +94,42 @@ const sliderThumbCss = `
 	}
 `;
 
-export default function ColourSelector() {
+const sectionHeading: React.CSSProperties = {
+	fontSize: 13,
+	fontWeight: 600,
+	marginBottom: 12,
+	color: "var(--bzn-text)",
+};
+
+const fieldLabel: React.CSSProperties = {
+	fontSize: 12,
+	color: "var(--bzn-text-muted)",
+	display: "block",
+	marginBottom: 8,
+};
+
+export default function ThemeSettings() {
 	const [primaryHue, setPrimaryHue] = useState(DEFAULT_PRIMARY);
 	const [secondaryHue, setSecondaryHue] = useState(DEFAULT_PRIMARY + DEFAULT_OFFSET);
 	const [hueOffset, setHueOffset] = useState<HueOffset>(DEFAULT_OFFSET);
+	const [colorScheme, setColorScheme] = useState<ColorScheme>("auto");
+	const [reducedMotion, setReducedMotion] = useState<TriState>("auto");
+	const [reducedTransparency, setReducedTransparency] = useState<TriState>("auto");
 	const [open, setOpen] = useState(false);
 	const detailsRef = useRef<HTMLDetailsElement>(null);
 	const initialized = useRef(false);
 
-	// Hydrate from localStorage on mount
 	useEffect(() => {
 		const stored = readStorage();
 		setPrimaryHue(stored.primaryHue);
 		setSecondaryHue(stored.secondaryHue);
 		setHueOffset(stored.hueOffset);
+		setColorScheme((localStorage.getItem(LS_COLOR_SCHEME) as ColorScheme) ?? "auto");
+		setReducedMotion((localStorage.getItem(LS_REDUCED_MOTION) as TriState) ?? "auto");
+		setReducedTransparency((localStorage.getItem(LS_REDUCED_TRANSPARENCY) as TriState) ?? "auto");
 		initialized.current = true;
 	}, []);
 
-	// Apply overrides whenever values change (skip before hydration)
 	useEffect(() => {
 		if (!initialized.current) return;
 		applyThemeOverrides(primaryHue, secondaryHue);
@@ -99,6 +137,24 @@ export default function ColourSelector() {
 		localStorage.setItem(LS_SECONDARY, String(secondaryHue));
 		localStorage.setItem(LS_OFFSET, String(hueOffset));
 	}, [primaryHue, secondaryHue, hueOffset]);
+
+	useEffect(() => {
+		if (!initialized.current) return;
+		applyPreferenceClass("colorScheme", colorScheme);
+		localStorage.setItem(LS_COLOR_SCHEME, colorScheme);
+	}, [colorScheme]);
+
+	useEffect(() => {
+		if (!initialized.current) return;
+		applyPreferenceClass("reducedMotion", reducedMotion);
+		localStorage.setItem(LS_REDUCED_MOTION, reducedMotion);
+	}, [reducedMotion]);
+
+	useEffect(() => {
+		if (!initialized.current) return;
+		applyPreferenceClass("reducedTransparency", reducedTransparency);
+		localStorage.setItem(LS_REDUCED_TRANSPARENCY, reducedTransparency);
+	}, [reducedTransparency]);
 
 	const handlePrimaryChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
@@ -132,12 +188,20 @@ export default function ColourSelector() {
 		setPrimaryHue(DEFAULT_PRIMARY);
 		setSecondaryHue(DEFAULT_PRIMARY + DEFAULT_OFFSET);
 		setHueOffset(DEFAULT_OFFSET);
+		setColorScheme("auto");
+		setReducedMotion("auto");
+		setReducedTransparency("auto");
 		localStorage.removeItem(LS_PRIMARY);
 		localStorage.removeItem(LS_SECONDARY);
 		localStorage.removeItem(LS_OFFSET);
+		localStorage.removeItem(LS_COLOR_SCHEME);
+		localStorage.removeItem(LS_REDUCED_MOTION);
+		localStorage.removeItem(LS_REDUCED_TRANSPARENCY);
+		applyPreferenceClass("colorScheme", "auto");
+		applyPreferenceClass("reducedMotion", "auto");
+		applyPreferenceClass("reducedTransparency", "auto");
 	}, []);
 
-	// Close on outside click
 	useEffect(() => {
 		function handleClick(e: MouseEvent) {
 			if (detailsRef.current && !detailsRef.current.contains(e.target as Node)) {
@@ -176,7 +240,7 @@ export default function ColourSelector() {
 							border: "2px solid var(--bzn-border)",
 							verticalAlign: "middle",
 						}}
-						aria-label="Accent colour selector"
+						aria-label="Theme settings"
 					/>
 				</summary>
 				<div
@@ -189,29 +253,13 @@ export default function ColourSelector() {
 						border: "1px solid var(--bzn-border)",
 						borderRadius: 8,
 						padding: 16,
-						width: 260,
+						width: 280,
 						boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
 					}}
 				>
-					<div
-						style={{
-							fontSize: 13,
-							fontWeight: 600,
-							marginBottom: 12,
-							color: "var(--bzn-text)",
-						}}
-					>
-						Accent colour
-					</div>
+					<div style={sectionHeading}>Accent colour</div>
 
-					<label
-						style={{
-							fontSize: 12,
-							color: "var(--bzn-text-muted)",
-							display: "block",
-							marginBottom: 4,
-						}}
-					>
+					<label style={{ fontSize: 12, color: "var(--bzn-text-muted)", display: "block", marginBottom: 4 }}>
 						Primary — {primaryHue}°
 					</label>
 					<div style={sliderTrack}>
@@ -226,21 +274,8 @@ export default function ColourSelector() {
 						/>
 					</div>
 
-					<div
-						style={{
-							display: "flex",
-							alignItems: "center",
-							gap: 6,
-							margin: "10px 0 4px",
-						}}
-					>
-						<label
-							style={{
-								fontSize: 12,
-								color: "var(--bzn-text-muted)",
-								flex: 1,
-							}}
-						>
+					<div style={{ display: "flex", alignItems: "center", gap: 6, margin: "10px 0 4px" }}>
+						<label style={{ fontSize: 12, color: "var(--bzn-text-muted)", flex: 1 }}>
 							Secondary — {Math.round(secondaryHue % 360)}°
 						</label>
 						<select
@@ -283,11 +318,34 @@ export default function ColourSelector() {
 						/>
 					</div>
 
+					<div style={{ ...sectionHeading, marginTop: 16 }}>Preferences</div>
+
+					<div style={fieldLabel}>Color scheme</div>
+					<ButtonGroup value={colorScheme} onChange={(v) => setColorScheme(v as ColorScheme)}>
+						<ButtonGroupOption value="auto">Auto</ButtonGroupOption>
+						<ButtonGroupOption value="light">Light</ButtonGroupOption>
+						<ButtonGroupOption value="dark">Dark</ButtonGroupOption>
+					</ButtonGroup>
+
+					<div style={{ ...fieldLabel, marginTop: 12 }}>Reduced motion</div>
+					<ButtonGroup value={reducedMotion} onChange={(v) => setReducedMotion(v as TriState)}>
+						<ButtonGroupOption value="auto">Auto</ButtonGroupOption>
+						<ButtonGroupOption value="yes">Yes</ButtonGroupOption>
+						<ButtonGroupOption value="no">No</ButtonGroupOption>
+					</ButtonGroup>
+
+					<div style={{ ...fieldLabel, marginTop: 12 }}>Reduced transparency</div>
+					<ButtonGroup value={reducedTransparency} onChange={(v) => setReducedTransparency(v as TriState)}>
+						<ButtonGroupOption value="auto">Auto</ButtonGroupOption>
+						<ButtonGroupOption value="yes">Yes</ButtonGroupOption>
+						<ButtonGroupOption value="no">No</ButtonGroupOption>
+					</ButtonGroup>
+
 					<button
 						type="button"
 						onClick={handleReset}
 						style={{
-							marginTop: 12,
+							marginTop: 16,
 							width: "100%",
 							padding: "4px 0",
 							fontSize: 12,
