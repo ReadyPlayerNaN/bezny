@@ -25,10 +25,10 @@
 	justify-content: center;
 	width: 20px;
 	height: 20px;
-	border: 2px solid var(--radio-border-color);
+	border: 2px solid var(--bzn-radio-border);
 	border-radius: 50%;
 	flex-shrink: 0;
-	transition: border-color var(--transition-default), background-color var(--transition-default);
+	transition: border-color var(--bzn-transition), background-color var(--bzn-transition);
 
 	&::after {
 		content: '';
@@ -36,14 +36,14 @@
 		width: 10px;
 		height: 10px;
 		border-radius: 50%;
-		background-color: var(--radio-checked-color);
+		background-color: var(--bzn-radio-checked);
 		transform: scale(0);
-		transition: transform var(--transition-default);
+		transition: transform var(--bzn-transition);
 	}
 }
 
 .input:checked + .indicator {
-	border-color: var(--radio-checked-color);
+	border-color: var(--bzn-radio-checked);
 
 	&::after {
 		transform: scale(1);
@@ -51,12 +51,12 @@
 }
 
 .input:focus-visible + .indicator {
-	outline: 2px solid var(--radio-checked-color);
+	outline: 2px solid var(--bzn-radio-checked);
 	outline-offset: 2px;
 }
 
 .label {
-	color: var(--text-color);
+	color: var(--bzn-text);
 	line-height: 1.4;
 }
 
@@ -65,10 +65,10 @@
 	opacity: 0.5;
 
 	.indicator {
-		border-color: var(--radio-disabled-color);
+		border-color: var(--bzn-radio-disabled);
 	}
 
 	.label {
-		color: var(--radio-disabled-color);
+		color: var(--bzn-radio-disabled);
 	}
 }

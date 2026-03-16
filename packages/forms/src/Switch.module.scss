@@ -25,10 +25,10 @@
 	width: 44px;
 	height: 24px;
 	border-radius: 12px;
-	background-color: var(--switch-track-off-color);
+	background-color: var(--bzn-switch-track-off);
 	padding: 2px;
 	flex-shrink: 0;
-	transition: background-color var(--transition-default);
+	transition: background-color var(--bzn-transition);
 }
 
 .thumb {
@@ -36,13 +36,13 @@
 	width: 20px;
 	height: 20px;
 	border-radius: 50%;
-	background-color: var(--switch-thumb-color);
-	transition: transform var(--transition-default);
+	background-color: var(--bzn-switch-thumb);
+	transition: transform var(--bzn-transition);
 	transform: translateX(0);
 }
 
 .input:checked + .track {
-	background-color: var(--switch-track-on-color);
+	background-color: var(--bzn-switch-track-on);
 
 	.thumb {
 		transform: translateX(20px);
@@ -50,16 +50,16 @@
 }
 
 .input:focus-visible + .track {
-	outline: 2px solid var(--switch-track-on-color);
+	outline: 2px solid var(--bzn-switch-track-on);
 	outline-offset: 2px;
 }
 
 .label {
-	color: var(--text-color);
+	color: var(--bzn-text);
 	line-height: 1.4;
 }
 
 .disabled {
 	cursor: not-allowed;
-	opacity: var(--switch-disabled-opacity);
+	opacity: var(--bzn-switch-disabled-opacity);
 }

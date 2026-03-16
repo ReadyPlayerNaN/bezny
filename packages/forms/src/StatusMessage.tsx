@@ -1,12 +1,8 @@
-import clsx from "clsx";
+import { createPolymorphic } from "@bezny/styles";
+import clsx, { type ClassValue } from "clsx";
 import styles from "./StatusMessage.module.scss";
 
 export type ValidationStatus = "error" | "warning" | "success";
-
-type StatusMessageProps = {
-	message: string;
-	status: ValidationStatus;
-};
 
 const statusClassMap: Record<ValidationStatus, string> = {
 	error: styles.error,
@@ -14,6 +10,17 @@ const statusClassMap: Record<ValidationStatus, string> = {
 	success: styles.success,
 };
 
-export function StatusMessage({ message, status }: StatusMessageProps) {
-	return <span className={clsx(styles.statusMessage, statusClassMap[status])}>{message}</span>;
-}
+export type StatusMessageOwnProps = {
+	className?: ClassValue;
+	message: string;
+	status: ValidationStatus;
+};
+
+export const StatusMessage = createPolymorphic<"span", StatusMessageOwnProps>(
+	"span",
+	(Tag, { className, message, status }, { className: _className, message: _, status: _status, ...rest }) => (
+		<Tag {...rest} className={clsx(styles.statusMessage, statusClassMap[status], className)}>
+			{message}
+		</Tag>
+	),
+);
