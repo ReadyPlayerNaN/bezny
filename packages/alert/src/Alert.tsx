@@ -1,11 +1,10 @@
+import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
-import type { ReactNode } from "react";
 import styles from "./Alert.module.scss";
 
 type AlertVariant = "success" | "warning" | "error";
 
-export type AlertProps = {
-	children?: ReactNode;
+export type AlertOwnProps = {
 	className?: ClassValue;
 	variant: AlertVariant;
 };
@@ -22,10 +21,13 @@ const variantRoleMap: Record<AlertVariant, string> = {
 	error: "alert",
 };
 
-export function Alert({ children, className, variant }: AlertProps) {
-	return (
-		<div className={clsx(styles.alert, variantClassMap[variant], className)} role={variantRoleMap[variant]}>
-			{children}
-		</div>
-	);
-}
+export const Alert = createPolymorphic<"div", AlertOwnProps>(
+	"div",
+	(Tag, { className, variant }, { className: _, variant: _v, ...rest }) => (
+		<Tag
+			className={clsx(styles.alert, variantClassMap[variant], className)}
+			role={variantRoleMap[variant]}
+			{...rest}
+		/>
+	),
+);

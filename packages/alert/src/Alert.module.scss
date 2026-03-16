@@ -10,19 +10,19 @@
 }
 
 .success {
-	background-color: var(--alert-success-background-color);
-	border-color: var(--alert-success-border-color);
-	color: var(--alert-success-color);
+	background-color: var(--bzn-alert-success-bg);
+	border-color: var(--bzn-alert-success-border);
+	color: var(--bzn-alert-success-color);
 }
 
 .warning {
-	background-color: var(--alert-warning-background-color);
-	border-color: var(--alert-warning-border-color);
-	color: var(--alert-warning-color);
+	background-color: var(--bzn-alert-warning-bg);
+	border-color: var(--bzn-alert-warning-border);
+	color: var(--bzn-alert-warning-color);
 }
 
 .error {
-	background-color: var(--alert-error-background-color);
-	border-color: var(--alert-error-border-color);
-	color: var(--alert-error-color);
+	background-color: var(--bzn-alert-error-bg);
+	border-color: var(--bzn-alert-error-border);
+	color: var(--bzn-alert-error-color);
 }
