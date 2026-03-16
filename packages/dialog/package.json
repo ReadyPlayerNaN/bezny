@@ -24,6 +24,7 @@
 		"react-dom": "^19"
 	},
 	"dependencies": {
+		"@bezny/styles": "workspace:*",
 		"clsx": "catalog:"
 	},
 	"devDependencies": {

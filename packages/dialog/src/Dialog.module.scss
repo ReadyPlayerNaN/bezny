@@ -1,10 +1,10 @@
 @use 'grid' as *;
 
 .dialog {
-	background-color: var(--modal-panel-background);
-	border: 1px solid var(--modal-panel-border-color);
+	background-color: var(--bzn-modal-panel-bg);
+	border: 1px solid var(--bzn-modal-panel-border);
 	border-radius: size(2);
-	box-shadow: var(--modal-panel-shadow);
+	box-shadow: var(--bzn-modal-panel-shadow);
 	display: flex;
 	flex-direction: column;
 	max-height: 80vh;
@@ -13,13 +13,13 @@
 	width: 100%;
 
 	&::backdrop {
-		background-color: var(--overlay-background-color);
+		background-color: var(--bzn-modal-overlay-bg);
 	}
 }
 
 .header {
 	align-items: center;
-	border-bottom: 1px solid var(--modal-header-border-color);
+	border-bottom: 1px solid var(--bzn-modal-header-border);
 	display: flex;
 	justify-content: space-between;
 	padding: size(4);
@@ -32,7 +32,7 @@
 }
 
 .footer {
-	border-top: 1px solid var(--modal-footer-border-color);
+	border-top: 1px solid var(--bzn-modal-footer-border);
 	display: flex;
 	gap: size(2);
 	justify-content: flex-end;
@@ -42,13 +42,13 @@
 .close {
 	background: none;
 	border: none;
-	color: var(--modal-close-color);
+	color: var(--bzn-modal-close-color);
 	font-size: size(5);
 	line-height: 1;
 	padding: size(1);
-	transition: color var(--transition-default);
+	transition: color var(--bzn-transition);
 
 	&:hover {
-		color: var(--modal-close-hover-color);
+		color: var(--bzn-modal-close-hover-color);
 	}
 }

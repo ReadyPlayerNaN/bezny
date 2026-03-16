@@ -1,3 +1,4 @@
+import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
 import { type ReactNode, useEffect, useRef } from "react";
 import styles from "./Dialog.module.scss";
@@ -56,39 +57,47 @@ export function Dialog({ children, className, onClose, open }: DialogProps) {
 	);
 }
 
-export type DialogHeaderProps = {
-	children?: ReactNode;
+export type DialogHeaderOwnProps = {
 	className?: ClassValue;
 	onClose?: () => void;
 };
 
-export function DialogHeader({ children, className, onClose }: DialogHeaderProps) {
-	return (
-		<header className={clsx(styles.header, className)}>
+export const DialogHeader = createPolymorphic<"header", DialogHeaderOwnProps>(
+	"header",
+	(Tag, { className, onClose }, { className: _, onClose: _onClose, children, ...rest }) => (
+		<Tag className={clsx(styles.header, className)} {...rest}>
 			{children}
 			{onClose ? (
 				<button aria-label="Close" className={styles.close} onClick={onClose} type="button">
 					&times;
 				</button>
 			) : null}
-		</header>
-	);
-}
+		</Tag>
+	),
+);
 
-export type DialogBodyProps = {
-	children?: ReactNode;
+export type DialogBodyOwnProps = {
 	className?: ClassValue;
 };
 
-export function DialogBody({ children, className }: DialogBodyProps) {
-	return <div className={clsx(styles.body, className)}>{children}</div>;
-}
+export const DialogBody = createPolymorphic<"div", DialogBodyOwnProps>(
+	"div",
+	(Tag, { className }, { className: _, ...rest }) => (
+		<Tag className={clsx(styles.body, className)} {...rest} />
+	),
+);
 
-export type DialogFooterProps = {
-	children?: ReactNode;
+export type DialogFooterOwnProps = {
 	className?: ClassValue;
 };
 
-export function DialogFooter({ children, className }: DialogFooterProps) {
-	return <footer className={clsx(styles.footer, className)}>{children}</footer>;
-}
+export const DialogFooter = createPolymorphic<"footer", DialogFooterOwnProps>(
+	"footer",
+	(Tag, { className }, { className: _, ...rest }) => (
+		<Tag className={clsx(styles.footer, className)} {...rest} />
+	),
+);
+
+Dialog.Header = DialogHeader;
+Dialog.Body = DialogBody;
+Dialog.Footer = DialogFooter;
