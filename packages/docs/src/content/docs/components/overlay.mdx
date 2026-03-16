@@ -1,0 +1,43 @@
+---
+title: Overlay
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A backdrop overlay rendered via portal, used as a building block for modals and drawers.
+
+```tsx
+import { Overlay } from "@bezny/overlay";
+```
+
+## Examples
+
+### Basic Overlay
+
+<LivePreview client:load noInline code={`function OverlayDemo() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)}>Show Overlay</Button>
+      <Overlay open={open} onClick={() => setOpen(false)}>
+        <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "var(--sl-color-bg)", padding: "24px", borderRadius: "8px" }}>
+          <Heading>Overlay Content</Heading>
+          <Paragraph>Click the backdrop to close.</Paragraph>
+          <Button onClick={() => setOpen(false)}>Close</Button>
+        </div>
+      </Overlay>
+    </div>
+  );
+}
+render(<OverlayDemo />);`} />
+
+## API Reference
+
+### Overlay
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | **required** | Controls overlay visibility |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Content rendered inside the overlay portal |
+| `...rest` | `ComponentPropsWithoutRef<"div">` | — | All other native div attributes |

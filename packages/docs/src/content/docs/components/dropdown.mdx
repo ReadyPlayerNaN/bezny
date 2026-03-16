@@ -1,0 +1,62 @@
+---
+title: Dropdown
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A positioned dropdown panel anchored to a trigger element with Escape and outside-click dismissal.
+
+```tsx
+import { Dropdown } from "@bezny/dropdown";
+```
+
+## Examples
+
+### Basic Dropdown
+
+<LivePreview client:load noInline code={`function DropdownDemo() {
+  const [open, setOpen] = React.useState(false);
+  const anchorRef = React.useRef(null);
+  return (
+    <div>
+      <Button ref={anchorRef} onClick={() => setOpen(!open)}>Toggle Dropdown</Button>
+      <Dropdown open={open} onClose={() => setOpen(false)} anchorRef={anchorRef}>
+        <div style={{ padding: "8px", minWidth: "150px" }}>
+          <Paragraph>Dropdown content</Paragraph>
+        </div>
+      </Dropdown>
+    </div>
+  );
+}
+render(<DropdownDemo />);`} />
+
+### Left-Aligned Dropdown
+
+<LivePreview client:load noInline code={`function DropdownDemo() {
+  const [open, setOpen] = React.useState(false);
+  const anchorRef = React.useRef(null);
+  return (
+    <div>
+      <Button ref={anchorRef} onClick={() => setOpen(!open)}>Left Aligned</Button>
+      <Dropdown open={open} onClose={() => setOpen(false)} anchorRef={anchorRef} align="left">
+        <div style={{ padding: "8px", minWidth: "150px" }}>
+          <Paragraph>Aligned to the left edge of the trigger.</Paragraph>
+        </div>
+      </Dropdown>
+    </div>
+  );
+}
+render(<DropdownDemo />);`} />
+
+## API Reference
+
+### Dropdown
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | **required** | Controls dropdown visibility |
+| `onClose` | `() => void` | **required** | Called on Escape press or outside click |
+| `anchorRef` | `RefObject<HTMLElement \| null>` | **required** | Ref to the anchor/trigger element |
+| `align` | `"left" \| "right"` | `"right"` | Horizontal alignment relative to anchor |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Dropdown content |

@@ -1,0 +1,65 @@
+---
+title: Card
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A compound card component with header, body, footer, and image sections.
+
+```tsx
+import { Card } from "@bezny/card";
+```
+
+## Examples
+
+### Basic Card
+
+<LivePreview client:load code={'<Card>\n  <Card.Header>Card Title</Card.Header>\n  <Card.Body>This is the card body content.</Card.Body>\n  <Card.Footer>Footer actions</Card.Footer>\n</Card>'} />
+
+### Card with Image
+
+<LivePreview client:load code={'<Card>\n  <Card.Img src="https://picsum.photos/seed/card/600/200" alt="Sample" position="top" />\n  <Card.Body>Card content below the image.</Card.Body>\n</Card>'} />
+
+### Multiple Cards
+
+<LivePreview client:load code={'<div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "16px" }}>\n  <Card>\n    <Card.Header>First</Card.Header>\n    <Card.Body>First card content</Card.Body>\n  </Card>\n  <Card>\n    <Card.Header>Second</Card.Header>\n    <Card.Body>Second card content</Card.Body>\n  </Card>\n  <Card>\n    <Card.Header>Third</Card.Header>\n    <Card.Body>Third card content</Card.Body>\n  </Card>\n</div>'} />
+
+## API Reference
+
+### Card
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Card content |
+
+### Card.Header
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `children` | `ReactNode` | — | Header content |
+
+### Card.Body
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `children` | `ReactNode` | — | Body content |
+
+### Card.Footer
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `children` | `ReactNode` | — | Footer content |
+
+### Card.Img
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `src` | `string` | **required** | Image source URL |
+| `alt` | `string` | **required** | Image alt text |
+| `position` | `"top" \| "bottom" \| "overlay"` | `"top"` | Image placement |
+| `height` | `number \| string` | `160` | Image height (ignored for overlay) |
+| `className` | `ClassValue` | — | Additional CSS classes |

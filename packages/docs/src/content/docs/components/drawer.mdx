@@ -1,0 +1,57 @@
+---
+title: Drawer
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A slide-in panel with overlay backdrop, focus trapping, and Escape key support.
+
+```tsx
+import { Drawer } from "@bezny/drawer";
+```
+
+## Examples
+
+### Right Drawer (Default)
+
+<LivePreview client:load noInline code={`function DrawerDemo() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)}>Open Drawer</Button>
+      <Drawer open={open} onClose={() => setOpen(false)}>
+        <Heading>Drawer Content</Heading>
+        <Paragraph>This drawer slides in from the right.</Paragraph>
+      </Drawer>
+    </div>
+  );
+}
+render(<DrawerDemo />);`} />
+
+### Left Drawer
+
+<LivePreview client:load noInline code={`function DrawerDemo() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)}>Open Left Drawer</Button>
+      <Drawer open={open} onClose={() => setOpen(false)} side="left">
+        <Heading>Left Drawer</Heading>
+        <Paragraph>This drawer slides in from the left.</Paragraph>
+      </Drawer>
+    </div>
+  );
+}
+render(<DrawerDemo />);`} />
+
+## API Reference
+
+### Drawer
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | **required** | Controls drawer visibility |
+| `onClose` | `() => void` | **required** | Called on Escape press or outside click |
+| `side` | `"left" \| "right"` | `"right"` | Which side the drawer slides from |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Drawer content |
