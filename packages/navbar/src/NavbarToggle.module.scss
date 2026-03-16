@@ -1,0 +1,41 @@
+@use 'grid' as *;
+@use 'breakpoints' as *;
+
+.toggle {
+	background: transparent;
+	border: 1px solid var(--bzn-navbar-toggle-color);
+	border-radius: size(1);
+	color: var(--bzn-navbar-toggle-color);
+	display: flex;
+	padding: size(1) size(2);
+	transition: background-color var(--bzn-transition);
+
+	&:hover {
+		background-color: var(--bzn-navbar-toggle-hover-bg);
+	}
+
+	@include breakpoint-up('lg') {
+		display: none;
+	}
+}
+
+.icon {
+	display: inline-block;
+	width: size(5);
+	height: size(5);
+	border-top: 2px solid currentColor;
+	border-bottom: 2px solid currentColor;
+	position: relative;
+
+	&::before {
+		content: '';
+		display: block;
+		position: absolute;
+		top: 50%;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background-color: currentColor;
+		transform: translateY(-50%);
+	}
+}

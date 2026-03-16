@@ -1,0 +1,15 @@
+@use 'grid' as *;
+@use 'typography' as *;
+
+.brand {
+	color: var(--bzn-navbar-brand-color);
+	font-size: font-size(1);
+	font-weight: bold;
+	padding: size(2) size(1);
+	text-decoration: none;
+	transition: color var(--bzn-transition);
+
+	&:hover {
+		color: var(--bzn-navbar-brand-hover-color);
+	}
+}

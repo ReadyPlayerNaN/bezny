@@ -1,0 +1,38 @@
+{
+	"name": "@bezny/navbar",
+	"version": "0.0.0",
+	"type": "module",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./index.css": "./dist/index.css"
+	},
+	"scripts": {
+		"build": "vite build",
+		"dev": "vite build --watch",
+		"lint": "biome check .",
+		"lint:fix": "biome check --write .",
+		"test": "vitest run",
+		"typecheck": "tsc --noEmit -p tsconfig.json"
+	},
+	"peerDependencies": {
+		"react": "^19"
+	},
+	"dependencies": {
+		"@bezny/styles": "workspace:*",
+		"clsx": "catalog:"
+	},
+	"devDependencies": {
+		"@types/react": "catalog:",
+		"@vitejs/plugin-react": "catalog:",
+		"react": "catalog:",
+		"sass": "catalog:",
+		"typescript": "catalog:",
+		"vite": "catalog:",
+		"vite-plugin-dts": "catalog:"
+	}
+}
