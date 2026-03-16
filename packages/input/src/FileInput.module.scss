@@ -1,0 +1,41 @@
+@use 'grid' as *;
+@use 'typography' as *;
+@use 'reactions' as *;
+@use 'validation' as *;
+
+.input {
+  @include input-reactions;
+
+  border-width: 1px;
+  border-style: solid;
+  border-radius: size(1);
+  font-family: inherit;
+  font-size: font-size(1);
+  line-height: size(6);
+  padding: size(2) size(3);
+  flex-grow: 1;
+}
+
+.statusError {
+  @include status-border(error);
+}
+
+.statusWarning {
+  @include status-border(warning);
+}
+
+.statusSuccess {
+  @include status-border(success);
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: size(1);
+}
+
+.label {
+  color: var(--bzn-input-label-color);
+  font-size: font-size(1);
+  line-height: size(6);
+}

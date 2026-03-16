@@ -1,6 +1,8 @@
 export { DateInput, type DateInputProps } from "./DateInput";
 export { DateTimeInput, type DateTimeInputProps } from "./DateTimeInput";
 export { EmailInput, type EmailInputProps } from "./EmailInput";
+export { FileInput, type FileInputProps } from "./FileInput";
+export { ImageInput, type ImageInputProps } from "./ImageInput";
 export { MonthInput, type MonthInputProps } from "./MonthInput";
 export { NumberInput, type NumberInputProps } from "./NumberInput";
 export { PasswordInput, type PasswordInputProps } from "./PasswordInput";
