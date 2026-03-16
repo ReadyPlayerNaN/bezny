@@ -22,7 +22,7 @@ export function RadioGroup({ children, className, disabled, legend, name, onChan
 	);
 
 	const ctx = useMemo<RadioGroupContextValue>(
-		() => ({ disabled, name, onChange: handleChange, value }),
+		() => ({ disabled: disabled, name: name, onChange: handleChange, value: value }),
 		[disabled, handleChange, name, value],
 	);
 

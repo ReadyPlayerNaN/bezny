@@ -15,7 +15,9 @@ export type CheckboxGroupProps = {
 export function CheckboxGroup({ children, className, disabled, legend, onChange, value }: CheckboxGroupProps) {
 	const handleChange = useCallback(
 		(itemValue: string, checked: boolean) => {
-			if (!onChange || !value) return;
+			if (!(onChange && value)) {
+				return;
+			}
 			if (checked) {
 				onChange([...value, itemValue]);
 			} else {
@@ -26,7 +28,7 @@ export function CheckboxGroup({ children, className, disabled, legend, onChange,
 	);
 
 	const ctx = useMemo<CheckboxGroupContextValue>(
-		() => ({ disabled, onChange: handleChange, value }),
+		() => ({ disabled: disabled, onChange: handleChange, value: value }),
 		[disabled, handleChange, value],
 	);
 
