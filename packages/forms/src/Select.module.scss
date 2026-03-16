@@ -47,7 +47,7 @@
     position: absolute;
     top: size(1);
     left: size(3);
-    color: var(--bzn-input-label-color);
+    color: var(--bzn-input-label-color, var(--bzn-text-muted));
     font-size: font-size(1);
     line-height: size(6);
     transform: translateY(size(2.25));
@@ -62,11 +62,11 @@
   .label.floated {
     transform: translateY(0);
     font-size: size(3);
-    color: var(--bzn-input-label-focused);
+    color: var(--bzn-input-label-focused, var(--bzn-focus-ring));
   }
 
   &:not(:focus-within) .label.floated {
-    color: var(--bzn-input-label-color);
+    color: var(--bzn-input-label-color, var(--bzn-text-muted));
   }
 
   &:has(.statusError) {
@@ -101,4 +101,8 @@
       @include status-label(success);
     }
   }
+}
+
+.statusMessage {
+  padding: size(1) size(3) 0;
 }

@@ -16,7 +16,7 @@
 	width: 100%;
 
 	&::placeholder {
-		color: var(--bzn-input-placeholder);
+		color: var(--bzn-input-placeholder, var(--bzn-text-muted));
 	}
 }
 
@@ -46,11 +46,11 @@
 		&:not(:placeholder-shown) + .label {
 			transform: translateY(0);
 			font-size: size(3);
-			color: var(--bzn-input-label-focused);
+			color: var(--bzn-input-label-focused, var(--bzn-focus-ring));
 		}
 
 		&:not(:focus):not(:placeholder-shown) + .label {
-			color: var(--bzn-input-label-color);
+			color: var(--bzn-input-label-color, var(--bzn-text-muted));
 		}
 
 		&.statusError:focus + .label,
@@ -74,10 +74,14 @@
 	position: absolute;
 	top: size(2);
 	left: size(3);
-	color: var(--bzn-input-label-color);
+	color: var(--bzn-input-label-color, var(--bzn-text-muted));
 	font-size: font-size(1);
 	line-height: size(6);
 	transform: translateY(size(1));
 	transition: transform var(--bzn-transition), font-size var(--bzn-transition), color var(--bzn-transition);
 	pointer-events: none;
+}
+
+.statusMessage {
+	padding: size(1) size(3) 0;
 }

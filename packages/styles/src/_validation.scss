@@ -1,9 +1,13 @@
 @mixin status-border($status) {
-  --bzn-input-border: var(--bzn-input-#{$status}-border);
-  --bzn-input-hover-border: var(--bzn-input-#{$status}-border);
-  --bzn-input-active-border: var(--bzn-input-#{$status}-border);
+  --bzn-input-border: var(--bzn-input-#{$status}-border, var(--bzn-#{$status}));
+  --bzn-input-hover-border: var(--bzn-input-#{$status}-border, var(--bzn-#{$status}));
+  --bzn-input-active-border: var(--bzn-input-#{$status}-border, var(--bzn-#{$status}));
 }
 
 @mixin status-label($status) {
-  color: var(--bzn-input-#{$status}-label);
+  color: var(--bzn-input-#{$status}-label, var(--bzn-#{$status}));
+}
+
+@mixin status-message($status) {
+  color: var(--bzn-input-#{$status}-message);
 }

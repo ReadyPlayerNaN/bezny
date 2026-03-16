@@ -1,4 +1,4 @@
-import { Alert } from "@bezny/alert";
+import { StatusMessage } from "@bezny/feedback";
 import clsx, { type ClassValue } from "clsx";
 import { type ChangeEvent, type ComponentPropsWithoutRef, useId } from "react";
 import styles from "./FileInput.module.scss";
@@ -48,9 +48,7 @@ export function FileInput({
 					onChange={handleChange}
 					type="file"
 				/>
-				{statusMessage && status ? (
-					<Alert variant={status}>{statusMessage}</Alert>
-				) : null}
+				<StatusMessage message={statusMessage} status={status} />
 			</div>
 		);
 	}

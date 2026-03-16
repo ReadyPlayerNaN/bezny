@@ -1,4 +1,4 @@
-import { Alert } from "@bezny/alert";
+import { StatusMessage } from "@bezny/feedback";
 import clsx, { type ClassValue } from "clsx";
 import { type ChangeEvent, type ComponentPropsWithoutRef, useId } from "react";
 import styles from "./Input.module.scss";
@@ -62,9 +62,7 @@ export function Input({
 						{label}
 					</label>
 				) : null}
-				{statusMessage && status ? (
-					<Alert variant={status}>{statusMessage}</Alert>
-				) : null}
+				<StatusMessage className={styles.statusMessage} message={statusMessage} status={status} />
 			</div>
 		);
 	}

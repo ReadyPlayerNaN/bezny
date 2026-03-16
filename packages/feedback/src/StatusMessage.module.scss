@@ -1,0 +1,20 @@
+@use 'grid' as *;
+@use 'validation' as *;
+
+.statusMessage {
+	display: block;
+	font-size: size(3);
+	line-height: size(4);
+}
+
+.messageError {
+	@include status-message(error);
+}
+
+.messageWarning {
+	@include status-message(warning);
+}
+
+.messageSuccess {
+	@include status-message(success);
+}

@@ -528,6 +528,9 @@ importers:
 
   packages/feedback:
     dependencies:
+      '@bezny/styles':
+        specifier: workspace:*
+        version: link:../styles
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -577,9 +580,9 @@ importers:
 
   packages/forms:
     dependencies:
-      '@bezny/alert':
+      '@bezny/feedback':
         specifier: workspace:*
-        version: link:../alert
+        version: link:../feedback
       '@bezny/styles':
         specifier: workspace:*
         version: link:../styles
@@ -632,9 +635,9 @@ importers:
 
   packages/input:
     dependencies:
-      '@bezny/alert':
+      '@bezny/feedback':
         specifier: workspace:*
-        version: link:../alert
+        version: link:../feedback
       '@bezny/styles':
         specifier: workspace:*
         version: link:../styles
