@@ -1,6 +1,7 @@
 import clsx, { type ClassValue } from "clsx";
 import { type ChangeEvent, useEffect, useId, useRef } from "react";
 import styles from "./Checkbox.module.scss";
+import { useCheckboxGroup } from "./CheckboxGroupContext";
 
 export type CheckboxProps = {
 	checked?: boolean;
@@ -12,6 +13,7 @@ export type CheckboxProps = {
 	label?: string;
 	name?: string;
 	onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+	value?: string;
 };
 
 export function Checkbox({
@@ -24,10 +26,22 @@ export function Checkbox({
 	label,
 	name,
 	onChange,
+	value,
 }: CheckboxProps) {
+	const group = useCheckboxGroup();
 	const autoId = useId();
 	const inputId = id ?? autoId;
 	const inputRef = useRef<HTMLInputElement>(null);
+
+	const isDisabled = disabled ?? group?.disabled;
+	const isChecked = checked ?? (group?.value && value ? group.value.includes(value) : undefined);
+
+	const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+		onChange?.(e);
+		if (group?.onChange && value) {
+			group.onChange(value, e.target.checked);
+		}
+	};
 
 	useEffect(() => {
 		if (inputRef.current) {
@@ -36,17 +50,18 @@ export function Checkbox({
 	}, [indeterminate]);
 
 	return (
-		<label className={clsx(styles.checkbox, { [styles.disabled]: disabled }, className)} htmlFor={inputId}>
+		<label className={clsx(styles.checkbox, { [styles.disabled]: isDisabled }, className)} htmlFor={inputId}>
 			<input
-				checked={checked}
+				checked={isChecked}
 				className={styles.input}
-				defaultChecked={defaultChecked}
-				disabled={disabled}
+				defaultChecked={group ? undefined : defaultChecked}
+				disabled={isDisabled}
 				id={inputId}
 				name={name}
-				onChange={onChange}
+				onChange={handleChange}
 				ref={inputRef}
 				type="checkbox"
+				value={value}
 			/>
 			<span
 				className={clsx(styles.indicator, {
