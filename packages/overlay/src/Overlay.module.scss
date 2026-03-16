@@ -1,14 +1,23 @@
-@use 'grid' as *;
+@use "grid" as *;
 
 .overlay {
-	inset: 0;
-	opacity: 0;
-	position: fixed;
-	transition: opacity var(--bzn-transition);
-	z-index: var(--overlay-z-index, 1000);
-}
+  background-color: var(--bzn-modal-overlay-bg);
+  display: block;
+  inset: 0;
+  opacity: 0;
+  position: fixed;
+  pointer-events: none;
+  transition:
+    opacity var(--bzn-transition),
+    display var(--bzn-transition) allow-discrete;
+  z-index: var(--overlay-z-index, 1000);
 
-.visible {
-	background-color: var(--bzn-modal-overlay-bg);
-	opacity: 1;
+  &.open {
+    opacity: 1;
+    pointer-events: auto;
+
+    @starting-style {
+      opacity: 0;
+    }
+  }
 }

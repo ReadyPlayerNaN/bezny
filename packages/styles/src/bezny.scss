@@ -31,5 +31,12 @@ a {
   }
 }
 
+// Scroll lock when modal is open
+:root:has(dialog[open]),
+:root:has([data-scroll-lock]) {
+  overflow: hidden;
+  scrollbar-gutter: stable;
+}
+
 // Responsive overrides (media queries + class overrides)
 @include bzn.responsive();

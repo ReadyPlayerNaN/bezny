@@ -11,12 +11,12 @@
 // $transition: default transition duration
 // $prefix: CSS variable prefix
 @mixin theme(
-  $primary: $bordeaux,
+  $primary: (h: 10, c: 0.18),
   $secondary: null,
   $neutral: $slate,
-  $success: $emerald,
-  $warning: $amber,
-  $danger: $rose,
+  $success: null,
+  $warning: null,
+  $danger: null,
   $transition: 200ms,
   $prefix: 'bzn',
 ) {
@@ -29,9 +29,23 @@
   @include shade.shade-scale('primary', $primary, $prefix);
   @include shade.shade-scale('secondary', $secondary, $prefix);
   @include shade.shade-scale('neutral', $neutral, $prefix);
-  @include shade.shade-scale('success', $success, $prefix);
-  @include shade.shade-scale('warning', $warning, $prefix);
-  @include shade.shade-scale('danger', $danger, $prefix);
+
+  // Semantic: derived from primary via CSS calc() when not explicitly provided
+  @if $success {
+    @include shade.shade-scale('success', $success, $prefix);
+  } @else {
+    @include shade.derived-shade-scale('success', 160, 0.14, 0.8, 'primary', $prefix);
+  }
+  @if $warning {
+    @include shade.shade-scale('warning', $warning, $prefix);
+  } @else {
+    @include shade.derived-shade-scale('warning', 85, 0.13, 0.8, 'primary', $prefix);
+  }
+  @if $danger {
+    @include shade.shade-scale('danger', $danger, $prefix);
+  } @else {
+    @include shade.derived-shade-scale('danger', 15, 0.16, 1.0, 'primary', $prefix);
+  }
 
   // Tier 2: Semantic (dark defaults)
   @include semantic.dark($prefix);

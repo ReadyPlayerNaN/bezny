@@ -1,5 +1,6 @@
 @use 'sass:color';
 @use 'sass:map';
+@use 'sass:math';
 
 // Compute analogous palette (hue + 60°).
 // Works with both simple (h, c) maps and full shade maps.
@@ -49,20 +50,48 @@ $_chroma-curve: (
 // $name: prefix name (e.g. "primary")
 // $palette: either a shade map (50: oklch(...), ...) or a simple map (h: 10, c: 0.2)
 // $prefix: CSS variable prefix
+// For simple (h, c) palettes, also outputs --{prefix}-{name}-h and --{prefix}-{name}-c
+// and references them via var() so shades update dynamically at runtime.
 @mixin shade-scale($name, $palette, $prefix: 'bzn') {
   @if map.has-key($palette, h) and map.has-key($palette, c) {
     // Simple API: generate from hue + chroma
     $h: map.get($palette, h);
     $c: map.get($palette, c);
 
+    --#{$prefix}-#{$name}-h: #{$h};
+    --#{$prefix}-#{$name}-c: #{$c};
+
     @each $shade, $lightness in $_lightness-curve {
       $chroma-mult: map.get($_chroma-curve, $shade);
-      --#{$prefix}-#{$name}-#{$shade}: oklch(#{$lightness} #{$c * $chroma-mult} #{$h});
+      --#{$prefix}-#{$name}-#{$shade}: oklch(#{$lightness} calc(var(--#{$prefix}-#{$name}-c) * #{$chroma-mult}) var(--#{$prefix}-#{$name}-h));
     }
   } @else {
     // Full API: use provided shade map directly
+    @if map.has-key($palette, 500) {
+      --#{$prefix}-#{$name}-h: #{math.div(color.channel(map.get($palette, 500), 'hue', $space: oklch), 1deg)};
+      --#{$prefix}-#{$name}-c: #{color.channel(map.get($palette, 500), 'chroma', $space: oklch)};
+    }
     @each $shade, $value in $palette {
       --#{$prefix}-#{$name}-#{$shade}: #{$value};
     }
+  }
+}
+
+// Generate a shade scale derived from another palette's h/c via CSS calc().
+// Uses circular hue interpolation (12% blend) and chroma inheritance at runtime.
+// $name: output name (e.g. "success")
+// $canonical-hue: classical association hue (e.g. 160 for green)
+// $chroma-floor: minimum chroma to preserve readability
+// $chroma-scale: fraction of source chroma to inherit
+// $source: source palette name (must have --{prefix}-{source}-h and -c defined)
+@mixin derived-shade-scale($name, $canonical-hue, $chroma-floor, $chroma-scale: 0.8, $source: 'primary', $prefix: 'bzn') {
+  // Hue: circular interpolation 12% toward source (mod wraps around 360°)
+  --#{$prefix}-#{$name}-h: calc(#{$canonical-hue} + (mod(var(--#{$prefix}-#{$source}-h) - #{$canonical-hue} + 180, 360) - 180) * 0.12);
+  // Chroma: max of (source chroma * scale) and floor
+  --#{$prefix}-#{$name}-c: max(var(--#{$prefix}-#{$source}-c) * #{$chroma-scale}, #{$chroma-floor});
+
+  @each $shade, $lightness in $_lightness-curve {
+    $chroma-mult: map.get($_chroma-curve, $shade);
+    --#{$prefix}-#{$name}-#{$shade}: oklch(#{$lightness} calc(var(--#{$prefix}-#{$name}-c) * #{$chroma-mult}) var(--#{$prefix}-#{$name}-h));
   }
 }

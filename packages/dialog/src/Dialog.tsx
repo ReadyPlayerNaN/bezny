@@ -1,6 +1,6 @@
 import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
-import { type ReactNode, useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 import styles from "./Dialog.module.scss";
 
 export type DialogProps = {
@@ -12,7 +12,6 @@ export type DialogProps = {
 
 export function Dialog({ children, className, onClose, open }: DialogProps) {
 	const dialogRef = useRef<HTMLDialogElement>(null);
-	const [visible, setVisible] = useState(false);
 
 	useEffect(() => {
 		const dialog = dialogRef.current;
@@ -23,35 +22,17 @@ export function Dialog({ children, className, onClose, open }: DialogProps) {
 			if (!dialog.open) {
 				dialog.showModal();
 			}
-			requestAnimationFrame(() => setVisible(true));
 		} else {
-			setVisible(false);
 			if (dialog.open) {
-				const handleEnd = () => dialog.close();
-				dialog.addEventListener("transitionend", handleEnd, { once: true });
-				return () => {
-					dialog.removeEventListener("transitionend", handleEnd);
-					dialog.close();
-				};
+				dialog.close();
 			}
 		}
-	}, [open]);
-
-	useEffect(() => {
-		if (!open) {
-			return;
-		}
-		const prev = document.body.style.overflow;
-		document.body.style.overflow = "hidden";
-		return () => {
-			document.body.style.overflow = prev;
-		};
 	}, [open]);
 
 	return (
 		<dialog
 			ref={dialogRef}
-			className={clsx(styles.dialog, visible && styles.visible, className)}
+			className={clsx(styles.dialog, className)}
 			onCancel={(e) => {
 				e.preventDefault();
 				onClose();

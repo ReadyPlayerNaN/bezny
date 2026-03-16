@@ -32,17 +32,6 @@ export function Drawer({ children, className, onClose, open, side = "right" }: D
 		};
 	}, [open, onClose]);
 
-	useEffect(() => {
-		if (!open) {
-			return;
-		}
-		const prev = document.body.style.overflow;
-		document.body.style.overflow = "hidden";
-		return () => {
-			document.body.style.overflow = prev;
-		};
-	}, [open]);
-
 	const handleFocusTrap = useCallback((event: KeyboardEvent) => {
 		if (event.key !== "Tab") {
 			return;
@@ -115,8 +104,8 @@ export function Drawer({ children, className, onClose, open, side = "right" }: D
 
 	return (
 		<Overlay className={styles.overlay} open={open}>
-			{(visible) => (
-				<div ref={panelRef} aria-modal="true" className={clsx(styles.panel, sideClass, visible && styles.panelVisible, className)} role="dialog">
+			{(open) => (
+				<div key={side} ref={panelRef} aria-modal="true" className={clsx(styles.panel, sideClass, open && styles.panelVisible, className)} role="dialog">
 					<button aria-label="Close" className={styles.close} onClick={onClose} type="button">
 						&times;
 					</button>
