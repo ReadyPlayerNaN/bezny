@@ -1,6 +1,9 @@
-import { Button, type ButtonProps } from "./Button";
+import type { PolymorphicProps } from "@bezny/styles";
+import { Button, type ButtonOwnProps } from "./Button";
 
-export function Submit({ children, ...props }: ButtonProps) {
+export type SubmitProps = PolymorphicProps<"button", ButtonOwnProps>;
+
+export function Submit({ children, ...props }: SubmitProps) {
 	return (
 		<Button {...props} type="submit">
 			{children}

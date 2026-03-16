@@ -23,7 +23,8 @@
 		"react": "^19"
 	},
 	"dependencies": {
-		"clsx": "catalog:"
+		"clsx": "catalog:",
+		"@bezny/styles": "workspace:*"
 	},
 	"devDependencies": {
 		"@types/react": "catalog:",

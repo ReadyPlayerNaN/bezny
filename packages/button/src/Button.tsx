@@ -1,24 +1,28 @@
+import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
-import type { ComponentPropsWithoutRef } from "react";
 import styles from "./Button.module.scss";
 
-type ButtonVariant = "primary" | "secondary" | "ghost";
+type ButtonVariant = "default" | "primary" | "secondary" | "ghost" | "link";
 
-export type ButtonProps = Omit<ComponentPropsWithoutRef<"button">, "className"> & {
+export type ButtonOwnProps = {
 	className?: ClassValue;
 	variant?: ButtonVariant;
 };
 
 const variantClassMap: Record<ButtonVariant, string> = {
+	default: styles.default,
 	primary: styles.primary,
 	secondary: styles.secondary,
 	ghost: styles.ghost,
+	link: styles.link,
 };
 
-export function Button({ children, className, type = "button", variant = "primary", ...rest }: ButtonProps) {
-	return (
-		<button className={clsx(styles.button, variantClassMap[variant], className)} type={type} {...rest}>
-			{children}
-		</button>
-	);
-}
+export const Button = createPolymorphic<"button", ButtonOwnProps>(
+	"button",
+	(Tag, { className, variant = "default" }, rest) => (
+		<Tag
+			className={clsx(styles.button, variantClassMap[variant], className)}
+			{...rest}
+		/>
+	),
+);
