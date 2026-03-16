@@ -46,6 +46,7 @@ export function Dialog({ children, className, onClose, open }: DialogProps) {
 				e.preventDefault();
 				onClose();
 			}}
+			open={Boolean(open)}
 			onClick={(e) => {
 				if (e.target === dialogRef.current) {
 					onClose();
@@ -82,9 +83,7 @@ export type DialogBodyOwnProps = {
 
 export const DialogBody = createPolymorphic<"div", DialogBodyOwnProps>(
 	"div",
-	(Tag, { className }, { className: _, ...rest }) => (
-		<Tag className={clsx(styles.body, className)} {...rest} />
-	),
+	(Tag, { className }, { className: _, ...rest }) => <Tag className={clsx(styles.body, className)} {...rest} />,
 );
 
 export type DialogFooterOwnProps = {
@@ -93,9 +92,7 @@ export type DialogFooterOwnProps = {
 
 export const DialogFooter = createPolymorphic<"footer", DialogFooterOwnProps>(
 	"footer",
-	(Tag, { className }, { className: _, ...rest }) => (
-		<Tag className={clsx(styles.footer, className)} {...rest} />
-	),
+	(Tag, { className }, { className: _, ...rest }) => <Tag className={clsx(styles.footer, className)} {...rest} />,
 );
 
 DialogHeader.displayName = "DialogHeader";
