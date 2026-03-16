@@ -1,0 +1,16 @@
+@use 'grid' as *;
+
+.group {
+	display: flex;
+	flex-direction: column;
+	gap: size(2);
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+
+.legend {
+	color: var(--bzn-text);
+	font-weight: 600;
+	margin-bottom: size(1);
+}
