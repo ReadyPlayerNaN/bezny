@@ -22,6 +22,7 @@ export const sidebarGroups: SidebarGroup[] = [
 			{ label: "AvatarStack", href: "/components/avatar-stack/" },
 			{ label: "Breadcrumbs", href: "/components/breadcrumbs/" },
 			{ label: "Button", href: "/components/button/" },
+			{ label: "ButtonGroup", href: "/components/button-group/" },
 			{ label: "Card", href: "/components/card/" },
 			{ label: "Checkbox", href: "/components/checkbox/" },
 			{ label: "Container", href: "/components/container/" },

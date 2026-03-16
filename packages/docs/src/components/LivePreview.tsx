@@ -9,7 +9,7 @@ import { Dropdown } from "@bezny/dropdown";
 import { Article, Aside, Container, Main, Section, Stack } from "@bezny/layout";
 import { Navbar, NavbarBrand, NavbarCollapse, NavbarToggle } from "@bezny/navbar";
 import { Overlay } from "@bezny/overlay";
-import { Checkbox, CheckboxGroup, Radio, RadioGroup, Switch } from "@bezny/switches";
+import { ButtonGroup, ButtonGroupOption, Checkbox, CheckboxGroup, Radio, RadioGroup, Switch } from "@bezny/switches";
 import { Heading, HeadingLevelProvider, Label, Link, Paragraph, StaticHeading } from "@bezny/text";
 import React from "react";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
@@ -23,6 +23,8 @@ const scope = {
 	BreadcrumbItem: BreadcrumbItem,
 	Breadcrumbs: Breadcrumbs,
 	Button: Button,
+	ButtonGroup: ButtonGroup,
+	ButtonGroupOption: ButtonGroupOption,
 	Card: Card,
 	CardBody: CardBody,
 	Checkbox: Checkbox,

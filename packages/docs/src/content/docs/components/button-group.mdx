@@ -1,0 +1,74 @@
+---
+title: ButtonGroup
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A segmented control for selecting one option from a set. Renders as connected buttons with radio semantics.
+
+```tsx
+import { ButtonGroup, ButtonGroupOption } from "@bezny/switches";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load noInline code={`function BasicExample() {
+  const [value, setValue] = React.useState("auto");
+  return (
+    <ButtonGroup value={value} onChange={setValue}>
+      <ButtonGroupOption value="auto">Auto</ButtonGroupOption>
+      <ButtonGroupOption value="light">Light</ButtonGroupOption>
+      <ButtonGroupOption value="dark">Dark</ButtonGroupOption>
+    </ButtonGroup>
+  );
+}
+
+render(<BasicExample />);`} />
+
+### With Legend
+
+<LivePreview client:load noInline code={`function LegendExample() {
+  const [value, setValue] = React.useState("medium");
+  return (
+    <ButtonGroup value={value} onChange={setValue} legend="Size">
+      <ButtonGroupOption value="small">Small</ButtonGroupOption>
+      <ButtonGroupOption value="medium">Medium</ButtonGroupOption>
+      <ButtonGroupOption value="large">Large</ButtonGroupOption>
+    </ButtonGroup>
+  );
+}
+
+render(<LegendExample />);`} />
+
+### Disabled
+
+<LivePreview client:load code={`<ButtonGroup value="a" disabled>
+  <ButtonGroupOption value="a">Alpha</ButtonGroupOption>
+  <ButtonGroupOption value="b">Beta</ButtonGroupOption>
+  <ButtonGroupOption value="c">Charlie</ButtonGroupOption>
+</ButtonGroup>`} />
+
+## API Reference
+
+### ButtonGroup
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | ButtonGroupOption components |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `defaultValue` | `string` | — | Initial selected value |
+| `disabled` | `boolean` | — | Disables all options |
+| `legend` | `string` | — | Fieldset legend text |
+| `onChange` | `(value: string) => void` | — | Called with the selected value |
+| `value` | `string` | — | Currently selected value |
+
+### ButtonGroupOption
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Option label content |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `disabled` | `boolean` | — | Disables this option |
+| `value` | `string` | — | Option value |
