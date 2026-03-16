@@ -1,5 +1,6 @@
 @use 'grid' as *;
 
+@layer docs {
 .prose {
 	line-height: 1.7;
 	color: var(--bzn-text);
@@ -126,4 +127,5 @@
 		max-width: 100%;
 		border-radius: 8px;
 	}
+}
 }
