@@ -23,7 +23,8 @@
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"peerDependencies": {
-		"react": "^19"
+		"react": "^19",
+		"react-dom": "^19"
 	},
 	"devDependencies": {
 		"@testing-library/jest-dom": "catalog:",
