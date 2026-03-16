@@ -1,25 +1,25 @@
 @use 'grid' as *;
 
 .card {
-	background-color: var(--card-background-color);
-	border: 1px solid var(--card-border-color);
+	background-color: var(--bzn-card-bg);
+	border: 1px solid var(--bzn-card-border);
 	border-radius: size(2);
 	overflow: hidden;
 	position: relative;
 }
 
 .cardHeader {
-	border-bottom: 1px solid var(--card-header-border-color);
-	padding: var(--card-header-padding);
+	border-bottom: 1px solid var(--bzn-card-header-border);
+	padding: var(--bzn-card-header-padding);
 }
 
 .cardBody {
-	padding: var(--card-body-padding);
+	padding: var(--bzn-card-body-padding);
 }
 
 .cardFooter {
-	border-top: 1px solid var(--card-footer-border-color);
-	padding: var(--card-footer-padding);
+	border-top: 1px solid var(--bzn-card-footer-border);
+	padding: var(--bzn-card-footer-padding);
 }
 
 .cardImg {

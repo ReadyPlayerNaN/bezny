@@ -1,42 +1,50 @@
+import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
-import type { ReactNode } from "react";
 import styles from "./Card.module.scss";
 
-export type CardProps = {
-	children?: ReactNode;
+export type CardOwnProps = {
 	className?: ClassValue;
 };
 
-export function Card({ children, className }: CardProps) {
-	return <div className={clsx(styles.card, className)}>{children}</div>;
-}
+const CardBase = createPolymorphic<"div", CardOwnProps>(
+	"div",
+	(Tag, { className }, { className: _, ...rest }) => (
+		<Tag className={clsx(styles.card, className)} {...rest} />
+	),
+);
 
-export type CardHeaderProps = {
-	children?: ReactNode;
+export type CardHeaderOwnProps = {
 	className?: ClassValue;
 };
 
-export function CardHeader({ children, className }: CardHeaderProps) {
-	return <div className={clsx(styles.cardHeader, className)}>{children}</div>;
-}
+export const CardHeader = createPolymorphic<"div", CardHeaderOwnProps>(
+	"div",
+	(Tag, { className }, { className: _, ...rest }) => (
+		<Tag className={clsx(styles.cardHeader, className)} {...rest} />
+	),
+);
 
-export type CardBodyProps = {
-	children?: ReactNode;
+export type CardBodyOwnProps = {
 	className?: ClassValue;
 };
 
-export function CardBody({ children, className }: CardBodyProps) {
-	return <div className={clsx(styles.cardBody, className)}>{children}</div>;
-}
+export const CardBody = createPolymorphic<"div", CardBodyOwnProps>(
+	"div",
+	(Tag, { className }, { className: _, ...rest }) => (
+		<Tag className={clsx(styles.cardBody, className)} {...rest} />
+	),
+);
 
-export type CardFooterProps = {
-	children?: ReactNode;
+export type CardFooterOwnProps = {
 	className?: ClassValue;
 };
 
-export function CardFooter({ children, className }: CardFooterProps) {
-	return <div className={clsx(styles.cardFooter, className)}>{children}</div>;
-}
+export const CardFooter = createPolymorphic<"div", CardFooterOwnProps>(
+	"div",
+	(Tag, { className }, { className: _, ...rest }) => (
+		<Tag className={clsx(styles.cardFooter, className)} {...rest} />
+	),
+);
 
 const DEFAULT_IMG_HEIGHT = 160;
 
@@ -65,7 +73,9 @@ export function CardImg({ alt, className, height, position = "top", src }: CardI
 	);
 }
 
-Card.Body = CardBody;
-Card.Header = CardHeader;
-Card.Footer = CardFooter;
-Card.Img = CardImg;
+export const Card = Object.assign(CardBase, {
+	Body: CardBody,
+	Header: CardHeader,
+	Footer: CardFooter,
+	Img: CardImg,
+});
