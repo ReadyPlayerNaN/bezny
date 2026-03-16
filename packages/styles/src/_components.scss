@@ -148,23 +148,13 @@
 
   // Drawer
   --#{$prefix}-drawer-bg: var(--#{$prefix}-surface);
-  --#{$prefix}-drawer-backdrop: rgba(
-    0,
-    0,
-    0,
-    var(--#{$prefix}-overlay-opacity)
-  );
+  --#{$prefix}-drawer-backdrop: var(--#{$prefix}-overlay-bg);
   --#{$prefix}-drawer-border: var(--#{$prefix}-border);
   --#{$prefix}-drawer-close-color: var(--#{$prefix}-text-muted);
   --#{$prefix}-drawer-close-hover-color: var(--#{$prefix}-text);
 
   // Modal
-  --#{$prefix}-modal-overlay-bg: rgba(
-    0,
-    0,
-    0,
-    var(--#{$prefix}-overlay-opacity)
-  );
+  --#{$prefix}-modal-overlay-bg: var(--#{$prefix}-overlay-bg);
   --#{$prefix}-modal-panel-bg: var(--#{$prefix}-surface);
   --#{$prefix}-modal-panel-border: var(--#{$prefix}-border);
   --#{$prefix}-modal-panel-shadow: 0 #{size(6)} #{size(12)}

@@ -59,6 +59,10 @@
   // Transparency
   --#{$prefix}-overlay-opacity: 0.6;
   --#{$prefix}-backdrop-blur: 4px;
+  --#{$prefix}-overlay-bg: oklch(
+    from var(--#{$prefix}-primary-600)
+    15% calc(c * 0.35) h / var(--#{$prefix}-overlay-opacity)
+  );
 }
 
 @mixin light($prefix: 'bzn') {
@@ -108,9 +112,11 @@
   --#{$prefix}-error-subtle: var(--#{$prefix}-danger-100);
   --#{$prefix}-error-text: var(--#{$prefix}-danger-700);
 
-  // Transparency
-  --#{$prefix}-overlay-opacity: 0.4;
-  --#{$prefix}-backdrop-blur: 4px;
+  // Transparency — light mode uses a lighter base for theme-appropriate backdrop
+  --#{$prefix}-overlay-bg: oklch(
+    from var(--#{$prefix}-primary-600)
+    88% calc(c * 0.12) h / var(--#{$prefix}-overlay-opacity)
+  );
 }
 
 @mixin high-contrast($prefix: 'bzn') {
