@@ -1,0 +1,43 @@
+---
+title: FileInput
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A file input with label support and validation.
+
+```tsx
+import { FileInput } from "@bezny/input";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load code={`<FileInput label="Upload file" />`} />
+
+### With Accept
+
+<LivePreview client:load code={`<FileInput label="Document" accept=".pdf,.doc,.docx" />`} />
+
+### Multiple Files
+
+<LivePreview client:load code={`<FileInput label="Attachments" multiple />`} />
+
+### Validation
+
+<LivePreview client:load code={`<FileInput label="Resume" status="error" statusMessage="File is too large" />`} />
+
+## API Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `accept` | `string` | — | Accepted file types |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `disabled` | `boolean` | — | Disables the input |
+| `label` | `string` | — | Label text |
+| `multiple` | `boolean` | — | Allow multiple files |
+| `name` | `string` | — | HTML name attribute |
+| `onChange` | `(files: FileList \| null) => void` | — | Called with the selected files |
+| `status` | `"error" \| "warning" \| "success"` | — | Validation status |
+| `statusMessage` | `string` | — | Validation message shown as Alert |

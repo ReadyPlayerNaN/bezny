@@ -1,0 +1,43 @@
+---
+title: ImageInput
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A file input pre-configured for images with label support and validation.
+
+```tsx
+import { ImageInput } from "@bezny/input";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load code={`<ImageInput label="Profile photo" />`} />
+
+### Custom Accept
+
+<LivePreview client:load code={`<ImageInput label="Logo" accept="image/png,image/svg+xml" />`} />
+
+### Multiple
+
+<LivePreview client:load code={`<ImageInput label="Gallery images" multiple />`} />
+
+### Validation
+
+<LivePreview client:load code={`<ImageInput label="Avatar" status="error" statusMessage="Image must be under 5MB" />`} />
+
+## API Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `accept` | `string` | `"image/*"` | Accepted file types |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `disabled` | `boolean` | — | Disables the input |
+| `label` | `string` | — | Label text |
+| `multiple` | `boolean` | — | Allow multiple files |
+| `name` | `string` | — | HTML name attribute |
+| `onChange` | `(files: FileList \| null) => void` | — | Called with the selected files |
+| `status` | `"error" \| "warning" \| "success"` | — | Validation status |
+| `statusMessage` | `string` | — | Validation message shown as Alert |
