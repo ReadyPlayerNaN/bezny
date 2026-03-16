@@ -1,0 +1,77 @@
+---
+title: Button
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Styled button components with variant support.
+
+```tsx
+import { Button, Submit } from "@bezny/button";
+```
+
+## Examples
+
+### Variants
+
+The Button component supports three variants: `primary` (default), `secondary`, and `ghost`.
+
+<LivePreview client:load code={`<div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+  <Button>Primary (default)</Button>
+  <Button variant="secondary">Secondary</Button>
+  <Button variant="ghost">Ghost</Button>
+</div>`} />
+
+### Disabled State
+
+<LivePreview client:load code={`<div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+  <Button disabled>Primary (default)</Button>
+  <Button variant="secondary" disabled>Secondary</Button>
+  <Button variant="ghost" disabled>Ghost</Button>
+</div>`} />
+
+### Submit Component
+
+The `Submit` component is a convenience wrapper around `Button` with `type="submit"`.
+
+<LivePreview client:load code={`<form onSubmit={(e) => { e.preventDefault(); alert("Submitted!"); }}>
+  <Submit>Submit Form</Submit>
+</form>`} />
+
+### Polymorphic Rendering
+
+All components support the `asChild` prop to render as a different HTML element or React component.
+
+```tsx
+// Render as a link
+<Button asChild="a" href="/home" variant="primary">
+  Go Home
+</Button>
+
+// Render as a React Router Link
+import { Link } from "react-router-dom";
+
+<Button asChild={Link} to="/home" variant="primary">
+  Go Home
+</Button>
+```
+
+When using `asChild`, the component passes its computed props (className, etc.) to the target element. The target is responsible for handling those props.
+
+## API Reference
+
+### Button
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `"primary" \| "secondary" \| "ghost"` | `"primary"` | Visual style variant |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `asChild` | `ElementType` | — | Render as a different HTML tag or React component |
+| `type` | `"button" \| "submit" \| "reset"` | `"button"` | HTML button type |
+| `children` | `ReactNode` | — | Button content |
+| `disabled` | `boolean` | `false` | Disables the button |
+| `...rest` | — | — | Additional props passed to the rendered element |
+
+### Submit
+
+A convenience wrapper around `Button` with `type="submit"`. Accepts all the same props as `Button`, except `type` is always `"submit"`.
