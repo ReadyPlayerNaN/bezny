@@ -1,7 +1,9 @@
+import { Alert } from "@bezny/alert";
 import clsx, { type ClassValue } from "clsx";
 import { type ChangeEvent, useId } from "react";
-import { StatusMessage, type ValidationStatus } from "./StatusMessage";
 import styles from "./TextArea.module.scss";
+
+type ValidationStatus = "error" | "warning" | "success";
 
 export type TextAreaProps = {
 	autoFocus?: boolean;
@@ -63,7 +65,9 @@ export function TextArea({
 						{label}
 					</label>
 				) : null}
-				{statusMessage && status ? <StatusMessage message={statusMessage} status={status} /> : null}
+				{statusMessage && status ? (
+					<Alert variant={status}>{statusMessage}</Alert>
+				) : null}
 			</div>
 		);
 	}

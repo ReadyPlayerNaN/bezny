@@ -1,7 +1,9 @@
+import { Alert } from "@bezny/alert";
 import clsx, { type ClassValue } from "clsx";
 import { type ChangeEvent, type ComponentPropsWithoutRef, type ReactNode, useId } from "react";
 import styles from "./Select.module.scss";
-import { StatusMessage, type ValidationStatus } from "./StatusMessage";
+
+type ValidationStatus = "error" | "warning" | "success";
 
 type NativeSelectProps = Omit<ComponentPropsWithoutRef<"select">, "onChange" | "className">;
 
@@ -66,7 +68,9 @@ export function Select({
 						{label}
 					</label>
 				) : null}
-				{statusMessage && status ? <StatusMessage message={statusMessage} status={status} /> : null}
+				{statusMessage && status ? (
+					<Alert variant={status}>{statusMessage}</Alert>
+				) : null}
 			</div>
 		);
 	}
