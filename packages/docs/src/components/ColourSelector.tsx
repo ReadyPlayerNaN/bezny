@@ -1,8 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-	applyThemeOverrides,
-	clearThemeOverrides,
-} from "../lib/shade-generation.js";
+import { applyThemeOverrides, clearThemeOverrides } from "../lib/shade-generation.js";
 
 const LS_PRIMARY = "bzn-docs-primary-hue";
 const LS_SECONDARY = "bzn-docs-secondary-hue";
@@ -18,8 +15,7 @@ function parseHueOffset(value: string | null): HueOffset {
 	if (value === "unlocked") return "unlocked";
 	if (value) {
 		const num = Number(value);
-		if (HUE_OFFSETS.includes(num as (typeof HUE_OFFSETS)[number]))
-			return num as (typeof HUE_OFFSETS)[number];
+		if (HUE_OFFSETS.includes(num as (typeof HUE_OFFSETS)[number])) return num as (typeof HUE_OFFSETS)[number];
 	}
 	return DEFAULT_OFFSET;
 }
@@ -35,7 +31,7 @@ function readStorage(): {
 		hueOffset === "unlocked"
 			? Number(localStorage.getItem(LS_SECONDARY)) || primary + DEFAULT_OFFSET
 			: primary + hueOffset;
-	return { primaryHue: primary, secondaryHue: secondary, hueOffset };
+	return { primaryHue: primary, secondaryHue: secondary, hueOffset: hueOffset };
 }
 
 const sliderTrack: React.CSSProperties = {
@@ -80,9 +76,7 @@ const sliderThumbCss = `
 
 export default function ColourSelector() {
 	const [primaryHue, setPrimaryHue] = useState(DEFAULT_PRIMARY);
-	const [secondaryHue, setSecondaryHue] = useState(
-		DEFAULT_PRIMARY + DEFAULT_OFFSET,
-	);
+	const [secondaryHue, setSecondaryHue] = useState(DEFAULT_PRIMARY + DEFAULT_OFFSET);
 	const [hueOffset, setHueOffset] = useState<HueOffset>(DEFAULT_OFFSET);
 	const [open, setOpen] = useState(false);
 	const detailsRef = useRef<HTMLDetailsElement>(null);
@@ -115,12 +109,9 @@ export default function ColourSelector() {
 		[hueOffset],
 	);
 
-	const handleSecondaryChange = useCallback(
-		(e: React.ChangeEvent<HTMLInputElement>) => {
-			setSecondaryHue(Number(e.target.value));
-		},
-		[],
-	);
+	const handleSecondaryChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+		setSecondaryHue(Number(e.target.value));
+	}, []);
 
 	const handleOffsetChange = useCallback(
 		(e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -149,10 +140,7 @@ export default function ColourSelector() {
 	// Close on outside click
 	useEffect(() => {
 		function handleClick(e: MouseEvent) {
-			if (
-				detailsRef.current &&
-				!detailsRef.current.contains(e.target as Node)
-			) {
+			if (detailsRef.current && !detailsRef.current.contains(e.target as Node)) {
 				setOpen(false);
 			}
 		}
@@ -166,9 +154,7 @@ export default function ColourSelector() {
 			<details
 				ref={detailsRef}
 				open={open}
-				onToggle={(e) =>
-					setOpen((e.target as HTMLDetailsElement).open)
-				}
+				onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}
 				style={{ position: "relative", display: "inline-block" }}
 			>
 				<summary
@@ -187,7 +173,7 @@ export default function ColourSelector() {
 							height: 24,
 							borderRadius: "50%",
 							background: `oklch(50% 0.19 ${primaryHue})`,
-							border: "2px solid var(--sl-color-gray-5)",
+							border: "2px solid var(--bzn-border)",
 							verticalAlign: "middle",
 						}}
 						aria-label="Accent colour selector"
@@ -199,8 +185,8 @@ export default function ColourSelector() {
 						right: 0,
 						top: "calc(100% + 8px)",
 						zIndex: 100,
-						background: "var(--sl-color-bg-nav)",
-						border: "1px solid var(--sl-color-gray-5)",
+						background: "var(--bzn-surface)",
+						border: "1px solid var(--bzn-border)",
 						borderRadius: 8,
 						padding: 16,
 						width: 260,
@@ -212,7 +198,7 @@ export default function ColourSelector() {
 							fontSize: 13,
 							fontWeight: 600,
 							marginBottom: 12,
-							color: "var(--sl-color-white)",
+							color: "var(--bzn-text)",
 						}}
 					>
 						Accent colour
@@ -221,7 +207,7 @@ export default function ColourSelector() {
 					<label
 						style={{
 							fontSize: 12,
-							color: "var(--sl-color-gray-2)",
+							color: "var(--bzn-text-muted)",
 							display: "block",
 							marginBottom: 4,
 						}}
@@ -251,7 +237,7 @@ export default function ColourSelector() {
 						<label
 							style={{
 								fontSize: 12,
-								color: "var(--sl-color-gray-2)",
+								color: "var(--bzn-text-muted)",
 								flex: 1,
 							}}
 						>
@@ -263,9 +249,9 @@ export default function ColourSelector() {
 							style={{
 								fontSize: 11,
 								padding: "1px 4px",
-								background: "var(--sl-color-gray-6)",
-								color: "var(--sl-color-gray-2)",
-								border: "1px solid var(--sl-color-gray-5)",
+								background: "var(--bzn-surface-raised)",
+								color: "var(--bzn-text-muted)",
+								border: "1px solid var(--bzn-border)",
 								borderRadius: 4,
 								cursor: "pointer",
 							}}
@@ -281,9 +267,8 @@ export default function ColourSelector() {
 					<div
 						style={{
 							...sliderTrack,
-							opacity: hueOffset !== "unlocked" ? 0.4 : 1,
-							pointerEvents:
-								hueOffset !== "unlocked" ? "none" : "auto",
+							opacity: hueOffset === "unlocked" ? 1 : 0.4,
+							pointerEvents: hueOffset === "unlocked" ? "auto" : "none",
 						}}
 					>
 						<input
@@ -306,9 +291,9 @@ export default function ColourSelector() {
 							width: "100%",
 							padding: "4px 0",
 							fontSize: 12,
-							background: "var(--sl-color-gray-6)",
-							color: "var(--sl-color-gray-2)",
-							border: "1px solid var(--sl-color-gray-5)",
+							background: "var(--bzn-surface-raised)",
+							color: "var(--bzn-text-muted)",
+							border: "1px solid var(--bzn-border)",
 							borderRadius: 4,
 							cursor: "pointer",
 						}}

@@ -28,6 +28,24 @@
 			}
 		},
 		{
+			"includes": ["src/**/*.astro"],
+			"linter": {
+				"rules": {
+					"correctness": {
+						"noUnusedImports": "off",
+						"noUnusedVariables": "off",
+						"noUnresolvedImports": "off"
+					},
+					"performance": {
+						"useTopLevelRegex": "off"
+					},
+					"nursery": {
+						"noShadow": "off"
+					}
+				}
+			}
+		},
+		{
 			"includes": ["src/components/**"],
 			"linter": {
 				"rules": {

@@ -40,17 +40,12 @@ export function generateShadeProperties(
 	for (const shade of SHADES) {
 		const l = LIGHTNESS_CURVE[shade];
 		const c = chroma * CHROMA_CURVE[shade];
-		properties[`--${prefix}-${name}-${shade}`] =
-			`oklch(${l * 100}% ${c} ${hue})`;
+		properties[`--${prefix}-${name}-${shade}`] = `oklch(${l * 100}% ${c} ${hue})`;
 	}
 	return properties;
 }
 
-export function applyThemeOverrides(
-	primaryHue: number,
-	secondaryHue: number | null,
-	chroma = 0.19,
-): void {
+export function applyThemeOverrides(primaryHue: number, secondaryHue: number | null, chroma = 0.19): void {
 	const el = document.documentElement;
 	const primary = generateShadeProperties("primary", primaryHue, chroma);
 	for (const [prop, value] of Object.entries(primary)) {

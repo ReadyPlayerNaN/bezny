@@ -10,8 +10,8 @@
 		"lint:fix": "biome check --write ."
 	},
 	"dependencies": {
+		"@astrojs/mdx": "^4.3.0",
 		"@astrojs/react": "^4.3.0",
-		"@astrojs/starlight": "^0.35.0",
 		"@bezny/alert": "workspace:*",
 		"@bezny/avatar": "workspace:*",
 		"@bezny/breadcrumbs": "workspace:*",
@@ -22,6 +22,7 @@
 		"@bezny/dropdown": "workspace:*",
 		"@bezny/layout": "workspace:*",
 		"@bezny/navbar": "workspace:*",
+		"@bezny/navigation": "workspace:*",
 		"@bezny/overlay": "workspace:*",
 		"@bezny/styles": "workspace:*",
 		"@bezny/text": "workspace:*",

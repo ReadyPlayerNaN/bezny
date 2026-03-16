@@ -1,0 +1,66 @@
+@use 'breakpoints' as *;
+@use 'grid' as *;
+
+.docs-shell {
+	display: grid;
+	grid-template-columns: 1fr;
+	grid-template-rows: auto 1fr;
+	min-height: 100vh;
+
+	@include breakpoint-up('lg') {
+		grid-template-columns: 240px 1fr;
+		grid-template-rows: auto 1fr;
+	}
+}
+
+.docs-navbar {
+	grid-column: 1 / -1;
+}
+
+.docs-sidebar {
+	display: none;
+
+	@include breakpoint-up('lg') {
+		display: block;
+		position: sticky;
+		top: 0;
+		height: 100vh;
+		overflow-y: auto;
+		padding: size(4) 0;
+		border-right: 1px solid var(--bzn-border);
+	}
+}
+
+.docs-body {
+	display: grid;
+	grid-template-columns: 1fr;
+	min-width: 0;
+
+	@include breakpoint-up('xl') {
+		grid-template-columns: 1fr 200px;
+	}
+}
+
+.docs-content {
+	padding: size(6) size(4);
+	max-width: 800px;
+	width: 100%;
+	min-width: 0;
+
+	@include breakpoint-up('lg') {
+		padding: size(8) size(8);
+	}
+}
+
+.docs-toc {
+	display: none;
+
+	@include breakpoint-up('xl') {
+		display: block;
+		position: sticky;
+		top: 0;
+		height: 100vh;
+		overflow-y: auto;
+		padding: size(8) size(4);
+	}
+}

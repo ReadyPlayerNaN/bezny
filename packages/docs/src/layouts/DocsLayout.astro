@@ -1,0 +1,23 @@
+---
+import type { MarkdownHeading } from "astro";
+import DocsShell from "../components/DocsShell";
+import BaseLayout from "./BaseLayout.astro";
+
+type Props = {
+	title: string;
+	description?: string;
+	headings: MarkdownHeading[];
+	currentPath: string;
+};
+
+const { title, description, headings, currentPath } = Astro.props;
+---
+
+<BaseLayout title={title} description={description}>
+	<DocsShell currentPath={currentPath} headings={headings} client:load>
+		<div class="prose">
+			<h1>{title}</h1>
+			<slot />
+		</div>
+	</DocsShell>
+</BaseLayout>

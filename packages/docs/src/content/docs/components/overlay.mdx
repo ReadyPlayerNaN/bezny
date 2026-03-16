@@ -20,7 +20,7 @@ import { Overlay } from "@bezny/overlay";
     <div>
       <Button onClick={() => setOpen(true)}>Show Overlay</Button>
       <Overlay open={open} onClick={() => setOpen(false)}>
-        <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "var(--sl-color-bg)", padding: "24px", borderRadius: "8px" }}>
+        <div style={{ position: "fixed", top: "50%", left: "50%", transform: "translate(-50%, -50%)", background: "var(--bzn-surface)", padding: "24px", borderRadius: "8px" }}>
           <Heading>Overlay Content</Heading>
           <Paragraph>Click the backdrop to close.</Paragraph>
           <Button onClick={() => setOpen(false)}>Close</Button>

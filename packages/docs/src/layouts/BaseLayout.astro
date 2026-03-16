@@ -1,0 +1,50 @@
+---
+import "../styles/global.css";
+import "../styles/docs.scss";
+import "../styles/prose.scss";
+
+type Props = {
+	title: string;
+	description?: string;
+};
+
+const { title, description } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title} — bezny</title>
+		{description && <meta name="description" content={description} />}
+		<script is:inline>
+			(function() {
+				var LS_PRIMARY = 'bzn-docs-primary-hue';
+				var LS_SECONDARY = 'bzn-docs-secondary-hue';
+				var LS_OFFSET = 'bzn-docs-hue-offset';
+				var stored = localStorage.getItem(LS_PRIMARY);
+				if (!stored) return;
+
+				var LIGHTNESS = [97,93,85,73,62,50,45,38,30,23,15];
+				var CHROMA = [0.1,0.25,0.4,0.65,0.85,1.0,1.0,0.9,0.75,0.6,0.4];
+				var SHADES = [50,100,200,300,400,500,600,700,800,900,950];
+				var chroma = 0.19;
+				var primaryHue = Number(stored);
+				var offsetStr = localStorage.getItem(LS_OFFSET);
+				var secondaryHue = offsetStr === 'unlocked'
+					? Number(localStorage.getItem(LS_SECONDARY)) || primaryHue + 60
+					: primaryHue + (Number(offsetStr) || 60);
+				var el = document.documentElement;
+				for (var i = 0; i < SHADES.length; i++) {
+					var c = chroma * CHROMA[i];
+					el.style.setProperty('--bzn-primary-' + SHADES[i], 'oklch(' + LIGHTNESS[i] + '% ' + c + ' ' + primaryHue + ')');
+					el.style.setProperty('--bzn-secondary-' + SHADES[i], 'oklch(' + LIGHTNESS[i] + '% ' + c + ' ' + secondaryHue + ')');
+				}
+			})();
+		</script>
+	</head>
+	<body>
+		<slot />
+	</body>
+</html>
