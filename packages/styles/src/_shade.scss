@@ -1,16 +1,16 @@
 @use 'sass:color';
 @use 'sass:map';
 
-// Compute complementary palette (hue + 180°).
+// Compute analogous palette (hue + 30°).
 // Works with both simple (h, c) maps and full shade maps.
 @function complementary($palette) {
   @if map.has-key($palette, h) and map.has-key($palette, c) {
-    @return (h: map.get($palette, h) + 180, c: map.get($palette, c));
+    @return (h: map.get($palette, h) + 30, c: map.get($palette, c));
   }
 
   $result: ();
   @each $shade, $value in $palette {
-    $result: map.set($result, $shade, color.adjust($value, $hue: 180deg, $space: oklch));
+    $result: map.set($result, $shade, color.adjust($value, $hue: 30deg, $space: oklch));
   }
   @return $result;
 }

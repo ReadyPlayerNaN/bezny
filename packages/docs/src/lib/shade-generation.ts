@@ -57,7 +57,7 @@ export function applyThemeOverrides(
 		el.style.setProperty(prop, value);
 	}
 
-	const secHue = secondaryHue ?? primaryHue + 180;
+	const secHue = secondaryHue ?? primaryHue + 30;
 	const secondary = generateShadeProperties("secondary", secHue, chroma);
 	for (const [prop, value] of Object.entries(secondary)) {
 		el.style.setProperty(prop, value);

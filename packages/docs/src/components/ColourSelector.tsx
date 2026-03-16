@@ -18,8 +18,8 @@ function readStorage(): {
 	const primary = Number(localStorage.getItem(LS_PRIMARY)) || DEFAULT_PRIMARY;
 	const linked = localStorage.getItem(LS_LINKED) !== "false";
 	const secondary = linked
-		? primary + 180
-		: Number(localStorage.getItem(LS_SECONDARY)) || primary + 180;
+		? primary + 30
+		: Number(localStorage.getItem(LS_SECONDARY)) || primary + 30;
 	return { primaryHue: primary, secondaryHue: secondary, isLinked: linked };
 }
 
@@ -65,7 +65,7 @@ const sliderThumbCss = `
 
 export default function ColourSelector() {
 	const [primaryHue, setPrimaryHue] = useState(DEFAULT_PRIMARY);
-	const [secondaryHue, setSecondaryHue] = useState(DEFAULT_PRIMARY + 180);
+	const [secondaryHue, setSecondaryHue] = useState(DEFAULT_PRIMARY + 30);
 	const [isLinked, setIsLinked] = useState(true);
 	const [open, setOpen] = useState(false);
 	const detailsRef = useRef<HTMLDetailsElement>(null);
@@ -93,7 +93,7 @@ export default function ColourSelector() {
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const hue = Number(e.target.value);
 			setPrimaryHue(hue);
-			if (isLinked) setSecondaryHue(hue + 180);
+			if (isLinked) setSecondaryHue(hue + 30);
 		},
 		[isLinked],
 	);
@@ -108,7 +108,7 @@ export default function ColourSelector() {
 	const handleLinkToggle = useCallback(() => {
 		setIsLinked((prev) => {
 			const next = !prev;
-			if (next) setSecondaryHue(primaryHue + 180);
+			if (next) setSecondaryHue(primaryHue + 30);
 			return next;
 		});
 	}, [primaryHue]);
@@ -116,7 +116,7 @@ export default function ColourSelector() {
 	const handleReset = useCallback(() => {
 		clearThemeOverrides();
 		setPrimaryHue(DEFAULT_PRIMARY);
-		setSecondaryHue(DEFAULT_PRIMARY + 180);
+		setSecondaryHue(DEFAULT_PRIMARY + 30);
 		setIsLinked(true);
 		localStorage.removeItem(LS_PRIMARY);
 		localStorage.removeItem(LS_SECONDARY);
@@ -240,7 +240,7 @@ export default function ColourSelector() {
 							title={
 								isLinked
 									? "Unlink secondary (set independently)"
-									: "Link secondary (complementary)"
+									: "Link secondary (analogous)"
 							}
 							style={{
 								background: "none",
