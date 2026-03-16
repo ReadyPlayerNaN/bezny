@@ -6,21 +6,36 @@ import {
 
 const LS_PRIMARY = "bzn-docs-primary-hue";
 const LS_SECONDARY = "bzn-docs-secondary-hue";
-const LS_LINKED = "bzn-docs-hues-linked";
+const LS_OFFSET = "bzn-docs-hue-offset";
 
 const DEFAULT_PRIMARY = 10;
+const DEFAULT_OFFSET = 60;
+const HUE_OFFSETS = [30, 60, 90, 120, 150, 180] as const;
+
+type HueOffset = (typeof HUE_OFFSETS)[number] | "unlocked";
+
+function parseHueOffset(value: string | null): HueOffset {
+	if (value === "unlocked") return "unlocked";
+	if (value) {
+		const num = Number(value);
+		if (HUE_OFFSETS.includes(num as (typeof HUE_OFFSETS)[number]))
+			return num as (typeof HUE_OFFSETS)[number];
+	}
+	return DEFAULT_OFFSET;
+}
 
 function readStorage(): {
 	primaryHue: number;
 	secondaryHue: number;
-	isLinked: boolean;
+	hueOffset: HueOffset;
 } {
 	const primary = Number(localStorage.getItem(LS_PRIMARY)) || DEFAULT_PRIMARY;
-	const linked = localStorage.getItem(LS_LINKED) !== "false";
-	const secondary = linked
-		? primary + 60
-		: Number(localStorage.getItem(LS_SECONDARY)) || primary + 60;
-	return { primaryHue: primary, secondaryHue: secondary, isLinked: linked };
+	const hueOffset = parseHueOffset(localStorage.getItem(LS_OFFSET));
+	const secondary =
+		hueOffset === "unlocked"
+			? Number(localStorage.getItem(LS_SECONDARY)) || primary + DEFAULT_OFFSET
+			: primary + hueOffset;
+	return { primaryHue: primary, secondaryHue: secondary, hueOffset };
 }
 
 const sliderTrack: React.CSSProperties = {
@@ -65,8 +80,10 @@ const sliderThumbCss = `
 
 export default function ColourSelector() {
 	const [primaryHue, setPrimaryHue] = useState(DEFAULT_PRIMARY);
-	const [secondaryHue, setSecondaryHue] = useState(DEFAULT_PRIMARY + 60);
-	const [isLinked, setIsLinked] = useState(true);
+	const [secondaryHue, setSecondaryHue] = useState(
+		DEFAULT_PRIMARY + DEFAULT_OFFSET,
+	);
+	const [hueOffset, setHueOffset] = useState<HueOffset>(DEFAULT_OFFSET);
 	const [open, setOpen] = useState(false);
 	const detailsRef = useRef<HTMLDetailsElement>(null);
 	const initialized = useRef(false);
@@ -76,26 +93,26 @@ export default function ColourSelector() {
 		const stored = readStorage();
 		setPrimaryHue(stored.primaryHue);
 		setSecondaryHue(stored.secondaryHue);
-		setIsLinked(stored.isLinked);
+		setHueOffset(stored.hueOffset);
 		initialized.current = true;
 	}, []);
 
 	// Apply overrides whenever values change (skip before hydration)
 	useEffect(() => {
 		if (!initialized.current) return;
-		applyThemeOverrides(primaryHue, isLinked ? null : secondaryHue);
+		applyThemeOverrides(primaryHue, secondaryHue);
 		localStorage.setItem(LS_PRIMARY, String(primaryHue));
 		localStorage.setItem(LS_SECONDARY, String(secondaryHue));
-		localStorage.setItem(LS_LINKED, String(isLinked));
-	}, [primaryHue, secondaryHue, isLinked]);
+		localStorage.setItem(LS_OFFSET, String(hueOffset));
+	}, [primaryHue, secondaryHue, hueOffset]);
 
 	const handlePrimaryChange = useCallback(
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const hue = Number(e.target.value);
 			setPrimaryHue(hue);
-			if (isLinked) setSecondaryHue(hue + 60);
+			if (hueOffset !== "unlocked") setSecondaryHue(hue + hueOffset);
 		},
-		[isLinked],
+		[hueOffset],
 	);
 
 	const handleSecondaryChange = useCallback(
@@ -105,22 +122,28 @@ export default function ColourSelector() {
 		[],
 	);
 
-	const handleLinkToggle = useCallback(() => {
-		setIsLinked((prev) => {
-			const next = !prev;
-			if (next) setSecondaryHue(primaryHue + 60);
-			return next;
-		});
-	}, [primaryHue]);
+	const handleOffsetChange = useCallback(
+		(e: React.ChangeEvent<HTMLSelectElement>) => {
+			const value = e.target.value;
+			if (value === "unlocked") {
+				setHueOffset("unlocked");
+			} else {
+				const offset = Number(value) as (typeof HUE_OFFSETS)[number];
+				setHueOffset(offset);
+				setSecondaryHue(primaryHue + offset);
+			}
+		},
+		[primaryHue],
+	);
 
 	const handleReset = useCallback(() => {
 		clearThemeOverrides();
 		setPrimaryHue(DEFAULT_PRIMARY);
-		setSecondaryHue(DEFAULT_PRIMARY + 60);
-		setIsLinked(true);
+		setSecondaryHue(DEFAULT_PRIMARY + DEFAULT_OFFSET);
+		setHueOffset(DEFAULT_OFFSET);
 		localStorage.removeItem(LS_PRIMARY);
 		localStorage.removeItem(LS_SECONDARY);
-		localStorage.removeItem(LS_LINKED);
+		localStorage.removeItem(LS_OFFSET);
 	}, []);
 
 	// Close on outside click
@@ -234,33 +257,33 @@ export default function ColourSelector() {
 						>
 							Secondary — {Math.round(secondaryHue % 360)}°
 						</label>
-						<button
-							type="button"
-							onClick={handleLinkToggle}
-							title={
-								isLinked
-									? "Unlink secondary (set independently)"
-									: "Link secondary (analogous)"
-							}
+						<select
+							value={hueOffset}
+							onChange={handleOffsetChange}
 							style={{
-								background: "none",
-								border: "none",
+								fontSize: 11,
+								padding: "1px 4px",
+								background: "var(--sl-color-gray-6)",
+								color: "var(--sl-color-gray-2)",
+								border: "1px solid var(--sl-color-gray-5)",
+								borderRadius: 4,
 								cursor: "pointer",
-								fontSize: 14,
-								padding: "0 2px",
-								color: isLinked
-									? "var(--sl-color-text-accent)"
-									: "var(--sl-color-gray-3)",
 							}}
 						>
-							{isLinked ? "🔗" : "↔"}
-						</button>
+							{HUE_OFFSETS.map((o) => (
+								<option key={o} value={o}>
+									+{o}°
+								</option>
+							))}
+							<option value="unlocked">Unlocked</option>
+						</select>
 					</div>
 					<div
 						style={{
 							...sliderTrack,
-							opacity: isLinked ? 0.4 : 1,
-							pointerEvents: isLinked ? "none" : "auto",
+							opacity: hueOffset !== "unlocked" ? 0.4 : 1,
+							pointerEvents:
+								hueOffset !== "unlocked" ? "none" : "auto",
 						}}
 					>
 						<input
@@ -269,7 +292,7 @@ export default function ColourSelector() {
 							max={360}
 							value={Math.round(secondaryHue % 360)}
 							onChange={handleSecondaryChange}
-							disabled={isLinked}
+							disabled={hueOffset !== "unlocked"}
 							className="bzn-hue-slider"
 							style={sliderInput}
 						/>

@@ -10,7 +10,7 @@ import ColourSelectorReact from './ColourSelector.tsx';
 (function() {
   var LS_PRIMARY = 'bzn-docs-primary-hue';
   var LS_SECONDARY = 'bzn-docs-secondary-hue';
-  var LS_LINKED = 'bzn-docs-hues-linked';
+  var LS_OFFSET = 'bzn-docs-hue-offset';
   var stored = localStorage.getItem(LS_PRIMARY);
   if (!stored) return;
 
@@ -19,10 +19,10 @@ import ColourSelectorReact from './ColourSelector.tsx';
   var SHADES = [50,100,200,300,400,500,600,700,800,900,950];
   var chroma = 0.19;
   var primaryHue = Number(stored);
-  var linked = localStorage.getItem(LS_LINKED) !== 'false';
-  var secondaryHue = linked
-    ? primaryHue + 60
-    : Number(localStorage.getItem(LS_SECONDARY)) || primaryHue + 60;
+  var offsetStr = localStorage.getItem(LS_OFFSET);
+  var secondaryHue = offsetStr === 'unlocked'
+    ? Number(localStorage.getItem(LS_SECONDARY)) || primaryHue + 60
+    : primaryHue + (Number(offsetStr) || 60);
   var el = document.documentElement;
   for (var i = 0; i < SHADES.length; i++) {
     var c = chroma * CHROMA[i];
