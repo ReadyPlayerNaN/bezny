@@ -387,15 +387,33 @@ importers:
       '@bezny/avatar':
         specifier: workspace:*
         version: link:../avatar
+      '@bezny/breadcrumbs':
+        specifier: workspace:*
+        version: link:../breadcrumbs
       '@bezny/button':
         specifier: workspace:*
         version: link:../button
+      '@bezny/card':
+        specifier: workspace:*
+        version: link:../card
       '@bezny/dialog':
         specifier: workspace:*
         version: link:../dialog
+      '@bezny/drawer':
+        specifier: workspace:*
+        version: link:../drawer
+      '@bezny/dropdown':
+        specifier: workspace:*
+        version: link:../dropdown
       '@bezny/layout':
         specifier: workspace:*
         version: link:../layout
+      '@bezny/navbar':
+        specifier: workspace:*
+        version: link:../navbar
+      '@bezny/overlay':
+        specifier: workspace:*
+        version: link:../overlay
       '@bezny/styles':
         specifier: workspace:*
         version: link:../styles
