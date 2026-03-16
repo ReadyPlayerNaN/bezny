@@ -1,4 +1,5 @@
 @use 'grid' as *;
+@use 'shared' as *;
 
 .checkbox {
 	display: inline-flex;
@@ -8,15 +9,7 @@
 }
 
 .input {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
+	@include visually-hidden;
 }
 
 .indicator {
@@ -28,7 +21,7 @@
 	border: 2px solid var(--bzn-checkbox-border);
 	border-radius: size(1);
 	flex-shrink: 0;
-	transition: border-color var(--bzn-transition), background-color var(--bzn-transition);
+	transition: border-color var(--bzn-transition-brief), background-color var(--bzn-transition-brief);
 
 	&::after {
 		content: '';
@@ -36,7 +29,7 @@
 		width: 12px;
 		height: 12px;
 		opacity: 0;
-		transition: opacity var(--bzn-transition);
+		transition: opacity var(--bzn-transition-brief);
 		background-color: transparent;
 	}
 }
@@ -77,20 +70,11 @@
 	}
 }
 
-.label {
-	color: var(--bzn-text);
-	line-height: 1.4;
-}
-
 .disabled {
 	cursor: not-allowed;
 	opacity: 0.5;
 
 	.indicator {
 		border-color: var(--bzn-checkbox-disabled);
-	}
-
-	.label {
-		color: var(--bzn-checkbox-disabled);
 	}
 }

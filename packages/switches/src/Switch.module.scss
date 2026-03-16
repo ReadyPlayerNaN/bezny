@@ -1,4 +1,5 @@
 @use 'grid' as *;
+@use 'shared' as *;
 
 .switch {
 	display: inline-flex;
@@ -8,15 +9,7 @@
 }
 
 .input {
-	position: absolute;
-	width: 1px;
-	height: 1px;
-	padding: 0;
-	margin: -1px;
-	overflow: hidden;
-	clip: rect(0, 0, 0, 0);
-	white-space: nowrap;
-	border: 0;
+	@include visually-hidden;
 }
 
 .track {
@@ -28,7 +21,7 @@
 	background-color: var(--bzn-switch-track-off);
 	padding: 2px;
 	flex-shrink: 0;
-	transition: background-color var(--bzn-transition);
+	transition: background-color var(--bzn-transition-brief);
 }
 
 .thumb {
@@ -37,7 +30,7 @@
 	height: 20px;
 	border-radius: 50%;
 	background-color: var(--bzn-switch-thumb);
-	transition: transform var(--bzn-transition);
+	transition: transform var(--bzn-transition-brief);
 	transform: translateX(0);
 }
 
@@ -52,11 +45,6 @@
 .input:focus-visible + .track {
 	outline: 2px solid var(--bzn-switch-track-on);
 	outline-offset: 2px;
-}
-
-.label {
-	color: var(--bzn-text);
-	line-height: 1.4;
 }
 
 .disabled {
