@@ -8,7 +8,7 @@ export type DrawerProps = {
 	className?: ClassValue;
 	onClose: () => void;
 	open: boolean;
-	side?: "left" | "right";
+	side?: "left" | "right" | "top" | "bottom";
 };
 
 const FOCUSABLE_SELECTOR =
@@ -105,16 +105,24 @@ export function Drawer({ children, className, onClose, open, side = "right" }: D
 		};
 	}, [open, onClose]);
 
-	const sideClass = side === "left" ? styles.panelLeft : styles.panelRight;
+	const sideClassMap = {
+		left: styles.panelLeft,
+		right: styles.panelRight,
+		top: styles.panelTop,
+		bottom: styles.panelBottom,
+	};
+	const sideClass = sideClassMap[side];
 
 	return (
 		<Overlay className={styles.overlay} open={open}>
-			<div ref={panelRef} aria-modal="true" className={clsx(styles.panel, sideClass, className)} role="dialog">
-				<button aria-label="Close" className={styles.close} onClick={onClose} type="button">
-					&times;
-				</button>
-				<div className={styles.content}>{children}</div>
-			</div>
+			{(visible) => (
+				<div ref={panelRef} aria-modal="true" className={clsx(styles.panel, sideClass, visible && styles.panelVisible, className)} role="dialog">
+					<button aria-label="Close" className={styles.close} onClick={onClose} type="button">
+						&times;
+					</button>
+					<div className={styles.content}>{children}</div>
+				</div>
+			)}
 		</Overlay>
 	);
 }

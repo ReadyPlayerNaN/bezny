@@ -12,32 +12,21 @@ import { Drawer } from "@bezny/drawer";
 
 ## Examples
 
-### Right Drawer (Default)
+### Drawer Sides
 
 <LivePreview client:load noInline code={`function DrawerDemo() {
   const [open, setOpen] = React.useState(false);
+  const [side, setSide] = React.useState("right");
+  const openSide = (s) => { setSide(s); setOpen(true); };
   return (
-    <div>
-      <Button onClick={() => setOpen(true)}>Open Drawer</Button>
-      <Drawer open={open} onClose={() => setOpen(false)}>
+    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+      <Button onClick={() => openSide("left")}>Left</Button>
+      <Button onClick={() => openSide("right")}>Right</Button>
+      <Button onClick={() => openSide("top")}>Top</Button>
+      <Button onClick={() => openSide("bottom")}>Bottom</Button>
+      <Drawer open={open} onClose={() => setOpen(false)} side={side}>
         <Heading>Drawer Content</Heading>
-        <Paragraph>This drawer slides in from the right.</Paragraph>
-      </Drawer>
-    </div>
-  );
-}
-render(<DrawerDemo />);`} />
-
-### Left Drawer
-
-<LivePreview client:load noInline code={`function DrawerDemo() {
-  const [open, setOpen] = React.useState(false);
-  return (
-    <div>
-      <Button onClick={() => setOpen(true)}>Open Left Drawer</Button>
-      <Drawer open={open} onClose={() => setOpen(false)} side="left">
-        <Heading>Left Drawer</Heading>
-        <Paragraph>This drawer slides in from the left.</Paragraph>
+        <Paragraph>This drawer slides in from the {side}.</Paragraph>
       </Drawer>
     </div>
   );
@@ -52,6 +41,6 @@ render(<DrawerDemo />);`} />
 |------|------|---------|-------------|
 | `open` | `boolean` | **required** | Controls drawer visibility |
 | `onClose` | `() => void` | **required** | Called on Escape press or outside click |
-| `side` | `"left" \| "right"` | `"right"` | Which side the drawer slides from |
+| `side` | `"left" \| "right" \| "top" \| "bottom"` | `"right"` | Which side the drawer slides from |
 | `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
 | `children` | `ReactNode` | — | Drawer content |

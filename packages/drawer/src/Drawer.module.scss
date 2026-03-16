@@ -6,27 +6,57 @@
 
 .panel {
 	background-color: var(--bzn-drawer-bg);
-	border-left: 1px solid var(--bzn-drawer-border);
 	display: flex;
 	flex-direction: column;
-	height: 100%;
-	max-width: size(80);
 	position: fixed;
-	top: 0;
-	width: 100%;
+	transition: transform var(--bzn-transition);
 	z-index: 301;
 }
 
 .panelRight {
 	border-left: 1px solid var(--bzn-drawer-border);
-	border-right: none;
+	height: 100%;
+	max-width: size(80);
 	right: 0;
+	top: 0;
+	transform: translateX(100%);
+	width: 100%;
 }
 
 .panelLeft {
-	border-left: none;
 	border-right: 1px solid var(--bzn-drawer-border);
+	height: 100%;
 	left: 0;
+	max-width: size(80);
+	top: 0;
+	transform: translateX(-100%);
+	width: 100%;
+}
+
+.panelTop {
+	border-bottom: 1px solid var(--bzn-drawer-border);
+	height: auto;
+	left: 0;
+	max-height: 80vh;
+	right: 0;
+	top: 0;
+	transform: translateY(-100%);
+	width: 100%;
+}
+
+.panelBottom {
+	border-top: 1px solid var(--bzn-drawer-border);
+	bottom: 0;
+	height: auto;
+	left: 0;
+	max-height: 80vh;
+	right: 0;
+	transform: translateY(100%);
+	width: 100%;
+}
+
+.panelVisible {
+	transform: translate(0);
 }
 
 .close {
