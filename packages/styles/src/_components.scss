@@ -56,6 +56,13 @@
   --#{$prefix}-switch-thumb: var(--#{$prefix}-text-on-primary);
   --#{$prefix}-switch-disabled-opacity: 0.5;
 
+  // ButtonGroup
+  --#{$prefix}-button-group-bg: var(--#{$prefix}-surface-raised);
+  --#{$prefix}-button-group-border: var(--#{$prefix}-border);
+  --#{$prefix}-button-group-color: var(--#{$prefix}-text);
+  --#{$prefix}-button-group-selected-bg: var(--#{$prefix}-interactive);
+  --#{$prefix}-button-group-selected-color: var(--#{$prefix}-text-on-primary);
+
   // Card
   --#{$prefix}-card-bg: var(--#{$prefix}-surface-raised);
   --#{$prefix}-card-border: var(--#{$prefix}-border);
