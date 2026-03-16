@@ -1,12 +1,14 @@
+import { createPolymorphic } from "@bezny/styles";
 import { HeadingLevelProvider } from "@bezny/text";
-import type { ComponentPropsWithoutRef } from "react";
+import type { ReactNode } from "react";
 
-export type SectionProps = ComponentPropsWithoutRef<"section">;
+export type SectionOwnProps = Record<string, never>;
 
-export function Section({ children, ...rest }: SectionProps) {
-	return (
-		<section {...rest}>
-			<HeadingLevelProvider>{children}</HeadingLevelProvider>
-		</section>
-	);
-}
+export const Section = createPolymorphic<"section", SectionOwnProps>(
+	"section",
+	(Tag, _ownProps, { children, ...rest }) => (
+		<Tag {...rest}>
+			<HeadingLevelProvider>{children as ReactNode}</HeadingLevelProvider>
+		</Tag>
+	),
+);

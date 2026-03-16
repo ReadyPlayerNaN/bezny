@@ -1,12 +1,14 @@
+import { createPolymorphic } from "@bezny/styles";
 import { HeadingLevelProvider } from "@bezny/text";
-import type { ComponentPropsWithoutRef } from "react";
+import type { ReactNode } from "react";
 
-export type AsideProps = ComponentPropsWithoutRef<"aside">;
+export type AsideOwnProps = Record<string, never>;
 
-export function Aside({ children, ...rest }: AsideProps) {
-	return (
-		<aside {...rest}>
-			<HeadingLevelProvider>{children}</HeadingLevelProvider>
-		</aside>
-	);
-}
+export const Aside = createPolymorphic<"aside", AsideOwnProps>(
+	"aside",
+	(Tag, _ownProps, { children, ...rest }) => (
+		<Tag {...rest}>
+			<HeadingLevelProvider>{children as ReactNode}</HeadingLevelProvider>
+		</Tag>
+	),
+);

@@ -1,7 +1,8 @@
-import type { ComponentPropsWithoutRef } from "react";
+import { createPolymorphic } from "@bezny/styles";
 
-export type MainProps = ComponentPropsWithoutRef<"main">;
+export type MainOwnProps = Record<string, never>;
 
-export function Main({ children, ...rest }: MainProps) {
-	return <main {...rest}>{children}</main>;
-}
+export const Main = createPolymorphic<"main", MainOwnProps>(
+	"main",
+	(Tag, _ownProps, rest) => <Tag {...rest} />,
+);

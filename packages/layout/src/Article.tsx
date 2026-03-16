@@ -1,12 +1,14 @@
+import { createPolymorphic } from "@bezny/styles";
 import { HeadingLevelProvider } from "@bezny/text";
-import type { ComponentPropsWithoutRef } from "react";
+import type { ReactNode } from "react";
 
-export type ArticleProps = ComponentPropsWithoutRef<"article">;
+export type ArticleOwnProps = Record<string, never>;
 
-export function Article({ children, ...rest }: ArticleProps) {
-	return (
-		<article {...rest}>
-			<HeadingLevelProvider>{children}</HeadingLevelProvider>
-		</article>
-	);
-}
+export const Article = createPolymorphic<"article", ArticleOwnProps>(
+	"article",
+	(Tag, _ownProps, { children, ...rest }) => (
+		<Tag {...rest}>
+			<HeadingLevelProvider>{children as ReactNode}</HeadingLevelProvider>
+		</Tag>
+	),
+);

@@ -1,11 +1,10 @@
+import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
-import type { ReactNode } from "react";
 import styles from "./Container.module.scss";
 
 type ContainerMaxWidth = "sm" | "md" | "lg" | "xl";
 
-export type ContainerProps = {
-	children?: ReactNode;
+export type ContainerOwnProps = {
 	className?: ClassValue;
 	maxWidth?: ContainerMaxWidth;
 };
@@ -17,6 +16,12 @@ const maxWidthClassMap: Record<ContainerMaxWidth, string> = {
 	xl: styles.xl,
 };
 
-export function Container({ children, className, maxWidth }: ContainerProps) {
-	return <div className={clsx(styles.container, maxWidth && maxWidthClassMap[maxWidth], className)}>{children}</div>;
-}
+export const Container = createPolymorphic<"div", ContainerOwnProps>(
+	"div",
+	(Tag, { className, maxWidth }, { className: _, maxWidth: _mw, ...rest }) => (
+		<Tag
+			className={clsx(styles.container, maxWidth && maxWidthClassMap[maxWidth], className)}
+			{...rest}
+		/>
+	),
+);

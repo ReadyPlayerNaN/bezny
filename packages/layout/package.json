@@ -23,6 +23,7 @@
 		"react": "^19"
 	},
 	"dependencies": {
+		"@bezny/styles": "workspace:*",
 		"@bezny/text": "workspace:*",
 		"clsx": "catalog:"
 	},

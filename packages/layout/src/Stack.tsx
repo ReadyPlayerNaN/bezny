@@ -1,25 +1,22 @@
+import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
-import type { ReactNode } from "react";
 import styles from "./Stack.module.scss";
 
 const GRID_UNIT = 4;
 
-export type StackProps = {
-	children?: ReactNode;
+export type StackOwnProps = {
 	className?: ClassValue;
 	direction?: "vertical" | "horizontal";
 	gap?: number;
 };
 
-export function Stack({ children, className, direction = "vertical", gap }: StackProps) {
-	const directionClass = direction === "horizontal" ? styles.horizontal : styles.vertical;
-
-	return (
-		<div
-			className={clsx(styles.stack, directionClass, className)}
+export const Stack = createPolymorphic<"div", StackOwnProps>(
+	"div",
+	(Tag, { className, direction = "vertical", gap }, { className: _, direction: _d, gap: _g, ...rest }) => (
+		<Tag
+			className={clsx(styles.stack, direction === "horizontal" ? styles.horizontal : styles.vertical, className)}
 			style={gap ? { gap: `${gap * GRID_UNIT}px` } : undefined}
-		>
-			{children}
-		</div>
-	);
-}
+			{...rest}
+		/>
+	),
+);
