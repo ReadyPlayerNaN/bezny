@@ -1,0 +1,114 @@
+---
+title: Text
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Headings, paragraphs, and labels with automatic heading level management.
+
+```tsx
+import { Heading, StaticHeading, HeadingLevelProvider, Paragraph, Label } from "@bezny/text";
+```
+
+## Examples
+
+### Heading with Context
+
+When nested inside `HeadingLevelProvider`, headings automatically increment their level.
+
+<LivePreview client:load code={`<HeadingLevelProvider>
+  <Heading>Top Level (h1)</Heading>
+  <HeadingLevelProvider>
+    <Heading>Nested (h2)</Heading>
+    <HeadingLevelProvider>
+      <Heading>Deeper (h3)</Heading>
+    </HeadingLevelProvider>
+  </HeadingLevelProvider>
+</HeadingLevelProvider>`} />
+
+### Heading
+
+The `Heading` component renders semantic heading elements. It automatically determines the heading level from context, or you can set it explicitly.
+
+<LivePreview client:load code={`<div>
+  <Heading level={1}>Heading 1</Heading>
+  <Heading level={2}>Heading 2</Heading>
+  <Heading level={3}>Heading 3</Heading>
+  <Heading level={4}>Heading 4</Heading>
+  <Heading level={5}>Heading 5</Heading>
+  <Heading level={6}>Heading 6</Heading>
+</div>`} />
+
+### StaticHeading
+
+`StaticHeading` is a simpler heading component that always renders at the specified level, ignoring context.
+
+<LivePreview client:load code={`<div>
+  <StaticHeading level={2}>Always h2</StaticHeading>
+  <StaticHeading level={4}>Always h4</StaticHeading>
+</div>`} />
+
+### Paragraph
+
+<LivePreview client:load code={`<Paragraph>This is a paragraph of text. It renders a styled p element.</Paragraph>`} />
+
+### Label
+
+<LivePreview client:load code={`<Label htmlFor="example-input">Email address</Label>`} />
+
+## API Reference
+
+### Heading
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `level` | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | Context + 1 | Explicit heading level. If omitted, derived from context. |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Heading content |
+| `...rest` | `ComponentPropsWithoutRef<"h1">` | — | All other native heading attributes |
+
+### StaticHeading
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `level` | `1 \| 2 \| 3 \| 4 \| 5 \| 6` | **required** | The heading level to render |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Heading content |
+| `...rest` | `ComponentPropsWithoutRef<"h1">` | — | All other native heading attributes |
+
+### HeadingLevelProvider
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `level` | `0 \| 1 \| 2 \| 3 \| 4 \| 5` | Current + 1 | Explicit context level. If omitted, increments from parent. |
+| `children` | `ReactNode` | — | Child components |
+
+### Paragraph
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Paragraph content |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+
+### Label
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Label content |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `htmlFor` | `string` | — | ID of the associated form element |
+
+### useHeadingLevel
+
+A hook that returns the current heading level from `HeadingLevelContext`.
+
+Returns `HeadingLevel` (`0 | 1 | 2 | 3 | 4 | 5`).
+
+```tsx
+import { useHeadingLevel } from "@bezny/text";
+
+function MyComponent() {
+  const level = useHeadingLevel();
+  return <span>Current heading level: {level}</span>;
+}
+```

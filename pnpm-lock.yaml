@@ -68,6 +68,9 @@ importers:
 
   packages/alert:
     dependencies:
+      '@bezny/styles':
+        specifier: workspace:*
+        version: link:../styles
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -172,6 +175,9 @@ importers:
 
   packages/button:
     dependencies:
+      '@bezny/styles':
+        specifier: workspace:*
+        version: link:../styles
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -200,6 +206,9 @@ importers:
 
   packages/card:
     dependencies:
+      '@bezny/styles':
+        specifier: workspace:*
+        version: link:../styles
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -298,6 +307,9 @@ importers:
 
   packages/dialog:
     dependencies:
+      '@bezny/styles':
+        specifier: workspace:*
+        version: link:../styles
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -504,6 +516,9 @@ importers:
 
   packages/forms:
     dependencies:
+      '@bezny/styles':
+        specifier: workspace:*
+        version: link:../styles
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -553,6 +568,9 @@ importers:
 
   packages/layout:
     dependencies:
+      '@bezny/styles':
+        specifier: workspace:*
+        version: link:../styles
       '@bezny/text':
         specifier: workspace:*
         version: link:../text
@@ -605,6 +623,9 @@ importers:
 
   packages/navigation:
     dependencies:
+      '@bezny/styles':
+        specifier: workspace:*
+        version: link:../styles
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -666,6 +687,10 @@ importers:
         version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
 
   packages/styles:
+    dependencies:
+      react-dom:
+        specifier: ^19
+        version: 19.2.4(react@19.2.4)
     devDependencies:
       '@testing-library/jest-dom':
         specifier: 'catalog:'
@@ -703,6 +728,9 @@ importers:
 
   packages/text:
     dependencies:
+      '@bezny/styles':
+        specifier: workspace:*
+        version: link:../styles
       clsx:
         specifier: 'catalog:'
         version: 2.1.1

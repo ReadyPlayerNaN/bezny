@@ -12,8 +12,13 @@
 	"dependencies": {
 		"@astrojs/react": "^4.3.0",
 		"@astrojs/starlight": "^0.35.0",
+		"@bezny/alert": "workspace:*",
+		"@bezny/avatar": "workspace:*",
 		"@bezny/button": "workspace:*",
+		"@bezny/dialog": "workspace:*",
+		"@bezny/layout": "workspace:*",
 		"@bezny/styles": "workspace:*",
+		"@bezny/text": "workspace:*",
 		"astro": "^5.10.0",
 		"react": "catalog:",
 		"react-dom": "catalog:",

@@ -1,0 +1,95 @@
+---
+title: Layout
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Layout primitives for arranging content: flex stacks, width containers, and semantic HTML wrappers.
+
+```tsx
+import { Stack, Container, Article, Section, Aside, Main } from "@bezny/layout";
+```
+
+## Examples
+
+### Vertical Stack
+
+<LivePreview client:load code={`<Stack gap={2}>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 1</div>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 2</div>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 3</div>
+</Stack>`} />
+
+### Horizontal Stack
+
+<LivePreview client:load code={`<Stack direction="horizontal" gap={3}>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 1</div>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 2</div>
+  <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>Item 3</div>
+</Stack>`} />
+
+### Container
+
+The Container component constrains content width with four size options.
+
+<LivePreview client:load code={`<div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+  <Container maxWidth="sm">
+    <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>sm (576px)</div>
+  </Container>
+  <Container maxWidth="md">
+    <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>md (768px)</div>
+  </Container>
+  <Container maxWidth="lg">
+    <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>lg (992px)</div>
+  </Container>
+  <Container maxWidth="xl">
+    <div style={{ padding: "8px", background: "var(--sl-color-gray-6)" }}>xl (1200px)</div>
+  </Container>
+</div>`} />
+
+### Semantic Elements
+
+The `Article`, `Section`, and `Aside` components render their respective HTML elements and automatically wrap children in a `HeadingLevelProvider` for proper heading level management.
+
+<LivePreview client:load code={`<Article>
+  <Heading>Article Heading (h1)</Heading>
+  <Section>
+    <Heading>Section Heading (h2)</Heading>
+    <Paragraph>Content inside a section within an article.</Paragraph>
+  </Section>
+</Article>`} />
+
+## API Reference
+
+### Stack
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `direction` | `"vertical" \| "horizontal"` | `"vertical"` | Layout direction |
+| `gap` | `number` | — | Gap between items in 4px units (e.g. `gap={2}` = 8px) |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Stack content |
+
+### Container
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `maxWidth` | `"sm" \| "md" \| "lg" \| "xl"` | — | Maximum width (576px, 768px, 992px, 1200px) |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Container content |
+
+### Article
+
+Renders an `<article>` element wrapped in a `HeadingLevelProvider`. Accepts all native `<article>` attributes.
+
+### Section
+
+Renders a `<section>` element wrapped in a `HeadingLevelProvider`. Accepts all native `<section>` attributes.
+
+### Aside
+
+Renders an `<aside>` element wrapped in a `HeadingLevelProvider`. Accepts all native `<aside>` attributes.
+
+### Main
+
+Renders a `<main>` element. Accepts all native `<main>` attributes.

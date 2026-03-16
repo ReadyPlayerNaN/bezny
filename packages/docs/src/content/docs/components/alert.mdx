@@ -1,0 +1,39 @@
+---
+title: Alert
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A styled alert component with semantic roles for different message types.
+
+```tsx
+import { Alert } from "@bezny/alert";
+```
+
+## Examples
+
+### Variants
+
+The Alert component supports three variants: `success`, `warning`, and `error`.
+
+<LivePreview client:load code={`<div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+  <Alert variant="success">Operation completed successfully.</Alert>
+  <Alert variant="warning">Please review your input before continuing.</Alert>
+  <Alert variant="error">Something went wrong. Please try again.</Alert>
+</div>`} />
+
+## API Reference
+
+### Alert
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `"success" \| "warning" \| "error"` | **required** | Visual style and semantic role |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Alert content |
+
+### Accessibility
+
+The component automatically assigns ARIA roles based on variant:
+- `success` uses `role="status"`
+- `warning` and `error` use `role="alert"`

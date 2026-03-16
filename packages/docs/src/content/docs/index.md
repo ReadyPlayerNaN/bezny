@@ -12,12 +12,14 @@ pnpm add @bezny/button @bezny/styles
 
 ## Setup
 
-Import the theme CSS in your application entry point:
+Import the default theme CSS in your application entry point:
 
 ```css
 @import "@bezny/styles/theme.css";
 @import "@bezny/button/index.css";
 ```
+
+To create a custom theme instead, see the [Theming](/theming/overview/) guide.
 
 ## Usage
 

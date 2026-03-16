@@ -1,20 +1,50 @@
+import { Alert } from "@bezny/alert";
+import { Avatar, AvatarStack } from "@bezny/avatar";
 import { Button, Submit } from "@bezny/button";
-import type { ReactNode } from "react";
+import { Dialog, DialogBody, DialogFooter, DialogHeader } from "@bezny/dialog";
+import { Article, Aside, Container, Main, Section, Stack } from "@bezny/layout";
+import {
+	Heading,
+	HeadingLevelProvider,
+	Label,
+	Paragraph,
+	StaticHeading,
+} from "@bezny/text";
+import React from "react";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
 
 const scope = {
-	Button: Button,
-	Submit: Submit,
+	Alert,
+	Article,
+	Aside,
+	Avatar,
+	AvatarStack,
+	Button,
+	Container,
+	Dialog,
+	DialogBody,
+	DialogFooter,
+	DialogHeader,
+	Heading,
+	HeadingLevelProvider,
+	Label,
+	Main,
+	Paragraph,
+	React,
+	Section,
+	Stack,
+	StaticHeading,
+	Submit,
 };
 
-function BeznyWrapper({ children }: { children: ReactNode }) {
-	return <div data-theme="light">{children}</div>;
-}
-
-export default function LiveCodePreview({ code }: { code: string }) {
+export default function LiveCodePreview({
+	code,
+	noInline,
+}: { code: string; noInline?: boolean }) {
 	return (
-		<LiveProvider code={code} scope={scope}>
+		<LiveProvider code={code} scope={scope} noInline={noInline}>
 			<div
+				className="not-content"
 				style={{
 					border: "1px solid var(--sl-color-gray-5)",
 					borderRadius: "0.5rem",
@@ -27,9 +57,7 @@ export default function LiveCodePreview({ code }: { code: string }) {
 						borderBottom: "1px solid var(--sl-color-gray-5)",
 					}}
 				>
-					<BeznyWrapper>
-						<LivePreview />
-					</BeznyWrapper>
+					<LivePreview />
 				</div>
 				<LiveEditor style={{ fontSize: "0.875rem" }} />
 			</div>

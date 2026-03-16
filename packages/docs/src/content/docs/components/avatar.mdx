@@ -1,0 +1,61 @@
+---
+title: Avatar
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Displays user avatars with initials fallback and Gravatar support.
+
+```tsx
+import { Avatar, AvatarStack } from "@bezny/avatar";
+```
+
+## Examples
+
+### Sizes
+
+The Avatar component supports three sizes: `sm`, `md`, and `lg`.
+
+<LivePreview client:load code={`<div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+  <Avatar name="Alice Smith" email="alice@example.com" size="sm" />
+  <Avatar name="Bob Jones" email="bob@example.com" size="md" />
+  <Avatar name="Carol White" email="carol@example.com" size="lg" />
+</div>`} />
+
+### Avatar Stack
+
+The AvatarStack component displays multiple avatars in an overlapping stack with an overflow count.
+
+<LivePreview client:load code={`<AvatarStack
+  users={[
+    { name: "Alice Smith", email: "alice@example.com" },
+    { name: "Bob Jones", email: "bob@example.com" },
+    { name: "Carol White", email: "carol@example.com" },
+    { name: "Dave Brown", email: "dave@example.com" },
+    { name: "Eve Green", email: "eve@example.com" },
+    { name: "Frank Black", email: "frank@example.com" },
+  ]}
+  max={4}
+/>`} />
+
+## API Reference
+
+### Avatar
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `name` | `string` | **required** | User's display name (used for alt text and initials fallback) |
+| `email` | `string` | **required** | User's email (used for Gravatar lookup) |
+| `avatarUrl` | `string \| null` | `null` | Custom avatar image URL |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Avatar size (24px, 40px, 64px) |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+
+### AvatarStack
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `users` | `AvatarStackUser[]` | **required** | Array of user objects with `name`, `email`, and optional `avatarUrl` |
+| `max` | `number` | `4` | Maximum visible avatars before overflow |
+| `size` | `"sm" \| "md" \| "lg"` | `"sm"` | Size of each avatar |
+| `onClick` | `() => void` | — | Click handler (renders as button when provided) |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |

@@ -1,0 +1,89 @@
+---
+title: Dialog
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A modal dialog built on the native `<dialog>` element with `showModal()` support.
+
+```tsx
+import { Dialog, DialogHeader, DialogBody, DialogFooter } from "@bezny/dialog";
+```
+
+## Examples
+
+### Basic Dialog
+
+A modal dialog with header, body, and footer sections.
+
+<LivePreview client:load noInline code={`function DialogDemo() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)}>Open Dialog</Button>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogHeader onClose={() => setOpen(false)}>Dialog Title</DialogHeader>
+        <DialogBody>This is the dialog content.</DialogBody>
+        <DialogFooter>
+          <Button variant="ghost" onClick={() => setOpen(false)}>Cancel</Button>
+          <Button variant="primary" onClick={() => setOpen(false)}>Confirm</Button>
+        </DialogFooter>
+      </Dialog>
+    </div>
+  );
+}
+render(<DialogDemo />);`} />
+
+### Dialog without Close Button
+
+Omit the `onClose` prop from `DialogHeader` to hide the close button.
+
+<LivePreview client:load noInline code={`function DialogDemo() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <div>
+      <Button onClick={() => setOpen(true)}>Open Dialog</Button>
+      <Dialog open={open} onClose={() => setOpen(false)}>
+        <DialogHeader>No Close Button</DialogHeader>
+        <DialogBody>Close by clicking the backdrop or pressing Escape.</DialogBody>
+        <DialogFooter>
+          <Button variant="primary" onClick={() => setOpen(false)}>OK</Button>
+        </DialogFooter>
+      </Dialog>
+    </div>
+  );
+}
+render(<DialogDemo />);`} />
+
+## API Reference
+
+### Dialog
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | **required** | Controls dialog visibility |
+| `onClose` | `() => void` | **required** | Called on Escape press or backdrop click |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Dialog content |
+
+### DialogHeader
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `onClose` | `() => void` | — | Shows a close button when provided |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Header content |
+
+### DialogBody
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Body content |
+
+### DialogFooter
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Footer content |
