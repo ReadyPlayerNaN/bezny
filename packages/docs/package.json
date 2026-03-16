@@ -20,6 +20,7 @@
 		"@bezny/dialog": "workspace:*",
 		"@bezny/drawer": "workspace:*",
 		"@bezny/dropdown": "workspace:*",
+		"@bezny/input": "workspace:*",
 		"@bezny/layout": "workspace:*",
 		"@bezny/navbar": "workspace:*",
 		"@bezny/navigation": "workspace:*",
