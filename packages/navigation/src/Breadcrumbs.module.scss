@@ -14,17 +14,17 @@
 .breadcrumbItem {
 	display: inline-flex;
 	align-items: center;
-	color: var(--breadcrumb-color);
-	transition: color var(--transition-default);
+	color: var(--bzn-breadcrumb-color);
+	transition: color var(--bzn-transition);
 
 	&:last-child {
-		color: var(--breadcrumb-active-color);
+		color: var(--bzn-breadcrumb-active-color);
 		font-weight: 500;
 	}
 
 	&:not(:last-child)::after {
 		content: '/';
-		color: var(--breadcrumb-separator-color);
+		color: var(--bzn-breadcrumb-separator-color);
 		margin: 0 size(2);
 		pointer-events: none;
 	}

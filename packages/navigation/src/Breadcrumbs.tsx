@@ -1,19 +1,18 @@
+import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
 import React, { cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
 import styles from "./Breadcrumbs.module.scss";
 
-export type BreadcrumbItemProps = {
-	children?: ReactNode;
+export type BreadcrumbItemOwnProps = {
 	className?: ClassValue;
 };
 
-export function BreadcrumbItem({ children, className, ...rest }: BreadcrumbItemProps & Record<string, unknown>) {
-	return (
-		<li className={clsx(styles.breadcrumbItem, className)} {...rest}>
-			{children}
-		</li>
-	);
-}
+export const BreadcrumbItem = createPolymorphic<"li", BreadcrumbItemOwnProps>(
+	"li",
+	(Tag, { className }, { className: _, ...rest }) => (
+		<Tag className={clsx(styles.breadcrumbItem, className)} {...rest} />
+	),
+);
 
 export type BreadcrumbsProps = {
 	children?: ReactNode;

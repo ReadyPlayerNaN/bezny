@@ -1,25 +1,30 @@
+import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
 import type { ReactNode } from "react";
 import { useNavbar } from "./NavbarContext";
 import styles from "./NavbarToggle.module.scss";
 
-export type NavbarToggleProps = {
+export type NavbarToggleOwnProps = {
 	children?: ReactNode;
 	className?: ClassValue;
 };
 
-export function NavbarToggle({ children, className }: NavbarToggleProps) {
-	const { expanded, onToggle } = useNavbar();
+export const NavbarToggle = createPolymorphic<"button", NavbarToggleOwnProps>(
+	"button",
+	(Tag, { children, className }, { children: _c, className: _, type = "button", ...rest }) => {
+		const { expanded, onToggle } = useNavbar();
 
-	return (
-		<button
-			aria-expanded={expanded}
-			aria-label="Toggle navigation"
-			className={clsx(styles.toggle, className)}
-			onClick={() => onToggle(!expanded)}
-			type="button"
-		>
-			{children ?? <span className={styles.icon} />}
-		</button>
-	);
-}
+		return (
+			<Tag
+				aria-expanded={expanded}
+				aria-label="Toggle navigation"
+				className={clsx(styles.toggle, className)}
+				onClick={() => onToggle(!expanded)}
+				type={type}
+				{...rest}
+			>
+				{children ?? <span className={styles.icon} />}
+			</Tag>
+		);
+	},
+);

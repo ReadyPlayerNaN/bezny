@@ -1,8 +1,8 @@
 @use 'grid' as *;
 
 .sidebar {
-	background-color: var(--sidebar-background-color);
-	border-right: 1px solid var(--sidebar-border-color);
+	background-color: var(--bzn-sidebar-bg);
+	border-right: 1px solid var(--bzn-sidebar-border);
 	display: flex;
 	flex-direction: column;
 	gap: size(4);
@@ -18,7 +18,7 @@
 }
 
 .groupLabel {
-	color: var(--sidebar-group-label-color);
+	color: var(--bzn-sidebar-group-label);
 	font-size: 0.75em;
 	font-weight: 600;
 	letter-spacing: 0.05em;

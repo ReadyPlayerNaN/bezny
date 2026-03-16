@@ -1,39 +1,39 @@
 @use 'grid' as *;
 
 .navLink {
-	color: var(--navlink-color);
+	color: var(--bzn-navlink-color);
 	padding: size(2) size(3);
 	text-decoration: none;
 	transition:
-		color var(--transition-default),
-		background-color var(--transition-default);
+		color var(--bzn-transition),
+		background-color var(--bzn-transition);
 
 	&:visited {
-		color: var(--navlink-color);
+		color: var(--bzn-navlink-color);
 	}
 
 	&:hover {
-		background-color: var(--navlink-hover-background-color);
-		color: var(--navlink-hover-color);
+		background-color: var(--bzn-navlink-hover-bg);
+		color: var(--bzn-navlink-hover-color);
 	}
 
 	&:active {
-		color: var(--navlink-color);
+		color: var(--bzn-navlink-color);
 	}
 }
 
 .active {
-	color: var(--navlink-active-color);
+	color: var(--bzn-navlink-active-color);
 
 	&:visited {
-		color: var(--navlink-active-color);
+		color: var(--bzn-navlink-active-color);
 	}
 
 	&:hover {
-		color: var(--navlink-active-hover-color);
+		color: var(--bzn-navlink-active-hover-color);
 	}
 
 	&:active {
-		color: var(--navlink-active-color);
+		color: var(--bzn-navlink-active-color);
 	}
 }

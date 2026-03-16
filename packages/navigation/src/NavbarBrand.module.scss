@@ -2,14 +2,14 @@
 @use 'typography' as *;
 
 .brand {
-	color: var(--navbar-brand-color);
+	color: var(--bzn-navbar-brand-color);
 	font-size: font-size(1);
 	font-weight: bold;
 	padding: size(2) size(1);
 	text-decoration: none;
-	transition: color var(--transition-default);
+	transition: color var(--bzn-transition);
 
 	&:hover {
-		color: var(--navbar-brand-hover-color);
+		color: var(--bzn-navbar-brand-hover-color);
 	}
 }
