@@ -24,22 +24,35 @@ const { title, description } = Astro.props;
 				var LS_SECONDARY = 'bzn-docs-secondary-hue';
 				var LS_OFFSET = 'bzn-docs-hue-offset';
 				var stored = localStorage.getItem(LS_PRIMARY);
-				if (!stored) return;
-
-				var LIGHTNESS = [97,93,85,73,62,50,45,38,30,23,15];
-				var CHROMA = [0.1,0.25,0.4,0.65,0.85,1.0,1.0,0.9,0.75,0.6,0.4];
-				var SHADES = [50,100,200,300,400,500,600,700,800,900,950];
-				var chroma = 0.19;
-				var primaryHue = Number(stored);
-				var offsetStr = localStorage.getItem(LS_OFFSET);
-				var secondaryHue = offsetStr === 'unlocked'
-					? Number(localStorage.getItem(LS_SECONDARY)) || primaryHue + 60
-					: primaryHue + (Number(offsetStr) || 60);
 				var el = document.documentElement;
-				for (var i = 0; i < SHADES.length; i++) {
-					var c = chroma * CHROMA[i];
-					el.style.setProperty('--bzn-primary-' + SHADES[i], 'oklch(' + LIGHTNESS[i] + '% ' + c + ' ' + primaryHue + ')');
-					el.style.setProperty('--bzn-secondary-' + SHADES[i], 'oklch(' + LIGHTNESS[i] + '% ' + c + ' ' + secondaryHue + ')');
+
+				if (stored) {
+					var LIGHTNESS = [97,93,85,73,62,50,45,38,30,23,15];
+					var CHROMA = [0.1,0.25,0.4,0.65,0.85,1.0,1.0,0.9,0.75,0.6,0.4];
+					var SHADES = [50,100,200,300,400,500,600,700,800,900,950];
+					var chroma = 0.19;
+					var primaryHue = Number(stored);
+					var offsetStr = localStorage.getItem(LS_OFFSET);
+					var secondaryHue = offsetStr === 'unlocked'
+						? Number(localStorage.getItem(LS_SECONDARY)) || primaryHue + 60
+						: primaryHue + (Number(offsetStr) || 60);
+					for (var i = 0; i < SHADES.length; i++) {
+						var c = chroma * CHROMA[i];
+						el.style.setProperty('--bzn-primary-' + SHADES[i], 'oklch(' + LIGHTNESS[i] + '% ' + c + ' ' + primaryHue + ')');
+						el.style.setProperty('--bzn-secondary-' + SHADES[i], 'oklch(' + LIGHTNESS[i] + '% ' + c + ' ' + secondaryHue + ')');
+					}
+				}
+
+				var prefs = {
+					'bzn-docs-color-scheme': { light: 'bzn--light', dark: 'bzn--dark' },
+					'bzn-docs-reduced-motion': { yes: 'bzn--reduce-motion', no: 'bzn--allow-motion' },
+					'bzn-docs-reduced-transparency': { yes: 'bzn--reduce-transparency', no: 'bzn--allow-transparency' }
+				};
+				for (var key in prefs) {
+					var val = localStorage.getItem(key);
+					if (val && prefs[key][val]) {
+						el.classList.add(prefs[key][val]);
+					}
 				}
 			})();
 		</script>
