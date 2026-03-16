@@ -21,6 +21,14 @@
 	top: 0;
 	transform: translateX(100%);
 	width: 100%;
+
+	&.panelVisible {
+		transform: translate(0);
+
+		@starting-style {
+			transform: translateX(100%);
+		}
+	}
 }
 
 .panelLeft {
@@ -31,6 +39,14 @@
 	top: 0;
 	transform: translateX(-100%);
 	width: 100%;
+
+	&.panelVisible {
+		transform: translate(0);
+
+		@starting-style {
+			transform: translateX(-100%);
+		}
+	}
 }
 
 .panelTop {
@@ -42,6 +58,14 @@
 	top: 0;
 	transform: translateY(-100%);
 	width: 100%;
+
+	&.panelVisible {
+		transform: translate(0);
+
+		@starting-style {
+			transform: translateY(-100%);
+		}
+	}
 }
 
 .panelBottom {
@@ -53,10 +77,14 @@
 	right: 0;
 	transform: translateY(100%);
 	width: 100%;
-}
 
-.panelVisible {
-	transform: translate(0);
+	&.panelVisible {
+		transform: translate(0);
+
+		@starting-style {
+			transform: translateY(100%);
+		}
+	}
 }
 
 .close {
