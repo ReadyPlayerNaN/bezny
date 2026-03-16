@@ -9,7 +9,7 @@ import { Dropdown } from "@bezny/dropdown";
 import { Article, Aside, Container, Main, Section, Stack } from "@bezny/layout";
 import { Navbar, NavbarBrand, NavbarCollapse, NavbarToggle } from "@bezny/navbar";
 import { Overlay } from "@bezny/overlay";
-import { Heading, HeadingLevelProvider, Label, Paragraph, StaticHeading } from "@bezny/text";
+import { Heading, HeadingLevelProvider, Label, Link, Paragraph, StaticHeading } from "@bezny/text";
 import React from "react";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
 
@@ -37,6 +37,7 @@ const scope = {
 	Heading: Heading,
 	HeadingLevelProvider: HeadingLevelProvider,
 	Label: Label,
+	Link: Link,
 	Main: Main,
 	Navbar: Navbar,
 	NavbarBrand: NavbarBrand,

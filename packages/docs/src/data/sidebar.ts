@@ -29,6 +29,7 @@ export const sidebarGroups: SidebarGroup[] = [
 			{ label: "Dropdown", href: "/components/dropdown/" },
 			{ label: "Heading", href: "/components/heading/" },
 			{ label: "Label", href: "/components/label/" },
+			{ label: "Link", href: "/components/link/" },
 			{ label: "Navbar", href: "/components/navbar/" },
 			{ label: "Overlay", href: "/components/overlay/" },
 			{ label: "Paragraph", href: "/components/paragraph/" },

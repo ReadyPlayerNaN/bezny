@@ -1,0 +1,32 @@
+---
+title: Link
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A styled anchor component with automatic `rel` handling for external links.
+
+```tsx
+import { Link } from "@bezny/text";
+```
+
+## Examples
+
+### Basic Link
+
+<LivePreview client:load code={`<Link href="https://example.com">Visit Example</Link>`} />
+
+### External Link
+
+<LivePreview client:load code={`<Link href="https://example.com" target="_blank">Opens in new tab</Link>`} />
+
+## API Reference
+
+### Link
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Link content |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `href` | `string` | — | Link destination URL |
+| `target` | `string` | — | Link target; when `"_blank"`, automatically adds `rel="noopener noreferrer"` |
