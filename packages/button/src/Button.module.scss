@@ -11,10 +11,10 @@
   font-family: inherit;
   font-size: font-size(1);
   line-height: size(6);
-  padding: size(1.5) size(3);
+  padding: size(1.5) size(3.5);
 }
 
-.default {
+.neutral {
   --bzn-interactive-bg: var(--bzn-neutral-bg);
   --bzn-interactive-border: color-mix(in oklch, var(--bzn-neutral-bg) 80%, black);
   --bzn-interactive-color: var(--bzn-text);

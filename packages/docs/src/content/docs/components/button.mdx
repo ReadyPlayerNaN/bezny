@@ -14,10 +14,11 @@ import { Button, Submit } from "@bezny/button";
 
 ### Variants
 
-The Button component supports three variants: `primary` (default), `secondary`, and `ghost`.
+The Button component supports four variants: `default`, `primary`, `secondary`, and `ghost`.
 
 <LivePreview client:load code={`<div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-  <Button>Primary (default)</Button>
+  <Button>Default</Button>
+  <Button variant="primary">Primary</Button>
   <Button variant="secondary">Secondary</Button>
   <Button variant="ghost">Ghost</Button>
 </div>`} />
@@ -25,7 +26,8 @@ The Button component supports three variants: `primary` (default), `secondary`, 
 ### Disabled State
 
 <LivePreview client:load code={`<div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-  <Button disabled>Primary (default)</Button>
+  <Button disabled>Default</Button>
+  <Button variant="primary" disabled>Primary</Button>
   <Button variant="secondary" disabled>Secondary</Button>
   <Button variant="ghost" disabled>Ghost</Button>
 </div>`} />
@@ -64,7 +66,7 @@ When using `asChild`, the component passes its computed props (className, etc.) 
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `"primary" \| "secondary" \| "ghost"` | `"primary"` | Visual style variant |
+| `variant` | `"default" \| "primary" \| "secondary" \| "ghost"` | `"default"` | Visual style variant |
 | `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
 | `asChild` | `ElementType` | — | Render as a different HTML tag or React component |
 | `type` | `"button" \| "submit" \| "reset"` | `"button"` | HTML button type |
