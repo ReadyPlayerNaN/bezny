@@ -21,8 +21,8 @@ import ColourSelectorReact from './ColourSelector.tsx';
   var primaryHue = Number(stored);
   var linked = localStorage.getItem(LS_LINKED) !== 'false';
   var secondaryHue = linked
-    ? primaryHue + 30
-    : Number(localStorage.getItem(LS_SECONDARY)) || primaryHue + 30;
+    ? primaryHue + 60
+    : Number(localStorage.getItem(LS_SECONDARY)) || primaryHue + 60;
   var el = document.documentElement;
   for (var i = 0; i < SHADES.length; i++) {
     var c = chroma * CHROMA[i];
