@@ -5,8 +5,8 @@
 }
 
 .panel {
-	background-color: var(--drawer-background-color);
-	border-left: 1px solid var(--drawer-border-color);
+	background-color: var(--bzn-drawer-bg);
+	border-left: 1px solid var(--bzn-drawer-border);
 	display: flex;
 	flex-direction: column;
 	height: 100%;
@@ -18,31 +18,31 @@
 }
 
 .panelRight {
-	border-left: 1px solid var(--drawer-border-color);
+	border-left: 1px solid var(--bzn-drawer-border);
 	border-right: none;
 	right: 0;
 }
 
 .panelLeft {
 	border-left: none;
-	border-right: 1px solid var(--drawer-border-color);
+	border-right: 1px solid var(--bzn-drawer-border);
 	left: 0;
 }
 
 .close {
 	background: none;
 	border: none;
-	color: var(--drawer-close-button-color);
+	color: var(--bzn-drawer-close-color);
 	font-size: size(5);
 	line-height: 1;
 	padding: size(2);
 	position: absolute;
 	right: size(2);
 	top: size(2);
-	transition: color var(--transition-default);
+	transition: color var(--bzn-transition);
 
 	&:hover {
-		color: var(--drawer-close-button-hover-color);
+		color: var(--bzn-drawer-close-hover-color);
 	}
 }
 

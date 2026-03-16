@@ -16,12 +16,23 @@
   --#{$prefix}-border: var(--#{$prefix}-neutral-700);
   --#{$prefix}-border-muted: var(--#{$prefix}-neutral-800);
 
-  // Interactive
+  // Interactive — primary
   --#{$prefix}-interactive: var(--#{$prefix}-primary-600);
   --#{$prefix}-interactive-hover: var(--#{$prefix}-primary-500);
   --#{$prefix}-interactive-active: var(--#{$prefix}-primary-700);
   --#{$prefix}-interactive-disabled: var(--#{$prefix}-neutral-700);
   --#{$prefix}-interactive-disabled-text: var(--#{$prefix}-neutral-400);
+
+  // Interactive — secondary
+  --#{$prefix}-interactive-secondary: var(--#{$prefix}-secondary-600);
+  --#{$prefix}-interactive-secondary-hover: var(--#{$prefix}-secondary-500);
+  --#{$prefix}-interactive-secondary-active: var(--#{$prefix}-secondary-700);
+  --#{$prefix}-text-on-secondary: var(--#{$prefix}-neutral-50);
+
+  // Interactive — neutral
+  --#{$prefix}-neutral-bg: var(--#{$prefix}-neutral-800);
+  --#{$prefix}-neutral-bg-hover: var(--#{$prefix}-neutral-700);
+  --#{$prefix}-neutral-bg-active: var(--#{$prefix}-neutral-900);
 
   // Focus
   --#{$prefix}-focus-ring: var(--#{$prefix}-primary-400);
@@ -38,7 +49,11 @@
   --#{$prefix}-error-text: var(--#{$prefix}-danger-100);
 
   // Motion
+  --#{$prefix}-transition-blink: 60ms;
+  --#{$prefix}-transition-brief: 120ms;
   --#{$prefix}-transition: 200ms;
+  --#{$prefix}-transition-immersive: 600ms;
+  --#{$prefix}-transition-theatrical: 1800ms;
   --#{$prefix}-transition-fn: ease;
 
   // Transparency
@@ -61,12 +76,23 @@
   --#{$prefix}-border: var(--#{$prefix}-neutral-200);
   --#{$prefix}-border-muted: var(--#{$prefix}-neutral-100);
 
-  // Interactive
+  // Interactive — primary
   --#{$prefix}-interactive: var(--#{$prefix}-primary-700);
   --#{$prefix}-interactive-hover: var(--#{$prefix}-primary-600);
   --#{$prefix}-interactive-active: var(--#{$prefix}-primary-800);
   --#{$prefix}-interactive-disabled: var(--#{$prefix}-neutral-200);
   --#{$prefix}-interactive-disabled-text: var(--#{$prefix}-neutral-400);
+
+  // Interactive — secondary
+  --#{$prefix}-interactive-secondary: var(--#{$prefix}-secondary-700);
+  --#{$prefix}-interactive-secondary-hover: var(--#{$prefix}-secondary-600);
+  --#{$prefix}-interactive-secondary-active: var(--#{$prefix}-secondary-800);
+  --#{$prefix}-text-on-secondary: var(--#{$prefix}-neutral-50);
+
+  // Interactive — neutral
+  --#{$prefix}-neutral-bg: var(--#{$prefix}-neutral-200);
+  --#{$prefix}-neutral-bg-hover: var(--#{$prefix}-neutral-300);
+  --#{$prefix}-neutral-bg-active: var(--#{$prefix}-neutral-100);
 
   // Focus
   --#{$prefix}-focus-ring: var(--#{$prefix}-primary-700);

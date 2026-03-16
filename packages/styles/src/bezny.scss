@@ -5,23 +5,29 @@
   @include bzn.theme();
 }
 
+// Focus
+:focus-visible {
+  outline: size(0.5) solid var(--bzn-focus-ring);
+  outline-offset: size(0.5);
+}
+
 // Link base styles
 a {
-  color: var(--link-color);
+  color: var(--bzn-link-color);
   text-decoration: underline;
   text-underline-offset: size(0.5);
   transition: color var(--bzn-transition);
 
   &:visited {
-    color: var(--link-visited-color);
+    color: var(--bzn-link-visited-color);
   }
 
   &:hover {
-    color: var(--link-hover-color);
+    color: var(--bzn-link-hover-color);
   }
 
   &:active {
-    color: var(--link-active-color);
+    color: var(--bzn-link-active-color);
   }
 }
 

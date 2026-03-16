@@ -12,6 +12,7 @@
 // $prefix: CSS variable prefix
 @mixin theme(
   $primary: $bordeaux,
+  $secondary: null,
   $neutral: $slate,
   $success: $emerald,
   $warning: $amber,
@@ -19,8 +20,14 @@
   $transition: 200ms,
   $prefix: 'bzn',
 ) {
+  // Compute secondary as complementary of primary when not provided
+  @if not $secondary {
+    $secondary: shade.complementary($primary);
+  }
+
   // Tier 1: Primitives
   @include shade.shade-scale('primary', $primary, $prefix);
+  @include shade.shade-scale('secondary', $secondary, $prefix);
   @include shade.shade-scale('neutral', $neutral, $prefix);
   @include shade.shade-scale('success', $success, $prefix);
   @include shade.shade-scale('warning', $warning, $prefix);
@@ -66,6 +73,7 @@
   @media (prefers-contrast: more) {
     :root:not(.bzn--no-high-contrast) {
       @include semantic.high-contrast($prefix);
+      --#{$prefix}-heading-gradient: var(--#{$prefix}-heading-color);
     }
 
     // High contrast + light
@@ -79,18 +87,27 @@
   // High contrast: forced
   .bzn--high-contrast {
     @include semantic.high-contrast($prefix);
+    --#{$prefix}-heading-gradient: var(--#{$prefix}-heading-color);
   }
 
   // Reduced motion: auto
   @media (prefers-reduced-motion: reduce) {
     :root:not(.bzn--allow-motion) {
+      --#{$prefix}-transition-blink: 0ms;
+      --#{$prefix}-transition-brief: 0ms;
       --#{$prefix}-transition: 0ms;
+      --#{$prefix}-transition-immersive: 0ms;
+      --#{$prefix}-transition-theatrical: 0ms;
     }
   }
 
   // Reduced motion: forced
   .bzn--reduce-motion {
+    --#{$prefix}-transition-blink: 0ms;
+    --#{$prefix}-transition-brief: 0ms;
     --#{$prefix}-transition: 0ms;
+    --#{$prefix}-transition-immersive: 0ms;
+    --#{$prefix}-transition-theatrical: 0ms;
   }
 
   // Reduced transparency: auto

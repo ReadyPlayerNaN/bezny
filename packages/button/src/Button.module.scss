@@ -1,28 +1,96 @@
-@use 'grid' as *;
-@use 'typography' as *;
-@use 'reactions' as *;
+@use "grid" as *;
+@use "typography" as *;
+@use "reactions" as *;
 
 .button {
-  @include button-variant(primary);
   @include interactive;
 
   border-width: 1px;
   border-style: solid;
-  border-radius: var(--button-radius);
+  border-radius: var(--bzn-button-radius);
   font-family: inherit;
   font-size: font-size(1);
   line-height: size(6);
-  padding: size(2) size(4);
+  padding: size(1.5) size(3);
+}
+
+.default {
+  --bzn-interactive-bg: var(--bzn-neutral-bg);
+  --bzn-interactive-border: color-mix(in oklch, var(--bzn-neutral-bg) 80%, black);
+  --bzn-interactive-color: var(--bzn-text);
+  --bzn-interactive-hover-bg: var(--bzn-neutral-bg-hover);
+  --bzn-interactive-hover-border: color-mix(in oklch, var(--bzn-neutral-bg-hover) 80%, white);
+  --bzn-interactive-hover-color: var(--bzn-text);
+  --bzn-interactive-active-bg: var(--bzn-neutral-bg-active);
+  --bzn-interactive-active-border: color-mix(in oklch, var(--bzn-neutral-bg-active) 80%, black);
+  --bzn-interactive-active-color: var(--bzn-text);
+  --bzn-interactive-disabled-bg: var(--bzn-interactive-disabled);
+  --bzn-interactive-disabled-border: var(--bzn-interactive-disabled);
+  --bzn-interactive-disabled-color: var(--bzn-interactive-disabled-text);
 }
 
 .primary {
-  @include button-variant(primary);
+  --bzn-interactive-bg: var(--bzn-interactive);
+  --bzn-interactive-border: color-mix(in oklch, var(--bzn-interactive) 80%, black);
+  --bzn-interactive-color: var(--bzn-text-on-primary);
+  --bzn-interactive-hover-bg: var(--bzn-interactive-hover);
+  --bzn-interactive-hover-border: color-mix(in oklch, var(--bzn-interactive-hover) 80%, white);
+  --bzn-interactive-hover-color: var(--bzn-text-on-primary);
+  --bzn-interactive-active-bg: var(--bzn-interactive-active);
+  --bzn-interactive-active-border: color-mix(in oklch, var(--bzn-interactive-active) 80%, black);
+  --bzn-interactive-active-color: var(--bzn-text-on-primary);
+  --bzn-interactive-disabled-bg: var(--bzn-interactive-disabled);
+  --bzn-interactive-disabled-border: var(--bzn-interactive-disabled);
+  --bzn-interactive-disabled-color: var(--bzn-interactive-disabled-text);
 }
 
 .secondary {
-  @include button-variant(secondary);
+  --bzn-interactive-bg: var(--bzn-interactive-secondary);
+  --bzn-interactive-border: color-mix(in oklch, var(--bzn-interactive-secondary) 80%, black);
+  --bzn-interactive-color: var(--bzn-text-on-secondary);
+  --bzn-interactive-hover-bg: var(--bzn-interactive-secondary-hover);
+  --bzn-interactive-hover-border: color-mix(in oklch, var(--bzn-interactive-secondary-hover) 80%, white);
+  --bzn-interactive-hover-color: var(--bzn-text-on-secondary);
+  --bzn-interactive-active-bg: var(--bzn-interactive-secondary-active);
+  --bzn-interactive-active-border: color-mix(in oklch, var(--bzn-interactive-secondary-active) 80%, black);
+  --bzn-interactive-active-color: var(--bzn-text-on-secondary);
+  --bzn-interactive-disabled-bg: var(--bzn-interactive-disabled);
+  --bzn-interactive-disabled-border: var(--bzn-interactive-disabled);
+  --bzn-interactive-disabled-color: var(--bzn-interactive-disabled-text);
 }
 
 .ghost {
-  @include button-variant(ghost);
+  --bzn-interactive-bg: transparent;
+  --bzn-interactive-border: transparent;
+  --bzn-interactive-color: var(--bzn-text);
+  --bzn-interactive-hover-bg: var(--bzn-surface-raised);
+  --bzn-interactive-hover-border: transparent;
+  --bzn-interactive-hover-color: var(--bzn-text);
+  --bzn-interactive-active-bg: var(--bzn-surface-overlay);
+  --bzn-interactive-active-border: transparent;
+  --bzn-interactive-active-color: var(--bzn-text);
+  --bzn-interactive-disabled-bg: transparent;
+  --bzn-interactive-disabled-border: transparent;
+  --bzn-interactive-disabled-color: var(--bzn-interactive-disabled-text);
+}
+
+.link {
+  --bzn-interactive-bg: transparent;
+  --bzn-interactive-border: transparent;
+  --bzn-interactive-color: var(--bzn-link-color);
+  --bzn-interactive-hover-bg: transparent;
+  --bzn-interactive-hover-border: transparent;
+  --bzn-interactive-hover-color: var(--bzn-link-hover-color);
+  --bzn-interactive-active-bg: transparent;
+  --bzn-interactive-active-border: transparent;
+  --bzn-interactive-active-color: var(--bzn-link-active-color);
+  --bzn-interactive-disabled-bg: transparent;
+  --bzn-interactive-disabled-border: transparent;
+  --bzn-interactive-disabled-color: var(--bzn-interactive-disabled-text);
+
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }

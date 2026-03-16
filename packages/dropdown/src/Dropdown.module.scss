@@ -1,10 +1,10 @@
 @use 'grid' as *;
 
 .dropdown {
-	background-color: var(--dropdown-background-color);
-	border: 1px solid var(--dropdown-border-color);
-	border-radius: var(--dropdown-border-radius);
-	box-shadow: 0 size(2) size(4) var(--dropdown-shadow-color);
+	background-color: var(--bzn-dropdown-bg);
+	border: 1px solid var(--bzn-dropdown-border);
+	border-radius: var(--bzn-dropdown-radius);
+	box-shadow: 0 size(2) size(4) var(--bzn-dropdown-shadow);
 	position: absolute;
 	z-index: 200;
 }
