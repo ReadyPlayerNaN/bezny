@@ -2,7 +2,7 @@
 @use 'typography' as *;
 
 .label {
-	color: var(--label-color);
+	color: var(--bzn-label-color);
 	display: block;
 	font-size: font-size(0.875);
 	font-weight: 500;

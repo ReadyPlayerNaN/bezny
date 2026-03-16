@@ -1,12 +1,14 @@
+import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
-import type { ReactNode } from "react";
 import styles from "./Paragraph.module.scss";
 
-type ParagraphProps = {
-	children?: ReactNode;
+export type ParagraphOwnProps = {
 	className?: ClassValue;
 };
 
-export function Paragraph({ children, className }: ParagraphProps) {
-	return <p className={clsx(styles.paragraph, className)}>{children}</p>;
-}
+export const Paragraph = createPolymorphic<"p", ParagraphOwnProps>(
+	"p",
+	(Tag, { className }, { className: _, ...rest }) => (
+		<Tag className={clsx(styles.paragraph, className)} {...rest} />
+	),
+);

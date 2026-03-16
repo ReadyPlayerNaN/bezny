@@ -1,17 +1,14 @@
+import { createPolymorphic } from "@bezny/styles";
 import clsx, { type ClassValue } from "clsx";
-import type { ReactNode } from "react";
 import styles from "./Label.module.scss";
 
-export type LabelProps = {
-	children?: ReactNode;
+export type LabelOwnProps = {
 	className?: ClassValue;
-	htmlFor?: string;
 };
 
-export function Label({ children, className, htmlFor }: LabelProps) {
-	return (
-		<label className={clsx(styles.label, className)} htmlFor={htmlFor}>
-			{children}
-		</label>
-	);
-}
+export const Label = createPolymorphic<"label", LabelOwnProps>(
+	"label",
+	(Tag, { className }, { className: _, ...rest }) => (
+		<Tag className={clsx(styles.label, className)} {...rest} />
+	),
+);

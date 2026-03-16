@@ -11,7 +11,7 @@ export type HeadingLevelProviderProps = {
 
 export function HeadingLevelProvider({ children, level }: HeadingLevelProviderProps) {
 	const current = useHeadingLevel();
-	const next = level ?? (Math.min(current + 1, MAX_HEADING_LEVEL) as HeadingLevel);
+	const next = level ?? (current == null ? 0 : (Math.min(current + 1, MAX_HEADING_LEVEL) as HeadingLevel));
 
 	return <HeadingLevelContext value={next}>{children}</HeadingLevelContext>;
 }
