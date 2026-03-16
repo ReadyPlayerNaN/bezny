@@ -1,0 +1,44 @@
+@use 'grid' as *;
+
+.option {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	padding: size(1) size(3);
+	border: 1px solid var(--bzn-button-group-border);
+	background: var(--bzn-button-group-bg);
+	color: var(--bzn-button-group-color);
+	font: inherit;
+	font-size: 0.85em;
+	cursor: pointer;
+	user-select: none;
+	transition: background-color var(--bzn-transition), color var(--bzn-transition);
+	margin-left: -1px;
+
+	&:first-child {
+		margin-left: 0;
+		border-radius: size(1.5) 0 0 size(1.5);
+	}
+
+	&:last-child {
+		border-radius: 0 size(1.5) size(1.5) 0;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--bzn-button-group-selected-bg);
+		outline-offset: 2px;
+		z-index: 1;
+	}
+}
+
+.selected {
+	background: var(--bzn-button-group-selected-bg);
+	color: var(--bzn-button-group-selected-color);
+	border-color: var(--bzn-button-group-selected-bg);
+	z-index: 1;
+}
+
+.disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
