@@ -1,5 +1,6 @@
-import clsx, { type ClassValue } from "clsx";
-import { type ChangeEvent, useId } from "react";
+import type { ClassValue } from "clsx";
+import type { ChangeEvent } from "react";
+import { SwitchGroup, useSwitchId } from "./SwitchGroup";
 import styles from "./Radio.module.scss";
 import { useRadioGroup } from "./RadioGroupContext";
 
@@ -17,8 +18,7 @@ export type RadioProps = {
 
 export function Radio({ checked, className, defaultChecked, disabled, id, label, name, onChange, value }: RadioProps) {
 	const group = useRadioGroup();
-	const autoId = useId();
-	const inputId = id ?? autoId;
+	const inputId = useSwitchId(id);
 
 	const isDisabled = disabled ?? group?.disabled;
 	const isChecked = checked ?? (group?.value !== undefined && value !== undefined ? group.value === value : undefined);
@@ -32,7 +32,14 @@ export function Radio({ checked, className, defaultChecked, disabled, id, label,
 	};
 
 	return (
-		<label className={clsx(styles.radio, { [styles.disabled]: isDisabled }, className)} htmlFor={inputId}>
+		<SwitchGroup
+			className={className}
+			disabled={isDisabled}
+			disabledClassName={styles.disabled}
+			htmlFor={inputId}
+			label={label}
+			rootClassName={styles.radio}
+		>
 			<input
 				checked={isChecked}
 				className={styles.input}
@@ -45,7 +52,6 @@ export function Radio({ checked, className, defaultChecked, disabled, id, label,
 				value={value}
 			/>
 			<span className={styles.indicator} />
-			{label ? <span className={styles.label}>{label}</span> : null}
-		</label>
+		</SwitchGroup>
 	);
 }

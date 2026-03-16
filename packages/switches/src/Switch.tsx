@@ -1,5 +1,6 @@
-import clsx, { type ClassValue } from "clsx";
-import { type ChangeEvent, useId } from "react";
+import type { ClassValue } from "clsx";
+import type { ChangeEvent } from "react";
+import { SwitchGroup, useSwitchId } from "./SwitchGroup";
 import styles from "./Switch.module.scss";
 
 export type SwitchProps = {
@@ -13,11 +14,17 @@ export type SwitchProps = {
 };
 
 export function Switch({ checked, className, defaultChecked, disabled, id, label, onChange }: SwitchProps) {
-	const autoId = useId();
-	const inputId = id ?? autoId;
+	const inputId = useSwitchId(id);
 
 	return (
-		<label className={clsx(styles.switch, { [styles.disabled]: disabled }, className)} htmlFor={inputId}>
+		<SwitchGroup
+			className={className}
+			disabled={disabled}
+			disabledClassName={styles.disabled}
+			htmlFor={inputId}
+			label={label}
+			rootClassName={styles.switch}
+		>
 			<input
 				checked={checked}
 				className={styles.input}
@@ -30,7 +37,6 @@ export function Switch({ checked, className, defaultChecked, disabled, id, label
 			<span className={styles.track}>
 				<span className={styles.thumb} />
 			</span>
-			{label ? <span className={styles.label}>{label}</span> : null}
-		</label>
+		</SwitchGroup>
 	);
 }
