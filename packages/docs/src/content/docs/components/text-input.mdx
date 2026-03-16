@@ -1,0 +1,59 @@
+---
+title: TextInput
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A text input with floating label support and validation.
+
+```tsx
+import { TextInput } from "@bezny/input";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load code={`<TextInput label="Username" />`} />
+
+### Disabled
+
+<LivePreview client:load code={`<TextInput label="Username" disabled />`} />
+
+### With Placeholder
+
+<LivePreview client:load code={`<TextInput placeholder="Enter your name" />`} />
+
+### Controlled
+
+<LivePreview client:load noInline code={`function ControlledExample() {
+  const [value, setValue] = React.useState("");
+  return (
+    <TextInput
+      label="Name"
+      value={value}
+      onChange={setValue}
+    />
+  );
+}
+
+render(<ControlledExample />);`} />
+
+### Validation
+
+<LivePreview client:load code={`<TextInput label="Email" status="error" statusMessage="This field is required" />`} />
+
+## API Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `defaultValue` | `string` | — | Initial value (uncontrolled) |
+| `disabled` | `boolean` | — | Disables the input |
+| `label` | `string` | — | Floating label text |
+| `name` | `string` | — | HTML name attribute |
+| `onChange` | `(value: string) => void` | — | Called with the input value |
+| `placeholder` | `string` | — | Placeholder text |
+| `status` | `"error" \| "warning" \| "success"` | — | Validation status |
+| `statusMessage` | `string` | — | Validation message shown as Alert |
+| `value` | `string` | — | Controlled value |

@@ -1,0 +1,42 @@
+---
+title: YearInput
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A year input (numeric with year-appropriate defaults) with floating label support and validation.
+
+```tsx
+import { YearInput } from "@bezny/input";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load code={`<YearInput label="Year of birth" />`} />
+
+### Custom Range
+
+<LivePreview client:load code={`<YearInput label="Graduation year" min={2000} max={2030} />`} />
+
+### Validation
+
+<LivePreview client:load code={`<YearInput label="Year" status="error" statusMessage="Year out of range" />`} />
+
+## API Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `defaultValue` | `string` | — | Initial value (uncontrolled) |
+| `disabled` | `boolean` | — | Disables the input |
+| `label` | `string` | — | Floating label text |
+| `max` | `number` | `2100` | Maximum year |
+| `min` | `number` | `1900` | Minimum year |
+| `name` | `string` | — | HTML name attribute |
+| `onChange` | `(value: string) => void` | — | Called with the input value |
+| `step` | `number` | `1` | Step increment |
+| `status` | `"error" \| "warning" \| "success"` | — | Validation status |
+| `statusMessage` | `string` | — | Validation message shown as Alert |
+| `value` | `string` | — | Controlled value |

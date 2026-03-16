@@ -1,0 +1,37 @@
+---
+title: WeekInput
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A week picker input with floating label support and validation.
+
+```tsx
+import { WeekInput } from "@bezny/input";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load code={`<WeekInput label="Week" />`} />
+
+### With Constraints
+
+<LivePreview client:load code={`<WeekInput label="Sprint" min="2026-W01" max="2026-W52" />`} />
+
+## API Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `defaultValue` | `string` | — | Initial value (uncontrolled) |
+| `disabled` | `boolean` | — | Disables the input |
+| `label` | `string` | — | Floating label text |
+| `max` | `string` | — | Latest allowed week |
+| `min` | `string` | — | Earliest allowed week |
+| `name` | `string` | — | HTML name attribute |
+| `onChange` | `(value: string) => void` | — | Called with the input value |
+| `status` | `"error" \| "warning" \| "success"` | — | Validation status |
+| `statusMessage` | `string` | — | Validation message shown as Alert |
+| `value` | `string` | — | Controlled value |

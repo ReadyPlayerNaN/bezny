@@ -1,0 +1,40 @@
+---
+title: TimeInput
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A time input with floating label support and validation.
+
+```tsx
+import { TimeInput } from "@bezny/input";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load code={`<TimeInput label="Start time" />`} />
+
+### With Step
+
+<LivePreview client:load code={`<TimeInput label="Alarm" step={60} />`} />
+
+### Validation
+
+<LivePreview client:load code={`<TimeInput label="Check-in" status="success" statusMessage="Time confirmed" />`} />
+
+## API Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `defaultValue` | `string` | — | Initial value (uncontrolled) |
+| `disabled` | `boolean` | — | Disables the input |
+| `label` | `string` | — | Floating label text |
+| `name` | `string` | — | HTML name attribute |
+| `onChange` | `(value: string) => void` | — | Called with the input value |
+| `step` | `number` | — | Step in seconds |
+| `status` | `"error" \| "warning" \| "success"` | — | Validation status |
+| `statusMessage` | `string` | — | Validation message shown as Alert |
+| `value` | `string` | — | Controlled value |
