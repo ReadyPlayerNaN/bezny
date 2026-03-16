@@ -1,0 +1,37 @@
+---
+title: Breadcrumbs
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A breadcrumb navigation component that automatically marks the last item as the current page.
+
+```tsx
+import { Breadcrumbs, BreadcrumbItem } from "@bezny/breadcrumbs";
+```
+
+## Examples
+
+### Basic Breadcrumbs
+
+<LivePreview client:load code={'<Breadcrumbs>\n  <BreadcrumbItem><a href="#">Home</a></BreadcrumbItem>\n  <BreadcrumbItem><a href="#">Products</a></BreadcrumbItem>\n  <BreadcrumbItem>Current Page</BreadcrumbItem>\n</Breadcrumbs>'} />
+
+### Two Levels
+
+<LivePreview client:load code={'<Breadcrumbs>\n  <BreadcrumbItem><a href="#">Dashboard</a></BreadcrumbItem>\n  <BreadcrumbItem>Settings</BreadcrumbItem>\n</Breadcrumbs>'} />
+
+## API Reference
+
+### Breadcrumbs
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | BreadcrumbItem elements |
+
+### BreadcrumbItem
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Item content |

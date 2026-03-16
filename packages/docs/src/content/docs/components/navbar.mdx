@@ -1,0 +1,84 @@
+---
+title: Navbar
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A responsive navigation bar with collapsible sections and toggle support.
+
+```tsx
+import { Navbar, NavbarBrand, NavbarToggle, NavbarCollapse } from "@bezny/navbar";
+```
+
+## Examples
+
+### Basic Navbar
+
+<LivePreview client:load noInline code={`function NavbarDemo() {
+  return (
+    <Navbar>
+      <NavbarBrand href="#">My App</NavbarBrand>
+      <NavbarToggle />
+      <NavbarCollapse>
+        <div style={{ display: "flex", gap: "16px", padding: "8px 0" }}>
+          <a href="#">Home</a>
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+        </div>
+      </NavbarCollapse>
+    </Navbar>
+  );
+}
+render(<NavbarDemo />);`} />
+
+### Controlled Navbar
+
+<LivePreview client:load noInline code={`function NavbarDemo() {
+  const [expanded, setExpanded] = React.useState(false);
+  return (
+    <Navbar expanded={expanded} onToggle={setExpanded}>
+      <NavbarBrand href="#">Brand</NavbarBrand>
+      <NavbarToggle />
+      <NavbarCollapse>
+        <div style={{ display: "flex", gap: "16px", padding: "8px 0" }}>
+          <a href="#">Link A</a>
+          <a href="#">Link B</a>
+        </div>
+      </NavbarCollapse>
+    </Navbar>
+  );
+}
+render(<NavbarDemo />);`} />
+
+## API Reference
+
+### Navbar
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `expanded` | `boolean` | — | Controlled expanded state |
+| `onToggle` | `(expanded: boolean) => void` | — | Called when toggle is clicked (controlled mode) |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Navbar content |
+
+### NavbarBrand
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `href` | `string` | — | Renders as `<a>` when provided, `<span>` otherwise |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `children` | `ReactNode` | — | Brand content |
+
+### NavbarToggle
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `children` | `ReactNode` | — | Custom toggle content (defaults to hamburger icon) |
+
+### NavbarCollapse
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `children` | `ReactNode` | — | Collapsible content |
