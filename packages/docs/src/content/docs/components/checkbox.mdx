@@ -1,0 +1,92 @@
+---
+title: Checkbox
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A styled checkbox input with label support, indeterminate state, and group composition via CheckboxGroup.
+
+```tsx
+import { Checkbox, CheckboxGroup } from "@bezny/switches";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load code={`<Checkbox label="Accept terms and conditions" />`} />
+
+### Disabled
+
+<LivePreview client:load code={`<Checkbox label="Disabled checkbox" disabled />`} />
+
+### Indeterminate
+
+<LivePreview client:load code={`<Checkbox label="Select all" indeterminate />`} />
+
+### Controlled
+
+<LivePreview client:load noInline code={`function ControlledCheckbox() {
+  const [checked, setChecked] = React.useState(false);
+  return (
+    <Checkbox
+      label={checked ? "Checked" : "Unchecked"}
+      checked={checked}
+      onChange={(e) => setChecked(e.target.checked)}
+    />
+  );
+}
+
+render(<ControlledCheckbox />);`} />
+
+### CheckboxGroup
+
+Use CheckboxGroup to manage multiple checkboxes as a group with shared state.
+
+<LivePreview client:load noInline code={`function CheckboxGroupExample() {
+  const [value, setValue] = React.useState(["cheese"]);
+  return (
+    <CheckboxGroup legend="Toppings" value={value} onChange={setValue}>
+      <Checkbox value="cheese" label="Cheese" />
+      <Checkbox value="bacon" label="Bacon" />
+      <Checkbox value="mushrooms" label="Mushrooms" />
+    </CheckboxGroup>
+  );
+}
+
+render(<CheckboxGroupExample />);`} />
+
+### Disabled Group
+
+<LivePreview client:load code={`<CheckboxGroup legend="Disabled group" disabled>
+  <Checkbox value="a" label="Option A" />
+  <Checkbox value="b" label="Option B" />
+</CheckboxGroup>`} />
+
+## API Reference
+
+### Checkbox
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `checked` | `boolean` | — | Controlled checked state |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `defaultChecked` | `boolean` | — | Initial checked state (uncontrolled) |
+| `disabled` | `boolean` | — | Disables the checkbox |
+| `id` | `string` | auto | HTML id attribute |
+| `indeterminate` | `boolean` | — | Shows indeterminate state |
+| `label` | `string` | — | Label text |
+| `name` | `string` | — | HTML name attribute |
+| `onChange` | `(e: ChangeEvent) => void` | — | Change handler |
+| `value` | `string` | — | Value used by CheckboxGroup |
+
+### CheckboxGroup
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Checkbox components |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `disabled` | `boolean` | — | Disables all checkboxes in the group |
+| `legend` | `string` | — | Fieldset legend text |
+| `onChange` | `(values: string[]) => void` | — | Called with the updated array of checked values |
+| `value` | `string[]` | — | Currently checked values |

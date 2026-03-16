@@ -1,0 +1,53 @@
+---
+title: Switch
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A toggle switch component for boolean on/off states.
+
+```tsx
+import { Switch } from "@bezny/switches";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load code={`<Switch label="Enable notifications" />`} />
+
+### Disabled
+
+<LivePreview client:load code={`<div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+  <Switch label="Disabled off" disabled />
+  <Switch label="Disabled on" disabled defaultChecked />
+</div>`} />
+
+### Controlled
+
+<LivePreview client:load noInline code={`function ControlledSwitch() {
+  const [checked, setChecked] = React.useState(false);
+  return (
+    <Switch
+      label={checked ? "On" : "Off"}
+      checked={checked}
+      onChange={(e) => setChecked(e.target.checked)}
+    />
+  );
+}
+
+render(<ControlledSwitch />);`} />
+
+## API Reference
+
+### Switch
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `checked` | `boolean` | — | Controlled checked state |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `defaultChecked` | `boolean` | — | Initial checked state (uncontrolled) |
+| `disabled` | `boolean` | — | Disables the switch |
+| `id` | `string` | auto | HTML id attribute |
+| `label` | `string` | — | Label text |
+| `onChange` | `(e: ChangeEvent) => void` | — | Change handler |

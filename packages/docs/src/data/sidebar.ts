@@ -23,6 +23,7 @@ export const sidebarGroups: SidebarGroup[] = [
 			{ label: "Breadcrumbs", href: "/components/breadcrumbs/" },
 			{ label: "Button", href: "/components/button/" },
 			{ label: "Card", href: "/components/card/" },
+			{ label: "Checkbox", href: "/components/checkbox/" },
 			{ label: "Container", href: "/components/container/" },
 			{ label: "Dialog", href: "/components/dialog/" },
 			{ label: "Drawer", href: "/components/drawer/" },
@@ -33,8 +34,10 @@ export const sidebarGroups: SidebarGroup[] = [
 			{ label: "Navbar", href: "/components/navbar/" },
 			{ label: "Overlay", href: "/components/overlay/" },
 			{ label: "Paragraph", href: "/components/paragraph/" },
+			{ label: "Radio", href: "/components/radio/" },
 			{ label: "Semantic Elements", href: "/components/semantic-elements/" },
 			{ label: "Stack", href: "/components/stack/" },
+			{ label: "Switch", href: "/components/switch/" },
 		],
 	},
 ];

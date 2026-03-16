@@ -25,6 +25,7 @@
 		"@bezny/navigation": "workspace:*",
 		"@bezny/overlay": "workspace:*",
 		"@bezny/styles": "workspace:*",
+		"@bezny/switches": "workspace:*",
 		"@bezny/text": "workspace:*",
 		"astro": "^5.10.0",
 		"react": "catalog:",

@@ -9,6 +9,7 @@ import { Dropdown } from "@bezny/dropdown";
 import { Article, Aside, Container, Main, Section, Stack } from "@bezny/layout";
 import { Navbar, NavbarBrand, NavbarCollapse, NavbarToggle } from "@bezny/navbar";
 import { Overlay } from "@bezny/overlay";
+import { Checkbox, CheckboxGroup, Radio, RadioGroup, Switch } from "@bezny/switches";
 import { Heading, HeadingLevelProvider, Label, Link, Paragraph, StaticHeading } from "@bezny/text";
 import React from "react";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
@@ -24,6 +25,8 @@ const scope = {
 	Button: Button,
 	Card: Card,
 	CardBody: CardBody,
+	Checkbox: Checkbox,
+	CheckboxGroup: CheckboxGroup,
 	CardFooter: CardFooter,
 	CardHeader: CardHeader,
 	CardImg: CardImg,
@@ -45,11 +48,14 @@ const scope = {
 	NavbarToggle: NavbarToggle,
 	Overlay: Overlay,
 	Paragraph: Paragraph,
+	Radio: Radio,
+	RadioGroup: RadioGroup,
 	React: React,
 	Section: Section,
 	Stack: Stack,
 	StaticHeading: StaticHeading,
 	Submit: Submit,
+	Switch: Switch,
 };
 
 export default function LiveCodePreview({ code, noInline }: { code: string; noInline?: boolean }) {

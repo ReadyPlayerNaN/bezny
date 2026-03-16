@@ -1,0 +1,69 @@
+---
+title: Radio
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A styled radio input with label support and group composition via RadioGroup.
+
+```tsx
+import { Radio, RadioGroup } from "@bezny/switches";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load code={`<Radio label="Option A" name="standalone" />`} />
+
+### RadioGroup
+
+Use RadioGroup to manage a set of mutually exclusive radio buttons.
+
+<LivePreview client:load noInline code={`function RadioGroupExample() {
+  const [value, setValue] = React.useState("medium");
+  return (
+    <RadioGroup legend="Size" name="size" value={value} onChange={setValue}>
+      <Radio value="small" label="Small" />
+      <Radio value="medium" label="Medium" />
+      <Radio value="large" label="Large" />
+    </RadioGroup>
+  );
+}
+
+render(<RadioGroupExample />);`} />
+
+### Disabled Group
+
+<LivePreview client:load code={`<RadioGroup legend="Disabled group" name="disabled" disabled>
+  <Radio value="a" label="Option A" />
+  <Radio value="b" label="Option B" />
+</RadioGroup>`} />
+
+## API Reference
+
+### Radio
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `checked` | `boolean` | — | Controlled checked state |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `defaultChecked` | `boolean` | — | Initial checked state (uncontrolled) |
+| `disabled` | `boolean` | — | Disables the radio |
+| `id` | `string` | auto | HTML id attribute |
+| `label` | `string` | — | Label text |
+| `name` | `string` | — | HTML name attribute |
+| `onChange` | `(e: ChangeEvent) => void` | — | Change handler |
+| `value` | `string` | — | Value used by RadioGroup |
+
+### RadioGroup
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Radio components |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `disabled` | `boolean` | — | Disables all radios in the group |
+| `legend` | `string` | — | Fieldset legend text |
+| `name` | `string` | — | Shared name for all radios |
+| `onChange` | `(value: string) => void` | — | Called with the selected value |
+| `value` | `string` | — | Currently selected value |
