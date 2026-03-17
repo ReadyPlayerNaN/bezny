@@ -3,15 +3,15 @@
 
 .toggle {
 	background: transparent;
-	border: 1px solid var(--bzn-navbar-toggle-color);
+	border: 1px solid var(--bzn-navbar-toggle-color, var(--bzn-text-muted));
 	border-radius: size(1);
-	color: var(--bzn-navbar-toggle-color);
+	color: var(--bzn-navbar-toggle-color, var(--bzn-text-muted));
 	display: flex;
 	padding: size(1) size(2);
 	transition: background-color var(--bzn-transition);
 
 	&:hover {
-		background-color: var(--bzn-navbar-toggle-hover-bg);
+		background-color: var(--bzn-navbar-toggle-hover-bg, var(--bzn-surface-raised));
 	}
 
 	@include breakpoint-up('lg') {

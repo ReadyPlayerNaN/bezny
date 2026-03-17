@@ -29,8 +29,8 @@
 }
 
 .initials {
-	background-color: var(--bzn-avatar-initials-bg);
-	color: var(--bzn-avatar-initials-color);
+	background-color: var(--bzn-avatar-initials-bg, var(--bzn-interactive));
+	color: var(--bzn-avatar-initials-color, var(--bzn-text-on-primary));
 	font-weight: 600;
 	user-select: none;
 }

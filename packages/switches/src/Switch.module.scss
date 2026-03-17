@@ -18,7 +18,7 @@
 	width: 44px;
 	height: 24px;
 	border-radius: 12px;
-	background-color: var(--bzn-switch-track-off);
+	background-color: var(--bzn-switch-track-off, var(--bzn-border));
 	padding: 2px;
 	flex-shrink: 0;
 	transition: background-color var(--bzn-transition-brief);
@@ -29,13 +29,13 @@
 	width: 20px;
 	height: 20px;
 	border-radius: 50%;
-	background-color: var(--bzn-switch-thumb);
+	background-color: var(--bzn-switch-thumb, var(--bzn-text-on-primary));
 	transition: transform var(--bzn-transition-brief);
 	transform: translateX(0);
 }
 
 .input:checked + .track {
-	background-color: var(--bzn-switch-track-on);
+	background-color: var(--bzn-switch-track-on, var(--bzn-interactive));
 
 	.thumb {
 		transform: translateX(20px);
@@ -43,11 +43,11 @@
 }
 
 .input:focus-visible + .track {
-	outline: 2px solid var(--bzn-switch-track-on);
+	outline: 2px solid var(--bzn-switch-track-on, var(--bzn-interactive));
 	outline-offset: 2px;
 }
 
 .disabled {
 	cursor: not-allowed;
-	opacity: var(--bzn-switch-disabled-opacity);
+	opacity: var(--bzn-switch-disabled-opacity, 0.5);
 }

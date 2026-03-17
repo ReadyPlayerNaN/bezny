@@ -1,10 +1,10 @@
 @use "grid" as *;
 
 .dialog {
-  background-color: var(--bzn-modal-panel-bg);
-  border: 1px solid var(--bzn-modal-panel-border);
+  background-color: var(--bzn-modal-panel-bg, var(--bzn-surface));
+  border: 1px solid var(--bzn-modal-panel-border, var(--bzn-border));
   border-radius: size(2);
-  box-shadow: var(--bzn-modal-panel-shadow);
+  box-shadow: var(--bzn-modal-panel-shadow, 0 24px 48px rgba(0, 0, 0, calc(var(--bzn-overlay-opacity) * 0.67)));
   color: var(--bzn-text);
   display: flex;
   flex-direction: column;
@@ -33,7 +33,7 @@
   }
 
   &::backdrop {
-    background-color: var(--bzn-modal-overlay-bg);
+    background-color: var(--bzn-modal-overlay-bg, var(--bzn-overlay-bg));
     opacity: 0;
     transition:
       opacity var(--bzn-transition),
@@ -51,7 +51,7 @@
 
 .header {
   align-items: center;
-  border-bottom: 1px solid var(--bzn-modal-header-border);
+  border-bottom: 1px solid var(--bzn-modal-header-border, var(--bzn-border));
   display: flex;
   justify-content: space-between;
   padding: size(4);
@@ -64,7 +64,7 @@
 }
 
 .footer {
-  border-top: 1px solid var(--bzn-modal-footer-border);
+  border-top: 1px solid var(--bzn-modal-footer-border, var(--bzn-border));
   display: flex;
   gap: size(2);
   justify-content: flex-end;
@@ -74,13 +74,13 @@
 .close {
   background: none;
   border: none;
-  color: var(--bzn-modal-close-color);
+  color: var(--bzn-modal-close-color, var(--bzn-text-muted));
   font-size: size(5);
   line-height: 1;
   padding: size(1);
   transition: color var(--bzn-transition);
 
   &:hover {
-    color: var(--bzn-modal-close-hover-color);
+    color: var(--bzn-modal-close-hover-color, var(--bzn-text));
   }
 }

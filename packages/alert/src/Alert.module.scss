@@ -10,19 +10,19 @@
 }
 
 .success {
-	background-color: var(--bzn-alert-success-bg);
-	border-color: var(--bzn-alert-success-border);
-	color: var(--bzn-alert-success-color);
+	background-color: var(--bzn-alert-success-bg, var(--bzn-success-subtle));
+	border-color: var(--bzn-alert-success-border, var(--bzn-success));
+	color: var(--bzn-alert-success-color, var(--bzn-success-text));
 }
 
 .warning {
-	background-color: var(--bzn-alert-warning-bg);
-	border-color: var(--bzn-alert-warning-border);
-	color: var(--bzn-alert-warning-color);
+	background-color: var(--bzn-alert-warning-bg, var(--bzn-warning-subtle));
+	border-color: var(--bzn-alert-warning-border, var(--bzn-warning));
+	color: var(--bzn-alert-warning-color, var(--bzn-warning-text));
 }
 
 .error {
-	background-color: var(--bzn-alert-error-bg);
-	border-color: var(--bzn-alert-error-border);
-	color: var(--bzn-alert-error-color);
+	background-color: var(--bzn-alert-error-bg, var(--bzn-error-subtle));
+	border-color: var(--bzn-alert-error-border, var(--bzn-error));
+	color: var(--bzn-alert-error-color, var(--bzn-error-text));
 }

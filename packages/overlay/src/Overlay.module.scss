@@ -1,7 +1,7 @@
 @use "grid" as *;
 
 .overlay {
-  background-color: var(--bzn-modal-overlay-bg);
+  background-color: var(--bzn-modal-overlay-bg, var(--bzn-overlay-bg));
   display: block;
   inset: 0;
   opacity: 0;

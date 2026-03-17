@@ -2,7 +2,7 @@
 @use 'typography' as *;
 
 .brand {
-	color: var(--bzn-navbar-brand-color);
+	color: var(--bzn-navbar-brand-color, var(--bzn-text));
 	font-size: font-size(1);
 	font-weight: bold;
 	padding: size(2) size(1);
@@ -10,6 +10,6 @@
 	transition: color var(--bzn-transition);
 
 	&:hover {
-		color: var(--bzn-navbar-brand-hover-color);
+		color: var(--bzn-navbar-brand-hover-color, var(--bzn-text-muted));
 	}
 }

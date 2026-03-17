@@ -2,7 +2,7 @@
 @use 'typography' as *;
 
 .paragraph {
-	color: var(--bzn-paragraph-color);
+	color: var(--bzn-paragraph-color, var(--bzn-text));
 	font-size: font-size(1); // 16px
 	line-height: size(6); // 24px
 	margin: 0;

@@ -18,7 +18,7 @@
 	justify-content: center;
 	width: 20px;
 	height: 20px;
-	border: 2px solid var(--bzn-checkbox-border);
+	border: 2px solid var(--bzn-checkbox-border, var(--bzn-border));
 	border-radius: size(1);
 	flex-shrink: 0;
 	transition: border-color var(--bzn-transition-brief), background-color var(--bzn-transition-brief);
@@ -35,8 +35,8 @@
 }
 
 .input:checked + .indicator {
-	border-color: var(--bzn-checkbox-checked);
-	background-color: var(--bzn-checkbox-checked);
+	border-color: var(--bzn-checkbox-checked, var(--bzn-interactive));
+	background-color: var(--bzn-checkbox-checked, var(--bzn-interactive));
 
 	&::after {
 		opacity: 1;
@@ -51,13 +51,13 @@
 }
 
 .input:focus-visible + .indicator {
-	outline: 2px solid var(--bzn-checkbox-checked);
+	outline: 2px solid var(--bzn-checkbox-checked, var(--bzn-interactive));
 	outline-offset: 2px;
 }
 
 .indeterminate {
-	border-color: var(--bzn-checkbox-checked);
-	background-color: var(--bzn-checkbox-checked);
+	border-color: var(--bzn-checkbox-checked, var(--bzn-interactive));
+	background-color: var(--bzn-checkbox-checked, var(--bzn-interactive));
 
 	&::after {
 		opacity: 1;
@@ -75,6 +75,6 @@
 	opacity: 0.5;
 
 	.indicator {
-		border-color: var(--bzn-checkbox-disabled);
+		border-color: var(--bzn-checkbox-disabled, var(--bzn-interactive-disabled));
 	}
 }

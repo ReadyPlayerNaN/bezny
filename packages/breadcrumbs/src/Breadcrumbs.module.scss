@@ -14,17 +14,17 @@
 .breadcrumbItem {
 	display: inline-flex;
 	align-items: center;
-	color: var(--bzn-breadcrumb-color);
+	color: var(--bzn-breadcrumb-color, var(--bzn-text-muted));
 	transition: color var(--bzn-transition);
 
 	&:last-child {
-		color: var(--bzn-breadcrumb-active-color);
+		color: var(--bzn-breadcrumb-active-color, var(--bzn-text));
 		font-weight: 500;
 	}
 
 	&:not(:last-child)::after {
 		content: '/';
-		color: var(--bzn-breadcrumb-separator-color);
+		color: var(--bzn-breadcrumb-separator-color, var(--bzn-border));
 		margin: 0 size(2);
 		pointer-events: none;
 	}

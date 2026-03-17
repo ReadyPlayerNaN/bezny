@@ -7,7 +7,7 @@
 
   border-width: 1px;
   border-style: solid;
-  border-radius: var(--bzn-button-radius);
+  border-radius: var(--bzn-button-radius, 6px);
   font-family: inherit;
   font-size: font-size(1);
   line-height: size(6);
@@ -77,13 +77,13 @@
 .link {
   --bzn-interactive-bg: transparent;
   --bzn-interactive-border: transparent;
-  --bzn-interactive-color: var(--bzn-link-color);
+  --bzn-interactive-color: var(--bzn-link-color, var(--bzn-interactive));
   --bzn-interactive-hover-bg: transparent;
   --bzn-interactive-hover-border: transparent;
-  --bzn-interactive-hover-color: var(--bzn-link-hover-color);
+  --bzn-interactive-hover-color: var(--bzn-link-hover-color, var(--bzn-interactive-hover));
   --bzn-interactive-active-bg: transparent;
   --bzn-interactive-active-border: transparent;
-  --bzn-interactive-active-color: var(--bzn-link-active-color);
+  --bzn-interactive-active-color: var(--bzn-link-active-color, var(--bzn-interactive-active));
   --bzn-interactive-disabled-bg: transparent;
   --bzn-interactive-disabled-border: transparent;
   --bzn-interactive-disabled-color: var(--bzn-interactive-disabled-text);

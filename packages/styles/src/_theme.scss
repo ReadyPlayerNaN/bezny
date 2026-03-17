@@ -1,7 +1,6 @@
 @use 'sass:map';
 @use 'shade' as shade;
 @use 'semantic' as semantic;
-@use 'components' as components;
 @use 'palettes' as *;
 
 // Main theme mixin.
@@ -53,9 +52,6 @@
   // Override transition if non-default
   --#{$prefix}-transition: #{$transition};
 
-  // Tier 3: Component tokens
-  @include components.tokens($prefix);
-
   // Base styles
   color: var(--#{$prefix}-text);
   background-color: var(--#{$prefix}-surface);
@@ -87,7 +83,7 @@
   @media (prefers-contrast: more) {
     :root:not(.bzn--no-high-contrast) {
       @include semantic.high-contrast($prefix);
-      --#{$prefix}-heading-gradient: var(--#{$prefix}-heading-color);
+      --#{$prefix}-heading-gradient: var(--#{$prefix}-heading-color, var(--#{$prefix}-text));
     }
 
     // High contrast + light
@@ -101,7 +97,7 @@
   // High contrast: forced
   .bzn--high-contrast {
     @include semantic.high-contrast($prefix);
-    --#{$prefix}-heading-gradient: var(--#{$prefix}-heading-color);
+    --#{$prefix}-heading-gradient: var(--#{$prefix}-heading-color, var(--#{$prefix}-text));
   }
 
   // Reduced motion: auto

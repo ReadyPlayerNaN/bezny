@@ -1,15 +1,15 @@
 @use 'grid' as *;
 
 .link {
-	color: var(--bzn-link-color);
+	color: var(--bzn-link-color, var(--bzn-interactive));
 	text-decoration: underline;
 	transition: color var(--bzn-transition);
 
 	&:hover {
-		color: var(--bzn-link-hover-color);
+		color: var(--bzn-link-hover-color, var(--bzn-interactive-hover));
 	}
 
 	&:active {
-		color: var(--bzn-link-active-color);
+		color: var(--bzn-link-active-color, var(--bzn-interactive-active));
 	}
 }

@@ -5,7 +5,7 @@
 }
 
 .panel {
-	background-color: var(--bzn-drawer-bg);
+	background-color: var(--bzn-drawer-bg, var(--bzn-surface));
 	display: flex;
 	flex-direction: column;
 	position: fixed;
@@ -14,7 +14,7 @@
 }
 
 .panelRight {
-	border-left: 1px solid var(--bzn-drawer-border);
+	border-left: 1px solid var(--bzn-drawer-border, var(--bzn-border));
 	height: 100%;
 	max-width: size(80);
 	right: 0;
@@ -32,7 +32,7 @@
 }
 
 .panelLeft {
-	border-right: 1px solid var(--bzn-drawer-border);
+	border-right: 1px solid var(--bzn-drawer-border, var(--bzn-border));
 	height: 100%;
 	left: 0;
 	max-width: size(80);
@@ -50,7 +50,7 @@
 }
 
 .panelTop {
-	border-bottom: 1px solid var(--bzn-drawer-border);
+	border-bottom: 1px solid var(--bzn-drawer-border, var(--bzn-border));
 	height: auto;
 	left: 0;
 	max-height: 80vh;
@@ -69,7 +69,7 @@
 }
 
 .panelBottom {
-	border-top: 1px solid var(--bzn-drawer-border);
+	border-top: 1px solid var(--bzn-drawer-border, var(--bzn-border));
 	bottom: 0;
 	height: auto;
 	left: 0;
@@ -90,7 +90,7 @@
 .close {
 	background: none;
 	border: none;
-	color: var(--bzn-drawer-close-color);
+	color: var(--bzn-drawer-close-color, var(--bzn-text-muted));
 	font-size: size(5);
 	line-height: 1;
 	padding: size(2);
@@ -100,7 +100,7 @@
 	transition: color var(--bzn-transition);
 
 	&:hover {
-		color: var(--bzn-drawer-close-hover-color);
+		color: var(--bzn-drawer-close-hover-color, var(--bzn-text));
 	}
 }
 

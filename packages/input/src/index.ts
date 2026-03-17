@@ -1,3 +1,4 @@
+export { Input, type InputProps } from "./Input";
 export { DateInput, type DateInputProps } from "./DateInput";
 export { DateTimeInput, type DateTimeInputProps } from "./DateTimeInput";
 export { EmailInput, type EmailInputProps } from "./EmailInput";

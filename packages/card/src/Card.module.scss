@@ -1,25 +1,25 @@
 @use 'grid' as *;
 
 .card {
-	background-color: var(--bzn-card-bg);
-	border: 1px solid var(--bzn-card-border);
+	background-color: var(--bzn-card-bg, var(--bzn-surface-raised));
+	border: 1px solid var(--bzn-card-border, var(--bzn-border));
 	border-radius: size(2);
 	overflow: hidden;
 	position: relative;
 }
 
 .cardHeader {
-	border-bottom: 1px solid var(--bzn-card-header-border);
-	padding: var(--bzn-card-header-padding);
+	border-bottom: 1px solid var(--bzn-card-header-border, var(--bzn-border));
+	padding: var(--bzn-card-header-padding, 12px 16px);
 }
 
 .cardBody {
-	padding: var(--bzn-card-body-padding);
+	padding: var(--bzn-card-body-padding, 16px);
 }
 
 .cardFooter {
-	border-top: 1px solid var(--bzn-card-footer-border);
-	padding: var(--bzn-card-footer-padding);
+	border-top: 1px solid var(--bzn-card-footer-border, var(--bzn-border));
+	padding: var(--bzn-card-footer-padding, 12px 16px);
 }
 
 .cardImg {

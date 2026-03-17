@@ -30,30 +30,30 @@
 }
 
 @mixin input-reactions {
-  background-color: var(--bzn-input-bg);
-  border-color: var(--bzn-input-border);
-  color: var(--bzn-input-color);
+  background-color: var(--bzn-input-bg, var(--bzn-surface-overlay));
+  border-color: var(--bzn-input-border, var(--bzn-border));
+  color: var(--bzn-input-color, var(--bzn-text));
   transition:
     background-color var(--bzn-transition) var(--bzn-transition-fn),
     border-color var(--bzn-transition) var(--bzn-transition-fn),
     color var(--bzn-transition) var(--bzn-transition-fn);
 
   &:hover {
-    background-color: var(--bzn-input-hover-bg);
-    border-color: var(--bzn-input-hover-border);
-    color: var(--bzn-input-hover-color);
+    background-color: var(--bzn-input-hover-bg, var(--bzn-surface-overlay));
+    border-color: var(--bzn-input-hover-border, var(--bzn-border-muted));
+    color: var(--bzn-input-hover-color, var(--bzn-text));
   }
 
   &:focus {
-    background-color: var(--bzn-input-active-bg);
-    border-color: var(--bzn-input-active-border);
-    color: var(--bzn-input-active-color);
+    background-color: var(--bzn-input-active-bg, var(--bzn-surface-overlay));
+    border-color: var(--bzn-input-active-border, var(--bzn-focus-ring));
+    color: var(--bzn-input-active-color, var(--bzn-text));
   }
 
   &:disabled {
-    background-color: var(--bzn-input-disabled-bg);
-    border-color: var(--bzn-input-disabled-border);
-    color: var(--bzn-input-disabled-color);
+    background-color: var(--bzn-input-disabled-bg, var(--bzn-surface));
+    border-color: var(--bzn-input-disabled-border, var(--bzn-border-muted));
+    color: var(--bzn-input-disabled-color, var(--bzn-interactive-disabled-text));
     cursor: not-allowed;
   }
 }

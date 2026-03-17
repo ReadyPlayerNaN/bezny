@@ -13,21 +13,21 @@
 
 // Link base styles
 a {
-  color: var(--bzn-link-color);
+  color: var(--bzn-link-color, var(--bzn-interactive));
   text-decoration: underline;
   text-underline-offset: size(0.5);
   transition: color var(--bzn-transition);
 
   &:visited {
-    color: var(--bzn-link-visited-color);
+    color: var(--bzn-link-visited-color, var(--bzn-interactive-active));
   }
 
   &:hover {
-    color: var(--bzn-link-hover-color);
+    color: var(--bzn-link-hover-color, var(--bzn-interactive-hover));
   }
 
   &:active {
-    color: var(--bzn-link-active-color);
+    color: var(--bzn-link-active-color, var(--bzn-interactive-active));
   }
 }
 

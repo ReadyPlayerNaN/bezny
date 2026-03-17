@@ -2,7 +2,7 @@
 @use 'typography' as *;
 
 .heading {
-	background: var(--bzn-heading-gradient);
+	background: var(--bzn-heading-gradient, var(--bzn-heading-color, var(--bzn-text)));
 	background-clip: text;
 	-webkit-background-clip: text;
 	color: transparent;

@@ -1,7 +1,7 @@
 @use 'grid' as *;
 
 .navLink {
-	color: var(--bzn-navlink-color);
+	color: var(--bzn-navlink-color, var(--bzn-text-muted));
 	padding: size(2) size(3);
 	text-decoration: none;
 	transition:
@@ -9,31 +9,31 @@
 		background-color var(--bzn-transition);
 
 	&:visited {
-		color: var(--bzn-navlink-color);
+		color: var(--bzn-navlink-color, var(--bzn-text-muted));
 	}
 
 	&:hover {
-		background-color: var(--bzn-navlink-hover-bg);
-		color: var(--bzn-navlink-hover-color);
+		background-color: var(--bzn-navlink-hover-bg, var(--bzn-surface-raised));
+		color: var(--bzn-navlink-hover-color, var(--bzn-text));
 	}
 
 	&:active {
-		color: var(--bzn-navlink-color);
+		color: var(--bzn-navlink-color, var(--bzn-text-muted));
 	}
 }
 
 .active {
-	color: var(--bzn-navlink-active-color);
+	color: var(--bzn-navlink-active-color, var(--bzn-interactive));
 
 	&:visited {
-		color: var(--bzn-navlink-active-color);
+		color: var(--bzn-navlink-active-color, var(--bzn-interactive));
 	}
 
 	&:hover {
-		color: var(--bzn-navlink-active-hover-color);
+		color: var(--bzn-navlink-active-hover-color, var(--bzn-interactive-hover));
 	}
 
 	&:active {
-		color: var(--bzn-navlink-active-color);
+		color: var(--bzn-navlink-active-color, var(--bzn-interactive));
 	}
 }
