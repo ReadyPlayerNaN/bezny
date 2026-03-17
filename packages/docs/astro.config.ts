@@ -9,7 +9,7 @@ export default defineConfig({
 		css: {
 			preprocessorOptions: {
 				scss: {
-					loadPaths: [resolve(import.meta.dirname, "../styles/src")],
+					loadPaths: [resolve(import.meta.dirname, "../core/src")],
 				},
 			},
 		},
