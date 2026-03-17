@@ -1,13 +1,14 @@
 import { createContext, useContext } from "react";
 
-export type NavbarContextValue = {
+type NavbarContextValue = {
+	collapseId: string;
 	expanded: boolean;
 	onToggle: (expanded: boolean) => void;
 };
 
 const NavbarContext = createContext<NavbarContextValue | null>(null);
 
-export function useNavbar(): NavbarContextValue {
+function useNavbar(): NavbarContextValue {
 	const context = useContext(NavbarContext);
 	if (context === null) {
 		throw new Error("useNavbar must be used within a Navbar component");
@@ -15,4 +16,4 @@ export function useNavbar(): NavbarContextValue {
 	return context;
 }
 
-export { NavbarContext };
+export { NavbarContext, type NavbarContextValue, useNavbar };

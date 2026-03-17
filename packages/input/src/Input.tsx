@@ -31,6 +31,7 @@ export function Input({
 	...rest
 }: InputProps) {
 	const id = useId();
+	const statusId = useId();
 	const useWrapper = Boolean(label || status || statusMessage);
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -42,6 +43,8 @@ export function Input({
 			<div className={clsx(styles.wrapper, className)}>
 				<input
 					{...rest}
+					aria-describedby={statusMessage ? statusId : undefined}
+					aria-invalid={status === "error" || undefined}
 					autoFocus={autoFocus}
 					className={clsx(styles.input, {
 						[styles.statusError]: status === "error",
@@ -62,7 +65,7 @@ export function Input({
 						{label}
 					</label>
 				) : null}
-				<StatusMessage className={styles.statusMessage} message={statusMessage} status={status} />
+				<StatusMessage className={styles.statusMessage} id={statusId} message={statusMessage} status={status} />
 			</div>
 		);
 	}

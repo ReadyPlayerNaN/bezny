@@ -5,12 +5,13 @@ type ValidationStatus = "error" | "warning" | "success";
 
 export type StatusMessageProps = {
 	className?: ClassValue;
+	id?: string;
 	message?: string;
 	status?: ValidationStatus;
 };
 
-export function StatusMessage({ className, message, status }: StatusMessageProps) {
-	if (!message || !status) {
+export function StatusMessage({ className, id, message, status }: StatusMessageProps) {
+	if (!(message && status)) {
 		return null;
 	}
 
@@ -21,6 +22,7 @@ export function StatusMessage({ className, message, status }: StatusMessageProps
 				[styles.messageWarning]: status === "warning",
 				[styles.messageSuccess]: status === "success",
 			})}
+			id={id}
 			role={status === "success" ? "status" : "alert"}
 		>
 			{message}

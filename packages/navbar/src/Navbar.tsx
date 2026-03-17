@@ -1,6 +1,6 @@
 import clsx, { type ClassValue } from "clsx";
 import type { ComponentPropsWithoutRef, ElementType } from "react";
-import { useState } from "react";
+import { useId, useState } from "react";
 import styles from "./Navbar.module.scss";
 import { NavbarContext } from "./NavbarContext";
 
@@ -23,13 +23,14 @@ export function Navbar<T extends ElementType = "nav">({
 	...rest
 }: NavbarProps<T>) {
 	const [internalExpanded, setInternalExpanded] = useState(false);
+	const collapseId = useId();
 	const isControlled = controlledExpanded !== undefined;
 	const expanded = isControlled ? controlledExpanded : internalExpanded;
 	const handleToggle = isControlled && onToggle ? onToggle : setInternalExpanded;
 	const Tag = asChild ?? "nav";
 
 	return (
-		<NavbarContext value={{ expanded, onToggle: handleToggle }}>
+		<NavbarContext value={{ collapseId: collapseId, expanded: expanded, onToggle: handleToggle }}>
 			<Tag className={clsx(styles.navbar, className)} {...rest} />
 		</NavbarContext>
 	);

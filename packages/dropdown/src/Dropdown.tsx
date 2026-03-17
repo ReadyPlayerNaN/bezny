@@ -117,7 +117,12 @@ export function Dropdown({ align = "right", anchorRef, children, className, onCl
 	}
 
 	return createPortal(
-		<div ref={panelRef} className={clsx(styles.dropdown, className)} style={{ left: position.left, top: position.top }}>
+		<div
+			ref={panelRef}
+			className={clsx(styles.dropdown, className)}
+			role="menu"
+			style={{ left: position.left, top: position.top }}
+		>
 			{children}
 		</div>,
 		document.body,

@@ -31,6 +31,7 @@ export function Select({
 	...rest
 }: SelectProps) {
 	const id = useId();
+	const statusId = useId();
 	const useWrapper = [label, status, statusMessage].some((v) => v !== undefined && v !== "");
 
 	function handleChange(event: ChangeEvent<HTMLSelectElement>) {
@@ -42,6 +43,8 @@ export function Select({
 			<div className={clsx(styles.wrapper, className)}>
 				<select
 					{...rest}
+					aria-describedby={statusMessage ? statusId : undefined}
+					aria-invalid={status === "error" || undefined}
 					autoFocus={autoFocus}
 					className={clsx(styles.select, {
 						[styles.statusError]: status === "error",
@@ -68,7 +71,7 @@ export function Select({
 						{label}
 					</label>
 				) : null}
-				<StatusMessage className={styles.statusMessage} message={statusMessage} status={status} />
+				<StatusMessage className={styles.statusMessage} id={statusId} message={statusMessage} status={status} />
 			</div>
 		);
 	}

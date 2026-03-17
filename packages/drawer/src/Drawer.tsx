@@ -4,6 +4,7 @@ import { type ReactNode, useCallback, useEffect, useRef } from "react";
 import styles from "./Drawer.module.scss";
 
 export type DrawerProps = {
+	"aria-label"?: string;
 	children?: ReactNode;
 	className?: ClassValue;
 	onClose: () => void;
@@ -14,7 +15,7 @@ export type DrawerProps = {
 const FOCUSABLE_SELECTOR =
 	'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
-export function Drawer({ children, className, onClose, open, side = "right" }: DrawerProps) {
+export function Drawer({ "aria-label": ariaLabel, children, className, onClose, open, side = "right" }: DrawerProps) {
 	const panelRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -70,6 +71,16 @@ export function Drawer({ children, className, onClose, open, side = "right" }: D
 		if (!open) {
 			return;
 		}
+		const previouslyFocused = document.activeElement as HTMLElement | null;
+		return () => {
+			previouslyFocused?.focus();
+		};
+	}, [open]);
+
+	useEffect(() => {
+		if (!open) {
+			return;
+		}
 		const panel = panelRef.current;
 		if (!panel) {
 			return;
@@ -104,8 +115,15 @@ export function Drawer({ children, className, onClose, open, side = "right" }: D
 
 	return (
 		<Overlay className={styles.overlay} open={open}>
-			{(open) => (
-				<div key={side} ref={panelRef} aria-modal="true" className={clsx(styles.panel, sideClass, open && styles.panelVisible, className)} role="dialog">
+			{(isVisible) => (
+				<div
+					key={side}
+					ref={panelRef}
+					aria-label={ariaLabel}
+					aria-modal="true"
+					className={clsx(styles.panel, sideClass, isVisible && styles.panelVisible, className)}
+					role="dialog"
+				>
 					<button aria-label="Close" className={styles.close} onClick={onClose} type="button">
 						&times;
 					</button>

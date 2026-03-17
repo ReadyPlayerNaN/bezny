@@ -9,7 +9,11 @@ export type NavbarCollapseProps = {
 };
 
 export function NavbarCollapse({ children, className }: NavbarCollapseProps) {
-	const { expanded } = useNavbar();
+	const { collapseId, expanded } = useNavbar();
 
-	return <div className={clsx(styles.collapse, expanded && styles.expanded, className)}>{children}</div>;
+	return (
+		<div id={collapseId} className={clsx(styles.collapse, expanded && styles.expanded, className)}>
+			{children}
+		</div>
+	);
 }

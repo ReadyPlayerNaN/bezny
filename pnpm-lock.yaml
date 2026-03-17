@@ -54,6 +54,9 @@ catalogs:
     vitest:
       specifier: ^4.0.18
       version: 4.1.0
+    vitest-axe:
+      specifier: 1.0.0-pre.5
+      version: 1.0.0-pre.5
 
 importers:
 
@@ -120,6 +123,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/avatar:
     dependencies:
@@ -175,6 +181,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/breadcrumbs:
     dependencies:
@@ -185,15 +194,36 @@ importers:
         specifier: 'catalog:'
         version: 2.1.1
     devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+      jsdom:
+        specifier: 'catalog:'
+        version: 28.1.0
       react:
         specifier: 'catalog:'
         version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
       sass:
         specifier: 'catalog:'
         version: 1.98.0
@@ -206,6 +236,12 @@ importers:
       vite-plugin-dts:
         specifier: 'catalog:'
         version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/button:
     dependencies:
@@ -216,15 +252,36 @@ importers:
         specifier: 'catalog:'
         version: 2.1.1
     devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+      jsdom:
+        specifier: 'catalog:'
+        version: 28.1.0
       react:
         specifier: 'catalog:'
         version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
       sass:
         specifier: 'catalog:'
         version: 1.98.0
@@ -237,6 +294,12 @@ importers:
       vite-plugin-dts:
         specifier: 'catalog:'
         version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/card:
     dependencies:
@@ -289,6 +352,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/data:
     dependencies:
@@ -338,6 +404,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/dialog:
     dependencies:
@@ -348,6 +417,15 @@ importers:
         specifier: 'catalog:'
         version: 2.1.1
     devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.14
@@ -357,6 +435,12 @@ importers:
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+      jsdom:
+        specifier: 'catalog:'
+        version: 28.1.0
       react:
         specifier: 'catalog:'
         version: 19.2.4
@@ -375,6 +459,12 @@ importers:
       vite-plugin-dts:
         specifier: 'catalog:'
         version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/docs:
     dependencies:
@@ -464,6 +554,15 @@ importers:
         specifier: 'catalog:'
         version: 2.1.1
     devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.14
@@ -473,6 +572,12 @@ importers:
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+      jsdom:
+        specifier: 'catalog:'
+        version: 28.1.0
       react:
         specifier: 'catalog:'
         version: 19.2.4
@@ -491,6 +596,12 @@ importers:
       vite-plugin-dts:
         specifier: 'catalog:'
         version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/dropdown:
     dependencies:
@@ -498,6 +609,15 @@ importers:
         specifier: 'catalog:'
         version: 2.1.1
     devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.14
@@ -507,6 +627,12 @@ importers:
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+      jsdom:
+        specifier: 'catalog:'
+        version: 28.1.0
       react:
         specifier: 'catalog:'
         version: 19.2.4
@@ -525,6 +651,12 @@ importers:
       vite-plugin-dts:
         specifier: 'catalog:'
         version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/feedback:
     dependencies:
@@ -577,6 +709,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/forms:
     dependencies:
@@ -632,6 +767,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/input:
     dependencies:
@@ -690,6 +828,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/layout:
     dependencies:
@@ -745,6 +886,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/navbar:
     dependencies:
@@ -755,65 +899,15 @@ importers:
         specifier: 'catalog:'
         version: 2.1.1
     devDependencies:
-      '@types/react':
+      '@testing-library/jest-dom':
         specifier: 'catalog:'
-        version: 19.2.14
-      '@vitejs/plugin-react':
+        version: 6.9.1
+      '@testing-library/react':
         specifier: 'catalog:'
-        version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-      react:
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@testing-library/user-event':
         specifier: 'catalog:'
-        version: 19.2.4
-      sass:
-        specifier: 'catalog:'
-        version: 1.98.0
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
-      vite-plugin-dts:
-        specifier: 'catalog:'
-        version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-
-  packages/navigation:
-    dependencies:
-      '@bezny/styles':
-        specifier: workspace:*
-        version: link:../styles
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
-    devDependencies:
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.14
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-      react:
-        specifier: 'catalog:'
-        version: 19.2.4
-      sass:
-        specifier: 'catalog:'
-        version: 1.98.0
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
-      vite-plugin-dts:
-        specifier: 'catalog:'
-        version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-
-  packages/overlay:
-    dependencies:
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
-    devDependencies:
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.14
@@ -823,49 +917,18 @@ importers:
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-      react:
+      '@vitest/coverage-v8':
         specifier: 'catalog:'
-        version: 19.2.4
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.4(react@19.2.4)
-      sass:
-        specifier: 'catalog:'
-        version: 1.98.0
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
-      vite-plugin-dts:
-        specifier: 'catalog:'
-        version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-
-  packages/styles:
-    dependencies:
-      react-dom:
-        specifier: ^19
-        version: 19.2.4(react@19.2.4)
-    devDependencies:
-      '@testing-library/jest-dom':
-        specifier: 'catalog:'
-        version: 6.9.1
-      '@testing-library/react':
-        specifier: 'catalog:'
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.14
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
       jsdom:
         specifier: 'catalog:'
         version: 28.1.0
       react:
         specifier: 'catalog:'
         version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
       sass:
         specifier: 'catalog:'
         version: 1.98.0
@@ -881,6 +944,167 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+
+  packages/navigation:
+    dependencies:
+      '@bezny/styles':
+        specifier: workspace:*
+        version: link:../styles
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+      jsdom:
+        specifier: 'catalog:'
+        version: 28.1.0
+      react:
+        specifier: 'catalog:'
+        version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
+      sass:
+        specifier: 'catalog:'
+        version: 1.98.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
+      vite-plugin-dts:
+        specifier: 'catalog:'
+        version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+
+  packages/overlay:
+    dependencies:
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+      jsdom:
+        specifier: 'catalog:'
+        version: 28.1.0
+      react:
+        specifier: 'catalog:'
+        version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
+      sass:
+        specifier: 'catalog:'
+        version: 1.98.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
+      vite-plugin-dts:
+        specifier: 'catalog:'
+        version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+
+  packages/styles:
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      jsdom:
+        specifier: 'catalog:'
+        version: 28.1.0
+      react:
+        specifier: 'catalog:'
+        version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
+      sass:
+        specifier: 'catalog:'
+        version: 1.98.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
+      vite-plugin-dts:
+        specifier: 'catalog:'
+        version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/switches:
     dependencies:
@@ -936,6 +1160,9 @@ importers:
       vitest:
         specifier: 'catalog:'
         version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
   packages/text:
     dependencies:
@@ -946,15 +1173,36 @@ importers:
         specifier: 'catalog:'
         version: 2.1.1
     devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@testing-library/user-event':
+        specifier: 'catalog:'
+        version: 14.6.1(@testing-library/dom@10.4.1)
       '@types/react':
         specifier: 'catalog:'
         version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+      jsdom:
+        specifier: 'catalog:'
+        version: 28.1.0
       react:
         specifier: 'catalog:'
         version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
       sass:
         specifier: 'catalog:'
         version: 1.98.0
@@ -967,6 +1215,12 @@ importers:
       vite-plugin-dts:
         specifier: 'catalog:'
         version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
 packages:
 
@@ -2124,6 +2378,9 @@ packages:
       vite:
         optional: true
 
+  '@vitest/pretty-format@3.2.4':
+    resolution: {integrity: sha512-IVNZik8IVRJRTr9fxlitMKeJeXFFFN0JaB9PHPGQ8NKQbGpfjlTx9zO4RefN8gp7eqjNy8nyK3NZmBzOPeIxtA==}
+
   '@vitest/pretty-format@4.1.0':
     resolution: {integrity: sha512-3RZLZlh88Ib0J7NQTRATfc/3ZPOnSUn2uDBUoGNn5T36+bALixmzphN26OUD3LRXWkJu4H0s5vvUeqBiw+kS0A==}
 
@@ -2261,6 +2518,10 @@ packages:
     resolution: {integrity: sha512-m4VWilWZ+Xt6NPoYzC4CgGZim/zQUO7WFL0RHCH0AiEavF1153iC3+me2atDvXpf/yX4PyGUeD8wZLq1cirT3g==}
     engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0, npm: '>=9.6.5', pnpm: '>=7.1.0'}
     hasBin: true
+
+  axe-core@4.11.1:
+    resolution: {integrity: sha512-BASOg+YwO2C+346x3LZOeoovTIoTrRqEsqMa6fmfAV0P+U9mFr9NsyOEpiYvFjbc64NMrSswhV50WdXzdb/Z5A==}
+    engines: {node: '>=4'}
 
   axobject-query@4.1.0:
     resolution: {integrity: sha512-qIj0G9wZbMGNLjLmg1PT6v2mE9AH2zlnADJD/2tC6E00hgmhUOfEB6greHPAfLRSufHqROIUTkw6E+M3lH0PTQ==}
@@ -2871,6 +3132,9 @@ packages:
   local-pkg@1.1.2:
     resolution: {integrity: sha512-arhlxbFRmoQHl33a0Zkle/YWlmNwoyt6QNZEIJcqNbdrsix5Lvc4HyyI3EnwxTYlZYc32EbYrQ8SzEZ7dqgg9A==}
     engines: {node: '>=14'}
+
+  lodash-es@4.17.23:
+    resolution: {integrity: sha512-kVI48u3PZr38HdYz98UmfPnXl2DXrpdctLrFLCd3kOx1xUkOmpFPx7gCWWM5MPkL/fD8zb+Ph0QzjGFs4+hHWg==}
 
   lodash@4.17.23:
     resolution: {integrity: sha512-LgVTMpQtIopCi79SJeDiP0TfWi5CNEc/L/aRdTh3yIvmZXTnheWpKjSZhnvMl8iXbC1tFg9gdHHDMLoV7CnG+w==}
@@ -3531,6 +3795,10 @@ packages:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
     engines: {node: '>=12.0.0'}
 
+  tinyrainbow@2.0.0:
+    resolution: {integrity: sha512-op4nsTR47R6p0vMUUoYl/a+ljLFVtlfaXkLQmqfLR1qHma1h/ysYk4hEXZ880bf2CYgTskvTa/e196Vd5dDQXw==}
+    engines: {node: '>=14.0.0'}
+
   tinyrainbow@3.1.0:
     resolution: {integrity: sha512-Bf+ILmBgretUrdJxzXM0SgXLZ3XfiaUuOj/IKQHuTXip+05Xn+uyEYdVg0kYDipTBcLrCVyUzAPz7QmArb0mmw==}
     engines: {node: '>=14.0.0'}
@@ -3820,6 +4088,11 @@ packages:
     peerDependenciesMeta:
       vite:
         optional: true
+
+  vitest-axe@1.0.0-pre.5:
+    resolution: {integrity: sha512-eUGxjpXnceha9lkqIVyMgOUeDmWU9LVjNiLTjAjDtMew0WbaBDtixoUvdftOhZfqRI03G2Ay4ZxaU1KG6jNCiQ==}
+    peerDependencies:
+      vitest: '>=1'
 
   vitest@4.1.0:
     resolution: {integrity: sha512-YbDrMF9jM2Lqc++2530UourxZHmkKLxrs4+mYhEwqWS97WJ7wOYEkcr+QfRgJ3PW9wz3odRijLZjHEaRLTNbqw==}
@@ -4988,6 +5261,10 @@ snapshots:
     optionalDependencies:
       vite: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
 
+  '@vitest/pretty-format@3.2.4':
+    dependencies:
+      tinyrainbow: 2.0.0
+
   '@vitest/pretty-format@4.1.0':
     dependencies:
       tinyrainbow: 3.1.0
@@ -5226,6 +5503,8 @@ snapshots:
       - typescript
       - uploadthing
       - yaml
+
+  axe-core@4.11.1: {}
 
   axobject-query@4.1.0: {}
 
@@ -5920,6 +6199,8 @@ snapshots:
       mlly: 1.8.1
       pkg-types: 2.3.0
       quansync: 0.2.11
+
+  lodash-es@4.17.23: {}
 
   lodash@4.17.23: {}
 
@@ -6978,6 +7259,8 @@ snapshots:
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
 
+  tinyrainbow@2.0.0: {}
+
   tinyrainbow@3.1.0: {}
 
   tldts-core@7.0.25: {}
@@ -7176,6 +7459,14 @@ snapshots:
   vitefu@1.1.2(vite@6.4.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)):
     optionalDependencies:
       vite: 6.4.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
+
+  vitest-axe@1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))):
+    dependencies:
+      '@vitest/pretty-format': 3.2.4
+      axe-core: 4.11.1
+      chalk: 5.6.2
+      lodash-es: 4.17.23
+      vitest: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
 
   vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)):
     dependencies:

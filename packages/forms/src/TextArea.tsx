@@ -35,6 +35,7 @@ export function TextArea({
 	value,
 }: TextAreaProps) {
 	const id = useId();
+	const statusId = useId();
 	const useWrapper = [label, status, statusMessage].some((v) => v !== undefined && v !== "");
 
 	function handleChange(event: ChangeEvent<HTMLTextAreaElement>) {
@@ -45,6 +46,8 @@ export function TextArea({
 		return (
 			<div className={clsx(styles.wrapper, className)}>
 				<textarea
+					aria-describedby={statusMessage ? statusId : undefined}
+					aria-invalid={status === "error" || undefined}
 					autoFocus={autoFocus}
 					className={clsx(styles.textarea, {
 						[styles.statusError]: status === "error",
@@ -65,7 +68,7 @@ export function TextArea({
 						{label}
 					</label>
 				) : null}
-				<StatusMessage className={styles.statusMessage} message={statusMessage} status={status} />
+				<StatusMessage className={styles.statusMessage} id={statusId} message={statusMessage} status={status} />
 			</div>
 		);
 	}

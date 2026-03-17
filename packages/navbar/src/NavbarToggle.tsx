@@ -12,10 +12,11 @@ export type NavbarToggleOwnProps = {
 export const NavbarToggle = createPolymorphic<"button", NavbarToggleOwnProps>(
 	"button",
 	(Tag, { children, className }, { children: _c, className: _, type = "button", ...rest }) => {
-		const { expanded, onToggle } = useNavbar();
+		const { collapseId, expanded, onToggle } = useNavbar();
 
 		return (
 			<Tag
+				aria-controls={collapseId}
 				aria-expanded={expanded}
 				aria-label="Toggle navigation"
 				className={clsx(styles.toggle, className)}
@@ -23,7 +24,7 @@ export const NavbarToggle = createPolymorphic<"button", NavbarToggleOwnProps>(
 				type={type}
 				{...rest}
 			>
-				{children ?? <span className={styles.icon} />}
+				{children ?? <span aria-hidden="true" className={styles.icon} />}
 			</Tag>
 		);
 	},
