@@ -6,12 +6,9 @@ export type CardOwnProps = {
 	className?: ClassValue;
 };
 
-const CardBase = createPolymorphic<"div", CardOwnProps>(
-	"div",
-	(Tag, { className }, { className: _, ...rest }) => (
-		<Tag className={clsx(styles.card, className)} {...rest} />
-	),
-);
+const CardBase = createPolymorphic<"div", CardOwnProps>("div", (Tag, { className }, { className: _, ...rest }) => (
+	<Tag className={clsx(styles.card, className)} {...rest} />
+));
 
 export type CardHeaderOwnProps = {
 	className?: ClassValue;
@@ -19,9 +16,7 @@ export type CardHeaderOwnProps = {
 
 export const CardHeader = createPolymorphic<"div", CardHeaderOwnProps>(
 	"div",
-	(Tag, { className }, { className: _, ...rest }) => (
-		<Tag className={clsx(styles.cardHeader, className)} {...rest} />
-	),
+	(Tag, { className }, { className: _, ...rest }) => <Tag className={clsx(styles.cardHeader, className)} {...rest} />,
 );
 
 export type CardBodyOwnProps = {
@@ -30,9 +25,7 @@ export type CardBodyOwnProps = {
 
 export const CardBody = createPolymorphic<"div", CardBodyOwnProps>(
 	"div",
-	(Tag, { className }, { className: _, ...rest }) => (
-		<Tag className={clsx(styles.cardBody, className)} {...rest} />
-	),
+	(Tag, { className }, { className: _, ...rest }) => <Tag className={clsx(styles.cardBody, className)} {...rest} />,
 );
 
 export type CardFooterOwnProps = {
@@ -41,9 +34,7 @@ export type CardFooterOwnProps = {
 
 export const CardFooter = createPolymorphic<"div", CardFooterOwnProps>(
 	"div",
-	(Tag, { className }, { className: _, ...rest }) => (
-		<Tag className={clsx(styles.cardFooter, className)} {...rest} />
-	),
+	(Tag, { className }, { className: _, ...rest }) => <Tag className={clsx(styles.cardFooter, className)} {...rest} />,
 );
 
 const DEFAULT_IMG_HEIGHT = 160;
@@ -79,8 +70,12 @@ CardBody.displayName = "CardBody";
 CardFooter.displayName = "CardFooter";
 
 export const Card = Object.assign(CardBase, {
+	// biome-ignore lint/style/useNamingConvention: React compound component convention
 	Body: CardBody,
+	// biome-ignore lint/style/useNamingConvention: React compound component convention
 	Header: CardHeader,
+	// biome-ignore lint/style/useNamingConvention: React compound component convention
 	Footer: CardFooter,
+	// biome-ignore lint/style/useNamingConvention: React compound component convention
 	Img: CardImg,
 });

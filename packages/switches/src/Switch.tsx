@@ -1,7 +1,7 @@
 import type { ClassValue } from "clsx";
 import type { ChangeEvent } from "react";
-import { SwitchGroup, useSwitchId } from "./SwitchGroup";
 import styles from "./Switch.module.scss";
+import { SwitchGroup, useSwitchId } from "./SwitchGroup";
 
 export type SwitchProps = {
 	checked?: boolean;

@@ -1,7 +1,7 @@
-import { useHeadingLevel } from "./useHeadingLevel";
 import clsx, { type ClassValue } from "clsx";
 import type { ComponentPropsWithoutRef } from "react";
 import styles from "./Heading.module.scss";
+import { useHeadingLevel } from "./useHeadingLevel";
 
 type HtmlHeadingLevel = 1 | 2 | 3 | 4 | 5 | 6;
 

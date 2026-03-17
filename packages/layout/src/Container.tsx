@@ -19,9 +19,6 @@ const maxWidthClassMap: Record<ContainerMaxWidth, string> = {
 export const Container = createPolymorphic<"div", ContainerOwnProps>(
 	"div",
 	(Tag, { className, maxWidth }, { className: _, maxWidth: _mw, ...rest }) => (
-		<Tag
-			className={clsx(styles.container, maxWidth && maxWidthClassMap[maxWidth], className)}
-			{...rest}
-		/>
+		<Tag className={clsx(styles.container, maxWidth && maxWidthClassMap[maxWidth], className)} {...rest} />
 	),
 );

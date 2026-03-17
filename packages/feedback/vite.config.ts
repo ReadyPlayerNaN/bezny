@@ -21,7 +21,7 @@ export default defineConfig({
 			formats: ["es"],
 		},
 		rollupOptions: {
-			external: ["react", "react-dom", "clsx", /^@bezny\//],
+			external: ["react", "react-dom", "clsx", /^@bezny\//u],
 			output: {
 				assetFileNames: "[name][extname]",
 			},

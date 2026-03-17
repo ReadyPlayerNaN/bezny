@@ -24,10 +24,6 @@ const variantRoleMap: Record<AlertVariant, string> = {
 export const Alert = createPolymorphic<"div", AlertOwnProps>(
 	"div",
 	(Tag, { className, variant }, { className: _, variant: _v, ...rest }) => (
-		<Tag
-			className={clsx(styles.alert, variantClassMap[variant], className)}
-			role={variantRoleMap[variant]}
-			{...rest}
-		/>
+		<Tag className={clsx(styles.alert, variantClassMap[variant], className)} role={variantRoleMap[variant]} {...rest} />
 	),
 );

@@ -5,8 +5,8 @@ import type { SidebarGroup } from "@bezny/navigation";
 import { Sidebar } from "@bezny/navigation";
 import { type ReactNode, useState } from "react";
 import { sidebarGroups } from "../data/sidebar.js";
-import ThemeSettings from "./ThemeSettings.js";
 import TableOfContents from "./TableOfContents.js";
+import ThemeSettings from "./ThemeSettings.js";
 
 type Heading = {
 	depth: number;

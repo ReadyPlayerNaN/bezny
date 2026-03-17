@@ -22,14 +22,14 @@ export function Dialog({ children, className, onClose, open }: DialogProps) {
 			if (!dialog.open) {
 				dialog.showModal();
 			}
-		} else {
-			if (dialog.open) {
-				dialog.close();
-			}
+		} else if (dialog.open) {
+			dialog.close();
 		}
 	}, [open]);
 
 	return (
+		// biome-ignore lint/a11y/noNoninteractiveElementInteractions: backdrop click-to-close is a standard dialog pattern
+		// biome-ignore lint/a11y/useKeyWithClickEvents: Escape key handled via onCancel
 		<dialog
 			ref={dialogRef}
 			className={clsx(styles.dialog, className)}

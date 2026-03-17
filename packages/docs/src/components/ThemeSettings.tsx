@@ -11,6 +11,9 @@ const LS_REDUCED_TRANSPARENCY = "bzn-docs-reduced-transparency";
 
 const DEFAULT_PRIMARY = 10;
 const DEFAULT_OFFSET = 60;
+const HUE_DEGREES = 360;
+const SLIDER_DISABLED_OPACITY = 0.4;
+// biome-ignore lint/style/noMagicNumbers: these are hue degree offsets, self-explanatory in context
 const HUE_OFFSETS = [30, 60, 90, 120, 150, 180] as const;
 
 type HueOffset = (typeof HUE_OFFSETS)[number] | "unlocked";
@@ -18,10 +21,14 @@ type TriState = "auto" | "yes" | "no";
 type ColorScheme = "auto" | "light" | "dark";
 
 function parseHueOffset(value: string | null): HueOffset {
-	if (value === "unlocked") return "unlocked";
+	if (value === "unlocked") {
+		return "unlocked";
+	}
 	if (value) {
 		const num = Number(value);
-		if (HUE_OFFSETS.includes(num as (typeof HUE_OFFSETS)[number])) return num as (typeof HUE_OFFSETS)[number];
+		if (HUE_OFFSETS.includes(num as (typeof HUE_OFFSETS)[number])) {
+			return num as (typeof HUE_OFFSETS)[number];
+		}
 	}
 	return DEFAULT_OFFSET;
 }
@@ -33,7 +40,7 @@ function readStorage() {
 		hueOffset === "unlocked"
 			? Number(localStorage.getItem(LS_SECONDARY)) || primary + DEFAULT_OFFSET
 			: primary + hueOffset;
-	return { primaryHue: primary, secondaryHue: secondary, hueOffset };
+	return { primaryHue: primary, secondaryHue: secondary, hueOffset: hueOffset };
 }
 
 const CLASS_MAP = {
@@ -49,7 +56,7 @@ function applyPreferenceClass(key: keyof typeof CLASS_MAP, value: string) {
 		el.classList.remove(...classes);
 	}
 	const classes = map[value as keyof typeof map];
-	if (classes?.length) {
+	if (classes?.length > 0) {
 		el.classList.add(...classes);
 	}
 }
@@ -124,7 +131,9 @@ export default function ThemeSettings() {
 	}, []);
 
 	useEffect(() => {
-		if (!initialized.current) return;
+		if (!initialized.current) {
+			return;
+		}
 		applyThemeOverrides(primaryHue, secondaryHue);
 		localStorage.setItem(LS_PRIMARY, String(primaryHue));
 		localStorage.setItem(LS_SECONDARY, String(secondaryHue));
@@ -132,19 +141,25 @@ export default function ThemeSettings() {
 	}, [primaryHue, secondaryHue, hueOffset]);
 
 	useEffect(() => {
-		if (!initialized.current) return;
+		if (!initialized.current) {
+			return;
+		}
 		applyPreferenceClass("colorScheme", colorScheme);
 		localStorage.setItem(LS_COLOR_SCHEME, colorScheme);
 	}, [colorScheme]);
 
 	useEffect(() => {
-		if (!initialized.current) return;
+		if (!initialized.current) {
+			return;
+		}
 		applyPreferenceClass("reducedMotion", reducedMotion);
 		localStorage.setItem(LS_REDUCED_MOTION, reducedMotion);
 	}, [reducedMotion]);
 
 	useEffect(() => {
-		if (!initialized.current) return;
+		if (!initialized.current) {
+			return;
+		}
 		applyPreferenceClass("reducedTransparency", reducedTransparency);
 		localStorage.setItem(LS_REDUCED_TRANSPARENCY, reducedTransparency);
 	}, [reducedTransparency]);
@@ -153,7 +168,9 @@ export default function ThemeSettings() {
 		(e: React.ChangeEvent<HTMLInputElement>) => {
 			const hue = Number(e.target.value);
 			setPrimaryHue(hue);
-			if (hueOffset !== "unlocked") setSecondaryHue(hue + hueOffset);
+			if (hueOffset !== "unlocked") {
+				setSecondaryHue(hue + hueOffset);
+			}
 		},
 		[hueOffset],
 	);
@@ -164,7 +181,7 @@ export default function ThemeSettings() {
 
 	const handleOffsetChange = useCallback(
 		(e: React.ChangeEvent<HTMLSelectElement>) => {
-			const value = e.target.value;
+			const { value } = e.target;
 			if (value === "unlocked") {
 				setHueOffset("unlocked");
 			} else {
@@ -201,7 +218,9 @@ export default function ThemeSettings() {
 				setOpen(false);
 			}
 		}
-		if (open) document.addEventListener("click", handleClick);
+		if (open) {
+			document.addEventListener("click", handleClick);
+		}
 		return () => document.removeEventListener("click", handleClick);
 	}, [open]);
 
@@ -233,6 +252,7 @@ export default function ThemeSettings() {
 							border: "2px solid var(--bzn-border)",
 							verticalAlign: "middle",
 						}}
+						role="img"
 						aria-label="Theme settings"
 					/>
 				</summary>
@@ -252,14 +272,18 @@ export default function ThemeSettings() {
 				>
 					<div style={sectionHeading}>Accent colour</div>
 
-					<label style={{ fontSize: 12, color: "var(--bzn-text-muted)", display: "block", marginBottom: 4 }}>
+					<label
+						htmlFor="bzn-primary-hue"
+						style={{ fontSize: 12, color: "var(--bzn-text-muted)", display: "block", marginBottom: 4 }}
+					>
 						Primary — {primaryHue}°
 					</label>
 					<div style={sliderTrack}>
 						<input
+							id="bzn-primary-hue"
 							type="range"
 							min={0}
-							max={360}
+							max={HUE_DEGREES}
 							value={primaryHue}
 							onChange={handlePrimaryChange}
 							className="bzn-hue-slider"
@@ -268,8 +292,8 @@ export default function ThemeSettings() {
 					</div>
 
 					<div style={{ display: "flex", alignItems: "center", gap: 6, margin: "10px 0 4px" }}>
-						<label style={{ fontSize: 12, color: "var(--bzn-text-muted)", flex: 1 }}>
-							Secondary — {Math.round(secondaryHue % 360)}°
+						<label htmlFor="bzn-secondary-hue" style={{ fontSize: 12, color: "var(--bzn-text-muted)", flex: 1 }}>
+							Secondary — {Math.round(secondaryHue % HUE_DEGREES)}°
 						</label>
 						<select
 							value={hueOffset}
@@ -295,15 +319,16 @@ export default function ThemeSettings() {
 					<div
 						style={{
 							...sliderTrack,
-							opacity: hueOffset === "unlocked" ? 1 : 0.4,
+							opacity: hueOffset === "unlocked" ? 1 : SLIDER_DISABLED_OPACITY,
 							pointerEvents: hueOffset === "unlocked" ? "auto" : "none",
 						}}
 					>
 						<input
+							id="bzn-secondary-hue"
 							type="range"
 							min={0}
-							max={360}
-							value={Math.round(secondaryHue % 360)}
+							max={HUE_DEGREES}
+							value={Math.round(secondaryHue % HUE_DEGREES)}
 							onChange={handleSecondaryChange}
 							disabled={hueOffset !== "unlocked"}
 							className="bzn-hue-slider"
@@ -325,7 +350,11 @@ export default function ThemeSettings() {
 						<ButtonGroupOption value="no">No</ButtonGroupOption>
 					</ButtonGroup>
 
-					<ButtonGroup value={reducedTransparency} onChange={(v) => setReducedTransparency(v as TriState)} legend="Reduced transparency">
+					<ButtonGroup
+						value={reducedTransparency}
+						onChange={(v) => setReducedTransparency(v as TriState)}
+						legend="Reduced transparency"
+					>
 						<ButtonGroupOption value="auto">Auto</ButtonGroupOption>
 						<ButtonGroupOption value="yes">Yes</ButtonGroupOption>
 						<ButtonGroupOption value="no">No</ButtonGroupOption>

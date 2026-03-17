@@ -4,10 +4,7 @@ import { defineConfig } from "vite";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
-	plugins: [
-		react(),
-		dts({ include: ["src"], exclude: ["src/**/*.test.*", "src/test/**"] }),
-	],
+	plugins: [react(), dts({ include: ["src"], exclude: ["src/**/*.test.*", "src/test/**"] })],
 	build: {
 		cssCodeSplit: true,
 		lib: {

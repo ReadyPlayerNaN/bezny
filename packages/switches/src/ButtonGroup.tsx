@@ -13,7 +13,15 @@ export type ButtonGroupProps = {
 	value?: string;
 };
 
-export function ButtonGroup({ children, className, defaultValue, disabled, legend, onChange, value }: ButtonGroupProps) {
+export function ButtonGroup({
+	children,
+	className,
+	defaultValue,
+	disabled,
+	legend,
+	onChange,
+	value,
+}: ButtonGroupProps) {
 	const handleChange = useCallback(
 		(itemValue: string) => {
 			onChange?.(itemValue);
@@ -22,13 +30,13 @@ export function ButtonGroup({ children, className, defaultValue, disabled, legen
 	);
 
 	const ctx = useMemo<ButtonGroupContextValue>(
-		() => ({ disabled, onChange: handleChange, value: value ?? defaultValue }),
+		() => ({ disabled: disabled, onChange: handleChange, value: value ?? defaultValue }),
 		[defaultValue, disabled, handleChange, value],
 	);
 
 	return (
 		<ButtonGroupContext.Provider value={ctx}>
-			<fieldset className={clsx(styles.group, className)} disabled={disabled} role="radiogroup">
+			<fieldset className={clsx(styles.group, className)} disabled={disabled}>
 				{legend ? <legend className={styles.legend}>{legend}</legend> : null}
 				{children}
 			</fieldset>

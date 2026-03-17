@@ -50,7 +50,7 @@ describe("ButtonGroup", () => {
 
 	it("disables all options when group is disabled", () => {
 		render(
-			<ButtonGroup value="a" disabled>
+			<ButtonGroup value="a" disabled={true}>
 				<ButtonGroupOption value="a">Alpha</ButtonGroupOption>
 				<ButtonGroupOption value="b">Beta</ButtonGroupOption>
 			</ButtonGroup>,

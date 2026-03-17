@@ -1,8 +1,8 @@
 import type { ClassValue } from "clsx";
 import type { ChangeEvent } from "react";
-import { SwitchGroup, useSwitchId } from "./SwitchGroup";
 import styles from "./Radio.module.scss";
 import { useRadioGroup } from "./RadioGroupContext";
+import { SwitchGroup, useSwitchId } from "./SwitchGroup";
 
 export type RadioProps = {
 	checked?: boolean;

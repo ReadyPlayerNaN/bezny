@@ -19,10 +19,6 @@ const variantClassMap: Record<ButtonVariant, string> = {
 export const Button = createPolymorphic<"button", ButtonOwnProps>(
 	"button",
 	(Tag, { className, variant = "default" }, { className: _, variant: _v, type = "button", ...rest }) => (
-		<Tag
-			className={clsx(styles.button, variantClassMap[variant], className)}
-			type={type}
-			{...rest}
-		/>
+		<Tag className={clsx(styles.button, variantClassMap[variant], className)} type={type} {...rest} />
 	),
 );

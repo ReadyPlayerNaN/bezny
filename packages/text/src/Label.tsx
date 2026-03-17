@@ -8,7 +8,5 @@ export type LabelOwnProps = {
 
 export const Label = createPolymorphic<"label", LabelOwnProps>(
 	"label",
-	(Tag, { className }, { className: _, ...rest }) => (
-		<Tag className={clsx(styles.label, className)} {...rest} />
-	),
+	(Tag, { className }, { className: _, ...rest }) => <Tag className={clsx(styles.label, className)} {...rest} />,
 );

@@ -1,7 +1,7 @@
 import clsx, { type ClassValue } from "clsx";
-import { type ReactNode } from "react";
-import styles from "./ButtonGroupOption.module.scss";
+import type { ReactNode } from "react";
 import { useButtonGroup } from "./ButtonGroupContext";
+import styles from "./ButtonGroupOption.module.scss";
 
 export type ButtonGroupOptionProps = {
 	children: ReactNode;
@@ -40,6 +40,7 @@ export function ButtonGroupOption({ children, className, disabled, value }: Butt
 	};
 
 	return (
+		// biome-ignore lint/a11y/useSemanticElements: button with role="radio" is intentional for custom ButtonGroup styling
 		<button
 			aria-checked={isSelected}
 			className={clsx(styles.option, { [styles.selected]: isSelected, [styles.disabled]: isDisabled }, className)}

@@ -27,6 +27,7 @@ describe("TextInput", () => {
 		expect(screen.getByRole("alert")).toHaveTextContent("Required");
 	});
 
+	// biome-ignore lint/nursery/useExpect: type-only test — assertion is the @ts-expect-error compile error
 	it("does not expose a type prop", () => {
 		// @ts-expect-error - type prop should not be accepted
 		render(<TextInput type="number" />);

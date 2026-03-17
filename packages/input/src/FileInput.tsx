@@ -5,7 +5,10 @@ import styles from "./FileInput.module.scss";
 
 type ValidationStatus = "error" | "warning" | "success";
 
-type NativeInputProps = Omit<ComponentPropsWithoutRef<"input">, "onChange" | "className" | "type" | "value" | "defaultValue">;
+type NativeInputProps = Omit<
+	ComponentPropsWithoutRef<"input">,
+	"onChange" | "className" | "type" | "value" | "defaultValue"
+>;
 
 export type FileInputProps = NativeInputProps & {
 	className?: ClassValue;
@@ -15,14 +18,7 @@ export type FileInputProps = NativeInputProps & {
 	statusMessage?: string;
 };
 
-export function FileInput({
-	className,
-	label,
-	onChange,
-	status,
-	statusMessage,
-	...rest
-}: FileInputProps) {
+export function FileInput({ className, label, onChange, status, statusMessage, ...rest }: FileInputProps) {
 	const id = useId();
 
 	function handleChange(event: ChangeEvent<HTMLInputElement>) {
@@ -53,13 +49,5 @@ export function FileInput({
 		);
 	}
 
-	return (
-		<input
-			{...rest}
-			className={clsx(styles.input, className)}
-			id={id}
-			onChange={handleChange}
-			type="file"
-		/>
-	);
+	return <input {...rest} className={clsx(styles.input, className)} id={id} onChange={handleChange} type="file" />;
 }

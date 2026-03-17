@@ -21,7 +21,11 @@ export function Overlay({ children, className, open, ...rest }: OverlayProps) {
 	}
 
 	return createPortal(
-		<div data-scroll-lock={open ? "" : undefined} className={clsx(styles.overlay, open && styles.open, className)} {...rest}>
+		<div
+			data-scroll-lock={open ? "" : undefined}
+			className={clsx(styles.overlay, open && styles.open, className)}
+			{...rest}
+		>
 			{typeof children === "function" ? children(open) : children}
 		</div>,
 		document.body,

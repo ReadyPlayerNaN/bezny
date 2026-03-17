@@ -26,6 +26,7 @@ describe("FileInput", () => {
 		expect(screen.getByRole("alert")).toHaveTextContent("File too large");
 	});
 
+	// biome-ignore lint/nursery/useExpect: type-only test — assertion is the @ts-expect-error compile error
 	it("does not expose a type prop", () => {
 		// @ts-expect-error - type prop should not be accepted
 		render(<FileInput type="text" />);

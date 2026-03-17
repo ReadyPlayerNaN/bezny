@@ -8,7 +8,5 @@ export type ParagraphOwnProps = {
 
 export const Paragraph = createPolymorphic<"p", ParagraphOwnProps>(
 	"p",
-	(Tag, { className }, { className: _, ...rest }) => (
-		<Tag className={clsx(styles.paragraph, className)} {...rest} />
-	),
+	(Tag, { className }, { className: _, ...rest }) => <Tag className={clsx(styles.paragraph, className)} {...rest} />,
 );
