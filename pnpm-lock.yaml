@@ -74,9 +74,9 @@ importers:
 
   packages/alert:
     dependencies:
-      '@bezny/styles':
+      '@bezny/core':
         specifier: workspace:*
-        version: link:../styles
+        version: link:../core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -185,69 +185,11 @@ importers:
         specifier: 'catalog:'
         version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
-  packages/breadcrumbs:
-    dependencies:
-      '@bezny/styles':
-        specifier: workspace:*
-        version: link:../styles
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
-    devDependencies:
-      '@testing-library/jest-dom':
-        specifier: 'catalog:'
-        version: 6.9.1
-      '@testing-library/react':
-        specifier: 'catalog:'
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@testing-library/user-event':
-        specifier: 'catalog:'
-        version: 14.6.1(@testing-library/dom@10.4.1)
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.14
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 19.2.3(@types/react@19.2.14)
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-      '@vitest/coverage-v8':
-        specifier: 'catalog:'
-        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
-      jsdom:
-        specifier: 'catalog:'
-        version: 28.1.0
-      react:
-        specifier: 'catalog:'
-        version: 19.2.4
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.4(react@19.2.4)
-      sass:
-        specifier: 'catalog:'
-        version: 1.98.0
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
-      vite-plugin-dts:
-        specifier: 'catalog:'
-        version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-      vitest:
-        specifier: 'catalog:'
-        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-      vitest-axe:
-        specifier: 'catalog:'
-        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
-
   packages/button:
     dependencies:
-      '@bezny/styles':
+      '@bezny/core':
         specifier: workspace:*
-        version: link:../styles
+        version: link:../core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -303,9 +245,9 @@ importers:
 
   packages/card:
     dependencies:
-      '@bezny/styles':
+      '@bezny/core':
         specifier: workspace:*
-        version: link:../styles
+        version: link:../core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -356,11 +298,7 @@ importers:
         specifier: 'catalog:'
         version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
-  packages/data:
-    dependencies:
-      clsx:
-        specifier: 'catalog:'
-        version: 2.1.1
+  packages/core:
     devDependencies:
       '@testing-library/jest-dom':
         specifier: 'catalog:'
@@ -377,9 +315,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: 'catalog:'
         version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-      '@vitest/coverage-v8':
-        specifier: 'catalog:'
-        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
       jsdom:
         specifier: 'catalog:'
         version: 28.1.0
@@ -410,9 +345,9 @@ importers:
 
   packages/dialog:
     dependencies:
-      '@bezny/styles':
+      '@bezny/core':
         specifier: workspace:*
-        version: link:../styles
+        version: link:../core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -480,15 +415,15 @@ importers:
       '@bezny/avatar':
         specifier: workspace:*
         version: link:../avatar
-      '@bezny/breadcrumbs':
-        specifier: workspace:*
-        version: link:../breadcrumbs
       '@bezny/button':
         specifier: workspace:*
         version: link:../button
       '@bezny/card':
         specifier: workspace:*
         version: link:../card
+      '@bezny/core':
+        specifier: workspace:*
+        version: link:../core
       '@bezny/dialog':
         specifier: workspace:*
         version: link:../dialog
@@ -513,9 +448,6 @@ importers:
       '@bezny/overlay':
         specifier: workspace:*
         version: link:../overlay
-      '@bezny/styles':
-        specifier: workspace:*
-        version: link:../styles
       '@bezny/switches':
         specifier: workspace:*
         version: link:../switches
@@ -660,9 +592,9 @@ importers:
 
   packages/feedback:
     dependencies:
-      '@bezny/styles':
+      '@bezny/core':
         specifier: workspace:*
-        version: link:../styles
+        version: link:../core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -715,12 +647,12 @@ importers:
 
   packages/forms:
     dependencies:
+      '@bezny/core':
+        specifier: workspace:*
+        version: link:../core
       '@bezny/feedback':
         specifier: workspace:*
         version: link:../feedback
-      '@bezny/styles':
-        specifier: workspace:*
-        version: link:../styles
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -773,12 +705,12 @@ importers:
 
   packages/input:
     dependencies:
+      '@bezny/core':
+        specifier: workspace:*
+        version: link:../core
       '@bezny/feedback':
         specifier: workspace:*
         version: link:../feedback
-      '@bezny/styles':
-        specifier: workspace:*
-        version: link:../styles
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -834,9 +766,9 @@ importers:
 
   packages/layout:
     dependencies:
-      '@bezny/styles':
+      '@bezny/core':
         specifier: workspace:*
-        version: link:../styles
+        version: link:../core
       '@bezny/text':
         specifier: workspace:*
         version: link:../text
@@ -890,11 +822,63 @@ importers:
         specifier: 'catalog:'
         version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
+  packages/list:
+    dependencies:
+      clsx:
+        specifier: 'catalog:'
+        version: 2.1.1
+    devDependencies:
+      '@testing-library/jest-dom':
+        specifier: 'catalog:'
+        version: 6.9.1
+      '@testing-library/react':
+        specifier: 'catalog:'
+        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@types/react':
+        specifier: 'catalog:'
+        version: 19.2.14
+      '@types/react-dom':
+        specifier: 'catalog:'
+        version: 19.2.3(@types/react@19.2.14)
+      '@vitejs/plugin-react':
+        specifier: 'catalog:'
+        version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.0(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+      jsdom:
+        specifier: 'catalog:'
+        version: 28.1.0
+      react:
+        specifier: 'catalog:'
+        version: 19.2.4
+      react-dom:
+        specifier: 'catalog:'
+        version: 19.2.4(react@19.2.4)
+      sass:
+        specifier: 'catalog:'
+        version: 1.98.0
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+      vite:
+        specifier: 'catalog:'
+        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
+      vite-plugin-dts:
+        specifier: 'catalog:'
+        version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
+      vitest-axe:
+        specifier: 'catalog:'
+        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
+
   packages/navbar:
     dependencies:
-      '@bezny/styles':
+      '@bezny/core':
         specifier: workspace:*
-        version: link:../styles
+        version: link:../core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -950,9 +934,9 @@ importers:
 
   packages/navigation:
     dependencies:
-      '@bezny/styles':
+      '@bezny/core':
         specifier: workspace:*
-        version: link:../styles
+        version: link:../core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -1061,56 +1045,11 @@ importers:
         specifier: 'catalog:'
         version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
 
-  packages/styles:
-    devDependencies:
-      '@testing-library/jest-dom':
-        specifier: 'catalog:'
-        version: 6.9.1
-      '@testing-library/react':
-        specifier: 'catalog:'
-        version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@types/react':
-        specifier: 'catalog:'
-        version: 19.2.14
-      '@types/react-dom':
-        specifier: 'catalog:'
-        version: 19.2.3(@types/react@19.2.14)
-      '@vitejs/plugin-react':
-        specifier: 'catalog:'
-        version: 5.2.0(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-      jsdom:
-        specifier: 'catalog:'
-        version: 28.1.0
-      react:
-        specifier: 'catalog:'
-        version: 19.2.4
-      react-dom:
-        specifier: 'catalog:'
-        version: 19.2.4(react@19.2.4)
-      sass:
-        specifier: 'catalog:'
-        version: 1.98.0
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-      vite:
-        specifier: 'catalog:'
-        version: 7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)
-      vite-plugin-dts:
-        specifier: 'catalog:'
-        version: 4.5.4(@types/node@25.5.0)(rollup@4.59.0)(typescript@5.9.3)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-      vitest:
-        specifier: 'catalog:'
-        version: 4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0))
-      vitest-axe:
-        specifier: 'catalog:'
-        version: 1.0.0-pre.5(vitest@4.1.0(@types/node@25.5.0)(jsdom@28.1.0)(vite@7.3.1(@types/node@25.5.0)(jiti@1.21.7)(sass@1.98.0)(terser@5.46.0)))
-
   packages/switches:
     dependencies:
-      '@bezny/styles':
+      '@bezny/core':
         specifier: workspace:*
-        version: link:../styles
+        version: link:../core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
@@ -1166,9 +1105,9 @@ importers:
 
   packages/text:
     dependencies:
-      '@bezny/styles':
+      '@bezny/core':
         specifier: workspace:*
-        version: link:../styles
+        version: link:../core
       clsx:
         specifier: 'catalog:'
         version: 2.1.1
