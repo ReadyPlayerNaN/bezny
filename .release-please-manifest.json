@@ -1,7 +1,6 @@
 {
   "packages/alert": "0.1.0",
   "packages/avatar": "0.1.0",
-  "packages/breadcrumbs": "0.1.0",
   "packages/button": "0.1.0",
   "packages/card": "0.1.0",
   "packages/list": "0.1.0",
@@ -15,7 +14,7 @@
   "packages/navbar": "0.1.0",
   "packages/navigation": "0.1.0",
   "packages/overlay": "0.1.0",
-  "packages/styles": "0.1.0",
+  "packages/core": "0.1.0",
   "packages/switches": "0.1.0",
   "packages/text": "0.1.0"
 }

@@ -6,7 +6,6 @@
     [
       "packages/alert",
       "packages/avatar",
-      "packages/breadcrumbs",
       "packages/button",
       "packages/card",
       "packages/list",
@@ -20,7 +19,7 @@
       "packages/navbar",
       "packages/navigation",
       "packages/overlay",
-      "packages/styles",
+      "packages/core",
       "packages/switches",
       "packages/text"
     ]
@@ -28,7 +27,6 @@
   "packages": {
     "packages/alert": {},
     "packages/avatar": {},
-    "packages/breadcrumbs": {},
     "packages/button": {},
     "packages/card": {},
     "packages/list": {},
@@ -42,7 +40,7 @@
     "packages/navbar": {},
     "packages/navigation": {},
     "packages/overlay": {},
-    "packages/styles": {},
+    "packages/core": {},
     "packages/switches": {},
     "packages/text": {}
   }
