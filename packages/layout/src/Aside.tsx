@@ -1,4 +1,4 @@
-import { createPolymorphic } from "@bezny/styles";
+import { createPolymorphic } from "@bezny/core";
 import { HeadingLevelProvider } from "@bezny/text";
 import type { ReactNode } from "react";
 

@@ -50,7 +50,7 @@
 	},
 	"dependencies": {
 		"@bezny/alert": "workspace:*",
-		"@bezny/styles": "workspace:*",
+		"@bezny/core": "workspace:*",
 		"clsx": "catalog:"
 	},
 	"devDependencies": {

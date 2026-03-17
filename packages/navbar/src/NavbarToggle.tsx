@@ -1,4 +1,4 @@
-import { createPolymorphic } from "@bezny/styles";
+import { createPolymorphic } from "@bezny/core";
 import clsx, { type ClassValue } from "clsx";
 import type { ReactNode } from "react";
 import { useNavbar } from "./NavbarContext";

@@ -24,7 +24,7 @@
 	},
 	"dependencies": {
 		"clsx": "catalog:",
-		"@bezny/styles": "workspace:*"
+		"@bezny/core": "workspace:*"
 	},
 	"devDependencies": {
 		"@testing-library/jest-dom": "catalog:",

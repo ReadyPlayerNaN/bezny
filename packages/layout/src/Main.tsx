@@ -1,4 +1,4 @@
-import { createPolymorphic } from "@bezny/styles";
+import { createPolymorphic } from "@bezny/core";
 
 export type MainOwnProps = Record<string, never>;
 

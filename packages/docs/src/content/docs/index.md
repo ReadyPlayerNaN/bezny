@@ -7,7 +7,7 @@ bezny is a React component framework built on a shared design system with CSS cu
 ## Installation
 
 ```bash
-pnpm add @bezny/button @bezny/styles
+pnpm add @bezny/button @bezny/core
 ```
 
 ## Setup
@@ -15,7 +15,7 @@ pnpm add @bezny/button @bezny/styles
 Import the default theme CSS in your application entry point:
 
 ```css
-@import "@bezny/styles/theme.css";
+@import "@bezny/core/theme.css";
 @import "@bezny/button/index.css";
 ```
 

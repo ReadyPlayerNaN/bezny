@@ -81,13 +81,13 @@ These differ from keyboard inputs:
 - Remove `StatusMessage.tsx`, `StatusMessage.module.scss`
 - Keep `TextArea.tsx`, `Select.tsx`
 - Replace `StatusMessage` usage in TextArea/Select with `Alert` from `@bezny/alert`
-- Add `@bezny/alert` as dependency, remove `@bezny/styles` `createPolymorphic` usage (was only for StatusMessage)
+- Add `@bezny/alert` as dependency, remove `@bezny/core` `createPolymorphic` usage (was only for StatusMessage)
 
 ## Dependencies
 
 ```
-@bezny/input → @bezny/alert, @bezny/styles, clsx
-@bezny/forms → @bezny/alert, @bezny/styles, clsx
+@bezny/input → @bezny/alert, @bezny/core, clsx
+@bezny/forms → @bezny/alert, @bezny/core, clsx
 @bezny/docs  → adds @bezny/input
 ```
 

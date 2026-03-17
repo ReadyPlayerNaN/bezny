@@ -9,7 +9,7 @@ Create a custom theme by using the `bzn.theme()` SCSS mixin. It generates all th
 Pass oklch colors and the mixin generates full shade ramps automatically:
 
 ```scss
-@use '@bezny/styles/theme' as bzn;
+@use '@bezny/core/theme' as bzn;
 
 :root {
   @include bzn.theme(
@@ -28,7 +28,7 @@ The `h` (hue) and `c` (chroma) values are used with a fixed lightness curve to p
 For precise control, pass complete shade maps instead of hue/chroma pairs:
 
 ```scss
-@use '@bezny/styles/theme' as bzn;
+@use '@bezny/core/theme' as bzn;
 
 $my-brand: (
   50:  oklch(97% 0.02 280),
@@ -70,7 +70,7 @@ You can mix approaches: use a shade map for one palette and hue/chroma for anoth
 
 ## Built-in palettes
 
-The following palettes are available as SCSS maps from `@bezny/styles/palettes`:
+The following palettes are available as SCSS maps from `@bezny/core/palettes`:
 
 - `$slate` — neutral gray-blue
 - `$bordeaux` — warm red (default primary)
@@ -79,7 +79,7 @@ The following palettes are available as SCSS maps from `@bezny/styles/palettes`:
 - `$rose` — pink-red (default danger)
 
 ```scss
-@use '@bezny/styles/palettes' as palettes;
+@use '@bezny/core/palettes' as palettes;
 
 :root {
   @include bzn.theme(
@@ -93,7 +93,7 @@ The following palettes are available as SCSS maps from `@bezny/styles/palettes`:
 The `bzn.responsive()` mixin must be called at the root level (outside `:root`) to emit media queries and class overrides. Without it, color scheme switching and accessibility preferences will not work.
 
 ```scss
-@use '@bezny/styles/theme' as bzn;
+@use '@bezny/core/theme' as bzn;
 
 :root {
   @include bzn.theme($primary: (h: 250, c: 0.18));

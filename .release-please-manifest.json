@@ -4,7 +4,7 @@
   "packages/breadcrumbs": "0.1.0",
   "packages/button": "0.1.0",
   "packages/card": "0.1.0",
-  "packages/data": "0.1.0",
+  "packages/list": "0.1.0",
   "packages/dialog": "0.1.0",
   "packages/drawer": "0.1.0",
   "packages/dropdown": "0.1.0",

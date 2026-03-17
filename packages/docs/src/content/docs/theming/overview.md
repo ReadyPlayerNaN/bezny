@@ -63,7 +63,7 @@ bezny ships a default theme using bordeaux (primary) and slate (neutral) palette
 To use the default theme, import the compiled CSS:
 
 ```css
-@import "@bezny/styles/theme.css";
+@import "@bezny/core/theme.css";
 ```
 
 For custom themes, see the [Custom Themes](/theming/custom-themes/) guide.

@@ -1,4 +1,4 @@
-import type { PolymorphicProps } from "@bezny/styles";
+import type { PolymorphicProps } from "@bezny/core";
 import { Button, type ButtonOwnProps } from "./Button";
 
 export type SubmitProps = PolymorphicProps<"button", ButtonOwnProps>;

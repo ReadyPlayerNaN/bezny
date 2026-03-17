@@ -1,6 +1,6 @@
 import { Alert } from "@bezny/alert";
 import { Avatar, AvatarStack } from "@bezny/avatar";
-import { BreadcrumbItem, Breadcrumbs } from "@bezny/breadcrumbs";
+import { BreadcrumbItem, Breadcrumbs } from "@bezny/navigation";
 import { Button, Submit } from "@bezny/button";
 import { Card, CardBody, CardFooter, CardHeader, CardImg } from "@bezny/card";
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from "@bezny/dialog";

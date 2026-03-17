@@ -1,5 +1,5 @@
 {
-	"name": "@bezny/styles",
+	"name": "@bezny/list",
 	"version": "0.0.0",
 	"type": "module",
 	"main": "./dist/index.js",
@@ -9,10 +9,7 @@
 			"import": "./dist/index.js",
 			"types": "./dist/index.d.ts"
 		},
-		"./theme.css": "./dist/theme.css",
-		"./styles/*": "./src/_*.scss",
-		"./theme": "./src/_theme.scss",
-		"./palettes": "./src/_palettes.scss"
+		"./index.css": "./dist/index.css"
 	},
 	"scripts": {
 		"build": "vite build",
@@ -23,8 +20,10 @@
 		"typecheck": "tsc --noEmit -p tsconfig.json"
 	},
 	"peerDependencies": {
-		"react": "^19",
-		"react-dom": "^19"
+		"react": "^19"
+	},
+	"dependencies": {
+		"clsx": "catalog:"
 	},
 	"devDependencies": {
 		"@testing-library/jest-dom": "catalog:",
@@ -32,6 +31,7 @@
 		"@types/react": "catalog:",
 		"@types/react-dom": "catalog:",
 		"@vitejs/plugin-react": "catalog:",
+		"@vitest/coverage-v8": "catalog:",
 		"jsdom": "catalog:",
 		"react": "catalog:",
 		"react-dom": "catalog:",

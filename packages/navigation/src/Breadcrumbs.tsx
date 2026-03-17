@@ -1,4 +1,4 @@
-import { createPolymorphic } from "@bezny/styles";
+import { createPolymorphic } from "@bezny/core";
 import clsx, { type ClassValue } from "clsx";
 import React, { cloneElement, isValidElement, type ReactElement, type ReactNode } from "react";
 import styles from "./Breadcrumbs.module.scss";
