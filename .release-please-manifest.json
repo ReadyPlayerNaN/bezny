@@ -1,0 +1,21 @@
+{
+  "packages/alert": "0.0.0",
+  "packages/avatar": "0.0.0",
+  "packages/breadcrumbs": "0.0.0",
+  "packages/button": "0.0.0",
+  "packages/card": "0.0.0",
+  "packages/data": "0.0.0",
+  "packages/dialog": "0.0.0",
+  "packages/drawer": "0.0.0",
+  "packages/dropdown": "0.0.0",
+  "packages/feedback": "0.0.0",
+  "packages/forms": "0.0.0",
+  "packages/input": "0.0.0",
+  "packages/layout": "0.0.0",
+  "packages/navbar": "0.0.0",
+  "packages/navigation": "0.0.0",
+  "packages/overlay": "0.0.0",
+  "packages/styles": "0.0.0",
+  "packages/switches": "0.0.0",
+  "packages/text": "0.0.0"
+}

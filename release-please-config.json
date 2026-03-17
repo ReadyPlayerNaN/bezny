@@ -1,0 +1,48 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "release-type": "node",
+  "linked-versions": [
+    [
+      "packages/alert",
+      "packages/avatar",
+      "packages/breadcrumbs",
+      "packages/button",
+      "packages/card",
+      "packages/data",
+      "packages/dialog",
+      "packages/drawer",
+      "packages/dropdown",
+      "packages/feedback",
+      "packages/forms",
+      "packages/input",
+      "packages/layout",
+      "packages/navbar",
+      "packages/navigation",
+      "packages/overlay",
+      "packages/styles",
+      "packages/switches",
+      "packages/text"
+    ]
+  ],
+  "packages": {
+    "packages/alert": {},
+    "packages/avatar": {},
+    "packages/breadcrumbs": {},
+    "packages/button": {},
+    "packages/card": {},
+    "packages/data": {},
+    "packages/dialog": {},
+    "packages/drawer": {},
+    "packages/dropdown": {},
+    "packages/feedback": {},
+    "packages/forms": {},
+    "packages/input": {},
+    "packages/layout": {},
+    "packages/navbar": {},
+    "packages/navigation": {},
+    "packages/overlay": {},
+    "packages/styles": {},
+    "packages/switches": {},
+    "packages/text": {}
+  }
+}
