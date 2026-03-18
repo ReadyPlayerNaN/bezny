@@ -4,6 +4,8 @@ import react from "@astrojs/react";
 import { defineConfig } from "astro/config";
 
 export default defineConfig({
+	site: "https://readyplayernan.github.io",
+	base: "/bezny",
 	integrations: [mdx(), react()],
 	vite: {
 		css: {
