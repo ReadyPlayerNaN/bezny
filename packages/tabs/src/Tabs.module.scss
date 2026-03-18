@@ -1,0 +1,44 @@
+@use 'grid' as *;
+
+.tabs {
+	display: flex;
+	flex-direction: column;
+}
+
+.tabList {
+	display: flex;
+	border-bottom: 1px solid var(--bzn-tabs-border, var(--bzn-border));
+	gap: size(1);
+}
+
+.tab {
+	appearance: none;
+	background: transparent;
+	border: none;
+	border-bottom: 2px solid transparent;
+	color: var(--bzn-tabs-tab-color, var(--bzn-text-muted));
+	cursor: pointer;
+	font: inherit;
+	padding: size(2) size(3);
+	transition:
+		color var(--bzn-transition) var(--bzn-transition-fn),
+		border-color var(--bzn-transition) var(--bzn-transition-fn);
+
+	&:hover {
+		color: var(--bzn-tabs-tab-hover-color, var(--bzn-text));
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--bzn-focus-ring);
+		outline-offset: -2px;
+	}
+}
+
+.tabActive {
+	border-bottom-color: var(--bzn-tabs-active-border, var(--bzn-interactive-bg));
+	color: var(--bzn-tabs-active-color, var(--bzn-text));
+}
+
+.tabPanel {
+	padding: size(3) 0;
+}

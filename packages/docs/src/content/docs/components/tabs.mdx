@@ -1,0 +1,49 @@
+---
+title: Tabs
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Tabbed interface using compound components with context-based state.
+
+```tsx
+import { Tabs } from "@bezny/tabs";
+```
+
+## Examples
+
+### Basic Tabs
+
+<LivePreview client:load code={'<Tabs defaultValue="one">\n  <Tabs.List aria-label="Demo tabs">\n    <Tabs.Tab value="one">Tab One</Tabs.Tab>\n    <Tabs.Tab value="two">Tab Two</Tabs.Tab>\n    <Tabs.Tab value="three">Tab Three</Tabs.Tab>\n  </Tabs.List>\n  <Tabs.Panel value="one">Content for tab one.</Tabs.Panel>\n  <Tabs.Panel value="two">Content for tab two.</Tabs.Panel>\n  <Tabs.Panel value="three">Content for tab three.</Tabs.Panel>\n</Tabs>'} />
+
+## API Reference
+
+### Tabs
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `defaultValue` | `string` | `""` | Initially active tab (uncontrolled) |
+| `value` | `string` | — | Active tab (controlled) |
+| `onValueChange` | `(value: string) => void` | — | Called when active tab changes |
+| `className` | `ClassValue` | — | Additional CSS classes |
+
+### Tabs.List
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `aria-label` | `string` | — | Accessible label for the tab list |
+| `className` | `ClassValue` | — | Additional CSS classes |
+
+### Tabs.Tab
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | Unique identifier for this tab |
+| `className` | `ClassValue` | — | Additional CSS classes |
+
+### Tabs.Panel
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | **required** | Matches the corresponding Tab value |
+| `className` | `ClassValue` | — | Additional CSS classes |

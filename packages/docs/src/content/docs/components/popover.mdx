@@ -1,0 +1,30 @@
+---
+title: Popover
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Positioned content panel triggered by click, richer than a tooltip but lighter than a dialog.
+
+```tsx
+import { Popover } from "@bezny/popover";
+```
+
+## Examples
+
+### Basic Popover
+
+<LivePreview client:load noInline code={'function Demo() {\n  const ref = React.useRef(null);\n  const [open, setOpen] = React.useState(false);\n  return (\n    <>\n      <Button ref={ref} onClick={() => setOpen(!open)}>\n        Toggle popover\n      </Button>\n      <Popover open={open} onClose={() => setOpen(false)} anchorRef={ref}>\n        <Paragraph>Rich popover content goes here.</Paragraph>\n      </Popover>\n    </>\n  );\n}\nrender(<Demo />);'} />
+
+## API Reference
+
+### Popover
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `anchorRef` | `RefObject<HTMLElement \| null>` | **required** | Reference to the trigger element |
+| `open` | `boolean` | **required** | Whether the popover is visible |
+| `onClose` | `() => void` | **required** | Called when the popover should close |
+| `align` | `"left" \| "right"` | `"left"` | Horizontal alignment relative to anchor |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `children` | `ReactNode` | — | Popover content |

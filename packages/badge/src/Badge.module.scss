@@ -1,0 +1,37 @@
+@use 'grid' as *;
+
+.badge {
+	display: inline-flex;
+	align-items: center;
+	border-radius: var(--bzn-badge-radius, 9999px);
+	font-size: var(--bzn-badge-font-size, 12px);
+	font-weight: var(--bzn-badge-font-weight, 600);
+	line-height: 1;
+	padding: size(1) size(2);
+	white-space: nowrap;
+}
+
+.default {
+	background-color: var(--bzn-badge-default-bg, var(--bzn-surface-muted));
+	color: var(--bzn-badge-default-color, var(--bzn-text-muted));
+}
+
+.success {
+	background-color: var(--bzn-badge-success-bg, var(--bzn-success-surface));
+	color: var(--bzn-badge-success-color, var(--bzn-success-text));
+}
+
+.warning {
+	background-color: var(--bzn-badge-warning-bg, var(--bzn-warning-surface));
+	color: var(--bzn-badge-warning-color, var(--bzn-warning-text));
+}
+
+.danger {
+	background-color: var(--bzn-badge-danger-bg, var(--bzn-danger-surface));
+	color: var(--bzn-badge-danger-color, var(--bzn-danger-text));
+}
+
+.info {
+	background-color: var(--bzn-badge-info-bg, var(--bzn-info-surface));
+	color: var(--bzn-badge-info-color, var(--bzn-info-text));
+}

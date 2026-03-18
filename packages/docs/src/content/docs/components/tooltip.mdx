@@ -1,0 +1,30 @@
+---
+title: Tooltip
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Positioned tooltip triggered on hover or focus.
+
+```tsx
+import { Tooltip } from "@bezny/tooltip";
+```
+
+## Examples
+
+### Basic Tooltip
+
+<LivePreview client:load noInline code={'function Demo() {\n  const ref = React.useRef(null);\n  const [open, setOpen] = React.useState(false);\n  return (\n    <>\n      <Button\n        ref={ref}\n        onMouseEnter={() => setOpen(true)}\n        onMouseLeave={() => setOpen(false)}\n        onFocus={() => setOpen(true)}\n        onBlur={() => setOpen(false)}\n        aria-describedby="demo-tooltip"\n      >\n        Hover me\n      </Button>\n      <Tooltip id="demo-tooltip" open={open} anchorRef={ref}>\n        Helpful tooltip text\n      </Tooltip>\n    </>\n  );\n}\nrender(<Demo />);'} />
+
+## API Reference
+
+### Tooltip
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `anchorRef` | `RefObject<HTMLElement \| null>` | **required** | Reference to the trigger element |
+| `open` | `boolean` | **required** | Whether the tooltip is visible |
+| `placement` | `"top" \| "bottom"` | `"top"` | Tooltip placement relative to anchor |
+| `id` | `string` | — | ID for aria-describedby association |
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `children` | `ReactNode` | — | Tooltip content |

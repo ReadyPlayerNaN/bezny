@@ -1,5 +1,6 @@
 import { Alert } from "@bezny/alert";
 import { Avatar, AvatarStack } from "@bezny/avatar";
+import { Badge } from "@bezny/badge";
 import { Button, Submit } from "@bezny/button";
 import { Card, CardBody, CardFooter, CardHeader, CardImg } from "@bezny/card";
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from "@bezny/dialog";
@@ -25,14 +26,19 @@ import { Article, Aside, Container, Main, Section, Stack } from "@bezny/layout";
 import { Navbar, NavbarBrand, NavbarCollapse, NavbarToggle } from "@bezny/navbar";
 import { BreadcrumbItem, Breadcrumbs } from "@bezny/navigation";
 import { Overlay } from "@bezny/overlay";
+import { Pagination } from "@bezny/pagination";
+import { Popover } from "@bezny/popover";
 import { ButtonGroup, ButtonGroupOption, Checkbox, CheckboxGroup, Radio, RadioGroup, Switch } from "@bezny/switches";
+import { Tab, TabList, TabPanel, Tabs } from "@bezny/tabs";
 import { Heading, HeadingLevelProvider, Label, Link, Paragraph, StaticHeading } from "@bezny/text";
+import { Tooltip } from "@bezny/tooltip";
 import React from "react";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
 
 const scope = {
 	Alert: Alert,
 	Article: Article,
+	Badge: Badge,
 	Aside: Aside,
 	Avatar: Avatar,
 	AvatarStack: AvatarStack,
@@ -72,8 +78,10 @@ const scope = {
 	NavbarToggle: NavbarToggle,
 	NumberInput: NumberInput,
 	Overlay: Overlay,
+	Pagination: Pagination,
 	Paragraph: Paragraph,
 	PasswordInput: PasswordInput,
+	Popover: Popover,
 	Radio: Radio,
 	RadioGroup: RadioGroup,
 	React: React,
@@ -83,7 +91,12 @@ const scope = {
 	StaticHeading: StaticHeading,
 	Submit: Submit,
 	Switch: Switch,
+	Tab: Tab,
+	TabList: TabList,
+	TabPanel: TabPanel,
+	Tabs: Tabs,
 	TextInput: TextInput,
+	Tooltip: Tooltip,
 	TimeInput: TimeInput,
 	UrlInput: UrlInput,
 	WeekInput: WeekInput,

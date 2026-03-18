@@ -1,0 +1,11 @@
+@use 'grid' as *;
+
+.popover {
+	background-color: var(--bzn-popover-bg, var(--bzn-surface-overlay));
+	border: 1px solid var(--bzn-popover-border, var(--bzn-border));
+	border-radius: var(--bzn-popover-radius, 8px);
+	box-shadow: 0 size(2) size(4) var(--bzn-popover-shadow, rgba(0, 0, 0, calc(var(--bzn-overlay-opacity) * 0.67)));
+	padding: size(3);
+	position: absolute;
+	z-index: 200;
+}

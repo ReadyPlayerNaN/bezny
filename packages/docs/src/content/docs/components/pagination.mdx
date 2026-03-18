@@ -1,0 +1,33 @@
+---
+title: Pagination
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Pagination controls for navigating list views.
+
+```tsx
+import { Pagination } from "@bezny/pagination";
+```
+
+## Examples
+
+### Basic Pagination
+
+<LivePreview client:load noInline code={'function Demo() {\n  const [page, setPage] = React.useState(1);\n  return <Pagination page={page} totalPages={10} onPageChange={setPage} />;\n}\nrender(<Demo />);'} />
+
+### With More Siblings
+
+<LivePreview client:load noInline code={'function Demo() {\n  const [page, setPage] = React.useState(5);\n  return <Pagination page={page} totalPages={20} siblings={2} onPageChange={setPage} />;\n}\nrender(<Demo />);'} />
+
+## API Reference
+
+### Pagination
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `page` | `number` | **required** | Current active page (1-indexed) |
+| `totalPages` | `number` | **required** | Total number of pages |
+| `onPageChange` | `(page: number) => void` | **required** | Called when page changes |
+| `siblings` | `number` | `1` | Number of visible pages around current |
+| `className` | `ClassValue` | — | Additional CSS classes |

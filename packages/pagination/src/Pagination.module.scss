@@ -1,0 +1,40 @@
+@use 'grid' as *;
+@use 'reactions' as *;
+
+.pagination {
+	display: flex;
+	align-items: center;
+	gap: size(1);
+}
+
+.pageButton {
+	@include interactive;
+	appearance: none;
+	border: 1px solid var(--bzn-pagination-border, var(--bzn-border));
+	border-radius: var(--bzn-pagination-radius, 6px);
+	cursor: pointer;
+	font: inherit;
+	font-size: 14px;
+	line-height: 1;
+	min-width: size(8);
+	padding: size(1.5) size(2);
+	text-align: center;
+}
+
+.active {
+	background-color: var(--bzn-pagination-active-bg, var(--bzn-interactive-bg));
+	border-color: var(--bzn-pagination-active-border, var(--bzn-interactive-bg));
+	color: var(--bzn-pagination-active-color, var(--bzn-interactive-color));
+
+	&:hover {
+		background-color: var(--bzn-pagination-active-bg, var(--bzn-interactive-bg));
+		border-color: var(--bzn-pagination-active-border, var(--bzn-interactive-bg));
+		color: var(--bzn-pagination-active-color, var(--bzn-interactive-color));
+	}
+}
+
+.ellipsis {
+	padding: size(1.5) size(0.5);
+	color: var(--bzn-text-muted);
+	user-select: none;
+}

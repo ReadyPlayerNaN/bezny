@@ -1,0 +1,26 @@
+@use 'grid' as *;
+
+.tooltip {
+	background-color: var(--bzn-tooltip-bg, var(--bzn-surface-inverse));
+	border-radius: var(--bzn-tooltip-radius, 6px);
+	color: var(--bzn-tooltip-color, var(--bzn-text-inverse));
+	font-size: var(--bzn-tooltip-font-size, 12px);
+	line-height: 1.4;
+	max-width: 240px;
+	padding: size(1) size(2);
+	pointer-events: none;
+	position: absolute;
+	transform: translateX(-50%);
+	white-space: normal;
+	z-index: 300;
+}
+
+.top {
+	transform: translate(-50%, -100%);
+	margin-top: size(-1);
+}
+
+.bottom {
+	margin-top: size(1);
+	transform: translateX(-50%);
+}
