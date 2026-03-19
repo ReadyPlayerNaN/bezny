@@ -1,5 +1,8 @@
-import { Markdown } from "@bezny/markdown";
-import { useState } from "react";
+import { type ComponentType, Suspense, lazy, useState } from "react";
+
+const LazyMarkdown = lazy(() =>
+	import("@bezny/markdown").then((mod) => ({ default: mod.Markdown as ComponentType<{ content: string }> })),
+);
 
 const defaultContent = `## Hello
 
@@ -35,7 +38,9 @@ export default function MarkdownDemo() {
 			}}
 		>
 			<div style={{ padding: "1.5rem", borderBottom: "1px solid var(--bzn-border)" }}>
-				<Markdown content={content} />
+				<Suspense fallback={<div>Loading...</div>}>
+					<LazyMarkdown content={content} />
+				</Suspense>
 			</div>
 			<textarea
 				value={content}
