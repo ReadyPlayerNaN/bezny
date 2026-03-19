@@ -18,7 +18,11 @@ import { Badge } from "@bezny/badge";
 
 ### Variants
 
-<LivePreview client:load code={'<div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>\n  <Badge>Default</Badge>\n  <Badge variant="success">Success</Badge>\n  <Badge variant="warning">Warning</Badge>\n  <Badge variant="danger">Danger</Badge>\n  <Badge variant="info">Info</Badge>\n</div>'} />
+<LivePreview client:load code={'<div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>\n  <Badge>Default</Badge>\n  <Badge variant="success">Success</Badge>\n  <Badge variant="warning">Warning</Badge>\n  <Badge variant="danger">Danger</Badge>\n  <Badge variant="info">Info</Badge>\n  <Badge variant="primary">Primary</Badge>\n  <Badge variant="secondary">Secondary</Badge>\n</div>'} />
+
+### With Dot
+
+<LivePreview client:load code={'<div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>\n  <Badge variant="success" dot>Active</Badge>\n  <Badge variant="danger" dot>Offline</Badge>\n  <Badge variant="info" dot>Syncing</Badge>\n  <Badge dot>Idle</Badge>\n</div>'} />
 
 ## API Reference
 
@@ -26,6 +30,7 @@ import { Badge } from "@bezny/badge";
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
-| `variant` | `"default" \| "success" \| "warning" \| "danger" \| "info"` | `"default"` | Visual style variant |
+| `variant` | `"default" \| "success" \| "warning" \| "danger" \| "info" \| "primary" \| "secondary"` | `"default"` | Visual style variant |
+| `dot` | `boolean` | `false` | Show a colored dot indicator before the label |
 | `className` | `ClassValue` | — | Additional CSS classes |
 | `children` | `ReactNode` | — | Badge content |

@@ -5,7 +5,7 @@
 
 // Main theme mixin.
 // $primary, $neutral: either a shade map (50: oklch(...)) or simple (h: N, c: N)
-// $success, $warning, $danger: same format, with built-in defaults
+// $success, $warning, $danger, $info: same format, with built-in defaults
 // $radius: base border radius
 // $transition: default transition duration
 // $prefix: CSS variable prefix
@@ -16,6 +16,7 @@
   $success: null,
   $warning: null,
   $danger: null,
+  $info: null,
   $transition: 200ms,
   $prefix: 'bzn',
 ) {
@@ -44,6 +45,11 @@
     @include shade.shade-scale('danger', $danger, $prefix);
   } @else {
     @include shade.derived-shade-scale('danger', 15, 0.16, 1.0, 'primary', $prefix);
+  }
+  @if $info {
+    @include shade.shade-scale('info', $info, $prefix);
+  } @else {
+    @include shade.derived-shade-scale('info', 220, 0.12, 0.8, 'primary', $prefix);
   }
 
   // Tier 2: Semantic (dark defaults)

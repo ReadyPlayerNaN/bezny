@@ -6,32 +6,51 @@
 	border-radius: var(--bzn-badge-radius, 9999px);
 	font-size: var(--bzn-badge-font-size, 12px);
 	font-weight: var(--bzn-badge-font-weight, 600);
+	gap: size(1);
 	line-height: 1;
 	padding: size(1) size(2);
 	white-space: nowrap;
 }
 
+.dot {
+	border-radius: 50%;
+	display: block;
+	height: 6px;
+	width: 6px;
+	background-color: currentColor;
+}
+
 .default {
-	background-color: var(--bzn-badge-default-bg, var(--bzn-surface-muted));
+	background-color: var(--bzn-badge-default-bg, var(--bzn-surface-raised));
 	color: var(--bzn-badge-default-color, var(--bzn-text-muted));
 }
 
 .success {
-	background-color: var(--bzn-badge-success-bg, var(--bzn-success-surface));
+	background-color: var(--bzn-badge-success-bg, var(--bzn-success-subtle));
 	color: var(--bzn-badge-success-color, var(--bzn-success-text));
 }
 
 .warning {
-	background-color: var(--bzn-badge-warning-bg, var(--bzn-warning-surface));
+	background-color: var(--bzn-badge-warning-bg, var(--bzn-warning-subtle));
 	color: var(--bzn-badge-warning-color, var(--bzn-warning-text));
 }
 
 .danger {
-	background-color: var(--bzn-badge-danger-bg, var(--bzn-danger-surface));
-	color: var(--bzn-badge-danger-color, var(--bzn-danger-text));
+	background-color: var(--bzn-badge-danger-bg, var(--bzn-error-subtle));
+	color: var(--bzn-badge-danger-color, var(--bzn-error-text));
 }
 
 .info {
-	background-color: var(--bzn-badge-info-bg, var(--bzn-info-surface));
+	background-color: var(--bzn-badge-info-bg, var(--bzn-info-subtle));
 	color: var(--bzn-badge-info-color, var(--bzn-info-text));
+}
+
+.primary {
+	background-color: var(--bzn-badge-primary-bg, var(--bzn-interactive));
+	color: var(--bzn-badge-primary-color, var(--bzn-text-on-primary));
+}
+
+.secondary {
+	background-color: var(--bzn-badge-secondary-bg, var(--bzn-interactive-secondary));
+	color: var(--bzn-badge-secondary-color, var(--bzn-text-on-secondary));
 }
