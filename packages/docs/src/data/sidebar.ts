@@ -52,6 +52,7 @@ export const sidebarGroups: SidebarGroup[] = [
 			{ label: "Stack", href: "/components/stack/" },
 			{ label: "Switch", href: "/components/switch/" },
 			{ label: "Tabs", href: "/components/tabs/" },
+			{ label: "TagListInput", href: "/components/tag-list-input/" },
 			{ label: "TextInput", href: "/components/text-input/" },
 			{ label: "TimeInput", href: "/components/time-input/" },
 			{ label: "Tooltip", href: "/components/tooltip/" },
