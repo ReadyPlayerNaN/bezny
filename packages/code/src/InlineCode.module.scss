@@ -1,0 +1,8 @@
+@use 'grid' as *;
+
+.inlineCode {
+	background: var(--bzn-inline-code-background, var(--bzn-surface-raised));
+	border-radius: size(1);
+	font-family: monospace;
+	padding: 0.1em 0.3em;
+}

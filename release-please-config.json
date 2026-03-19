@@ -19,6 +19,7 @@
       "packages/navbar",
       "packages/navigation",
       "packages/overlay",
+      "packages/code",
       "packages/core",
       "packages/switches",
       "packages/text"
@@ -29,6 +30,7 @@
     "packages/avatar": {},
     "packages/button": {},
     "packages/card": {},
+    "packages/code": {},
     "packages/list": {},
     "packages/dialog": {},
     "packages/drawer": {},
