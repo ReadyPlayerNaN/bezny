@@ -21,7 +21,7 @@ export default defineConfig({
 			formats: ["es"],
 		},
 		rollupOptions: {
-			external: ["react", "react-dom", "react/jsx-runtime", "clsx"],
+			external: (id) => id !== "." && !id.startsWith("./") && !id.startsWith("../") && !id.startsWith("/"),
 			output: {
 				assetFileNames: "[name][extname]",
 			},
