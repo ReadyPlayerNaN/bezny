@@ -1,0 +1,39 @@
+@use 'grid' as *;
+
+.wrapper {
+	overflow-x: auto;
+}
+
+.table {
+	border-collapse: collapse;
+	font-size: var(--bzn-table-font-size, 14px);
+	width: 100%;
+}
+
+.headerCell {
+	border-bottom: 1px solid var(--bzn-table-border-color, var(--bzn-border));
+	color: var(--bzn-table-header-color, var(--bzn-text-muted));
+	font-weight: var(--bzn-table-header-font-weight, 500);
+	padding: size(2) size(3);
+	text-align: left;
+	white-space: nowrap;
+}
+
+.bodyCell {
+	border-bottom: 1px solid var(--bzn-table-border-color, var(--bzn-border));
+	color: var(--bzn-table-cell-color, var(--bzn-text));
+	padding: size(2) size(3);
+}
+
+.footerCell {
+	border-top: 2px solid var(--bzn-table-border-color, var(--bzn-border));
+	color: var(--bzn-table-footer-color, var(--bzn-text));
+	font-weight: var(--bzn-table-footer-font-weight, 600);
+	padding: size(2) size(3);
+}
+
+.emptyState {
+	color: var(--bzn-table-empty-color, var(--bzn-text-muted));
+	padding: size(8);
+	text-align: center;
+}

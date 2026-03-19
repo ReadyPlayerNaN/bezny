@@ -1,0 +1,93 @@
+---
+title: DataTable
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Generic, fully typed table component for rendering tabular data from column definitions and a row array.
+
+```tsx
+import { DataTable, type Column } from "@bezny/table";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load noInline code={`const columns = [
+  { key: "name", header: "Name", render: (row) => row.name },
+  { key: "score", header: "Score", render: (row) => row.score.toFixed(1) },
+];
+
+const rows = [
+  { id: "1", name: "Alice", score: 9.5 },
+  { id: "2", name: "Bob", score: 7.2 },
+  { id: "3", name: "Charlie", score: 8.8 },
+];
+
+render(
+  <DataTable
+    columns={columns}
+    rows={rows}
+    getRowKey={(row) => row.id}
+  />
+);`} />
+
+### With Footer Totals
+
+<LivePreview client:load noInline code={`const columns = [
+  { key: "name", header: "Name", render: (row) => row.name },
+  { key: "price", header: "Price", render: (row) => "$" + row.price.toFixed(2) },
+  { key: "qty", header: "Qty", render: (row) => row.qty },
+];
+
+const rows = [
+  { id: "1", name: "Widget", price: 12.99, qty: 3 },
+  { id: "2", name: "Gadget", price: 24.50, qty: 1 },
+  { id: "3", name: "Doohickey", price: 8.75, qty: 5 },
+];
+
+const total = rows.reduce((sum, r) => sum + r.price * r.qty, 0);
+
+render(
+  <DataTable
+    columns={columns}
+    rows={rows}
+    getRowKey={(row) => row.id}
+    totalsRow={["Total", "$" + total.toFixed(2), rows.reduce((s, r) => s + r.qty, 0)]}
+  />
+);`} />
+
+### Empty State
+
+<LivePreview client:load noInline code={`const columns = [
+  { key: "name", header: "Name", render: (row) => row.name },
+  { key: "email", header: "Email", render: (row) => row.email },
+];
+
+render(
+  <DataTable
+    columns={columns}
+    rows={[]}
+    getRowKey={(row) => row.id}
+  />
+);`} />
+
+## API Reference
+
+### DataTable
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `columns` | `Column<T>[]` | — | Column definitions with header label and render function |
+| `rows` | `T[]` | — | Data rows |
+| `getRowKey` | `(row: T) => string` | — | Unique key extractor per row |
+| `totalsRow` | `ReactNode[]` | — | Optional footer row cells (one per column) |
+
+### Column
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `key` | `string` | Unique column identifier |
+| `header` | `string` | Header label text |
+| `render` | `(row: T) => ReactNode` | Cell render function |

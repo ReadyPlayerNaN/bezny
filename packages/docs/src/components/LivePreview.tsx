@@ -45,6 +45,7 @@ import {
 	StaticHeading,
 	UnorderedList,
 } from "@bezny/text";
+import { DataTable } from "@bezny/table";
 import { Tooltip } from "@bezny/tooltip";
 import React from "react";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
@@ -71,6 +72,7 @@ const scope = {
 	CardHeader: CardHeader,
 	CardImg: CardImg,
 	Container: Container,
+	DataTable: DataTable,
 	DateInput: DateInput,
 	DateTimeInput: DateTimeInput,
 	Dialog: Dialog,
