@@ -23,6 +23,7 @@
 		"@bezny/dropdown": "workspace:*",
 		"@bezny/input": "workspace:*",
 		"@bezny/layout": "workspace:*",
+		"@bezny/markdown": "workspace:*",
 		"@bezny/navbar": "workspace:*",
 		"@bezny/navigation": "workspace:*",
 		"@bezny/overlay": "workspace:*",
