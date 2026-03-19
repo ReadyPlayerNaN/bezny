@@ -1,0 +1,7 @@
+@use 'grid' as *;
+
+.horizontalRule {
+	border: none;
+	border-top: 1px solid var(--bzn-border);
+	margin: size(4) 0;
+}

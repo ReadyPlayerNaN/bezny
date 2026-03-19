@@ -1,0 +1,7 @@
+@use 'grid' as *;
+
+.unorderedList {
+	list-style: disc;
+	margin: 0;
+	padding-left: size(6);
+}
