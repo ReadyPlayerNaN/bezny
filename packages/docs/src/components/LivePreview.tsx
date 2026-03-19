@@ -2,6 +2,7 @@ import { Alert } from "@bezny/alert";
 import { Avatar, AvatarStack } from "@bezny/avatar";
 import { Badge } from "@bezny/badge";
 import { Button, Submit } from "@bezny/button";
+import { CodeBlock, InlineCode } from "@bezny/code";
 import { Card, CardBody, CardFooter, CardHeader, CardImg } from "@bezny/card";
 import { Dialog, DialogBody, DialogFooter, DialogHeader } from "@bezny/dialog";
 import { Drawer } from "@bezny/drawer";
@@ -23,6 +24,7 @@ import {
 	YearInput,
 } from "@bezny/input";
 import { Article, Aside, Container, Main, Section, Stack } from "@bezny/layout";
+import { Markdown } from "@bezny/markdown";
 import { Navbar, NavbarBrand, NavbarCollapse, NavbarToggle } from "@bezny/navbar";
 import { BreadcrumbItem, Breadcrumbs } from "@bezny/navigation";
 import { Overlay } from "@bezny/overlay";
@@ -30,7 +32,19 @@ import { Pagination } from "@bezny/pagination";
 import { Popover } from "@bezny/popover";
 import { ButtonGroup, ButtonGroupOption, Checkbox, CheckboxGroup, Radio, RadioGroup, Switch } from "@bezny/switches";
 import { Tab, TabList, TabPanel, Tabs } from "@bezny/tabs";
-import { Heading, HeadingLevelProvider, Label, Link, Paragraph, StaticHeading } from "@bezny/text";
+import {
+	Blockquote,
+	Heading,
+	HeadingLevelProvider,
+	HorizontalRule,
+	Label,
+	Link,
+	ListItem,
+	OrderedList,
+	Paragraph,
+	StaticHeading,
+	UnorderedList,
+} from "@bezny/text";
 import { Tooltip } from "@bezny/tooltip";
 import React from "react";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
@@ -39,6 +53,7 @@ const scope = {
 	Alert: Alert,
 	Article: Article,
 	Badge: Badge,
+	Blockquote: Blockquote,
 	Aside: Aside,
 	Avatar: Avatar,
 	AvatarStack: AvatarStack,
@@ -48,6 +63,7 @@ const scope = {
 	ButtonGroup: ButtonGroup,
 	ButtonGroupOption: ButtonGroupOption,
 	Card: Card,
+	CodeBlock: CodeBlock,
 	CardBody: CardBody,
 	Checkbox: Checkbox,
 	CheckboxGroup: CheckboxGroup,
@@ -67,16 +83,21 @@ const scope = {
 	FileInput: FileInput,
 	Heading: Heading,
 	HeadingLevelProvider: HeadingLevelProvider,
+	HorizontalRule: HorizontalRule,
 	ImageInput: ImageInput,
+	InlineCode: InlineCode,
 	Label: Label,
 	Link: Link,
+	ListItem: ListItem,
 	Main: Main,
+	Markdown: Markdown,
 	MonthInput: MonthInput,
 	Navbar: Navbar,
 	NavbarBrand: NavbarBrand,
 	NavbarCollapse: NavbarCollapse,
 	NavbarToggle: NavbarToggle,
 	NumberInput: NumberInput,
+	OrderedList: OrderedList,
 	Overlay: Overlay,
 	Pagination: Pagination,
 	Paragraph: Paragraph,
@@ -97,6 +118,7 @@ const scope = {
 	Tabs: Tabs,
 	TextInput: TextInput,
 	Tooltip: Tooltip,
+	UnorderedList: UnorderedList,
 	TimeInput: TimeInput,
 	UrlInput: UrlInput,
 	WeekInput: WeekInput,
