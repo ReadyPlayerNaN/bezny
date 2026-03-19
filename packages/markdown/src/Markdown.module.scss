@@ -1,0 +1,7 @@
+@use 'grid' as *;
+
+.markdown {
+	> * + * {
+		margin-top: size(3);
+	}
+}

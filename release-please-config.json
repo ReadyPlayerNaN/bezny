@@ -21,6 +21,7 @@
       "packages/overlay",
       "packages/code",
       "packages/core",
+      "packages/markdown",
       "packages/switches",
       "packages/text"
     ]
@@ -32,6 +33,7 @@
     "packages/card": {},
     "packages/code": {},
     "packages/list": {},
+    "packages/markdown": {},
     "packages/dialog": {},
     "packages/drawer": {},
     "packages/dropdown": {},

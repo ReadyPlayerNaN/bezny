@@ -5,6 +5,7 @@
   "packages/card": "0.2.0",
   "packages/code": "0.0.0",
   "packages/list": "0.1.0",
+  "packages/markdown": "0.0.0",
   "packages/dialog": "0.2.0",
   "packages/drawer": "0.2.0",
   "packages/dropdown": "0.2.0",
