@@ -1,0 +1,7 @@
+@use 'grid' as *;
+
+.orderedList {
+	list-style: decimal;
+	margin: 0;
+	padding-left: size(6);
+}

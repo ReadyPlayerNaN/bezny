@@ -1,0 +1,9 @@
+@use 'grid' as *;
+
+.blockquote {
+	border-left: 3px solid var(--bzn-border);
+	color: var(--bzn-blockquote-color, var(--bzn-text-muted));
+	font-style: italic;
+	margin: 0;
+	padding-left: size(4);
+}
