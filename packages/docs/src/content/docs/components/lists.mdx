@@ -1,0 +1,44 @@
+---
+title: Lists
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Styled list components for ordered and unordered lists.
+
+```tsx
+import { OrderedList, UnorderedList, ListItem } from "@bezny/text";
+```
+
+## Examples
+
+### Unordered List
+
+<LivePreview client:load code={`<UnorderedList><ListItem>First item</ListItem><ListItem>Second item</ListItem><ListItem>Third item</ListItem></UnorderedList>`} />
+
+### Ordered List
+
+<LivePreview client:load code={`<OrderedList><ListItem>Step one</ListItem><ListItem>Step two</ListItem><ListItem>Step three</ListItem></OrderedList>`} />
+
+## API Reference
+
+### OrderedList
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | List items |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+
+### UnorderedList
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | List items |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+
+### ListItem
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Item content |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |

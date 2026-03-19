@@ -1,0 +1,37 @@
+---
+title: Code
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+Components for displaying inline code and code blocks.
+
+```tsx
+import { InlineCode, CodeBlock } from "@bezny/code";
+```
+
+## Examples
+
+### Inline Code
+
+<LivePreview client:load code={`<Paragraph>Use the <InlineCode>console.log</InlineCode> function to debug.</Paragraph>`} />
+
+### Code Block
+
+<LivePreview client:load code={`<CodeBlock><code>{"const greeting = 'Hello, world!';\nconsole.log(greeting);"}</code></CodeBlock>`} />
+
+## API Reference
+
+### InlineCode
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Code content |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+
+### CodeBlock
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Code content (typically a `<code>` element) |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
