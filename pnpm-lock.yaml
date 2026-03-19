@@ -561,6 +561,9 @@ importers:
       '@bezny/layout':
         specifier: workspace:*
         version: link:../layout
+      '@bezny/markdown':
+        specifier: workspace:*
+        version: link:../markdown
       '@bezny/navbar':
         specifier: workspace:*
         version: link:../navbar

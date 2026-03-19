@@ -2,6 +2,8 @@
 title: Markdown
 ---
 
+import MarkdownDemo from "../../../components/MarkdownDemo";
+
 Renders markdown strings as styled HTML using bezny components.
 
 ```tsx
@@ -10,16 +12,14 @@ import { Markdown } from "@bezny/markdown";
 
 ## Examples
 
-### Basic Markdown
+### Interactive Demo
+
+<MarkdownDemo client:only="react" />
+
+### Basic Usage
 
 ```tsx
-<Markdown content="## Hello\n\nSome **bold** text and a [link](https://example.com).\n\n- Item one\n- Item two" />
-```
-
-### Code in Markdown
-
-```tsx
-<Markdown content="Inline `code` and a block:\n\n```js\nconst x = 1;\n```" />
+<Markdown content="## Hello\n\nSome **bold** text and a [link](https://example.com)." />
 ```
 
 ## API Reference
