@@ -1,0 +1,63 @@
+---
+title: TagListInput
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A composite input for managing a list of label/value tag pairs. Users type a value, press Enter or click Add, and it appears as a removable chip.
+
+```tsx
+import { TagListInput } from "@bezny/input";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load noInline code={`
+const [tags, setTags] = React.useState([
+  { label: "React", value: "react" },
+  { label: "TypeScript", value: "typescript" },
+]);
+
+render(
+  <TagListInput
+    label="Skills"
+    values={tags}
+    onChange={setTags}
+    placeholder="Add a skill..."
+  />
+);
+`} />
+
+### With Validation
+
+<LivePreview client:load noInline code={`
+const [tags, setTags] = React.useState([]);
+
+render(
+  <TagListInput
+    label="Tags"
+    values={tags}
+    onChange={setTags}
+    status="error"
+    statusMessage="At least one tag is required"
+  />
+);
+`} />
+
+## API Reference
+
+### TagListInput
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `label` | `string` | — | Label text |
+| `values` | `Array<{ label: string; value: string }>` | — | Current tag list |
+| `onChange` | `(values: Array<{ label: string; value: string }>) => void` | — | Called when tags change |
+| `placeholder` | `string` | `"Add item..."` | Input placeholder |
+| `status` | `"error" \| "warning" \| "success"` | — | Validation status |
+| `statusMessage` | `string` | — | Validation message |
+| `disabled` | `boolean` | `false` | Disable input and buttons |
+| `name` | `string` | — | Input name attribute |
+| `className` | `ClassValue` | — | Additional CSS classes |
