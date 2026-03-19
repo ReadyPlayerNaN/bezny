@@ -1,4 +1,4 @@
-import { type ComponentType, Suspense, lazy, useState } from "react";
+import { type ComponentType, lazy, Suspense, useState } from "react";
 
 const LazyMarkdown = lazy(() =>
 	import("@bezny/markdown").then((mod) => ({ default: mod.Markdown as ComponentType<{ content: string }> })),
