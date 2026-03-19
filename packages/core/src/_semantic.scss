@@ -47,6 +47,9 @@
   --#{$prefix}-error: var(--#{$prefix}-danger-500);
   --#{$prefix}-error-subtle: var(--#{$prefix}-danger-700);
   --#{$prefix}-error-text: var(--#{$prefix}-danger-100);
+  --#{$prefix}-info: var(--#{$prefix}-info-600);
+  --#{$prefix}-info-subtle: var(--#{$prefix}-info-700);
+  --#{$prefix}-info-text: var(--#{$prefix}-info-100);
 
   // Motion
   --#{$prefix}-transition-blink: 60ms;
@@ -111,6 +114,9 @@
   --#{$prefix}-error: var(--#{$prefix}-danger-600);
   --#{$prefix}-error-subtle: var(--#{$prefix}-danger-100);
   --#{$prefix}-error-text: var(--#{$prefix}-danger-700);
+  --#{$prefix}-info: var(--#{$prefix}-info-600);
+  --#{$prefix}-info-subtle: var(--#{$prefix}-info-100);
+  --#{$prefix}-info-text: var(--#{$prefix}-info-700);
 
   // Transparency — light mode uses a lighter base for theme-appropriate backdrop
   --#{$prefix}-overlay-bg: oklch(
