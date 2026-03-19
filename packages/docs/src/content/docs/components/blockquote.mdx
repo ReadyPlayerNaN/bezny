@@ -1,0 +1,30 @@
+---
+title: Blockquote
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A styled blockquote component for quoted passages.
+
+```tsx
+import { Blockquote } from "@bezny/text";
+```
+
+## Examples
+
+### Basic Blockquote
+
+<LivePreview client:load code={`<Blockquote>This is a quoted passage of text.</Blockquote>`} />
+
+### Nested Content
+
+<LivePreview client:load code={`<Blockquote><Paragraph>A quote with a paragraph inside.</Paragraph></Blockquote>`} />
+
+## API Reference
+
+### Blockquote
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | — | Blockquote content |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
