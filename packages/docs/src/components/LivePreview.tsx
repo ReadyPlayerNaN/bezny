@@ -31,6 +31,7 @@ import { Overlay } from "@bezny/overlay";
 import { Pagination } from "@bezny/pagination";
 import { Popover } from "@bezny/popover";
 import { ButtonGroup, ButtonGroupOption, Checkbox, CheckboxGroup, Radio, RadioGroup, Switch } from "@bezny/switches";
+import { DataTable } from "@bezny/table";
 import { Tab, TabList, TabPanel, Tabs } from "@bezny/tabs";
 import {
 	Blockquote,
@@ -45,7 +46,6 @@ import {
 	StaticHeading,
 	UnorderedList,
 } from "@bezny/text";
-import { DataTable } from "@bezny/table";
 import { Tooltip } from "@bezny/tooltip";
 import React from "react";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
