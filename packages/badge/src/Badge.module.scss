@@ -4,11 +4,9 @@
 	display: inline-flex;
 	align-items: center;
 	border-radius: var(--bzn-badge-radius, 9999px);
-	font-size: var(--bzn-badge-font-size, 12px);
 	font-weight: var(--bzn-badge-font-weight, 600);
 	gap: size(1);
 	line-height: 1;
-	padding: size(1) size(2);
 	white-space: nowrap;
 }
 
@@ -18,6 +16,16 @@
 	height: 6px;
 	width: 6px;
 	background-color: currentColor;
+}
+
+.sm {
+	font-size: var(--bzn-badge-sm-font-size, 11px);
+	padding: size(0.5) size(1.5);
+}
+
+.md {
+	font-size: var(--bzn-badge-md-font-size, 12px);
+	padding: size(1) size(2);
 }
 
 .default {
