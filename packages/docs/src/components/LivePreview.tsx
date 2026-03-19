@@ -24,7 +24,6 @@ import {
 	YearInput,
 } from "@bezny/input";
 import { Article, Aside, Container, Main, Section, Stack } from "@bezny/layout";
-import { Markdown } from "@bezny/markdown";
 import { Navbar, NavbarBrand, NavbarCollapse, NavbarToggle } from "@bezny/navbar";
 import { BreadcrumbItem, Breadcrumbs } from "@bezny/navigation";
 import { Overlay } from "@bezny/overlay";
@@ -90,7 +89,6 @@ const scope = {
 	Link: Link,
 	ListItem: ListItem,
 	Main: Main,
-	Markdown: Markdown,
 	MonthInput: MonthInput,
 	Navbar: Navbar,
 	NavbarBrand: NavbarBrand,

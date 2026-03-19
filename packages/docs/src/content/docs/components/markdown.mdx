@@ -2,8 +2,6 @@
 title: Markdown
 ---
 
-import LivePreview from "../../../components/LivePreview";
-
 Renders markdown strings as styled HTML using bezny components.
 
 ```tsx
@@ -14,11 +12,15 @@ import { Markdown } from "@bezny/markdown";
 
 ### Basic Markdown
 
-<LivePreview client:load code={`<Markdown content="## Hello\\n\\nSome **bold** text and a [link](https://example.com).\\n\\n- Item one\\n- Item two" />`} />
+```tsx
+<Markdown content="## Hello\n\nSome **bold** text and a [link](https://example.com).\n\n- Item one\n- Item two" />
+```
 
 ### Code in Markdown
 
-<LivePreview client:load code={`<Markdown content="Inline \\\`code\\\` and a block:\\n\\n\\\`\\\`\\\`js\\nconst x = 1;\\n\\\`\\\`\\\`" />`} />
+```tsx
+<Markdown content="Inline `code` and a block:\n\n```js\nconst x = 1;\n```" />
+```
 
 ## API Reference
 
