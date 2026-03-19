@@ -20,6 +20,10 @@ import { Badge } from "@bezny/badge";
 
 <LivePreview client:load code={'<div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>\n  <Badge>Default</Badge>\n  <Badge variant="success">Success</Badge>\n  <Badge variant="warning">Warning</Badge>\n  <Badge variant="danger">Danger</Badge>\n  <Badge variant="info">Info</Badge>\n  <Badge variant="primary">Primary</Badge>\n  <Badge variant="secondary">Secondary</Badge>\n</div>'} />
 
+### Sizes
+
+<LivePreview client:load code={'<div style={{ display: "flex", gap: "8px", alignItems: "center" }}>\n  <Badge size="sm" variant="info">Small</Badge>\n  <Badge size="md" variant="info">Medium</Badge>\n</div>'} />
+
 ### With Dot
 
 <LivePreview client:load code={'<div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>\n  <Badge variant="success" dot>Active</Badge>\n  <Badge variant="danger" dot>Offline</Badge>\n  <Badge variant="info" dot>Syncing</Badge>\n  <Badge dot>Idle</Badge>\n</div>'} />
@@ -31,6 +35,7 @@ import { Badge } from "@bezny/badge";
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
 | `variant` | `"default" \| "success" \| "warning" \| "danger" \| "info" \| "primary" \| "secondary"` | `"default"` | Visual style variant |
+| `size` | `"sm" \| "md"` | `"md"` | Size of the badge |
 | `dot` | `boolean` | `false` | Show a colored dot indicator before the label |
 | `className` | `ClassValue` | — | Additional CSS classes |
 | `children` | `ReactNode` | — | Badge content |
