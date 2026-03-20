@@ -75,7 +75,6 @@
 	border: none;
 	border-radius: size(0.5);
 	color: var(--bzn-tag-remove-color, var(--bzn-text-muted));
-	cursor: pointer;
 	display: inline-flex;
 	font-size: font-size(1);
 	justify-content: center;
@@ -163,7 +162,6 @@
 	border-color: var(--bzn-tag-add-border, var(--bzn-border));
 	border-radius: size(1);
 	color: var(--bzn-tag-add-color, var(--bzn-text));
-	cursor: pointer;
 	font-family: inherit;
 	font-size: font-size(1);
 	line-height: size(6);
