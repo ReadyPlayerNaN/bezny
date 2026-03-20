@@ -81,6 +81,7 @@ export const sidebarGroups: SidebarGroup[] = [
 			{ label: "Breadcrumbs", href: "/components/breadcrumbs/" },
 			{ label: "Navbar", href: "/components/navbar/" },
 			{ label: "Pagination", href: "/components/pagination/" },
+			{ label: "SideMenu", href: "/components/side-menu/" },
 			{ label: "Tabs", href: "/components/tabs/" },
 		],
 	},

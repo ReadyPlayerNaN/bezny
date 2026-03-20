@@ -1,0 +1,88 @@
+---
+title: SideMenu
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A responsive side menu that renders as a sticky sidebar on large viewports and collapses into a drawer on smaller viewports.
+
+```tsx
+import { SideMenu } from "@bezny/navigation";
+```
+
+## Examples
+
+### Basic SideMenu
+
+On large screens, the `SideMenu` renders its children in a sticky `<aside>`. On smaller screens, use the `open` and `onClose` props to control the drawer.
+
+<LivePreview client:load noInline code={`function SideMenuDemo() {
+  const [open, setOpen] = React.useState(false);
+  const groups = [
+    {
+      label: "Getting Started",
+      items: [
+        { label: "Introduction", href: "#", active: true },
+        { label: "Installation", href: "#" },
+      ],
+    },
+    {
+      label: "Components",
+      items: [
+        { label: "Button", href: "#" },
+        { label: "Card", href: "#" },
+        { label: "Dialog", href: "#" },
+      ],
+    },
+  ];
+  return (
+    <div style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+      <Button onClick={() => setOpen(true)}>Open menu</Button>
+      <SideMenu open={open} onClose={() => setOpen(false)}>
+        <Sidebar groups={groups} />
+      </SideMenu>
+    </div>
+  );
+}
+render(<SideMenuDemo />);`} />
+
+### With Navbar Integration
+
+Pair `SideMenu` with `Navbar` and `NavbarToggle` to wire up the mobile drawer toggle.
+
+<LivePreview client:load noInline code={`function NavSideMenuDemo() {
+  const [open, setOpen] = React.useState(false);
+  const groups = [
+    {
+      label: "Docs",
+      items: [
+        { label: "Overview", href: "#", active: true },
+        { label: "Guides", href: "#" },
+        { label: "API Reference", href: "#" },
+      ],
+    },
+  ];
+  return (
+    <div>
+      <Navbar expanded={open} onToggle={setOpen}>
+        <NavbarBrand href="#">My App</NavbarBrand>
+        <NavbarToggle />
+      </Navbar>
+      <SideMenu open={open} onClose={() => setOpen(false)}>
+        <Sidebar groups={groups} />
+      </SideMenu>
+    </div>
+  );
+}
+render(<NavSideMenuDemo />);`} />
+
+## API Reference
+
+### SideMenu
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `open` | `boolean` | `false` | Controls drawer visibility on small viewports |
+| `onClose` | `() => void` | — | Called when the drawer should close |
+| `className` | `ClassValue` | — | Additional CSS classes for the aside element (clsx-compatible) |
+| `children` | `ReactNode` | — | Menu content (typically a `Sidebar`) |
