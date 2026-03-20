@@ -17,20 +17,6 @@
 	grid-column: 1 / -1;
 }
 
-.docs-sidebar {
-	display: none;
-
-	@include breakpoint-up('lg') {
-		display: block;
-		position: sticky;
-		top: 0;
-		height: 100vh;
-		overflow-y: auto;
-		padding: size(4) 0;
-		border-right: 1px solid var(--bzn-border);
-	}
-}
-
 .docs-body {
 	display: grid;
 	grid-template-columns: 1fr;
