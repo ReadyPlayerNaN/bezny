@@ -1,13 +1,87 @@
 @use 'breakpoints' as *;
+@use 'grid' as *;
+
+.overlay {
+	background-color: var(--bzn-modal-overlay-bg, var(--bzn-overlay-bg));
+	inset: 0;
+	opacity: 0;
+	pointer-events: none;
+	position: fixed;
+	transition:
+		opacity var(--bzn-transition),
+		display var(--bzn-transition) allow-discrete;
+	z-index: 300;
+
+	@include breakpoint-up('lg') {
+		display: none;
+	}
+}
+
+.overlayOpen {
+	opacity: 1;
+	pointer-events: auto;
+
+	@starting-style {
+		opacity: 0;
+	}
+}
 
 .aside {
-	display: none;
+	@include breakpoint-down('lg') {
+		background-color: var(--bzn-drawer-bg, var(--bzn-surface));
+		border-right: 1px solid var(--bzn-drawer-border, var(--bzn-border));
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		left: 0;
+		max-width: size(80);
+		overflow-y: auto;
+		position: fixed;
+		top: 0;
+		transform: translateX(-100%);
+		transition: transform var(--bzn-transition);
+		width: 100%;
+		z-index: 301;
+	}
 
 	@include breakpoint-up('lg') {
 		display: block;
-		position: sticky;
-		top: 0;
 		height: 100vh;
 		overflow-y: auto;
+		position: sticky;
+		top: 0;
+	}
+}
+
+.open {
+	@include breakpoint-down('lg') {
+		transform: translate(0);
+
+		@starting-style {
+			transform: translateX(-100%);
+		}
+	}
+}
+
+.close {
+	background: none;
+	border: none;
+	color: var(--bzn-drawer-close-color, var(--bzn-text-muted));
+	cursor: pointer;
+	font-size: size(5);
+	line-height: 1;
+	padding: size(2);
+	position: absolute;
+	right: size(2);
+	top: size(2);
+	transition: color var(--bzn-transition);
+	z-index: 1;
+
+	&:hover {
+		color: var(--bzn-drawer-close-hover-color, var(--bzn-text));
+	}
+
+	@include breakpoint-up('lg') {
+		display: none;
 	}
 }
