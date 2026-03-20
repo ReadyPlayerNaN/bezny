@@ -47,6 +47,7 @@ import {
 	StaticHeading,
 	UnorderedList,
 } from "@bezny/text";
+import { Toast, ToastList } from "@bezny/toast";
 import { Tooltip } from "@bezny/tooltip";
 import React from "react";
 import { LiveEditor, LiveError, LivePreview, LiveProvider } from "react-live";
@@ -121,6 +122,8 @@ const scope = {
 	Tabs: Tabs,
 	TagListInput: TagListInput,
 	TextInput: TextInput,
+	Toast: Toast,
+	ToastList: ToastList,
 	Tooltip: Tooltip,
 	UnorderedList: UnorderedList,
 	TimeInput: TimeInput,

@@ -591,6 +591,9 @@ importers:
       '@bezny/text':
         specifier: workspace:*
         version: link:../text
+      '@bezny/toast':
+        specifier: workspace:*
+        version: link:../toast
       '@bezny/tooltip':
         specifier: workspace:*
         version: link:../tooltip
