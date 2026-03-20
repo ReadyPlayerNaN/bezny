@@ -8,6 +8,7 @@ export { MonthInput, type MonthInputProps } from "./MonthInput";
 export { NumberInput, type NumberInputProps } from "./NumberInput";
 export { PasswordInput, type PasswordInputProps } from "./PasswordInput";
 export { SearchInput, type SearchInputProps } from "./SearchInput";
+export { SelectInput, type SelectInputOption, type SelectInputProps } from "./SelectInput";
 export { TagListInput, type TagListInputProps, type TagListInputTag } from "./TagListInput";
 export { TextInput, type TextInputProps } from "./TextInput";
 export { TimeInput, type TimeInputProps } from "./TimeInput";

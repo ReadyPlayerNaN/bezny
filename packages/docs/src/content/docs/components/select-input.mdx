@@ -1,0 +1,94 @@
+---
+title: SelectInput
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A select input with label support and validation.
+
+```tsx
+import { SelectInput } from "@bezny/input";
+```
+
+## Examples
+
+### Basic
+
+<LivePreview client:load code={`<SelectInput
+  label="Country"
+  options={[
+    { label: "Czech Republic", value: "cz" },
+    { label: "Germany", value: "de" },
+    { label: "Austria", value: "at" },
+  ]}
+/>`} />
+
+### With Placeholder
+
+<LivePreview client:load code={`<SelectInput
+  placeholder="Choose a fruit"
+  options={[
+    { label: "Apple", value: "apple" },
+    { label: "Banana", value: "banana" },
+    { label: "Cherry", value: "cherry" },
+  ]}
+/>`} />
+
+### Disabled
+
+<LivePreview client:load code={`<SelectInput
+  label="Country"
+  disabled
+  options={[
+    { label: "Czech Republic", value: "cz" },
+    { label: "Germany", value: "de" },
+  ]}
+/>`} />
+
+### Controlled
+
+<LivePreview client:load noInline code={`function ControlledExample() {
+  const [value, setValue] = React.useState("de");
+  return (
+    <SelectInput
+      label="Country"
+      value={value}
+      onChange={setValue}
+      options={[
+        { label: "Czech Republic", value: "cz" },
+        { label: "Germany", value: "de" },
+        { label: "Austria", value: "at" },
+      ]}
+    />
+  );
+}
+
+render(<ControlledExample />);`} />
+
+### Validation
+
+<LivePreview client:load code={`<SelectInput
+  label="Country"
+  status="error"
+  statusMessage="Please select a country"
+  options={[
+    { label: "Czech Republic", value: "cz" },
+    { label: "Germany", value: "de" },
+  ]}
+/>`} />
+
+## API Reference
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `className` | `ClassValue` | — | Additional CSS classes |
+| `defaultValue` | `string` | — | Initial value (uncontrolled) |
+| `disabled` | `boolean` | — | Disables the select |
+| `label` | `string` | — | Label text |
+| `name` | `string` | — | HTML name attribute |
+| `onChange` | `(value: string) => void` | — | Called with the selected value |
+| `options` | `SelectInputOption[]` | — | Array of `{ label, value }` objects |
+| `placeholder` | `string` | — | Placeholder option text |
+| `status` | `"error" \| "warning" \| "success"` | — | Validation status |
+| `statusMessage` | `string` | — | Validation message |
+| `value` | `string` | — | Controlled value |
