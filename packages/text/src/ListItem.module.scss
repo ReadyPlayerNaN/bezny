@@ -1,5 +1,5 @@
 @use 'grid' as *;
 
 .listItem {
-	margin-bottom: size(1);
+	margin: var(--bzn-list-item-margin, 0 0 #{size(1)} 0);
 }
