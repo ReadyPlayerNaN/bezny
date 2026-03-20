@@ -4,6 +4,6 @@
 	border-left: 3px solid var(--bzn-border);
 	color: var(--bzn-blockquote-color, var(--bzn-text-muted));
 	font-style: italic;
-	margin: 0;
+	margin: var(--bzn-blockquote-margin, 0 0 #{size(3)} 0);
 	padding-left: size(4);
 }

@@ -6,7 +6,7 @@
 	background-clip: text;
 	-webkit-background-clip: text;
 	color: transparent;
-	margin: 0;
+	margin: var(--bzn-heading-margin, 0 0 #{size(2)} 0);
 }
 
 .h1 {

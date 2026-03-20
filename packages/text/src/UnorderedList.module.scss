@@ -2,6 +2,6 @@
 
 .unorderedList {
 	list-style: disc;
-	margin: 0;
+	margin: var(--bzn-unordered-list-margin, 0 0 #{size(3)} 0);
 	padding-left: size(6);
 }

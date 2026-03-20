@@ -5,6 +5,6 @@
 	color: var(--bzn-paragraph-color, var(--bzn-text));
 	font-size: font-size(1); // 16px
 	line-height: size(6); // 24px
-	margin: 0;
+	margin: var(--bzn-paragraph-margin, 0 0 #{size(3)} 0);
 	max-width: 65ch;
 }

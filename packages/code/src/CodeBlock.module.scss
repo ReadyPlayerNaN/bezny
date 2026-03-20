@@ -4,7 +4,7 @@
 	background: var(--bzn-code-block-background, var(--bzn-surface-raised));
 	border-radius: size(1.5);
 	font-family: monospace;
-	margin: 0;
+	margin: var(--bzn-code-block-margin, 0 0 #{size(3)} 0);
 	overflow-x: auto;
 	padding: size(4);
 }
