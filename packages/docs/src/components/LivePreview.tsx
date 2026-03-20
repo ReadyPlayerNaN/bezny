@@ -27,7 +27,7 @@ import {
 } from "@bezny/input";
 import { Article, Aside, Container, Main, Section, Stack } from "@bezny/layout";
 import { Navbar, NavbarBrand, NavbarCollapse, NavbarToggle } from "@bezny/navbar";
-import { BreadcrumbItem, Breadcrumbs } from "@bezny/navigation";
+import { BreadcrumbItem, Breadcrumbs, Sidebar, SideMenu } from "@bezny/navigation";
 import { Overlay } from "@bezny/overlay";
 import { Pagination } from "@bezny/pagination";
 import { Popover } from "@bezny/popover";
@@ -112,6 +112,8 @@ const scope = {
 	SearchInput: SearchInput,
 	SelectInput: SelectInput,
 	Section: Section,
+	Sidebar: Sidebar,
+	SideMenu: SideMenu,
 	Stack: Stack,
 	StaticHeading: StaticHeading,
 	Submit: Submit,
