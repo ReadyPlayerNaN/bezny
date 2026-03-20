@@ -1,24 +1,60 @@
 @use 'grid' as *;
 @use 'typography' as *;
-@use 'reactions' as *;
 @use 'validation' as *;
 
-.wrapper {
-	display: flex;
-	flex-direction: column;
-	gap: size(1);
-}
-
-.label {
-	color: var(--bzn-input-label-color, var(--bzn-text-muted));
-	font-size: font-size(1);
-	line-height: size(6);
-}
-
-.tagList {
+.inputBox {
+	position: relative;
 	display: flex;
 	flex-wrap: wrap;
+	align-items: center;
 	gap: size(1);
+	border-width: 1px;
+	border-style: solid;
+	border-radius: size(1);
+	padding: size(2) size(3);
+	background-color: var(--bzn-input-bg, var(--bzn-surface-overlay));
+	border-color: var(--bzn-input-border, var(--bzn-border));
+	color: var(--bzn-input-color, var(--bzn-text));
+	transition:
+		background-color var(--bzn-transition) var(--bzn-transition-fn),
+		border-color var(--bzn-transition) var(--bzn-transition-fn),
+		color var(--bzn-transition) var(--bzn-transition-fn);
+
+	&:hover {
+		background-color: var(--bzn-input-hover-bg, var(--bzn-surface-overlay));
+		border-color: var(--bzn-input-hover-border, var(--bzn-border-muted));
+		color: var(--bzn-input-hover-color, var(--bzn-text));
+	}
+
+	&:focus-within {
+		background-color: var(--bzn-input-active-bg, var(--bzn-surface-overlay));
+		border-color: var(--bzn-input-active-border, var(--bzn-focus-ring));
+		color: var(--bzn-input-active-color, var(--bzn-text));
+	}
+
+	&.disabled {
+		background-color: var(--bzn-input-disabled-bg, var(--bzn-surface));
+		border-color: var(--bzn-input-disabled-border, var(--bzn-border-muted));
+		color: var(--bzn-input-disabled-color, var(--bzn-interactive-disabled-text));
+		cursor: not-allowed;
+	}
+
+	&.hasLabel {
+		padding-top: size(5);
+		padding-bottom: size(1);
+	}
+}
+
+.statusError {
+	@include status-border(error);
+}
+
+.statusWarning {
+	@include status-border(warning);
+}
+
+.statusSuccess {
+	@include status-border(success);
 }
 
 .tag {
@@ -56,49 +92,82 @@
 	}
 }
 
-.inputRow {
-	display: flex;
-	gap: size(1);
-}
-
 .input {
-	@include input-reactions;
-
-	border-width: 1px;
-	border-style: solid;
-	border-radius: size(1);
-	flex-grow: 1;
+	background: transparent;
+	border: none;
+	color: inherit;
+	flex: 1 1 auto;
 	font-family: inherit;
 	font-size: font-size(1);
 	line-height: size(6);
-	padding: size(2) size(3);
+	min-width: size(20);
+	outline: none;
+	padding: 0;
+
+	&::placeholder {
+		color: var(--bzn-input-placeholder, var(--bzn-text-muted));
+	}
+
+	.hasLabel & {
+		&::placeholder {
+			color: transparent;
+		}
+	}
 }
 
-.statusError {
-	@include status-border(error);
-}
+.label {
+	position: absolute;
+	top: size(1);
+	left: size(3);
+	color: var(--bzn-input-label-color, var(--bzn-text-muted));
+	font-size: font-size(1);
+	line-height: size(6);
+	transform: translateY(size(2));
+	transition:
+		transform var(--bzn-transition),
+		font-size var(--bzn-transition),
+		color var(--bzn-transition);
+	pointer-events: none;
 
-.statusWarning {
-	@include status-border(warning);
-}
+	.inputBox:focus-within &,
+	.hasContent & {
+		transform: translateY(calc(-1 * size(1.25)));
+		font-size: size(3);
+		color: var(--bzn-input-label-focused, var(--bzn-focus-ring));
+	}
 
-.statusSuccess {
-	@include status-border(success);
+	.inputBox:not(:focus-within).hasContent & {
+		color: var(--bzn-input-label-color, var(--bzn-text-muted));
+	}
+
+	.statusError:focus-within &,
+	.statusError.hasContent & {
+		@include status-label(error);
+	}
+
+	.statusWarning:focus-within &,
+	.statusWarning.hasContent & {
+		@include status-label(warning);
+	}
+
+	.statusSuccess:focus-within &,
+	.statusSuccess.hasContent & {
+		@include status-label(success);
+	}
 }
 
 .addButton {
-	@include input-reactions;
-
 	background: var(--bzn-tag-add-bg, var(--bzn-surface-raised));
 	border-width: 1px;
 	border-style: solid;
+	border-color: var(--bzn-tag-add-border, var(--bzn-border));
 	border-radius: size(1);
 	color: var(--bzn-tag-add-color, var(--bzn-text));
 	cursor: pointer;
 	font-family: inherit;
 	font-size: font-size(1);
 	line-height: size(6);
-	padding: size(2) size(3);
+	padding: size(0.5) size(2);
 	white-space: nowrap;
 
 	&:disabled {

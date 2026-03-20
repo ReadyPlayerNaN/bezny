@@ -36,6 +36,7 @@ export function TagListInput({
 	const id = useId();
 	const statusId = useId();
 	const [inputValue, setInputValue] = useState("");
+	const hasContent = values.length > 0 || inputValue;
 
 	function addTag() {
 		const trimmed = inputValue.trim();
@@ -62,50 +63,51 @@ export function TagListInput({
 
 	return (
 		<div className={clsx(styles.wrapper, className)}>
-			{label ? (
-				<label className={styles.label} htmlFor={id}>
-					{label}
-				</label>
-			) : null}
-			{values.length > 0 ? (
-				<div className={styles.tagList}>
-					{values.map((tag) => (
-						<span className={styles.tag} key={tag.value}>
-							{tag.label}
-							<button
-								aria-label={`Remove ${tag.label}`}
-								className={styles.removeButton}
-								disabled={disabled}
-								onClick={() => removeTag(tag.value)}
-								type="button"
-							>
-								×
-							</button>
-						</span>
-					))}
-				</div>
-			) : null}
-			<div className={styles.inputRow}>
+			<div
+				className={clsx(styles.inputBox, {
+					[styles.hasContent]: hasContent,
+					[styles.hasLabel]: Boolean(label),
+					[styles.statusError]: status === "error",
+					[styles.statusWarning]: status === "warning",
+					[styles.statusSuccess]: status === "success",
+					[styles.disabled]: disabled,
+				})}
+			>
+				{values.map((tag) => (
+					<span className={styles.tag} key={tag.value}>
+						{tag.label}
+						<button
+							aria-label={`Remove ${tag.label}`}
+							className={styles.removeButton}
+							disabled={disabled}
+							onClick={() => removeTag(tag.value)}
+							type="button"
+						>
+							×
+						</button>
+					</span>
+				))}
 				<input
 					aria-describedby={statusMessage ? statusId : undefined}
 					aria-invalid={status === "error" || undefined}
-					className={clsx(styles.input, {
-						[styles.statusError]: status === "error",
-						[styles.statusWarning]: status === "warning",
-						[styles.statusSuccess]: status === "success",
-					})}
+					className={styles.input}
 					disabled={disabled}
 					id={id}
 					name={name}
 					onChange={(e) => setInputValue(e.target.value)}
 					onKeyDown={handleKeyDown}
-					placeholder={placeholder}
+					placeholder={label ? " " : placeholder}
 					type="text"
 					value={inputValue}
 				/>
 				<button className={styles.addButton} disabled={disabled} onClick={addTag} type="button">
 					Add
 				</button>
+				{label ? (
+					<label className={styles.label} htmlFor={id}>
+						{label}
+					</label>
+				) : null}
 			</div>
 			<StatusMessage id={statusId} message={statusMessage} status={status} />
 		</div>
