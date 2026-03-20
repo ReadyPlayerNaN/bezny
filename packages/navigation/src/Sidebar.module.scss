@@ -18,17 +18,50 @@
 }
 
 .groupLabel {
+	align-items: center;
+	background: none;
+	border: none;
 	color: var(--bzn-sidebar-group-label, var(--bzn-text-muted));
+	cursor: pointer;
+	display: flex;
 	font-size: 0.75em;
 	font-weight: 600;
+	gap: size(1);
+	justify-content: space-between;
 	letter-spacing: 0.05em;
 	padding: 0 size(4);
+	text-align: left;
 	text-transform: uppercase;
+
+	&:hover {
+		color: var(--bzn-sidebar-group-label-hover, var(--bzn-text));
+	}
+}
+
+.chevron {
+	display: inline-flex;
+	transition: transform var(--bzn-transition);
+	transform: rotate(0deg);
+}
+
+.chevronExpanded {
+	transform: rotate(90deg);
+}
+
+.groupCollapse {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows var(--bzn-transition);
+}
+
+.groupExpanded {
+	grid-template-rows: 1fr;
 }
 
 .groupItems {
 	list-style: none;
 	margin: 0;
+	overflow: hidden;
 	padding: 0;
 }
 
