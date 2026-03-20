@@ -65,4 +65,27 @@ describe("DataTable", () => {
 		const table = screen.getByRole("table");
 		expect(table.querySelector("tfoot")).not.toBeInTheDocument();
 	});
+
+	it("renders correct number of body rows", () => {
+		render(<DataTable columns={columns} getRowKey={getRowKey} rows={rows} />);
+		const bodyRows = screen.getAllByRole("row");
+		// 1 header row + 2 body rows
+		expect(bodyRows).toHaveLength(3);
+	});
+
+	it("renders custom column content via render function", () => {
+		const customColumns: Column<Product>[] = [
+			{ key: "name", header: "Name", render: (row) => <strong>{row.name}</strong> },
+			{ key: "price", header: "Price", render: (row) => <em>${row.price}</em> },
+		];
+		render(<DataTable columns={customColumns} getRowKey={getRowKey} rows={rows} />);
+		expect(screen.getByText("Apple").tagName).toBe("STRONG");
+		expect(screen.getByText("$1").tagName).toBe("EM");
+	});
+
+	it("renders empty state with full colspan", () => {
+		render(<DataTable columns={columns} getRowKey={getRowKey} rows={[]} />);
+		const emptyCell = screen.getByText("No data");
+		expect(emptyCell).toHaveAttribute("colspan", "2");
+	});
 });
