@@ -1147,6 +1147,9 @@ importers:
       '@bezny/core':
         specifier: workspace:*
         version: link:../core
+      '@bezny/drawer':
+        specifier: workspace:*
+        version: link:../drawer
       clsx:
         specifier: 'catalog:'
         version: 2.1.1

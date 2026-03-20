@@ -1,0 +1,13 @@
+@use 'breakpoints' as *;
+
+.aside {
+	display: none;
+
+	@include breakpoint-up('lg') {
+		display: block;
+		position: sticky;
+		top: 0;
+		height: 100vh;
+		overflow-y: auto;
+	}
+}

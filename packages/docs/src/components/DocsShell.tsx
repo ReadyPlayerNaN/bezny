@@ -1,8 +1,7 @@
-import { Drawer } from "@bezny/drawer";
 import { Main } from "@bezny/layout";
-import { Navbar, NavbarBrand, NavbarToggle, useNavbar } from "@bezny/navbar";
+import { Navbar, NavbarBrand, NavbarToggle } from "@bezny/navbar";
 import type { SidebarGroup } from "@bezny/navigation";
-import { Sidebar } from "@bezny/navigation";
+import { Sidebar, SideMenu } from "@bezny/navigation";
 import { type ReactNode, useState } from "react";
 import { sidebarGroups } from "../data/sidebar.js";
 import TableOfContents from "./TableOfContents.js";
@@ -22,15 +21,6 @@ function withActive(groups: SidebarGroup[], currentPath: string): SidebarGroup[]
 			active: item.href === currentPath,
 		})),
 	}));
-}
-
-function DrawerToggle() {
-	const { onToggle, expanded } = useNavbar();
-	return (
-		<Drawer side="left" open={expanded} onClose={() => onToggle(false)}>
-			<Sidebar groups={sidebarGroups} />
-		</Drawer>
-	);
 }
 
 export default function DocsShell({
@@ -53,11 +43,10 @@ export default function DocsShell({
 				<div style={{ marginLeft: "auto" }}>
 					<ThemeSettings />
 				</div>
-				<DrawerToggle />
 			</Navbar>
-			<aside className="docs-sidebar">
+			<SideMenu open={drawerOpen} onClose={() => setDrawerOpen(false)}>
 				<Sidebar groups={groups} />
-			</aside>
+			</SideMenu>
 			<div className="docs-body">
 				<Main className="docs-content">{children}</Main>
 				<div className="docs-toc">
