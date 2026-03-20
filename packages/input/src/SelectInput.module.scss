@@ -1,0 +1,88 @@
+@use 'grid' as *;
+@use 'typography' as *;
+@use 'reactions' as *;
+@use 'validation' as *;
+
+.select {
+  @include input-reactions;
+
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='currentColor' d='M6 8.825a.7.7 0 0 1-.5-.2L2.2 5.3a.68.68 0 0 1 0-1 .68.68 0 0 1 1 0L6 7.15l2.8-2.85a.68.68 0 0 1 1 0 .68.68 0 0 1 0 1L6.5 8.625a.7.7 0 0 1-.5.2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right size(3) center;
+  background-size: size(3);
+  border-width: 1px;
+  border-style: solid;
+  border-radius: size(1);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: font-size(1);
+  line-height: size(6);
+  padding: size(2) size(8) size(2) size(3);
+  width: 100%;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+.statusError {
+  @include status-border(error);
+}
+
+.statusWarning {
+  @include status-border(warning);
+}
+
+.statusSuccess {
+  @include status-border(success);
+}
+
+.wrapper {
+  position: relative;
+
+  .select.hasLabel {
+    padding: size(5) size(8) size(1) size(3);
+  }
+
+  .select.hasLabel + .label {
+    transform: translateY(calc(-1 * size(1.25)));
+    font-size: size(3);
+    color: var(--bzn-input-label-color, var(--bzn-text-muted));
+  }
+
+  .select.hasLabel:focus + .label {
+    color: var(--bzn-input-label-focused, var(--bzn-focus-ring));
+  }
+
+  .select.hasLabel.statusError + .label {
+    @include status-label(error);
+  }
+
+  .select.hasLabel.statusWarning + .label {
+    @include status-label(warning);
+  }
+
+  .select.hasLabel.statusSuccess + .label {
+    @include status-label(success);
+  }
+}
+
+.label {
+  position: absolute;
+  top: size(1);
+  left: size(3);
+  color: var(--bzn-input-label-color, var(--bzn-text-muted));
+  font-size: font-size(1);
+  line-height: size(6);
+  transform: translateY(size(2));
+  transition:
+    transform var(--bzn-transition),
+    font-size var(--bzn-transition),
+    color var(--bzn-transition);
+  pointer-events: none;
+}
+
+.statusMessage {
+  padding: size(1) size(3) 0;
+}
