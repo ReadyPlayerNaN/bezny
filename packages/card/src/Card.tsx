@@ -43,11 +43,13 @@ export type CardImgProps = {
 	alt: string;
 	className?: ClassValue;
 	height?: number | string;
-	position?: "top" | "bottom" | "overlay";
+	position?: CardImgPosition;
 	src: string;
 };
 
-export const positionClassMap = {
+type CardImgPosition = "top" | "bottom" | "overlay";
+
+export const positionClassMap: Record<CardImgPosition, string> = {
 	top: styles.cardImgTop,
 	bottom: styles.cardImgBottom,
 	overlay: styles.cardImgOverlay,

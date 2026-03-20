@@ -18,6 +18,12 @@ export type FileInputProps = NativeInputProps & {
 	statusMessage?: string;
 };
 
+const statusClassMap: Record<ValidationStatus, string> = {
+	error: styles.statusError,
+	warning: styles.statusWarning,
+	success: styles.statusSuccess,
+};
+
 export function FileInput({ className, label, onChange, status, statusMessage, ...rest }: FileInputProps) {
 	const id = useId();
 
@@ -35,11 +41,7 @@ export function FileInput({ className, label, onChange, status, statusMessage, .
 				) : null}
 				<input
 					{...rest}
-					className={clsx(styles.input, {
-						[styles.statusError]: status === "error",
-						[styles.statusWarning]: status === "warning",
-						[styles.statusSuccess]: status === "success",
-					})}
+					className={clsx(styles.input, status && statusClassMap[status])}
 					id={id}
 					onChange={handleChange}
 					type="file"

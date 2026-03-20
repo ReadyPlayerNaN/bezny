@@ -22,6 +22,12 @@ export type TagListInputProps = {
 	values: TagListInputTag[];
 };
 
+const statusClassMap: Record<ValidationStatus, string> = {
+	error: styles.statusError,
+	warning: styles.statusWarning,
+	success: styles.statusSuccess,
+};
+
 export function TagListInput({
 	className,
 	disabled,
@@ -64,12 +70,9 @@ export function TagListInput({
 	return (
 		<div className={clsx(styles.wrapper, className)}>
 			<div
-				className={clsx(styles.inputBox, {
+				className={clsx(styles.inputBox, status && statusClassMap[status], {
 					[styles.hasContent]: hasContent,
 					[styles.hasLabel]: Boolean(label),
-					[styles.statusError]: status === "error",
-					[styles.statusWarning]: status === "warning",
-					[styles.statusSuccess]: status === "success",
 					[styles.disabled]: disabled,
 				})}
 			>

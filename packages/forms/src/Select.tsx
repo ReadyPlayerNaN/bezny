@@ -16,6 +16,12 @@ export type SelectProps = NativeSelectProps & {
 	statusMessage?: string;
 };
 
+const statusClassMap: Record<ValidationStatus, string> = {
+	error: styles.statusError,
+	warning: styles.statusWarning,
+	success: styles.statusSuccess,
+};
+
 export function Select({
 	autoFocus,
 	children,
@@ -46,11 +52,7 @@ export function Select({
 					aria-describedby={statusMessage ? statusId : undefined}
 					aria-invalid={status === "error" || undefined}
 					autoFocus={autoFocus}
-					className={clsx(styles.select, {
-						[styles.statusError]: status === "error",
-						[styles.statusWarning]: status === "warning",
-						[styles.statusSuccess]: status === "success",
-					})}
+					className={clsx(styles.select, status && statusClassMap[status])}
 					defaultValue={defaultValue}
 					disabled={disabled}
 					id={id}
