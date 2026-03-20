@@ -19,10 +19,12 @@
 				"rules": {
 					"correctness": {
 						"noNodejsModules": "off",
+						"noProcessGlobal": "off",
 						"noUnresolvedImports": "off"
 					},
 					"style": {
-						"noDefaultExport": "off"
+						"noDefaultExport": "off",
+						"noProcessEnv": "off"
 					}
 				}
 			}
