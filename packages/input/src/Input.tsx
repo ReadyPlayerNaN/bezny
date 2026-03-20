@@ -15,6 +15,12 @@ export type InputProps = NativeInputProps & {
 	statusMessage?: string;
 };
 
+const statusClassMap: Record<ValidationStatus, string> = {
+	error: styles.statusError,
+	warning: styles.statusWarning,
+	success: styles.statusSuccess,
+};
+
 export function Input({
 	autoFocus,
 	className,
@@ -46,11 +52,7 @@ export function Input({
 					aria-describedby={statusMessage ? statusId : undefined}
 					aria-invalid={status === "error" || undefined}
 					autoFocus={autoFocus}
-					className={clsx(styles.input, {
-						[styles.statusError]: status === "error",
-						[styles.statusWarning]: status === "warning",
-						[styles.statusSuccess]: status === "success",
-					})}
+					className={clsx(styles.input, status && statusClassMap[status])}
 					defaultValue={defaultValue}
 					disabled={disabled}
 					id={id}

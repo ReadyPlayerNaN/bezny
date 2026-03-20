@@ -20,6 +20,12 @@ export type TextAreaProps = {
 	value?: string;
 };
 
+const statusClassMap: Record<ValidationStatus, string> = {
+	error: styles.statusError,
+	warning: styles.statusWarning,
+	success: styles.statusSuccess,
+};
+
 export function TextArea({
 	autoFocus,
 	className,
@@ -49,11 +55,7 @@ export function TextArea({
 					aria-describedby={statusMessage ? statusId : undefined}
 					aria-invalid={status === "error" || undefined}
 					autoFocus={autoFocus}
-					className={clsx(styles.textarea, {
-						[styles.statusError]: status === "error",
-						[styles.statusWarning]: status === "warning",
-						[styles.statusSuccess]: status === "success",
-					})}
+					className={clsx(styles.textarea, status && statusClassMap[status])}
 					defaultValue={defaultValue}
 					disabled={disabled}
 					id={id}

@@ -10,6 +10,18 @@ export type StatusMessageProps = {
 	status?: ValidationStatus;
 };
 
+const statusClassMap: Record<ValidationStatus, string> = {
+	error: styles.messageError,
+	warning: styles.messageWarning,
+	success: styles.messageSuccess,
+};
+
+const statusRoleMap: Record<ValidationStatus, string> = {
+	error: "alert",
+	warning: "alert",
+	success: "status",
+};
+
 export function StatusMessage({ className, id, message, status }: StatusMessageProps) {
 	if (!(message && status)) {
 		return null;
@@ -17,13 +29,9 @@ export function StatusMessage({ className, id, message, status }: StatusMessageP
 
 	return (
 		<span
-			className={clsx(styles.statusMessage, className, {
-				[styles.messageError]: status === "error",
-				[styles.messageWarning]: status === "warning",
-				[styles.messageSuccess]: status === "success",
-			})}
+			className={clsx(styles.statusMessage, statusClassMap[status], className)}
 			id={id}
-			role={status === "success" ? "status" : "alert"}
+			role={statusRoleMap[status]}
 		>
 			{message}
 		</span>

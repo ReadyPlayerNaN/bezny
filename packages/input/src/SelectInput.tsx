@@ -22,6 +22,12 @@ export type SelectInputProps = NativeSelectProps & {
 	statusMessage?: string;
 };
 
+const statusClassMap: Record<ValidationStatus, string> = {
+	error: styles.statusError,
+	warning: styles.statusWarning,
+	success: styles.statusSuccess,
+};
+
 export function SelectInput({
 	className,
 	defaultValue,
@@ -66,10 +72,7 @@ export function SelectInput({
 					{...rest}
 					aria-describedby={statusMessage ? statusId : undefined}
 					aria-invalid={status === "error" || undefined}
-					className={clsx(styles.select, {
-						[styles.statusError]: status === "error",
-						[styles.statusWarning]: status === "warning",
-						[styles.statusSuccess]: status === "success",
+					className={clsx(styles.select, status && statusClassMap[status], {
 						[styles.hasLabel]: Boolean(label),
 					})}
 					defaultValue={defaultValue ?? (placeholder ? "" : undefined)}
