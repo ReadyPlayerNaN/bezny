@@ -1,0 +1,136 @@
+---
+title: Toast
+---
+
+import LivePreview from "../../../components/LivePreview";
+
+A notification component that pops up to carry short information and optionally actions. Toasts animate in and can be dismissed.
+
+```tsx
+import { Toast, ToastList } from "@bezny/toast";
+```
+
+## Examples
+
+### Variants
+
+The Toast component supports four variants: `info`, `success`, `warning`, and `error`.
+
+<LivePreview client:load code={`<div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+  <Toast variant="info">New version available.</Toast>
+  <Toast variant="success">File uploaded successfully.</Toast>
+  <Toast variant="warning">Your session will expire soon.</Toast>
+  <Toast variant="error">Failed to save changes.</Toast>
+</div>`} />
+
+### With Close Button
+
+Pass an `onClose` callback to render a dismiss button.
+
+<LivePreview client:load noInline code={`function CloseExample() {
+  const [visible, setVisible] = React.useState(true);
+  if (!visible) {
+    return <Button onClick={() => setVisible(true)}>Show toast</Button>;
+  }
+  return (
+    <Toast variant="info" onClose={() => setVisible(false)}>
+      Click the close button to dismiss.
+    </Toast>
+  );
+}
+
+render(<CloseExample />);`} />
+
+### With Actions
+
+Use the `actions` prop to add action buttons alongside the message.
+
+<LivePreview client:load code={`<Toast
+  variant="info"
+  actions={<Button variant="ghost">Undo</Button>}
+>
+  Item moved to trash.
+</Toast>`} />
+
+### ToastList Positioning
+
+ToastList renders toasts in a fixed portal. Position is configured with `horizontal` (`left`, `center`, `right`) and `vertical` (`top`, `center`, `bottom`).
+
+<LivePreview client:load noInline code={`function ToastListExample() {
+  const [position, setPosition] = React.useState({ horizontal: "right", vertical: "bottom" });
+  const [visible, setVisible] = React.useState(false);
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+      <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+        {["left", "center", "right"].map((h) =>
+          ["top", "center", "bottom"].map((v) => (
+            <Button
+              key={h + v}
+              variant={position.horizontal === h && position.vertical === v ? "primary" : "default"}
+              onClick={() => { setPosition({ horizontal: h, vertical: v }); setVisible(true); }}
+            >
+              {v}-{h}
+            </Button>
+          ))
+        )}
+      </div>
+      {visible && (
+        <ToastList horizontal={position.horizontal} vertical={position.vertical}>
+          <Toast variant="success" onClose={() => setVisible(false)}>
+            Position: {position.vertical}-{position.horizontal}
+          </Toast>
+        </ToastList>
+      )}
+    </div>
+  );
+}
+
+render(<ToastListExample />);`} />
+
+## API Reference
+
+### Toast
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `variant` | `"info" \| "success" \| "warning" \| "error"` | `"info"` | Visual style and semantic role |
+| `onClose` | `() => void` | — | Close callback; renders a dismiss button when provided |
+| `actions` | `ReactNode` | — | Action content rendered beside the message |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Toast message content |
+
+### ToastList
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `horizontal` | `"left" \| "center" \| "right"` | `"right"` | Horizontal position |
+| `vertical` | `"top" \| "center" \| "bottom"` | `"bottom"` | Vertical position |
+| `className` | `ClassValue` | — | Additional CSS classes (clsx-compatible) |
+| `children` | `ReactNode` | — | Toast elements to render |
+
+### Accessibility
+
+The Toast component automatically assigns ARIA attributes based on variant:
+- `info` and `success` use `role="status"` with `aria-live="polite"`
+- `warning` and `error` use `role="alert"` with `aria-live="assertive"`
+
+ToastList renders via portal with `aria-live="polite"` to announce new toasts to screen readers.
+
+### CSS Custom Properties
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `--bzn-toast-info-bg` | `var(--bzn-info-subtle)` | Info background |
+| `--bzn-toast-info-border` | `var(--bzn-info)` | Info border |
+| `--bzn-toast-info-color` | `var(--bzn-info-text)` | Info text |
+| `--bzn-toast-success-bg` | `var(--bzn-success-subtle)` | Success background |
+| `--bzn-toast-success-border` | `var(--bzn-success)` | Success border |
+| `--bzn-toast-success-color` | `var(--bzn-success-text)` | Success text |
+| `--bzn-toast-warning-bg` | `var(--bzn-warning-subtle)` | Warning background |
+| `--bzn-toast-warning-border` | `var(--bzn-warning)` | Warning border |
+| `--bzn-toast-warning-color` | `var(--bzn-warning-text)` | Warning text |
+| `--bzn-toast-error-bg` | `var(--bzn-error-subtle)` | Error background |
+| `--bzn-toast-error-border` | `var(--bzn-error)` | Error border |
+| `--bzn-toast-error-color` | `var(--bzn-error-text)` | Error text |
+| `--bzn-toast-z-index` | `1100` | ToastList z-index |

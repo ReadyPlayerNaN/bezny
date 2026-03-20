@@ -34,6 +34,7 @@
 		"@bezny/table": "workspace:*",
 		"@bezny/tabs": "workspace:*",
 		"@bezny/text": "workspace:*",
+		"@bezny/toast": "workspace:*",
 		"@bezny/tooltip": "workspace:*",
 		"astro": "^5.10.0",
 		"react": "catalog:",
