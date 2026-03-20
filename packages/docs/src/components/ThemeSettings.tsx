@@ -78,7 +78,6 @@ const sliderInput: React.CSSProperties = {
 	appearance: "none",
 	WebkitAppearance: "none",
 	background: "transparent",
-	cursor: "pointer",
 };
 
 const sliderThumbCss = `
@@ -236,7 +235,6 @@ export default function ThemeSettings() {
 				<summary
 					style={{
 						listStyle: "none",
-						cursor: "pointer",
 						display: "flex",
 						alignItems: "center",
 						gap: 6,
@@ -305,7 +303,6 @@ export default function ThemeSettings() {
 								color: "var(--bzn-text-muted)",
 								border: "1px solid var(--bzn-border)",
 								borderRadius: 4,
-								cursor: "pointer",
 							}}
 						>
 							{HUE_OFFSETS.map((o) => (
@@ -372,7 +369,6 @@ export default function ThemeSettings() {
 							color: "var(--bzn-text-muted)",
 							border: "1px solid var(--bzn-border)",
 							borderRadius: 4,
-							cursor: "pointer",
 						}}
 					>
 						Reset to default
