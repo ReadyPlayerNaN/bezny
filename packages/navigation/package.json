@@ -24,7 +24,6 @@
 	},
 	"dependencies": {
 		"@bezny/core": "workspace:*",
-		"@bezny/drawer": "workspace:*",
 		"clsx": "catalog:"
 	},
 	"devDependencies": {
