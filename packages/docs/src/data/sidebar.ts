@@ -65,6 +65,7 @@ export const sidebarGroups: SidebarGroup[] = [
 			{ label: "PasswordInput", href: "/components/password-input/" },
 			{ label: "Radio", href: "/components/radio/" },
 			{ label: "SearchInput", href: "/components/search-input/" },
+			{ label: "SelectInput", href: "/components/select-input/" },
 			{ label: "Switch", href: "/components/switch/" },
 			{ label: "TagListInput", href: "/components/tag-list-input/" },
 			{ label: "TextInput", href: "/components/text-input/" },
