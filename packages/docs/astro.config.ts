@@ -5,7 +5,7 @@ import { defineConfig } from "astro/config";
 
 export default defineConfig({
 	site: "https://readyplayernan.github.io",
-	base: "/bezny",
+	base: process.env.GITHUB_ACTIONS === "true" ? "/bezny" : "/",
 	integrations: [mdx(), react()],
 	vite: {
 		css: {
