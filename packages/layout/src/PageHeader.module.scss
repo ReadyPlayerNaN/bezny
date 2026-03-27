@@ -1,0 +1,10 @@
+@use 'grid' as *;
+
+.header {
+	margin: var(--bzn-page-header-margin, 0 0 #{size(6)} 0);
+}
+
+.description {
+	color: var(--bzn-page-header-description-color, var(--bzn-text));
+	margin: var(--bzn-page-header-description-margin, 0);
+}
