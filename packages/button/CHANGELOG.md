@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/ReadyPlayerNaN/bezny/compare/button-v0.2.0...button-v0.3.0) (2026-03-27)
+
+
+### Features
+
+* **button:** use size(3.5) font-size and bold font-weight ([33d6238](https://github.com/ReadyPlayerNaN/bezny/commit/33d6238186d98980ae1244510f7a7518d07de29f))
+
 ## [0.2.0](https://github.com/ReadyPlayerNaN/bezny/compare/button-v0.1.0...button-v0.2.0) (2026-03-17)
 
 

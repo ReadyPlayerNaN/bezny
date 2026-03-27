@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/ReadyPlayerNaN/bezny/compare/layout-v0.2.0...layout-v0.3.0) (2026-03-27)
+
+
+### Features
+
+* **layout:** add PageHeader component ([244cbf0](https://github.com/ReadyPlayerNaN/bezny/commit/244cbf060442c921b12a59180ceacae240492e18))
+
 ## [0.2.0](https://github.com/ReadyPlayerNaN/bezny/compare/layout-v0.1.0...layout-v0.2.0) (2026-03-17)
 
 
