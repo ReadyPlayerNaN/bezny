@@ -32,7 +32,7 @@ describe("DataTable", () => {
 		expect(screen.getByText("Name")).toBeInTheDocument();
 		expect(screen.getByText("Price")).toBeInTheDocument();
 		const columnHeaders = screen.getAllByRole("columnheader");
-		expect(columnHeaders).toHaveLength(2);
+		expect(columnHeaders).toHaveLength(columns.length);
 		expect(columnHeaders[0]).toHaveTextContent("Name");
 		expect(columnHeaders[1]).toHaveTextContent("Price");
 	});
@@ -40,7 +40,7 @@ describe("DataTable", () => {
 	it("uses getRowKey for row keys", () => {
 		const getRowKeySpy = vi.fn((row: Product) => row.id);
 		render(<DataTable columns={columns} getRowKey={getRowKeySpy} rows={rows} />);
-		expect(getRowKeySpy).toHaveBeenCalledTimes(2);
+		expect(getRowKeySpy).toHaveBeenCalledTimes(rows.length);
 		expect(getRowKeySpy).toHaveBeenCalledWith(rows[0]);
 		expect(getRowKeySpy).toHaveBeenCalledWith(rows[1]);
 	});
@@ -69,8 +69,8 @@ describe("DataTable", () => {
 	it("renders correct number of body rows", () => {
 		render(<DataTable columns={columns} getRowKey={getRowKey} rows={rows} />);
 		const bodyRows = screen.getAllByRole("row");
-		// 1 header row + 2 body rows
-		expect(bodyRows).toHaveLength(3);
+		// 1 header row + rows.length body rows
+		expect(bodyRows).toHaveLength(rows.length + 1);
 	});
 
 	it("renders custom column content via render function", () => {
@@ -86,6 +86,29 @@ describe("DataTable", () => {
 	it("renders empty state with full colspan", () => {
 		render(<DataTable columns={columns} getRowKey={getRowKey} rows={[]} />);
 		const emptyCell = screen.getByText("No data");
-		expect(emptyCell).toHaveAttribute("colspan", "2");
+		expect(emptyCell).toHaveAttribute("colspan", String(columns.length));
+	});
+
+	it("renders loading state when loading is true", () => {
+		render(<DataTable columns={columns} getRowKey={getRowKey} rows={rows} loading={true} />);
+		expect(screen.getByText("Loading…")).toBeInTheDocument();
+	});
+
+	it("does not render rows when loading is true", () => {
+		render(<DataTable columns={columns} getRowKey={getRowKey} rows={rows} loading={true} />);
+		expect(screen.queryByText("Apple")).not.toBeInTheDocument();
+		expect(screen.queryByText("Banana")).not.toBeInTheDocument();
+	});
+
+	it("renders loading state with full colspan", () => {
+		render(<DataTable columns={columns} getRowKey={getRowKey} rows={rows} loading={true} />);
+		const loadingCell = screen.getByText("Loading…");
+		expect(loadingCell).toHaveAttribute("colspan", String(columns.length));
+	});
+
+	it("does not render loading state when loading is false", () => {
+		render(<DataTable columns={columns} getRowKey={getRowKey} rows={rows} loading={false} />);
+		expect(screen.queryByText("Loading…")).not.toBeInTheDocument();
+		expect(screen.getByText("Apple")).toBeInTheDocument();
 	});
 });

@@ -12,9 +12,45 @@ export type DataTableProps<T> = {
 	rows: T[];
 	getRowKey: (row: T) => string;
 	totalsRow?: ReactNode[];
+	loading?: boolean;
 };
 
-export function DataTable<T>({ columns, rows, getRowKey, totalsRow }: DataTableProps<T>) {
+function renderBodyContent<T>(
+	columns: Column<T>[],
+	rows: T[],
+	getRowKey: (row: T) => string,
+	loading: boolean | undefined,
+): ReactNode {
+	if (loading) {
+		return (
+			<tr>
+				<td className={styles.loadingState} colSpan={columns.length}>
+					Loading…
+				</td>
+			</tr>
+		);
+	}
+	if (rows.length === 0) {
+		return (
+			<tr>
+				<td className={styles.emptyState} colSpan={columns.length}>
+					No data
+				</td>
+			</tr>
+		);
+	}
+	return rows.map((row) => (
+		<tr key={getRowKey(row)}>
+			{columns.map((column) => (
+				<td key={column.key} className={styles.bodyCell}>
+					{column.render(row)}
+				</td>
+			))}
+		</tr>
+	));
+}
+
+export function DataTable<T>({ columns, rows, getRowKey, totalsRow, loading }: DataTableProps<T>) {
 	return (
 		<div className={styles.wrapper}>
 			<table className={styles.table}>
@@ -27,25 +63,7 @@ export function DataTable<T>({ columns, rows, getRowKey, totalsRow }: DataTableP
 						))}
 					</tr>
 				</thead>
-				<tbody>
-					{rows.length === 0 ? (
-						<tr>
-							<td className={styles.emptyState} colSpan={columns.length}>
-								No data
-							</td>
-						</tr>
-					) : (
-						rows.map((row) => (
-							<tr key={getRowKey(row)}>
-								{columns.map((column) => (
-									<td key={column.key} className={styles.bodyCell}>
-										{column.render(row)}
-									</td>
-								))}
-							</tr>
-						))
-					)}
-				</tbody>
+				<tbody>{renderBodyContent(columns, rows, getRowKey, loading)}</tbody>
 				{totalsRow && (
 					<tfoot>
 						<tr>

@@ -37,3 +37,9 @@
 	padding: size(8);
 	text-align: center;
 }
+
+.loadingState {
+	color: var(--bzn-table-loading-color, var(--bzn-text-muted));
+	padding: size(8);
+	text-align: center;
+}
