@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.0](https://github.com/ReadyPlayerNaN/bezny/compare/text-v0.2.0...text-v0.3.0) (2026-03-27)
+
+
+### Features
+
+* **text,code:** add default margins to contentful components ([8dd43b5](https://github.com/ReadyPlayerNaN/bezny/commit/8dd43b5bb5d4ac319d04381ba9d4c5928c0df2e3))
+* **text:** add Blockquote, HorizontalRule, OrderedList, UnorderedList, ListItem components ([036a770](https://github.com/ReadyPlayerNaN/bezny/commit/036a770b9d2d2a1f6a2103f6de39289f6e3f098e))
+
 ## [0.2.0](https://github.com/ReadyPlayerNaN/bezny/compare/text-v0.1.0...text-v0.2.0) (2026-03-17)
 
 

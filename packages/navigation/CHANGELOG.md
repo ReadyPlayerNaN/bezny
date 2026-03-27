@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.3.0](https://github.com/ReadyPlayerNaN/bezny/compare/navigation-v0.2.0...navigation-v0.3.0) (2026-03-27)
+
+
+### Features
+
+* **navigation:** add SideMenu responsive component ([ca113be](https://github.com/ReadyPlayerNaN/bezny/commit/ca113be1104c42cd0ef74bf1075c1665a98a3b70))
+* **navigation:** make sidebar component groups collapsible ([368ae62](https://github.com/ReadyPlayerNaN/bezny/commit/368ae623ee7afece640424264a90692ac820f2e5))
+
+
+### Bug Fixes
+
+* remove cursor: pointer from non-link interactive elements ([e1b49c5](https://github.com/ReadyPlayerNaN/bezny/commit/e1b49c5dc0538a324aeb8b214ff181aed188817f))
+
 ## [0.2.0](https://github.com/ReadyPlayerNaN/bezny/compare/navigation-v0.1.0...navigation-v0.2.0) (2026-03-17)
 
 

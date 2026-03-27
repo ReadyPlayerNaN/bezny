@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/ReadyPlayerNaN/bezny/compare/switches-v0.2.0...switches-v0.2.1) (2026-03-27)
+
+
+### Bug Fixes
+
+* remove cursor: pointer from non-link interactive elements ([e1b49c5](https://github.com/ReadyPlayerNaN/bezny/commit/e1b49c5dc0538a324aeb8b214ff181aed188817f))
+
 ## [0.2.0](https://github.com/ReadyPlayerNaN/bezny/compare/switches-v0.1.0...switches-v0.2.0) (2026-03-17)
 
 

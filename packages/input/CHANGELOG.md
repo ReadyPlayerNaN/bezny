@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.3.0](https://github.com/ReadyPlayerNaN/bezny/compare/input-v0.2.0...input-v0.3.0) (2026-03-27)
+
+
+### Features
+
+* **input:** add SelectInput component ([41a1c53](https://github.com/ReadyPlayerNaN/bezny/commit/41a1c53c48e8180471cec4305c976d2f60acf03c))
+* **input:** add TagListInput component ([15cb8fa](https://github.com/ReadyPlayerNaN/bezny/commit/15cb8fa019343c2810de2b7479051bf5ac48f7ec))
+* **input:** conform TagListInput to floating label pattern ([3639241](https://github.com/ReadyPlayerNaN/bezny/commit/36392419e49c277cbd1fb5049e8ecbb843aa4795))
+
+
+### Bug Fixes
+
+* **input:** fix input overflow by using flex column wrapper ([692ec30](https://github.com/ReadyPlayerNaN/bezny/commit/692ec30d46f0b2f75947615e09138afdfe9bca2b))
+* remove cursor: pointer from non-link interactive elements ([e1b49c5](https://github.com/ReadyPlayerNaN/bezny/commit/e1b49c5dc0538a324aeb8b214ff181aed188817f))
+
 ## [0.2.0](https://github.com/ReadyPlayerNaN/bezny/compare/input-v0.1.0...input-v0.2.0) (2026-03-17)
 
 
