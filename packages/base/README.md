@@ -30,6 +30,22 @@ export function Page() {
 
 An explicit `level` takes precedence over the inherited level. Native HTML attributes, children, and custom classes are forwarded.
 
+## Icons
+
+`Icon` and `wrapIcon` are ported from `aipocapso`'s Lucide wrapper. They enforce `role="graphics-symbol"`, preserve SVG attributes, events, children, decorative `aria-hidden` semantics, and refs, and add no DOM wrapper. Ref forwarding uses React 19 ref props.
+
+```tsx
+import { Icon, wrapIcon } from "@bezny/base";
+import { Plane } from "lucide-react";
+
+const AirlineIcon = wrapIcon(Plane);
+
+<Icon icon={Plane} aria-label="Airline" />;
+<AirlineIcon aria-hidden="true" />;
+```
+
+The wrapper accepts any Lucide icon; this package does not copy the source application's domain-specific icon catalogue. Label meaningful icons or mark decorative ones `aria-hidden="true"`. Heading typography sizes their symbols.
+
 ## Styling
 
 Styles use locally scoped SCSS module classes and the project's four-layer [SCSS token architecture](../../README.md#scss-token-architecture). Shared defaults are included in `@bezny/base/style.css`; control aliases are bound on each heading. Text color inherits from the surrounding interface.
