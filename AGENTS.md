@@ -4,6 +4,11 @@
 
 Bezny is a UI framework for building admin interfaces, using React and TypeScript. Use this purpose to guide implementation and design decisions.
 
+## Meaningful naming
+
+- Use meaningful names for everything: files, directories, modules, variables, functions, types, and components. Names must communicate their domain, responsibility, or purpose.
+- Meaningless filler names such as `utilities`, `lib`, or `helpers` are forbidden. Name code for what it does, not for being a miscellaneous collection.
+
 ## SCSS tokens
 
 - Use four layers: **Foundational → Logical → Structural → Control**.
