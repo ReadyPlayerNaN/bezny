@@ -1,0 +1,9 @@
+@mixin size($font-size, $line-height) {
+  font-size: $font-size;
+  line-height: $line-height;
+  --heading-icon-size: #{$font-size};
+}
+
+@mixin title3 {
+  @include size(var(--primitive-font-size-400, 20px), var(--primitive-line-height-400, 28px));
+}

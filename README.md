@@ -18,6 +18,7 @@ pnpm test
 
 ## Structure
 
+- `packages/base/` — React heading primitives, built with Vite and SCSS modules ([usage](packages/base/README.md))
 - `packages/core/` — starter ESM TypeScript library with a smoke test
 - `packages/typescript-config/` — shared strict TypeScript configuration
 - `turbo.json` — build, typecheck, and test pipelines
