@@ -8,10 +8,16 @@
   "scripts": {
     "build": "turbo run build",
     "typecheck": "turbo run typecheck",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "check": "ultracite check",
+    "fix": "ultracite fix"
   },
   "devDependencies": {
+    "oxfmt": "^0.72.0",
+    "oxlint": "^1.87.0",
+    "oxlint-plugin-react-doctor": "^0.9.17",
     "turbo": "2.11.7",
-    "typescript": "7.0.2"
+    "typescript": "7.0.2",
+    "ultracite": "7.12.4"
   }
 }
