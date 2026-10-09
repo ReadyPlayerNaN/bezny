@@ -29,8 +29,7 @@ up to `h6`. `Main` is a semantic wrapper and does not change the level.
 `HeadingLevelProvider` can explicitly set a level or increment it automatically;
 `useHeadingLevel` exposes the inherited level.
 
-An explicit `level` takes precedence over `type` (`title1` through `title6`),
-which takes precedence over the inherited level. Native HTML attributes,
+An explicit `level` takes precedence over the inherited level. Native HTML attributes,
 children, and custom classes are forwarded.
 
 ## Styling

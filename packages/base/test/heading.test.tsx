@@ -33,22 +33,18 @@ describe('heading semantics', () => {
     expect(renderToStaticMarkup(<Heading level={level}>Title</Heading>)).toContain(`<h${level}`);
   });
 
-  it.each(levels)('supports title%i kinds', (level) => {
-    expect(renderToStaticMarkup(<Heading type={`title${level}`}>Title</Heading>)).toContain(`<h${level}`);
-  });
-
-  it('prioritizes level over type and inherited context', () => {
+  it('prioritizes explicit level over inherited context', () => {
     const html = renderToStaticMarkup(
-      <HeadingLevelProvider level={5}><Heading level={2} type="title3">Title</Heading></HeadingLevelProvider>,
+      <HeadingLevelProvider level={5}><Heading level={2}>Title</Heading></HeadingLevelProvider>,
     );
     expect(headingTags(html)).toEqual(['<h2']);
   });
 
-  it('prioritizes type over inherited context', () => {
+  it('uses the inherited level when no explicit level is provided', () => {
     const html = renderToStaticMarkup(
-      <HeadingLevelProvider level={5}><Heading type="title3">Title</Heading></HeadingLevelProvider>,
+      <HeadingLevelProvider level={5}><Heading>Title</Heading></HeadingLevelProvider>,
     );
-    expect(headingTags(html)).toEqual(['<h3']);
+    expect(headingTags(html)).toEqual(['<h5']);
   });
 
   it('increments nested sections and restores the parent level for siblings', () => {
