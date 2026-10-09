@@ -1,0 +1,9 @@
+@use "./tokens/foundational";
+@use "./tokens/logical";
+@use "./tokens/structural";
+
+:root {
+  @include foundational.tokens;
+  @include logical.tokens;
+  @include structural.tokens;
+}

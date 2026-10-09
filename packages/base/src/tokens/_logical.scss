@@ -1,0 +1,22 @@
+@mixin tokens {
+  --bezny-logical-font-size-xs: var(--bezny-foundation-size-14);
+  --bezny-logical-font-size-sm: var(--bezny-foundation-size-16);
+  --bezny-logical-font-size-md: var(--bezny-foundation-size-18);
+  --bezny-logical-font-size-lg: var(--bezny-foundation-size-20);
+  --bezny-logical-font-size-xl: var(--bezny-foundation-size-24);
+  --bezny-logical-font-size-2xl: var(--bezny-foundation-size-32);
+  --bezny-logical-line-height-xs: var(--bezny-foundation-size-20);
+  --bezny-logical-line-height-sm: var(--bezny-foundation-size-24);
+  --bezny-logical-line-height-md: var(--bezny-foundation-size-24);
+  --bezny-logical-line-height-lg: var(--bezny-foundation-size-28);
+  --bezny-logical-line-height-xl: var(--bezny-foundation-size-32);
+  --bezny-logical-line-height-2xl: var(--bezny-foundation-size-40);
+  --bezny-logical-icon-size-xs: var(--bezny-foundation-size-14);
+  --bezny-logical-icon-size-sm: var(--bezny-foundation-size-16);
+  --bezny-logical-icon-size-md: var(--bezny-foundation-size-18);
+  --bezny-logical-icon-size-lg: var(--bezny-foundation-size-20);
+  --bezny-logical-icon-size-xl: var(--bezny-foundation-size-24);
+  --bezny-logical-icon-size-2xl: var(--bezny-foundation-size-28);
+  --bezny-logical-font-family-body: var(--bezny-foundation-font-family-sans);
+  --bezny-logical-font-weight-bold: var(--bezny-foundation-font-weight-700);
+}
