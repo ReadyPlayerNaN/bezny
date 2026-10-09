@@ -2,8 +2,20 @@
 
 ## Project purpose
 
-Bezny is a UI framework for building admin interfaces, using React and TypeScript.
-Use this purpose to guide implementation and design decisions.
+Bezny is a UI framework for building admin interfaces, using React and TypeScript. Use this purpose to guide implementation and design decisions.
+
+## SCSS tokens
+
+- Use four layers: **Foundational → Logical → Structural → Control**.
+- Foundational tokens define absolute primitive values; they do not reference other tokens.
+- Logical tokens reference foundational tokens only, grouping primitives into a system.
+- Structural tokens reference logical tokens only, giving system values purpose.
+- Control tokens belong to components and reference structural tokens only. Component styles consume control tokens.
+- Do not skip layers, create reverse dependencies, or place raw design values in higher layers. “Primitive” means foundational, not a fifth layer.
+- Use `rem` for typography: font sizes, line heights, and typography-related icon sizes. Do not force a fixed root font size.
+- Before adding or changing tokens or token-consuming styles, read `.agents/skills/using-scss-tokens/SKILL.md` and follow its workflow.
+
+> Structure cannot stand without its foundations. Logic is a foundation of function. Function is the essence of control
 
 ## Functional slices and commits
 
