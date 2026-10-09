@@ -1,5 +1,10 @@
 # Agent instructions
 
+## Project purpose
+
+Bezny is a UI framework for building admin interfaces, using React and TypeScript.
+Use this purpose to guide implementation and design decisions.
+
 ## Functional slices and commits
 
 - All work must be divided into functional slices. Each slice must deliver a complete, independently usable functional improvement to the source code—not a partial implementation or an arbitrary batch of files.

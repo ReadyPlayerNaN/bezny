@@ -1,6 +1,8 @@
 # Bezny
 
-Minimal TypeScript + Turborepo monorepo using pnpm workspaces.
+Bezny is a UI framework for building admin interfaces.
+
+Built with React and TypeScript in a Turborepo monorepo using pnpm workspaces.
 
 ## Requirements
 
