@@ -4,6 +4,7 @@ import { readFileSync } from "node:fs";
 import test from "node:test";
 
 import {
+  Button,
   Heading,
   HeadingLevelProvider,
   Main,
@@ -32,9 +33,10 @@ const classNames = (level) => {
   return html.match(classPattern).groups.classes.split(" ");
 };
 
-const rules = new Map(
-  [...css.matchAll(rulePattern)].map(({ groups }) => [groups.name, groups.body])
-);
+const rules = new Map();
+for (const { groups } of css.matchAll(rulePattern)) {
+  rules.set(groups.name, `${rules.get(groups.name) ?? ""}${groups.body};`);
+}
 const tokenEntries = (text) =>
   [...text.matchAll(tokenPattern)].map(({ groups }) => [
     groups.name,
@@ -194,6 +196,50 @@ test("structural and foundational overrides propagate through heading aliases", 
     resolveToken("--bezny-control-heading-icon-size", foundational),
     "1.375rem"
   );
+});
+
+test("built buttons resolve all variants and sizes through complete token chains", () => {
+  const expectedBackgrounds = {
+    critical: "#df1111",
+    primary: "#008f7b",
+    secondary: "#e8edf1",
+  };
+  for (const variant of ["primary", "secondary", "critical"]) {
+    for (const size of ["normal", "small"]) {
+      const html = renderToStaticMarkup(
+        createElement(Button, { size, variant }, "Save")
+      );
+      const classes = html.match(classPattern).groups.classes.split(" ");
+      const tokens = { ...rootTokens };
+      for (const className of classes) {
+        Object.assign(
+          tokens,
+          Object.fromEntries(tokenEntries(rules.get(className) ?? ""))
+        );
+      }
+      assert.equal(
+        resolveToken("--bezny-control-button-background", tokens),
+        expectedBackgrounds[variant]
+      );
+      assert.equal(
+        resolveToken("--bezny-control-button-height", tokens),
+        size === "small" ? "2rem" : "2.5rem"
+      );
+      assert.equal(
+        resolveToken("--bezny-control-button-font-size", tokens),
+        size === "small" ? ".75rem" : "1rem"
+      );
+      assert.equal(
+        resolveToken("--bezny-control-button-line-height", tokens),
+        size === "small" ? "1rem" : "1.25rem"
+      );
+      for (const name of Object.keys(tokens)) {
+        if (name.startsWith("--bezny-control-button-")) {
+          resolveToken(name, tokens);
+        }
+      }
+    }
+  }
 });
 
 test("icon sizing is scoped to graphics symbols inside headings", () => {

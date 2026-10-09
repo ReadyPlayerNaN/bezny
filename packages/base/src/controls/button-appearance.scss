@@ -1,0 +1,133 @@
+@use "../tokens/css-properties";
+@use "../tokens/structural";
+
+$-definitions: (
+  "background": structural.token("button-primary-background"),
+  "background-hover": structural.token("button-primary-background-hover"),
+  "background-active": structural.token("button-primary-background-active"),
+  "border": structural.token("button-primary-border"),
+  "text": structural.token("button-primary-text"),
+  "height": structural.token("button-height-normal"),
+  "padding": structural.token("button-padding-normal"),
+  "font-size": structural.token("button-font-size-normal"),
+  "line-height": structural.token("button-line-height-normal"),
+  "font-family": structural.token("button-font-family"),
+  "font-weight": structural.token("button-font-weight"),
+  "gap": structural.token("button-gap"),
+  "radius": structural.token("button-radius"),
+  "border-width": structural.token("button-border-width"),
+  "spinner-size": structural.token("button-spinner-size"),
+  "spinner-border-width": structural.token("button-spinner-border-width"),
+  "focus-ring": structural.token("button-focus-ring"),
+  "opacity-disabled": structural.token("button-opacity-disabled"),
+  "duration-interaction": structural.token("button-duration-interaction"),
+  "duration-spinner": structural.token("button-duration-spinner"),
+);
+
+$background: css-properties.reference(
+  $-definitions,
+  "background",
+  "control-button"
+);
+$background-hover: css-properties.reference(
+  $-definitions,
+  "background-hover",
+  "control-button"
+);
+$background-active: css-properties.reference(
+  $-definitions,
+  "background-active",
+  "control-button"
+);
+$border: css-properties.reference($-definitions, "border", "control-button");
+$text: css-properties.reference($-definitions, "text", "control-button");
+$height: css-properties.reference($-definitions, "height", "control-button");
+$padding: css-properties.reference($-definitions, "padding", "control-button");
+$font-size: css-properties.reference(
+  $-definitions,
+  "font-size",
+  "control-button"
+);
+$line-height: css-properties.reference(
+  $-definitions,
+  "line-height",
+  "control-button"
+);
+$font-family: css-properties.reference(
+  $-definitions,
+  "font-family",
+  "control-button"
+);
+$font-weight: css-properties.reference(
+  $-definitions,
+  "font-weight",
+  "control-button"
+);
+$gap: css-properties.reference($-definitions, "gap", "control-button");
+$radius: css-properties.reference($-definitions, "radius", "control-button");
+$border-width: css-properties.reference(
+  $-definitions,
+  "border-width",
+  "control-button"
+);
+$spinner-size: css-properties.reference(
+  $-definitions,
+  "spinner-size",
+  "control-button"
+);
+$spinner-border-width: css-properties.reference(
+  $-definitions,
+  "spinner-border-width",
+  "control-button"
+);
+$focus-ring: css-properties.reference(
+  $-definitions,
+  "focus-ring",
+  "control-button"
+);
+$opacity-disabled: css-properties.reference(
+  $-definitions,
+  "opacity-disabled",
+  "control-button"
+);
+$duration-interaction: css-properties.reference(
+  $-definitions,
+  "duration-interaction",
+  "control-button"
+);
+$duration-spinner: css-properties.reference(
+  $-definitions,
+  "duration-spinner",
+  "control-button"
+);
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-button");
+}
+
+@mixin size($size) {
+  @include css-properties.declarations(
+    (
+      "height": structural.token("button-height-#{$size}"),
+      "padding": structural.token("button-padding-#{$size}"),
+      "font-size": structural.token("button-font-size-#{$size}"),
+      "line-height": structural.token("button-line-height-#{$size}"),
+    ),
+    "control-button"
+  );
+}
+
+@mixin variant($variant) {
+  @include css-properties.declarations(
+    (
+      "background": structural.token("button-#{$variant}-background"),
+      "background-hover":
+        structural.token("button-#{$variant}-background-hover"),
+      "background-active":
+        structural.token("button-#{$variant}-background-active"),
+      "border": structural.token("button-#{$variant}-border"),
+      "text": structural.token("button-#{$variant}-text"),
+    ),
+    "control-button"
+  );
+}

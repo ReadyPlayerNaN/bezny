@@ -5,7 +5,55 @@
 $-definitions: (
   "heading-font-family": logical.$font-family-body,
   "heading-font-weight": logical.$font-weight-bold,
+  "button-font-family": logical.$font-family-body,
+  "button-font-weight": logical.$font-weight-bold,
+  "button-gap": logical.token("control-gap"),
+  "button-radius": logical.token("control-radius"),
+  "button-border-width": logical.token("control-border-width"),
+  "button-spinner-size": logical.token("control-spinner-size"),
+  "button-spinner-border-width": logical.token("control-spinner-border-width"),
+  "button-focus-ring": logical.token("focus-ring"),
+  "button-opacity-disabled": logical.token("opacity-disabled"),
+  "button-duration-interaction": logical.token("duration-interaction"),
+  "button-duration-spinner": logical.token("duration-spinner"),
 );
+
+@each $size in (normal, small) {
+  @each $property in (height, padding, font-size, line-height) {
+    $-definitions: map.set(
+      $-definitions,
+      "button-#{$property}-#{$size}",
+      logical.token("control-#{$property}-#{$size}")
+    );
+  }
+}
+
+@each $variant,
+  $palette in (primary: brand, secondary: neutral, critical: danger)
+{
+  $border-color: "color-#{$palette}";
+  $text-color: "color-on-accent";
+  @if $variant == secondary {
+    $border-color: "color-neutral-active";
+    $text-color: "color-text-strong";
+  }
+  $-definitions: map.merge(
+    $-definitions,
+    (
+      "button-#{$variant}-background": logical.token("color-#{$palette}"),
+      "button-#{$variant}-background-hover":
+        logical.token("color-#{$palette}-hover"),
+      "button-#{$variant}-background-active":
+        logical.token("color-#{$palette}-active"),
+      "button-#{$variant}-border": logical.token($border-color),
+      "button-#{$variant}-text": logical.token($text-color),
+    )
+  );
+}
+
+@function token($token-name) {
+  @return css-properties.reference($-definitions, $token-name, "structural");
+}
 
 @each $level, $step in (1: 2xl, 2: xl, 3: lg, 4: md, 5: sm, 6: xs) {
   $-definitions: map.merge(

@@ -15,3 +15,12 @@ export {
   type LucideIcon,
   type LucideProps,
 } from "./content/icon.js";
+
+export {
+  Button,
+  Submit,
+  type ButtonProps,
+  type ButtonOwnProps,
+  type ButtonSize,
+  type ButtonVariant,
+} from "./controls/button.js";

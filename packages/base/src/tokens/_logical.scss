@@ -22,7 +22,39 @@ $-definitions: (
   "icon-size-2xl": foundational.size(28),
   "font-family-body": foundational.$font-family-sans,
   "font-weight-bold": foundational.$font-weight-700,
+  "control-height-normal": foundational.size(40),
+  "control-height-small": foundational.size(32),
+  "control-padding-normal": foundational.size(16),
+  "control-padding-small": foundational.size(12),
+  "control-gap": foundational.size(8),
+  "control-font-size-normal": foundational.size(16),
+  "control-font-size-small": foundational.size(12),
+  "control-line-height-normal": foundational.size(20),
+  "control-line-height-small": foundational.size(16),
+  "control-radius": foundational.size(6),
+  "control-border-width": foundational.size(1),
+  "control-spinner-size": foundational.size(16),
+  "control-spinner-border-width": foundational.size(2),
+  "color-brand": foundational.token("color-product-normal"),
+  "color-brand-hover": foundational.token("color-product-hover"),
+  "color-brand-active": foundational.token("color-product-active"),
+  "color-neutral": foundational.token("color-cloud-normal"),
+  "color-neutral-hover": foundational.token("color-cloud-hover"),
+  "color-neutral-active": foundational.token("color-cloud-dark"),
+  "color-danger": foundational.token("color-red-normal"),
+  "color-danger-hover": foundational.token("color-red-hover"),
+  "color-danger-active": foundational.token("color-red-active"),
+  "color-on-accent": foundational.token("color-white"),
+  "color-text-strong": foundational.token("color-ink-dark"),
+  "focus-ring": foundational.token("shadow-focus"),
+  "opacity-disabled": foundational.token("opacity-disabled"),
+  "duration-interaction": foundational.token("duration-interaction"),
+  "duration-spinner": foundational.token("duration-spinner"),
 );
+
+@function token($token-name) {
+  @return css-properties.reference($-definitions, $token-name, "logical");
+}
 
 $font-family-body: css-properties.reference(
   $-definitions,

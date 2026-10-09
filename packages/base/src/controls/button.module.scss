@@ -1,0 +1,108 @@
+@use "./button-appearance";
+
+.button {
+  @include button-appearance.declarations;
+
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  min-height: button-appearance.$height;
+  align-items: center;
+  justify-content: center;
+  gap: button-appearance.$gap;
+  padding-inline: button-appearance.$padding;
+  border: button-appearance.$border-width solid button-appearance.$border;
+  border-radius: button-appearance.$radius;
+  background: button-appearance.$background;
+  color: button-appearance.$text;
+  font-family: button-appearance.$font-family;
+  font-size: button-appearance.$font-size;
+  font-weight: button-appearance.$font-weight;
+  line-height: button-appearance.$line-height;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color button-appearance.$duration-interaction ease,
+    border-color button-appearance.$duration-interaction ease,
+    color button-appearance.$duration-interaction ease,
+    box-shadow button-appearance.$duration-interaction ease,
+    opacity button-appearance.$duration-interaction ease;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover:not(.disabled):not(.loading) {
+    background: button-appearance.$background-hover;
+    border-color: button-appearance.$background-hover;
+  }
+
+  &:active:not(.disabled):not(.loading) {
+    background: button-appearance.$background-active;
+    border-color: button-appearance.$background-active;
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: button-appearance.$focus-ring;
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: button-appearance.$opacity-disabled;
+  }
+}
+
+.autoWidth {
+  width: auto;
+}
+.fullWidth {
+  width: 100%;
+}
+.small {
+  @include button-appearance.size(small);
+}
+.secondary {
+  @include button-appearance.variant(secondary);
+}
+.critical {
+  @include button-appearance.variant(critical);
+}
+
+.disabled {
+  cursor: not-allowed;
+  opacity: button-appearance.$opacity-disabled;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading .label {
+  opacity: 0;
+}
+
+.spinner {
+  position: absolute;
+  width: button-appearance.$spinner-size;
+  height: button-appearance.$spinner-size;
+  border: button-appearance.$spinner-border-width solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: button-spinner button-appearance.$duration-spinner linear infinite;
+}
+
+@keyframes button-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+  .spinner {
+    animation: none;
+  }
+}

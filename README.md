@@ -41,7 +41,7 @@ pnpm test
 
 ## Structure
 
-- `packages/base/` — React heading primitives, built with Vite and SCSS modules ([usage](packages/base/README.md))
+- `packages/base/` — React headings, Lucide icon wrappers, and buttons, built with Vite and SCSS modules ([usage](packages/base/README.md))
 - `packages/typescript-config/` — shared strict TypeScript configuration
 - `turbo.json` — build, typecheck, and test pipelines
 

@@ -46,6 +46,34 @@ const AirlineIcon = wrapIcon(Plane);
 
 The wrapper accepts any Lucide icon; this package does not copy the source application's domain-specific icon catalogue. Label meaningful icons or mark decorative ones `aria-hidden="true"`. Heading typography sizes their symbols.
 
+## Buttons
+
+`Button` and `Submit` are ported from `aipocapso` and use scoped SCSS modules. Import `@bezny/base/style.css` once for shared tokens and component styles.
+
+```tsx
+import { Button, Icon, Submit } from "@bezny/base";
+import { Plane } from "lucide-react";
+
+<Button variant="secondary" size="small">
+  <Icon icon={Plane} aria-hidden="true" />
+  Travel
+</Button>;
+<Submit loading>Save</Submit>;
+<Button asComponent="a" href="#details">
+  Details
+</Button>;
+```
+
+- Variants: `primary` (default), `secondary`, and `critical`.
+- Sizes: `normal` (default) and `small`; `fullWidth` expands the control.
+- `disabled` and `loading` block interaction. Loading adds a decorative spinner, hides the label visually without changing its accessible name, and sets `aria-busy`.
+- Native buttons default to `type="button"`. `type="submit"`, `submit`, and `Submit` support form submission; `type="reset"` is supported too.
+- The source's legacy `type="secondary"` and `type="critical"` appearance aliases are retained. Prefer `variant` in new code.
+- `asComponent` accepts an element or component and preserves its props and React 19 ref. Non-native controls receive button semantics, keyboard activation, and a focusable default tab index. Custom components must forward the provided props/ref.
+- Disabled non-native controls are removed from tab order, suppress navigation, and stop click propagation. Focus rings and reduced-motion styling are included.
+
+The source's default button palette and sizing are represented through all four layers. Normal buttons use `1rem` text with `1.25rem` line height and a `2.5rem` minimum height; small buttons use `0.75rem`, `1rem`, and `2rem`, respectively. Automatic dark-mode tokens from the source application's full theme are not copied; the palette can be themed through Bezny's CSS tokens.
+
 ## Styling
 
 Styles use locally scoped SCSS module classes and the project's four-layer [SCSS token architecture](../../README.md#scss-token-architecture). Shared defaults are included in `@bezny/base/style.css`; control aliases are bound on each heading. Text color inherits from the surrounding interface.
@@ -54,7 +82,8 @@ Styles use locally scoped SCSS module classes and the project's four-layer [SCSS
 - `src/tokens/_foundational.scss` — absolute sizes in `rem`, font family, and weight.
 - `src/tokens/_logical.scss` — typography and icon scales referencing foundations.
 - `src/tokens/_structural.scss` — heading purposes referencing logical scales.
-- `src/content/heading-typography.scss` and `src/content/heading.module.scss` — component control aliases and their usage.
+- `src/content/heading-typography.scss` and `src/content/heading.module.scss` — heading control aliases and their usage.
+- `src/controls/button-appearance.scss` and `src/controls/button.module.scss` — button control aliases, states, variants, and sizes.
 - `src/tokens.scss` — shared `:root` defaults, included by the heading SCSS module.
 
 | Heading level | Font size  | Line height | Icon size  |
