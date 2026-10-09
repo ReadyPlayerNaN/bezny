@@ -124,12 +124,12 @@ test("every CSS variable reference in the built stylesheet has a declaration", (
 
 test("built heading styles resolve all six levels through the rem token chain", () => {
   const cases = [
-    { font: "2rem", icon: "1.75rem", level: 1, line: "2.5rem" },
-    { font: "1.5rem", icon: "1.5rem", level: 2, line: "2rem" },
-    { font: "1.25rem", icon: "1.25rem", level: 3, line: "1.75rem" },
-    { font: "1.125rem", icon: "1.125rem", level: 4, line: "1.5rem" },
-    { font: "1rem", icon: "1rem", level: 5, line: "1.5rem" },
-    { font: ".875rem", icon: ".875rem", level: 6, line: "1.25rem" },
+    { font: "3rem", icon: "3rem", level: 1, line: "3.5rem" },
+    { font: "2.5rem", icon: "2.5rem", level: 2, line: "3rem" },
+    { font: "2rem", icon: "1.75rem", level: 3, line: "2.5rem" },
+    { font: "1.5rem", icon: "1.5rem", level: 4, line: "2rem" },
+    { font: "1.25rem", icon: "1.25rem", level: 5, line: "1.75rem" },
+    { font: "1rem", icon: "1rem", level: 6, line: "1.5rem" },
   ];
   for (const { font, icon, level, line } of cases) {
     const [base, variant] = classNames(level);
@@ -185,7 +185,7 @@ test("structural and foundational overrides propagate through heading aliases", 
     resolveToken("--bezny-control-heading-font-size", structural),
     "2rem"
   );
-  const foundational = headingTokens(3, {
+  const foundational = headingTokens(5, {
     "--bezny-foundation-size-20": "1.375rem",
   });
   assert.equal(

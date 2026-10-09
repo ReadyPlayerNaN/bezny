@@ -86,16 +86,16 @@ Styles use locally scoped SCSS module classes and the project's four-layer [SCSS
 - `src/controls/button-appearance.scss` and `src/controls/button.module.scss` — button control aliases, states, variants, and sizes.
 - `src/tokens.scss` — shared `:root` defaults, included by the heading SCSS module.
 
-| Heading level | Font size  | Line height | Icon size  |
-| ------------- | ---------- | ----------- | ---------- |
-| 1             | `2rem`     | `2.5rem`    | `1.75rem`  |
-| 2             | `1.5rem`   | `2rem`      | `1.5rem`   |
-| 3             | `1.25rem`  | `1.75rem`   | `1.25rem`  |
-| 4             | `1.125rem` | `1.5rem`    | `1.125rem` |
-| 5             | `1rem`     | `1.5rem`    | `1rem`     |
-| 6             | `0.875rem` | `1.25rem`   | `0.875rem` |
+| Heading level | Font size | Line height | Icon size |
+| ------------- | --------- | ----------- | --------- |
+| 1             | `3rem`    | `3.5rem`    | `3rem`    |
+| 2             | `2.5rem`  | `3rem`      | `2.5rem`  |
+| 3             | `2rem`    | `2.5rem`    | `1.75rem` |
+| 4             | `1.5rem`  | `2rem`      | `1.5rem`  |
+| 5             | `1.25rem` | `1.75rem`   | `1.25rem` |
+| 6             | `1rem`    | `1.5rem`    | `1rem`    |
 
-These preserve the original proportions at a reference root size of 16px, without setting the root font size. Font family defaults to `sans-serif` and font weight to `700`. Icons with `role="graphics-symbol"` inside headings consume the heading icon-size control token.
+Headings use a rounded scale from `3rem` to `1rem`, without setting the root font size. Font family defaults to `sans-serif` and font weight to `700`. Icons with `role="graphics-symbol"` inside headings consume the heading icon-size control token.
 
 Definition maps are the source of truth. Pure accessors such as `foundational.size(20)`, `logical.font-size("lg")`, and `structural.heading-font-size(3)` validate their keys and return runtime CSS references. Their declaration mixins emit matching properties separately; there is no global registration side effect.
 
