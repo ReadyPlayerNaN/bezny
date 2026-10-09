@@ -64,9 +64,18 @@ pnpm typecheck
 pnpm test
 ```
 
+## Component showcase
+
+```sh
+pnpm --filter @bezny/demo dev
+```
+
+This builds `@bezny/base` and starts the Vite demo server. Open the local URL printed in the terminal to explore headings, icons, and buttons ([demo details](packages/demo/README.md)).
+
 ## Structure
 
 - `packages/base/` — React headings, Lucide icon wrappers, and buttons, built with Vite and SCSS modules ([usage](packages/base/README.md))
+- `packages/demo/` — private Vite component showcase consuming `@bezny/base`
 - `packages/typescript-config/` — shared strict TypeScript configuration
 - `turbo.json` — build, typecheck, and test pipelines
 
