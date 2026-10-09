@@ -4,6 +4,18 @@ Bezny is a UI framework for building admin interfaces.
 
 Built with React and TypeScript in a Turborepo monorepo using pnpm workspaces.
 
+## Component behavior architecture
+
+Build Bezny's interactive components on top of **Radix Primitives** wherever an appropriate primitive exists. This is the framework's behavioral foundation, not a styling system.
+
+- **Radix** provides interaction behavior: focus management, keyboard navigation, dismissal, portals, state management, and accessibility semantics where supported by the chosen primitive.
+- **Bezny** owns the public component APIs, composition, SCSS modules, and the four-layer token system. Wrap primitives as Bezny components rather than exposing an unstyled dependency as the finished framework.
+- **Native HTML** remains appropriate for straightforward headings, icons, and buttons. Do not introduce a Radix wrapper where it adds no behavior.
+
+Use Radix for components such as dialogs, dropdown menus, popovers, selects, tabs, and tooltips instead of reimplementing their interaction machinery. Consider Radix Slot when implementing `asChild` composition; Slot merges props and refs but does not supply button behavior by itself.
+
+Add individual Radix dependencies to the package that uses them when implementing that component, not preemptively. Preserve the primitive's accessibility contract and verify keyboard, focus, and state behavior through integration tests. This records the architectural direction; existing components are not automatically migrated by this documentation change.
+
 ## SCSS token architecture
 
 Bezny uses four layers of tokens, with dependencies flowing in one direction:

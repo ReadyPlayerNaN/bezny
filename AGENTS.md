@@ -4,6 +4,15 @@
 
 Bezny is a UI framework for building admin interfaces, using React and TypeScript. Use this purpose to guide implementation and design decisions.
 
+## Component behavior
+
+- Build interactive components on top of Radix Primitives when a suitable primitive exists. Radix is the framework's behavioral foundation; do not independently recreate behavior already supplied by the primitive.
+- Let Radix handle supported interaction behavior such as keyboard navigation, focus management, dismissal, portals, state, and accessibility semantics. Preserve its required structure, props, refs, and event composition when wrapping it.
+- Bezny owns the public component API, composition, SCSS modules, and four-layer tokens. Style and wrap Radix primitives as Bezny components.
+- Keep native HTML for straightforward headings, icons, and buttons when a Radix wrapper would add no behavior. Consider Radix Slot for an intentional `asChild` API; it composes props and refs but does not provide button behavior.
+- Add only the Radix dependencies needed by the component being implemented, in the package that consumes them. Do not install speculative dependencies or migrate existing APIs without an implementation task.
+- Check the chosen primitive's documentation before integration. Test keyboard interactions, focus behavior, controlled/uncontrolled state where supported, and accessible semantics—not only rendered markup.
+
 ## Meaningful naming
 
 - Use meaningful names for everything: files, directories, modules, variables, functions, types, and components. Names must communicate their domain, responsibility, or purpose.
