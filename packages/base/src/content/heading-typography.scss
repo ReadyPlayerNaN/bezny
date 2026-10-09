@@ -1,11 +1,51 @@
+@use "../tokens/css-properties";
+@use "../tokens/structural";
+
+$-definitions: (
+  "font-family": structural.$heading-font-family,
+  "font-weight": structural.$heading-font-weight,
+  "font-size": structural.heading-font-size(1),
+  "line-height": structural.heading-line-height(1),
+  "icon-size": structural.heading-icon-size(1),
+);
+
+$font-family: css-properties.reference(
+  $-definitions,
+  "font-family",
+  "control-heading"
+);
+$font-weight: css-properties.reference(
+  $-definitions,
+  "font-weight",
+  "control-heading"
+);
+$font-size: css-properties.reference(
+  $-definitions,
+  "font-size",
+  "control-heading"
+);
+$line-height: css-properties.reference(
+  $-definitions,
+  "line-height",
+  "control-heading"
+);
+$icon-size: css-properties.reference(
+  $-definitions,
+  "icon-size",
+  "control-heading"
+);
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-heading");
+}
+
 @mixin level($level) {
-  --bezny-control-heading-font-size: var(
-    --bezny-structural-heading-#{$level}-font-size
-  );
-  --bezny-control-heading-line-height: var(
-    --bezny-structural-heading-#{$level}-line-height
-  );
-  --bezny-control-heading-icon-size: var(
-    --bezny-structural-heading-#{$level}-icon-size
+  @include css-properties.declarations(
+    (
+      "font-size": structural.heading-font-size($level),
+      "line-height": structural.heading-line-height($level),
+      "icon-size": structural.heading-icon-size($level),
+    ),
+    "control-heading"
   );
 }

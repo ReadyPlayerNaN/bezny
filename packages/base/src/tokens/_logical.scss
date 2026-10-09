@@ -1,22 +1,64 @@
-@mixin tokens {
-  --bezny-logical-font-size-xs: var(--bezny-foundation-size-14);
-  --bezny-logical-font-size-sm: var(--bezny-foundation-size-16);
-  --bezny-logical-font-size-md: var(--bezny-foundation-size-18);
-  --bezny-logical-font-size-lg: var(--bezny-foundation-size-20);
-  --bezny-logical-font-size-xl: var(--bezny-foundation-size-24);
-  --bezny-logical-font-size-2xl: var(--bezny-foundation-size-32);
-  --bezny-logical-line-height-xs: var(--bezny-foundation-size-20);
-  --bezny-logical-line-height-sm: var(--bezny-foundation-size-24);
-  --bezny-logical-line-height-md: var(--bezny-foundation-size-24);
-  --bezny-logical-line-height-lg: var(--bezny-foundation-size-28);
-  --bezny-logical-line-height-xl: var(--bezny-foundation-size-32);
-  --bezny-logical-line-height-2xl: var(--bezny-foundation-size-40);
-  --bezny-logical-icon-size-xs: var(--bezny-foundation-size-14);
-  --bezny-logical-icon-size-sm: var(--bezny-foundation-size-16);
-  --bezny-logical-icon-size-md: var(--bezny-foundation-size-18);
-  --bezny-logical-icon-size-lg: var(--bezny-foundation-size-20);
-  --bezny-logical-icon-size-xl: var(--bezny-foundation-size-24);
-  --bezny-logical-icon-size-2xl: var(--bezny-foundation-size-28);
-  --bezny-logical-font-family-body: var(--bezny-foundation-font-family-sans);
-  --bezny-logical-font-weight-bold: var(--bezny-foundation-font-weight-700);
+@use "css-properties";
+@use "foundational";
+
+$-definitions: (
+  "font-size-xs": foundational.size(14),
+  "font-size-sm": foundational.size(16),
+  "font-size-md": foundational.size(18),
+  "font-size-lg": foundational.size(20),
+  "font-size-xl": foundational.size(24),
+  "font-size-2xl": foundational.size(32),
+  "line-height-xs": foundational.size(20),
+  "line-height-sm": foundational.size(24),
+  "line-height-md": foundational.size(24),
+  "line-height-lg": foundational.size(28),
+  "line-height-xl": foundational.size(32),
+  "line-height-2xl": foundational.size(40),
+  "icon-size-xs": foundational.size(14),
+  "icon-size-sm": foundational.size(16),
+  "icon-size-md": foundational.size(18),
+  "icon-size-lg": foundational.size(20),
+  "icon-size-xl": foundational.size(24),
+  "icon-size-2xl": foundational.size(28),
+  "font-family-body": foundational.$font-family-sans,
+  "font-weight-bold": foundational.$font-weight-700,
+);
+
+$font-family-body: css-properties.reference(
+  $-definitions,
+  "font-family-body",
+  "logical"
+);
+$font-weight-bold: css-properties.reference(
+  $-definitions,
+  "font-weight-bold",
+  "logical"
+);
+
+@function font-size($step) {
+  @return css-properties.reference(
+    $-definitions,
+    "font-size-#{$step}",
+    "logical"
+  );
+}
+
+@function line-height($step) {
+  @return css-properties.reference(
+    $-definitions,
+    "line-height-#{$step}",
+    "logical"
+  );
+}
+
+@function icon-size($step) {
+  @return css-properties.reference(
+    $-definitions,
+    "icon-size-#{$step}",
+    "logical"
+  );
+}
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "logical");
 }

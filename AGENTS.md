@@ -18,6 +18,8 @@ Bezny is a UI framework for building admin interfaces, using React and TypeScrip
 - Control tokens belong to components and reference structural tokens only. Component styles consume control tokens.
 - Do not skip layers, create reverse dependencies, or place raw design values in higher layers. “Primitive” means foundational, not a fifth layer.
 - Use `rem` for typography: font sizes, line heights, and typography-related icon sizes. Do not force a fixed root font size.
+- Use exported Sass variables and validated, domain-specific token accessors to obtain CSS `var()` values. Do not handwrite `var(--bezny-...)` references in SCSS source.
+- Follow Bulma's separation of responsibilities: pure functions build references; declaration mixins emit CSS in the caller's scope. Do not mutate a global token registry inside a function.
 - Before adding or changing tokens or token-consuming styles, read `.agents/skills/using-scss-tokens/SKILL.md` and follow its workflow.
 
 > Structure cannot stand without its foundations. Logic is a foundation of function. Function is the essence of control

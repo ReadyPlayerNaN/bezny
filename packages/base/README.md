@@ -34,6 +34,7 @@ An explicit `level` takes precedence over the inherited level. Native HTML attri
 
 Styles use locally scoped SCSS module classes and the project's four-layer [SCSS token architecture](../../README.md#scss-token-architecture). Shared defaults are included in `@bezny/base/style.css`; control aliases are bound on each heading. Text color inherits from the surrounding interface.
 
+- `src/tokens/_css-properties.scss` — pure CSS-name/reference functions and declaration mixins, inspired by [Bulma](https://github.com/jgthms/bulma/blob/main/sass/utilities/css-variables.scss).
 - `src/tokens/_foundational.scss` — absolute sizes in `rem`, font family, and weight.
 - `src/tokens/_logical.scss` — typography and icon scales referencing foundations.
 - `src/tokens/_structural.scss` — heading purposes referencing logical scales.
@@ -51,23 +52,38 @@ Styles use locally scoped SCSS module classes and the project's four-layer [SCSS
 
 These preserve the original proportions at a reference root size of 16px, without setting the root font size. Font family defaults to `sans-serif` and font weight to `700`. Icons with `role="graphics-symbol"` inside headings consume the heading icon-size control token.
 
-Token names are namespaced by layer:
+Definition maps are the source of truth. Pure accessors such as `foundational.size(20)`, `logical.font-size("lg")`, and `structural.heading-font-size(3)` validate their keys and return runtime CSS references. Their declaration mixins emit matching properties separately; there is no global registration side effect.
+
+Components consume exported Sass variables rather than handwritten CSS names:
 
 ```scss
-// Defaults: foundation → logical → structural → control.
-// --bezny-foundation-size-20: 1.25rem;
-// --bezny-logical-font-size-lg: var(--bezny-foundation-size-20);
-// --bezny-structural-heading-3-font-size: var(--bezny-logical-font-size-lg);
-// --bezny-control-heading-font-size: var(--bezny-structural-heading-3-font-size);
-```
+@use "./src/content/heading-typography";
 
-For a theme, override shared tokens on `:root` after importing the package stylesheet. Keep references to the preceding layer:
-
-```scss
-:root {
-  --bezny-structural-heading-3-font-size: var(--bezny-logical-font-size-xl);
+.heading {
+  @include heading-typography.declarations;
+  font-size: heading-typography.$font-size;
 }
 ```
+
+This compiles to `font-size: var(--bezny-control-heading-font-size)`, not a fixed Sass value. Unknown token keys, invalid heading levels, and missing Sass exports fail compilation. This is Bulma's separation of reference creation from declaration emission, extended with definition-map validation. The CSS names and four-layer alias chain remain unchanged.
+
+Within this package, override shared tokens on `:root` after importing the stylesheet, using the declaration mixin and the preceding layer's accessor:
+
+```scss
+@use "./src/tokens/css-properties";
+@use "./src/tokens/logical";
+
+:root {
+  @include css-properties.declarations(
+    (
+      "heading-3-font-size": logical.font-size("xl"),
+    ),
+    "structural"
+  );
+}
+```
+
+These Sass modules are currently internal source modules, not published package exports. Consumers of the built package can still theme its public CSS custom properties directly. Root defaults must be emitted even when only a Sass reference is consumed: returning `var()` does not emit its definition. Build tests check every CSS reference, the adjacent-layer chain, and each heading's scoped control declarations.
 
 Other structural heading tokens follow `--bezny-structural-heading-<1–6>-<font-size|line-height|icon-size>`. Shared family and weight tokens are `--bezny-structural-heading-font-family` and `--bezny-structural-heading-font-weight`. Controls use `--bezny-control-heading-<font-size|line-height|icon-size|font-family|font-weight>`. Root aliases resolve where declared: descendant foundational or logical overrides do not automatically recompute the shared structural aliases. The old `--primitive-*`, `--semantic-color-text-strong`, and `--heading-icon-size` names have been replaced by this token chain.
 

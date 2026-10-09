@@ -2,9 +2,13 @@
   "name": "@bezny/base",
   "version": "0.0.0",
   "private": true,
+  "files": [
+    "dist"
+  ],
   "type": "module",
-  "files": ["dist"],
-  "sideEffects": ["**/*.css"],
+  "sideEffects": [
+    "**/*.css"
+  ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
@@ -15,10 +19,7 @@
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run && node --test test/build.test.mjs"
-  },
-  "peerDependencies": {
-    "react": "^19.0.0"
+    "test": "vitest run && node --test test/*.test.mjs"
   },
   "devDependencies": {
     "@bezny/typescript-config": "workspace:*",
@@ -31,5 +32,8 @@
     "typescript": "7.0.2",
     "vite": "8.3.4",
     "vitest": "5.0.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
   }
 }

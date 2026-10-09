@@ -1,12 +1,38 @@
-@mixin tokens {
-  --bezny-foundation-size-14: 0.875rem;
-  --bezny-foundation-size-16: 1rem;
-  --bezny-foundation-size-18: 1.125rem;
-  --bezny-foundation-size-20: 1.25rem;
-  --bezny-foundation-size-24: 1.5rem;
-  --bezny-foundation-size-28: 1.75rem;
-  --bezny-foundation-size-32: 2rem;
-  --bezny-foundation-size-40: 2.5rem;
-  --bezny-foundation-font-family-sans: sans-serif;
-  --bezny-foundation-font-weight-700: 700;
+@use "css-properties";
+
+$-definitions: (
+  "size-14": 0.875rem,
+  "size-16": 1rem,
+  "size-18": 1.125rem,
+  "size-20": 1.25rem,
+  "size-24": 1.5rem,
+  "size-28": 1.75rem,
+  "size-32": 2rem,
+  "size-40": 2.5rem,
+  "font-family-sans": sans-serif,
+  "font-weight-700": 700,
+);
+
+$font-family-sans: css-properties.reference(
+  $-definitions,
+  "font-family-sans",
+  "foundation"
+);
+$font-weight-700: css-properties.reference(
+  $-definitions,
+  "font-weight-700",
+  "foundation"
+);
+
+// The key describes the reference size at 16px per rem, not a CSS pixel value.
+@function size($reference-size) {
+  @return css-properties.reference(
+    $-definitions,
+    "size-#{$reference-size}",
+    "foundation"
+  );
+}
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "foundation");
 }

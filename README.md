@@ -21,6 +21,8 @@ Bezny uses four layers of tokens, with dependencies flowing in one direction:
 
 > Structure cannot stand without its foundations. Logic is a foundation of function. Function is the essence of control
 
+The implementation follows [Bulma's Sass/CSS-variable separation](https://github.com/jgthms/bulma/blob/main/sass/utilities/css-variables.scss): pure functions return runtime CSS references, while mixins emit declarations. Bezny additionally validates token keys against their definition maps. Components consume exported Sass variables containing CSS `var()` values, so runtime theming is preserved. Tests verify that referenced declarations are emitted and scoped correctly.
+
 The project-local [using-scss-tokens skill](.agents/skills/using-scss-tokens/SKILL.md) provides the implementation workflow.
 
 ## Requirements

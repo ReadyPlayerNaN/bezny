@@ -22,6 +22,7 @@ const rulePattern = /\.(?<name>[\w-]+)\s*\{(?<body>[^}]+)\}/gu;
 const rootPattern = /:root\s*\{(?<body>[^}]+)\}/gu;
 const tokenPattern = /(?<name>--bezny-[\w-]+)\s*:\s*(?<value>[^;}]+)/gu;
 const referencePattern = /^var\((?<name>--bezny-[\w-]+)\)$/u;
+const cssReferencePattern = /var\((?<name>--bezny-[\w-]+)/gu;
 const pixelPattern = /(?:\d*\.)?\d+px\b/u;
 const layerPattern =
   /^--bezny-(?<layer>foundation|logical|structural|control)-/u;
@@ -105,6 +106,18 @@ test("shared token defaults are emitted once and use adjacent layers only", () =
     }
   }
   assert.doesNotMatch(css, pixelPattern);
+});
+
+test("every CSS variable reference in the built stylesheet has a declaration", () => {
+  const definedTokens = new Set(tokenEntries(css).map(([name]) => name));
+  const references = [...css.matchAll(cssReferencePattern)];
+  assert.ok(references.length > 0);
+  for (const { groups } of references) {
+    assert.ok(
+      definedTokens.has(groups.name),
+      `Missing declaration for ${groups.name}`
+    );
+  }
 });
 
 test("built heading styles resolve all six levels through the rem token chain", () => {

@@ -1,0 +1,25 @@
+@use "sass:map";
+
+// Bulma-inspired separation: references compute values; mixins emit declarations.
+// https://github.com/jgthms/bulma/blob/main/sass/utilities/css-variables.scss
+@function property-name($token-name, $namespace) {
+  @return "--bezny-#{$namespace}-#{$token-name}";
+}
+
+@function reference($definitions, $token-name, $namespace) {
+  @if not map.has-key($definitions, $token-name) {
+    @error "Unknown #{$namespace} token: #{$token-name}";
+  }
+
+  @return var(#{property-name($token-name, $namespace)});
+}
+
+@mixin declarations($definitions, $namespace) {
+  @each $token-name, $value in $definitions {
+    @if $value == null {
+      @error "Missing value for #{$namespace} token: #{$token-name}";
+    }
+
+    #{property-name($token-name, $namespace)}: #{$value};
+  }
+}

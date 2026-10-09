@@ -3,7 +3,7 @@
 @use "./tokens/structural";
 
 :root {
-  @include foundational.tokens;
-  @include logical.tokens;
-  @include structural.tokens;
+  @include foundational.declarations;
+  @include logical.declarations;
+  @include structural.declarations;
 }
