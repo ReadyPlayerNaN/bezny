@@ -37,7 +37,7 @@ Styles use locally scoped SCSS module classes and the project's four-layer [SCSS
 - `src/tokens/_foundational.scss` — absolute sizes in `rem`, font family, and weight.
 - `src/tokens/_logical.scss` — typography and icon scales referencing foundations.
 - `src/tokens/_structural.scss` — heading purposes referencing logical scales.
-- `src/heading-typography.scss` and `src/heading.module.scss` — component control aliases and their usage.
+- `src/content/heading-typography.scss` and `src/content/heading.module.scss` — component control aliases and their usage.
 - `src/tokens.scss` — shared `:root` defaults, included by the heading SCSS module.
 
 | Heading level | Font size  | Line height | Icon size  |

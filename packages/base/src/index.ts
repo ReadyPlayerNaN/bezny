@@ -6,4 +6,4 @@ export {
   useHeadingLevel,
   type HeadingLevel,
   type HeadingProps,
-} from './heading.js';
+} from "./content/heading.js";
