@@ -1,21 +1,24 @@
-import { resolve } from 'node:path';
-import { defineConfig } from 'vitest/config';
+import path from "node:path";
+
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   build: {
     lib: {
-      entry: resolve(import.meta.dirname, 'src/index.ts'),
-      formats: ['es'],
-      fileName: 'index',
-      cssFileName: 'style',
+      cssFileName: "style",
+      entry: path.resolve(import.meta.dirname, "src/index.ts"),
+      fileName: "index",
+      formats: ["es"],
+    },
+    rolldownOptions: {
+      external:
+        /^(?:react|react-dom|react-hook-form|lucide-react|@radix-ui\/react-[\w-]+)(?:\/.*)?$/u,
     },
     sourcemap: true,
-    rolldownOptions: {
-      external: /^react(?:\/.*)?$/,
-    },
   },
   test: {
-    environment: 'node',
-    include: ['test/**/*.test.tsx'],
+    environment: "node",
+    include: ["test/**/*.test.tsx"],
+    setupFiles: ["test/dom-observers.ts"],
   },
 });

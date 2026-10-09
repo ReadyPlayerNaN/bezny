@@ -74,6 +74,24 @@ import { Plane } from "lucide-react";
 
 The source's default button palette and sizing are represented through all four layers. Normal buttons use `1rem` text with `1.25rem` line height and a `2.5rem` minimum height; small buttons use `0.75rem`, `1rem`, and `2rem`, respectively. Automatic dark-mode tokens from the source application's full theme are not copied; the palette can be themed through Bezny's CSS tokens.
 
+## Inputs and field presentation
+
+**Inputs** are reusable RHF-unbound controls: `TextInput`, `TextareaInput`, `CheckboxInput`, `RadioGroupInput`, and `RadioInput`. They work without a form provider and accept native/Radix control props and React 19 refs. Checkbox and radio behavior comes from Radix; text entry uses native HTML controls.
+
+`TextInput` adapts the source `InputField`'s control/prefix behavior without its label or feedback. It retains `minValue`/`maxValue` aliases and supports native `type` values. `TextareaInput` defaults to three rows. `CheckboxInput` supports controlled/uncontrolled and indeterminate states; `RadioInput` is used inside `RadioGroupInput` for roving focus, selection, and form values.
+
+`FieldLabel` and `FieldFeedback` are reusable presentation components. A label uses `htmlFor`; for a radio group's accessible name, use `asComponent="span"` with an `id` and reference it through `aria-labelledby`. Required markers are decorative. Feedback supports `help`/`helpId` and `error`/`errorId`, with errors announced as alerts.
+
+```tsx
+<FieldLabel htmlFor="name" required>
+  Name
+</FieldLabel>;
+<TextInput id="name" aria-describedby="name-help" />;
+<FieldFeedback help="Use your full name" helpId="name-help" />;
+```
+
+All input and field presentation styles use scoped SCSS modules and the same four-layer token system. The source's typography is converted to `rem`.
+
 ## Styling
 
 Styles use locally scoped SCSS module classes and the project's four-layer [SCSS token architecture](../../README.md#scss-token-architecture). Shared defaults are included in `@bezny/base/style.css`; control aliases are bound on each heading. Text color inherits from the surrounding interface.

@@ -1,0 +1,40 @@
+@use "./field-appearance";
+
+.field {
+  @include field-appearance.declarations;
+  display: grid;
+  gap: field-appearance.$gap;
+}
+.label {
+  @include field-appearance.declarations;
+  display: inline-flex;
+  align-items: baseline;
+  gap: field-appearance.$gap;
+  color: field-appearance.$label-color;
+  font-family: field-appearance.$label-font-family;
+  font-size: field-appearance.$label-font-size;
+  font-weight: field-appearance.$label-font-weight;
+  line-height: field-appearance.$label-line-height;
+}
+.required {
+  color: field-appearance.$error-color;
+}
+.feedback {
+  @include field-appearance.declarations;
+  display: grid;
+  gap: field-appearance.$gap;
+  font-family: field-appearance.$feedback-font-family;
+  font-size: field-appearance.$feedback-font-size;
+  line-height: field-appearance.$feedback-line-height;
+}
+.help {
+  color: field-appearance.$help-color;
+}
+.error {
+  color: field-appearance.$error-color;
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: field-appearance.$gap;
+}

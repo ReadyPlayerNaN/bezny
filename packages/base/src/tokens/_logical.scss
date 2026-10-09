@@ -56,6 +56,20 @@ $-definitions: (
   "opacity-disabled": foundational.token("opacity-disabled"),
   "duration-interaction": foundational.token("duration-interaction"),
   "duration-spinner": foundational.token("duration-spinner"),
+  "field-gap": foundational.size(4),
+  "field-font-size": foundational.size(14),
+  "field-line-height": foundational.size(20),
+  "field-label-weight": foundational.token("font-weight-500"),
+  "feedback-font-size": foundational.size(12),
+  "feedback-line-height": foundational.size(16),
+  "input-padding-block": foundational.size(12),
+  "checkable-size": foundational.size(20),
+  "checkable-radius": foundational.size(4),
+  "checkable-indicator-size": foundational.size(8),
+  "opacity-field-disabled": foundational.token("opacity-field-disabled"),
+  "color-text-normal": foundational.token("color-ink-normal"),
+  "color-surface": foundational.token("color-white"),
+  "color-surface-disabled": foundational.token("color-cloud-light"),
 );
 
 @function token($token-name) {

@@ -1,0 +1,140 @@
+@use "./input-appearance";
+
+.control {
+  @include input-appearance.declarations;
+  display: flex;
+  align-items: center;
+  min-height: input-appearance.$height;
+  border: input-appearance.$border-width solid input-appearance.$border;
+  border-radius: input-appearance.$radius;
+  background: input-appearance.$background;
+  transition:
+    border-color input-appearance.$duration-interaction ease,
+    box-shadow input-appearance.$duration-interaction ease,
+    background-color input-appearance.$duration-interaction ease;
+
+  &:focus-within {
+    border-color: input-appearance.$border-focus;
+    box-shadow: input-appearance.$focus-ring;
+  }
+  &[data-disabled] {
+    opacity: input-appearance.$opacity-disabled;
+    background: input-appearance.$background-disabled;
+  }
+}
+
+.invalid {
+  border-color: input-appearance.$border-error;
+}
+
+.input,
+.textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-width: 0;
+  min-height: calc(
+    input-appearance.$height - input-appearance.$border-width * 2
+  );
+  padding: 0 input-appearance.$padding-inline;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: input-appearance.$text;
+  font-family: input-appearance.$font-family;
+  font-size: input-appearance.$font-size;
+  line-height: input-appearance.$line-height;
+
+  &::placeholder {
+    color: input-appearance.$placeholder;
+  }
+  &[readonly] {
+    cursor: default;
+  }
+}
+
+.textarea {
+  padding-block: input-appearance.$padding-block;
+  resize: vertical;
+}
+.prefix {
+  padding-left: input-appearance.$padding-inline;
+  color: input-appearance.$placeholder;
+  font-family: input-appearance.$font-family;
+  font-size: input-appearance.$font-size;
+  line-height: input-appearance.$line-height;
+  white-space: nowrap;
+}
+
+.checkable {
+  @include input-appearance.declarations;
+  display: inline-flex;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  width: input-appearance.$checkable-size;
+  height: input-appearance.$checkable-size;
+  padding: 0;
+  border: input-appearance.$border-width solid input-appearance.$border;
+  border-radius: input-appearance.$checkable-radius;
+  background: input-appearance.$background;
+  color: input-appearance.$checked-text;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: input-appearance.$focus-ring;
+  }
+  &[data-state="checked"],
+  &[data-state="indeterminate"] {
+    background: input-appearance.$checked-background;
+    border-color: input-appearance.$checked-background;
+  }
+  &[data-disabled] {
+    opacity: input-appearance.$opacity-disabled;
+    cursor: not-allowed;
+  }
+  &[aria-invalid="true"] {
+    border-color: input-appearance.$border-error;
+  }
+}
+
+.indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.checkmark {
+  width: input-appearance.$padding-inline;
+  height: input-appearance.$padding-inline;
+  .indicator[data-state="indeterminate"] & {
+    display: none;
+  }
+}
+.mixed {
+  width: input-appearance.$padding-inline;
+  height: input-appearance.$padding-inline;
+  display: none;
+  .indicator[data-state="indeterminate"] & {
+    display: block;
+  }
+}
+.radio {
+  border-radius: 50%;
+}
+.radioDot {
+  width: input-appearance.$indicator-size;
+  height: input-appearance.$indicator-size;
+  border-radius: 50%;
+  background: currentColor;
+}
+.radioGroup {
+  @include input-appearance.declarations;
+  display: grid;
+  gap: input-appearance.$indicator-size;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .control {
+    transition: none;
+  }
+}

@@ -1,0 +1,142 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/structural";
+
+$-definitions: ();
+@each $property
+    in (
+      height,
+      padding-inline,
+      padding-block,
+      border-width,
+      radius,
+      background,
+      background-disabled,
+      border,
+      border-focus,
+      border-error,
+      text,
+      placeholder,
+      font-family,
+      font-size,
+      line-height,
+      focus-ring,
+      opacity-disabled,
+      duration-interaction,
+      checkable-size,
+      checkable-radius,
+      indicator-size,
+      checked-background,
+      checked-text
+    )
+{
+  $-definitions: map.set(
+    $-definitions,
+    $property,
+    structural.token("input-#{$property}")
+  );
+}
+
+$height: css-properties.reference($-definitions, "height", "control-input");
+$padding-inline: css-properties.reference(
+  $-definitions,
+  "padding-inline",
+  "control-input"
+);
+$padding-block: css-properties.reference(
+  $-definitions,
+  "padding-block",
+  "control-input"
+);
+$border-width: css-properties.reference(
+  $-definitions,
+  "border-width",
+  "control-input"
+);
+$radius: css-properties.reference($-definitions, "radius", "control-input");
+$background: css-properties.reference(
+  $-definitions,
+  "background",
+  "control-input"
+);
+$background-disabled: css-properties.reference(
+  $-definitions,
+  "background-disabled",
+  "control-input"
+);
+$border: css-properties.reference($-definitions, "border", "control-input");
+$border-focus: css-properties.reference(
+  $-definitions,
+  "border-focus",
+  "control-input"
+);
+$border-error: css-properties.reference(
+  $-definitions,
+  "border-error",
+  "control-input"
+);
+$text: css-properties.reference($-definitions, "text", "control-input");
+$placeholder: css-properties.reference(
+  $-definitions,
+  "placeholder",
+  "control-input"
+);
+$font-family: css-properties.reference(
+  $-definitions,
+  "font-family",
+  "control-input"
+);
+$font-size: css-properties.reference(
+  $-definitions,
+  "font-size",
+  "control-input"
+);
+$line-height: css-properties.reference(
+  $-definitions,
+  "line-height",
+  "control-input"
+);
+$focus-ring: css-properties.reference(
+  $-definitions,
+  "focus-ring",
+  "control-input"
+);
+$opacity-disabled: css-properties.reference(
+  $-definitions,
+  "opacity-disabled",
+  "control-input"
+);
+$duration-interaction: css-properties.reference(
+  $-definitions,
+  "duration-interaction",
+  "control-input"
+);
+$checkable-size: css-properties.reference(
+  $-definitions,
+  "checkable-size",
+  "control-input"
+);
+$checkable-radius: css-properties.reference(
+  $-definitions,
+  "checkable-radius",
+  "control-input"
+);
+$indicator-size: css-properties.reference(
+  $-definitions,
+  "indicator-size",
+  "control-input"
+);
+$checked-background: css-properties.reference(
+  $-definitions,
+  "checked-background",
+  "control-input"
+);
+$checked-text: css-properties.reference(
+  $-definitions,
+  "checked-text",
+  "control-input"
+);
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-input");
+}

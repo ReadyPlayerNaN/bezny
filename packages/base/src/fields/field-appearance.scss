@@ -1,0 +1,82 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/structural";
+
+$-definitions: ();
+@each $property
+    in (
+      gap,
+      label-font-family,
+      label-font-size,
+      label-line-height,
+      label-font-weight,
+      label-color,
+      feedback-font-family,
+      feedback-font-size,
+      feedback-line-height,
+      help-color,
+      error-color
+    )
+{
+  $-definitions: map.set(
+    $-definitions,
+    $property,
+    structural.token("field-#{$property}")
+  );
+}
+
+$gap: css-properties.reference($-definitions, "gap", "control-field");
+$label-font-family: css-properties.reference(
+  $-definitions,
+  "label-font-family",
+  "control-field"
+);
+$label-font-size: css-properties.reference(
+  $-definitions,
+  "label-font-size",
+  "control-field"
+);
+$label-line-height: css-properties.reference(
+  $-definitions,
+  "label-line-height",
+  "control-field"
+);
+$label-font-weight: css-properties.reference(
+  $-definitions,
+  "label-font-weight",
+  "control-field"
+);
+$label-color: css-properties.reference(
+  $-definitions,
+  "label-color",
+  "control-field"
+);
+$feedback-font-family: css-properties.reference(
+  $-definitions,
+  "feedback-font-family",
+  "control-field"
+);
+$feedback-font-size: css-properties.reference(
+  $-definitions,
+  "feedback-font-size",
+  "control-field"
+);
+$feedback-line-height: css-properties.reference(
+  $-definitions,
+  "feedback-line-height",
+  "control-field"
+);
+$help-color: css-properties.reference(
+  $-definitions,
+  "help-color",
+  "control-field"
+);
+$error-color: css-properties.reference(
+  $-definitions,
+  "error-color",
+  "control-field"
+);
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-field");
+}
