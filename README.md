@@ -16,6 +16,12 @@ Use Radix for components such as dialogs, dropdown menus, popovers, selects, tab
 
 Add individual Radix dependencies to the package that uses them when implementing that component, not preemptively. Preserve the primitive's accessibility contract and verify keyboard, focus, and state behavior through integration tests. This records the architectural direction; existing components are not automatically migrated by this documentation change.
 
+## Forms
+
+Use **React Hook Form** (`react-hook-form`) for form state, field registration, validation integration, and submission handling. It is a dependency of `@bezny/base`.
+
+Use `register` for compatible native inputs and `Controller` or `useController` for controlled components, including Radix-based fields. Bezny owns field styling, labels, and error presentation; preserve accessible label and error associations. Radix owns supported control interactions, while React Hook Form owns form state.
+
 ## SCSS token architecture
 
 Bezny uses four layers of tokens, with dependencies flowing in one direction:

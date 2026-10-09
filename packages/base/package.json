@@ -22,7 +22,8 @@
     "test": "vitest run && node --test test/*.test.mjs"
   },
   "dependencies": {
-    "lucide-react": "1.54.0"
+    "lucide-react": "1.54.0",
+    "react-hook-form": "^7.89.0"
   },
   "devDependencies": {
     "@bezny/typescript-config": "workspace:*",

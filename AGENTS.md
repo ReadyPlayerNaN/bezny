@@ -13,6 +13,13 @@ Bezny is a UI framework for building admin interfaces, using React and TypeScrip
 - Add only the Radix dependencies needed by the component being implemented, in the package that consumes them. Do not install speculative dependencies or migrate existing APIs without an implementation task.
 - Check the chosen primitive's documentation before integration. Test keyboard interactions, focus behavior, controlled/uncontrolled state where supported, and accessible semantics—not only rendered markup.
 
+## Forms
+
+- Use React Hook Form (`react-hook-form`) for form state, field registration, validation integration, and submission handling. It is installed in `@bezny/base`.
+- Use `register` for compatible native inputs and `Controller` or `useController` for controlled fields, including Radix-based controls. Forward field names, refs, values, and change/blur handlers correctly.
+- Keep Radix interaction behavior separate from React Hook Form's form state. Bezny provides field composition, styling, labels, and accessible error presentation.
+- Test field updates, validation errors, submission, and focus/ref integration when implementing forms.
+
 ## Meaningful naming
 
 - Use meaningful names for everything: files, directories, modules, variables, functions, types, and components. Names must communicate their domain, responsibility, or purpose.
