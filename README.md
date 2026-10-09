@@ -22,6 +22,13 @@ Use **React Hook Form** (`react-hook-form`) for form state, field registration, 
 
 Use `register` for compatible native inputs and `Controller` or `useController` for controlled components, including Radix-based fields. Bezny owns field styling, labels, and error presentation; preserve accessible label and error associations. Radix owns supported control interactions, while React Hook Form owns form state.
 
+### Inputs and fields
+
+- **Inputs** are reusable, React Hook Form-unbound controls. They accept ordinary values/default values, change and blur handlers, refs, and accessibility props. They do not require a form context or own labels and validation feedback.
+- **Fields** are React Hook Form-ready components that bind an input to form state and compose its label and feedback (including validation errors). They connect accessible labels, descriptions, invalid state, and RHF focus refs.
+
+Use inputs outside RHF or when composing a custom field. Use fields inside an RHF form, with a `FormProvider` or an explicitly supplied `control`.
+
 ## SCSS token architecture
 
 Bezny uses four layers of tokens, with dependencies flowing in one direction:

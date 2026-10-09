@@ -18,6 +18,9 @@ Bezny is a UI framework for building admin interfaces, using React and TypeScrip
 - Use React Hook Form (`react-hook-form`) for form state, field registration, validation integration, and submission handling. It is installed in `@bezny/base`.
 - Use `register` for compatible native inputs and `Controller` or `useController` for controlled fields, including Radix-based controls. Forward field names, refs, values, and change/blur handlers correctly.
 - Keep Radix interaction behavior separate from React Hook Form's form state. Bezny provides field composition, styling, labels, and accessible error presentation.
+- Distinguish **inputs** from **fields**. Inputs are reusable RHF-unbound controls with ordinary value/default-value, event, ref, and accessibility props; they must not require RHF context or manage form registration.
+- Fields are RHF form-ready components that bind inputs to form state and include labels and feedback (errors/help). They must wire label/description IDs, invalid state, and RHF focus refs correctly. Support a `FormProvider` or explicit `control`.
+- Keep reusable controls in `src/inputs` and RHF-bound compositions plus shared field presentation components in `src/fields`.
 - Test field updates, validation errors, submission, and focus/ref integration when implementing forms.
 
 ## Meaningful naming
