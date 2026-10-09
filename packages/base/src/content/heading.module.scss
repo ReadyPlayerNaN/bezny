@@ -9,13 +9,13 @@
   font-weight: heading-typography.$font-weight;
   font-size: heading-typography.$font-size;
   line-height: heading-typography.$line-height;
-}
 
-.heading [role="graphics-symbol"] {
-  width: heading-typography.$icon-size;
-  height: heading-typography.$icon-size;
-  min-width: heading-typography.$icon-size;
-  flex-shrink: 0;
+  [role="graphics-symbol"] {
+    width: heading-typography.$icon-size;
+    height: heading-typography.$icon-size;
+    min-width: heading-typography.$icon-size;
+    flex-shrink: 0;
+  }
 }
 
 @for $level from 1 through 6 {
