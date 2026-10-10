@@ -51,8 +51,6 @@ export const editorialTranslations = {
       pageSummary: "الصفحة {{page}} من {{pages}} · {{total}} سجلًا",
       pagination: "ترقيم الصفحات",
       palette: "لوحة الأوامر",
-      paletteDescription:
-        "ابحث عن المسارات والإجراءات للسياق الحالي. استخدم Tab لاختيار الأمر وEnter لتنفيذه.",
       published: "منشور",
       save: "حفظ {{entity}}",
       saveError: "تعذر حفظ السجل. حاول مرة أخرى.",
@@ -125,8 +123,6 @@ export const editorialTranslations = {
       pageSummary: "Stránka {{page}} z {{pages}} · záznamů: {{total}}",
       pagination: "Stránkování",
       palette: "Paleta příkazů",
-      paletteDescription:
-        "Hledejte cesty a akce pro aktuální kontext. Příkaz vyberte klávesou Tab a spusťte Enterem.",
       published: "Publikováno",
       save: "Uložit: {{entity}}",
       saveError: "Záznam se nepodařilo uložit. Zkuste to znovu.",
@@ -201,8 +197,6 @@ export const editorialTranslations = {
       pageSummary: "Page {{page}} of {{pages}} · {{total}} records",
       pagination: "Pagination",
       palette: "Command palette",
-      paletteDescription:
-        "Search registered entity routes and actions for the current context. Tab to a command and press Enter.",
       published: "Published",
       save: "Save {{entity}}",
       saveError: "Unable to save record. Please try again.",

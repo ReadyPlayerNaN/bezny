@@ -6,6 +6,7 @@
 
 .application,
 .actions,
+.palette,
 .commands,
 .form,
 .selectionBar,
@@ -199,11 +200,133 @@
   overflow-wrap: anywhere;
 }
 
-.commands {
-  display: grid;
-  gap: appearance.token("gap");
+.palette[role="dialog"] {
+  inset-block-start: 20dvh;
+  transform: translateX(-50%);
+  &:dir(rtl) {
+    transform: translateX(50%);
+  }
+  display: block;
   padding: 0;
-  list-style: none;
-  max-height: 50dvh;
+  overflow: hidden;
+}
+.paletteTitle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.paletteSearch {
+  display: flex;
+  align-items: center;
+  gap: appearance.token("gap");
+  padding: appearance.token("padding-small") appearance.token("padding");
+  border-block-end: appearance.token("border-width") solid
+    appearance.token("border");
+  &:focus-within {
+    border-block-end-color: appearance.token("accent");
+  }
+}
+.paletteInput {
+  min-width: 0;
+  width: 100%;
+  flex: 1;
+  padding: 0;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  &::placeholder {
+    color: appearance.token("muted");
+    opacity: 1;
+  }
+}
+.paletteDismiss {
+  flex-shrink: 0;
+  padding-inline: appearance.token("gap");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: transparent;
+  color: appearance.token("muted");
+  cursor: pointer;
+  &:focus-visible {
+    outline: none;
+    box-shadow: appearance.token("focus-ring");
+  }
+  kbd {
+    font-family: appearance.token("font-family");
+    font-size: appearance.token("font-size");
+    line-height: appearance.token("line-height");
+  }
+}
+.commands {
+  box-sizing: border-box;
+  max-height: min(50dvh, appearance.token("palette-list-max-height"));
   overflow-y: auto;
+  padding: appearance.token("padding-small");
+  scroll-padding-block: appearance.token("padding-small");
+}
+.paletteItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: appearance.token("gap");
+  padding: appearance.token("padding-small") appearance.token("padding");
+  border-radius: appearance.token("radius");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  cursor: pointer;
+  > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  &[data-selected="true"] {
+    background: appearance.token("hover");
+  }
+  &[data-destructive="true"] {
+    color: appearance.token("danger");
+  }
+}
+.paletteEnter {
+  display: none;
+  color: appearance.token("muted");
+  font-family: appearance.token("font-family");
+}
+.paletteItem[data-selected="true"] .paletteEnter {
+  display: block;
+}
+.paletteIcon {
+  flex-shrink: 0;
+  width: appearance.token("font-size");
+  height: appearance.token("font-size");
+  color: appearance.token("muted");
+}
+.palette[dir="rtl"] .paletteItem .paletteIcon {
+  transform: rotate(180deg);
+}
+.paletteEmpty {
+  padding: appearance.token("padding");
+  color: appearance.token("muted");
+  text-align: center;
+}
+.paletteEditor {
+  padding: appearance.token("padding");
+  form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: appearance.token("gap");
+    > :first-child {
+      grid-column: 1 / -1;
+    }
+  }
 }

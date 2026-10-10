@@ -49,7 +49,9 @@ The status bar displays context from `useAdminEntityContext`: collection, decode
 
 Create/edit screens use RHF and Bezny fields. They register Save/Cancel with `useAdminPageCommands`, binding actual form callbacks. The palette submits through the same RHF handler as the form, with the same validation and focus behavior. No hardcoded form ID or `requestSubmit()` DOM lookup is needed. Commands disappear when their owning screen leaves.
 
-Open **Command palette** with its header button (mouse, Enter, or Space). Type to filter, Tab to a command, and Enter to execute. Escape closes it and restores focus. Radix owns modal focus, dismissal, and accessibility; native buttons supply command activation. The palette intentionally does not emulate arrow-key listbox behavior.
+Open **Command palette** with its header button or **Ctrl/Cmd+K** (also toggles it closed). Type to search; **↑/↓** move between commands with wraparound, **Home/End** jump to the first/last, and **Enter** executes the highlighted command without leaving search. **Escape** closes it and restores focus. Parameterized commands focus their RHF field; Back returns to the focused search. Destructive commands still open confirmation after the palette closes. The shortcut does not open another modal over an existing dialog.
+
+`cmdk` owns search ranking, listbox selection, and command keyboard navigation; Bezny's Radix Dialog owns modal focus, dismissal, portals, and naming. Flat compact rows replace the button grid, and the introductory paragraph is removed. The search stays at a fixed viewport-relative position while results change. The list scrolls within `min(50dvh, 20rem)`, with the four-layer `--bezny-control-editorial-demo-palette-list-max-height` → `--bezny-structural-command-list-max-height` → `--bezny-logical-command-list-max-height` → `--bezny-foundation-size-320` chain. Override the structural alias at `:root` or a theme boundary after loading base CSS, or override the demo control alias directly on the command list.
 
 ## Presentation and data boundaries
 

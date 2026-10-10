@@ -61,6 +61,26 @@ describe("editorial demo tokens", () => {
     );
   });
 
+  it("caps compact command results with an adjacent four-layer token chain", () => {
+    const { css } = compileString(
+      '@use "../../base/src/tokens"; @use "editorial-admin.module";',
+      sassOptions
+    );
+    expect(css).toContain("--bezny-foundation-size-320: 20rem");
+    expect(css).toContain(
+      "--bezny-logical-command-list-max-height: var(--bezny-foundation-size-320)"
+    );
+    expect(css).toContain(
+      "--bezny-structural-command-list-max-height: var(--bezny-logical-command-list-max-height)"
+    );
+    expect(css).toContain(
+      "--bezny-control-editorial-demo-palette-list-max-height: var(--bezny-structural-command-list-max-height)"
+    );
+    expect(css).toContain(
+      "max-height: min(50dvh, var(--bezny-control-editorial-demo-palette-list-max-height))"
+    );
+  });
+
   it("caps the banner, fixes the status bar, and reserves space for bottom controls", () => {
     const { css } = compile(path.resolve("src/editorial-admin.module.scss"));
     expect(css).toMatch(

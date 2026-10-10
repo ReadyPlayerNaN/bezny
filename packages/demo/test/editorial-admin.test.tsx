@@ -52,10 +52,10 @@ const runCommand = async (
 ) => {
   const palette = await openPalette(user);
   await user.type(
-    palette.getByRole("textbox", { name: "Search commands" }),
+    palette.getByRole("combobox", { name: "Search commands" }),
     label
   );
-  await user.click(palette.getByRole("button", { name: label }));
+  await user.click(palette.getByRole("option", { name: label }));
 };
 
 describe("editorial admin", () => {
@@ -139,9 +139,9 @@ describe("editorial admin", () => {
     expect(main.getByRole("button", { name: "Create article" })).toBeDefined();
     const palette = await openPalette(user);
     expect(
-      palette.getByRole("button", { name: "Create article" })
+      palette.getByRole("option", { name: "Create article" })
     ).toBeDefined();
-    expect(palette.getByRole("button", { name: "Create page" })).toBeDefined();
+    expect(palette.getByRole("option", { name: "Create page" })).toBeDefined();
   });
 
   it.each([
@@ -325,7 +325,7 @@ describe("editorial admin", () => {
       ).toBeNull()
     );
     await user.click(screen.getByRole("button", { name: "Command palette" }));
-    await user.click(screen.getByRole("button", { name: "Filter by Search" }));
+    await user.click(screen.getByRole("option", { name: "Filter by Search" }));
     const input = screen.getByRole("textbox", { name: "Search" });
     await user.clear(input);
     await user.type(input, "Welcome");
@@ -339,7 +339,7 @@ describe("editorial admin", () => {
   it("configures choice filters and page size through parameterized palette commands", async () => {
     const { application, user, main } = await renderDemo();
     await user.click(screen.getByRole("button", { name: "Command palette" }));
-    await user.click(screen.getByRole("button", { name: "Filter by Status" }));
+    await user.click(screen.getByRole("option", { name: "Filter by Status" }));
     await user.click(screen.getByRole("combobox", { name: "Status" }));
     await user.click(await screen.findByRole("option", { name: "Draft" }));
     await user.click(screen.getByRole("button", { name: "Apply command" }));
@@ -349,7 +349,7 @@ describe("editorial admin", () => {
       )
     );
     await user.click(screen.getByRole("button", { name: "Command palette" }));
-    await user.click(screen.getByRole("button", { name: "Change page size" }));
+    await user.click(screen.getByRole("option", { name: "Change page size" }));
     await user.click(
       screen.getByRole("combobox", { name: "Records per page" })
     );
@@ -375,7 +375,7 @@ describe("editorial admin", () => {
       main.getByRole("checkbox", { name: "Select Welcome to Bezny" })
     );
     await user.click(screen.getByRole("button", { name: "Command palette" }));
-    await user.click(screen.getByRole("button", { name: "Next page" }));
+    await user.click(screen.getByRole("option", { name: "Next page" }));
     await main.findByRole("heading", { name: "Fourth article" });
     expect(main.getByLabelText("Pagination").textContent).toBe(
       "Page 2 of 2 · 4 records"
@@ -649,18 +649,18 @@ describe("editorial admin", () => {
     const palette = await openPalette(user);
     expect(
       labels.every(
-        (label) => palette.queryByRole("button", { name: label ?? "" }) !== null
+        (label) => palette.queryByRole("option", { name: label ?? "" }) !== null
       )
     ).toBeTruthy();
     expect(
-      palette.getByRole("button", { name: "Create article" })
+      palette.getByRole("option", { name: "Create article" })
     ).toBeDefined();
     await user.type(
-      palette.getByRole("textbox", { name: "Search commands" }),
+      palette.getByRole("combobox", { name: "Search commands" }),
       "Select Welcome"
     );
     await user.click(
-      palette.getByRole("button", { name: "Select Welcome to Bezny" })
+      palette.getByRole("option", { name: "Select Welcome to Bezny" })
     );
     await waitFor(() => {
       expect(
@@ -718,6 +718,106 @@ describe("editorial admin", () => {
     expect(application.repository.inspect("articles")).toHaveLength(4);
   });
 
+  it("uses a compact accessible command list without a description or button grid", async () => {
+    const { user } = await renderDemo();
+    const palette = await openPalette(user);
+    const input = palette.getByRole("combobox", { name: "Search commands" });
+    const list = palette.getByRole("listbox", { name: "Available commands" });
+    expect(input.getAttribute("aria-controls")).toBe(list.id);
+    expect(
+      screen.getByRole("dialog").getAttribute("aria-describedby")
+    ).toBeNull();
+    expect(palette.getAllByRole("button")).toHaveLength(1);
+    expect(palette.queryByText(/Search registered entity routes/u)).toBeNull();
+    expect(document.activeElement).toBe(input);
+  });
+
+  it("supports arrow navigation, Home/End and wraparound while keeping focus in search", async () => {
+    const { user } = await renderDemo();
+    const palette = await openPalette(user);
+    const input = palette.getByRole("combobox", { name: "Search commands" });
+    const options = palette.getAllByRole("option");
+    await user.keyboard("{Home}{ArrowDown}");
+    await waitFor(() =>
+      expect(input.getAttribute("aria-activedescendant")).toBe(options[1]?.id)
+    );
+    await user.keyboard("{End}");
+    expect(input.getAttribute("aria-activedescendant")).toBe(
+      options.at(-1)?.id
+    );
+    await user.keyboard("{ArrowDown}");
+    expect(input.getAttribute("aria-activedescendant")).toBe(options[0]?.id);
+    await user.keyboard("{ArrowUp}");
+    expect(input.getAttribute("aria-activedescendant")).toBe(
+      options.at(-1)?.id
+    );
+    expect(document.activeElement).toBe(input);
+  });
+
+  it("opens and toggles by Ctrl/Cmd+K and clears the previous query", async () => {
+    const { user } = await renderDemo();
+    await user.keyboard("{Control>}k{/Control}");
+    const input = await screen.findByRole("combobox", {
+      name: "Search commands",
+    });
+    await user.type(input, "No such command");
+    expect(screen.getByRole("status").textContent).toBe(
+      "No matching commands."
+    );
+    await user.keyboard("{Control>}k{/Control}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    await user.keyboard("{Meta>}k{/Meta}");
+    expect(
+      screen
+        .getByRole("combobox", { name: "Search commands" })
+        .getAttribute("value")
+    ).toBe("");
+    expect(screen.getAllByRole("option").length).toBeGreaterThan(1);
+  });
+
+  it("ignores command execution and shortcuts while composing text", async () => {
+    const { user } = await renderDemo();
+    const palette = await openPalette(user);
+    const input = palette.getByRole("combobox", { name: "Search commands" });
+    await user.type(input, "Create article");
+    fireEvent.keyDown(input, { isComposing: true, key: "Enter" });
+    expect(
+      screen.getByRole("dialog", { name: "Command palette" })
+    ).toBeDefined();
+    fireEvent.keyDown(input, { ctrlKey: true, isComposing: true, key: "k" });
+    expect(document.activeElement).toBe(input);
+  });
+
+  it("enters parameterized commands and restores search focus on Back", async () => {
+    const { user } = await renderDemo();
+    const palette = await openPalette(user);
+    await user.type(
+      palette.getByRole("combobox", { name: "Search commands" }),
+      "Filter by Search"
+    );
+    await user.keyboard("{Enter}");
+    const field = screen.getByRole("textbox", { name: "Search" });
+    expect(document.activeElement).toBe(field);
+    await user.click(screen.getByRole("button", { name: "Back to commands" }));
+    expect(document.activeElement).toBe(
+      screen.getByRole("combobox", { name: "Search commands" })
+    );
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+  });
+
+  it("does not open a second palette over an active confirmation dialog", async () => {
+    const { user, main } = await renderDemo();
+    fireEvent.contextMenu(main.getByRole("group", { name: "Item 1" }));
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete Welcome to Bezny" })
+    );
+    await screen.findByRole("alertdialog");
+    await user.keyboard("{Control>}k{/Control}");
+    expect(screen.queryByRole("dialog")).toBeNull();
+    expect(screen.getByRole("alertdialog")).toBeTruthy();
+  });
+
   it("supports keyboard palette search, execution, Escape, and focus restoration", async () => {
     const { user, main } = await renderDemo();
     const trigger = screen.getByRole("button", { name: "Command palette" });
@@ -725,17 +825,20 @@ describe("editorial admin", () => {
     await user.keyboard("{Enter}");
     const dialog = within(await screen.findByRole("dialog"));
     expect(document.activeElement).toBe(
-      dialog.getByRole("textbox", { name: "Search commands" })
+      dialog.getByRole("combobox", { name: "Search commands" })
     );
     await user.keyboard("No such command");
     expect(dialog.getByText("No matching commands.")).toBeDefined();
+    await user.keyboard("{Enter}");
+    expect(
+      screen.getByRole("dialog", { name: "Command palette" })
+    ).toBeDefined();
     await user.keyboard("{Escape}");
     await waitFor(() => {
       expect(document.activeElement).toBe(trigger);
     });
     await user.keyboard("{Enter}");
     await user.keyboard("Create article");
-    await user.tab();
     await user.keyboard("{Enter}");
     await expect(
       main.findByRole("heading", { level: 1, name: "Create article" })
@@ -846,7 +949,7 @@ describe("editorial admin", () => {
       screen.getByRole("status", { name: "Current context" }).textContent
     ).toBe("Context: No available article");
     const palette = await openPalette(user);
-    expect(palette.queryByRole("button", { name: /^Delete/u })).toBeNull();
-    expect(palette.queryByRole("button", { name: "Save article" })).toBeNull();
+    expect(palette.queryByRole("option", { name: /^Delete/u })).toBeNull();
+    expect(palette.queryByRole("option", { name: "Save article" })).toBeNull();
   });
 });

@@ -70,7 +70,9 @@ const sampleInteractions = () => {
       for (const state of ["normal", "selected", "focus"]) {
         row.dataset.selected = String(state === "selected");
         if (state === "focus") {
-          row.focus();
+          // Request keyboard-visible focus explicitly instead of inheriting the
+          // headless browser's current pointer/keyboard modality.
+          row.focus({ focusVisible: true });
         }
         const style = getComputedStyle(row);
         const shadow = style.boxShadow.match(/rgba?\([^)]*\)/u);

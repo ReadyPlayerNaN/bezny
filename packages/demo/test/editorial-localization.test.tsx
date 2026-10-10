@@ -101,7 +101,7 @@ describe("editorial localization", () => {
     await screen.findByRole("heading", { name: "Welcome to Bezny" });
     await user.click(screen.getByRole("button", { name: "Command palette" }));
     await user.click(
-      within(screen.getByRole("dialog")).getByRole("button", {
+      within(screen.getByRole("dialog")).getByRole("option", {
         name: "Change language to Čeština",
       })
     );

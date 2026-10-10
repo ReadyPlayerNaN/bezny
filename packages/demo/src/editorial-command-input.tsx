@@ -24,6 +24,7 @@ const CommandTextField = ({
       <TextareaField<{ value: string }>
         name="value"
         label={input.label}
+        autoFocus
         maxLength={input.maxLength}
       />
     );
@@ -32,6 +33,7 @@ const CommandTextField = ({
     <TextField<{ value: string }>
       name="value"
       label={input.label}
+      autoFocus
       type={input.type ?? "text"}
       min={input.min}
       max={input.max}
@@ -90,6 +92,7 @@ export const EditorialCommandInput = ({
               >
                 <SelectTrigger
                   ref={field.ref}
+                  autoFocus
                   onBlur={() => field.onBlur()}
                   aria-label={input.label}
                 >

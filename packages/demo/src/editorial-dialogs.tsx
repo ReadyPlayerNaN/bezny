@@ -19,15 +19,14 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogTitle,
   DialogTrigger,
   IconButton,
-  TextInput,
 } from "@bezny/base";
+import { Command as CommandMenu } from "cmdk";
 import { useAtom, useStore } from "jotai";
-import { Command } from "lucide-react";
-import { useRef, useState } from "react";
+import { Command, Search, ChevronRight } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { EditorialCommandInput } from "./editorial-command-input.js";
@@ -47,18 +46,39 @@ export const EditorialCommandPalette = () => {
   const [editing, setEditing] = useState<AdminCommand | null>(null);
   const pendingCommand = useRef<AdminCommand | null>(null);
   const trigger = useRef<HTMLButtonElement>(null);
-  const matching = paletteCommands.filter((command) =>
-    command.label.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())
-  );
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    setQuery("");
+    setEditing(null);
+  };
+  useEffect(() => {
+    const handleShortcut = (event: KeyboardEvent) => {
+      if (
+        event.defaultPrevented ||
+        event.isComposing ||
+        event.repeat ||
+        event.altKey ||
+        !(event.ctrlKey || event.metaKey) ||
+        event.key.toLowerCase() !== "k"
+      ) {
+        return;
+      }
+      if (
+        !open &&
+        document.querySelector('[role="dialog"], [role="alertdialog"]')
+      ) {
+        return;
+      }
+      event.preventDefault();
+      setOpen((current) => !current);
+      setQuery("");
+      setEditing(null);
+    };
+    document.addEventListener("keydown", handleShortcut);
+    return () => document.removeEventListener("keydown", handleShortcut);
+  }, [open]);
   return (
-    <Dialog
-      open={open}
-      onOpenChange={(nextOpen) => {
-        setOpen(nextOpen);
-        setQuery("");
-        setEditing(null);
-      }}
-    >
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <IconButton
           ref={trigger}
@@ -66,9 +86,12 @@ export const EditorialCommandPalette = () => {
           variant="secondary"
           icon={Command}
           aria-label={t("palette")}
+          aria-keyshortcuts="Control+k Meta+k"
         />
       </DialogTrigger>
       <DialogContent
+        className={styles.palette}
+        aria-describedby={undefined}
         dir={i18n.dir()}
         onCloseAutoFocus={async (event) => {
           const command = pendingCommand.current;
@@ -81,54 +104,83 @@ export const EditorialCommandPalette = () => {
           }
         }}
       >
-        <DialogTitle>{t("palette")}</DialogTitle>
-        <DialogDescription>{t("paletteDescription")}</DialogDescription>
+        <DialogTitle className={styles.paletteTitle}>
+          {t("palette")}
+        </DialogTitle>
         {editing ? (
-          <EditorialCommandInput
-            key={editing.id}
-            command={editing}
-            cancel={() => setEditing(null)}
-            apply={(value) => {
-              pendingCommand.current = {
-                ...editing,
-                execute: () => editing.input?.execute(value),
-              };
-              setOpen(false);
-            }}
-          />
-        ) : (
-          <>
-            <TextInput
-              aria-label={t("searchCommands")}
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
+          <div className={styles.paletteEditor}>
+            <EditorialCommandInput
+              key={editing.id}
+              command={editing}
+              cancel={() => setEditing(null)}
+              apply={(value) => {
+                pendingCommand.current = {
+                  ...editing,
+                  execute: () => editing.input?.execute(value),
+                };
+                setOpen(false);
+              }}
             />
-            <ul className={styles.commands} aria-label={t("commands")}>
-              {matching.map((command) => (
-                <li key={command.id}>
-                  <Button
-                    fullWidth
-                    variant={command.destructive ? "critical" : "secondary"}
-                    onClick={() => {
-                      if (command.input) {
-                        setEditing(command);
-                      } else {
-                        pendingCommand.current = command;
-                        setOpen(false);
-                      }
-                    }}
-                  >
-                    {command.label}
-                  </Button>
-                </li>
+          </div>
+        ) : (
+          <CommandMenu label={t("searchCommands")} loop vimBindings={false}>
+            <div className={styles.paletteSearch}>
+              <Search aria-hidden="true" className={styles.paletteIcon} />
+              <CommandMenu.Input
+                autoFocus
+                className={styles.paletteInput}
+                aria-label={t("searchCommands")}
+                placeholder={t("searchCommands")}
+                value={query}
+                onValueChange={setQuery}
+              />
+              <DialogClose asChild>
+                <button
+                  type="button"
+                  className={styles.paletteDismiss}
+                  aria-label={t("closePalette")}
+                >
+                  <kbd>Esc</kbd>
+                </button>
+              </DialogClose>
+            </div>
+            <CommandMenu.List className={styles.commands} label={t("commands")}>
+              <CommandMenu.Empty className={styles.paletteEmpty}>
+                <output>{t("noCommands")}</output>
+              </CommandMenu.Empty>
+              {paletteCommands.map((command) => (
+                <CommandMenu.Item
+                  key={command.id}
+                  value={command.id}
+                  keywords={[command.label]}
+                  className={styles.paletteItem}
+                  data-destructive={command.destructive || undefined}
+                  onSelect={() => {
+                    if (command.input) {
+                      setEditing(command);
+                    } else {
+                      pendingCommand.current = command;
+                      setOpen(false);
+                    }
+                  }}
+                >
+                  <span>{command.label}</span>
+                  {!command.input && (
+                    <kbd aria-hidden="true" className={styles.paletteEnter}>
+                      ↵
+                    </kbd>
+                  )}
+                  {command.input && (
+                    <ChevronRight
+                      aria-hidden="true"
+                      className={styles.paletteIcon}
+                    />
+                  )}
+                </CommandMenu.Item>
               ))}
-            </ul>
-            {matching.length === 0 && <output>{t("noCommands")}</output>}
-          </>
+            </CommandMenu.List>
+          </CommandMenu>
         )}
-        <DialogClose asChild>
-          <Button variant="secondary">{t("closePalette")}</Button>
-        </DialogClose>
       </DialogContent>
     </Dialog>
   );

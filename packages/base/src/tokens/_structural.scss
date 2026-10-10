@@ -4,6 +4,7 @@
 @use "surfaces";
 
 $-definitions: (
+  "command-list-max-height": logical.token("command-list-max-height"),
   "theme-background": logical.token("color-page"),
   "theme-text": logical.token("color-text-strong"),
   "theme-font-family": logical.$font-family-body,
