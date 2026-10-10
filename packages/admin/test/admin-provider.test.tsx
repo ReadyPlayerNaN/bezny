@@ -11,9 +11,16 @@ import {
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { atom, createStore, useAtom } from "jotai";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { DefaultAdminPage } from "../src/admin-building-blocks.js";
+import type { AdminPageProps } from "../src/admin-building-blocks.js";
+import { AdminPage } from "../src/admin-page.js";
 import { AdminProvider } from "../src/admin-provider.js";
+
+const BrandedPage = (props: AdminPageProps) => (
+  <DefaultAdminPage {...props} data-brand="example" />
+);
 
 const countAtom = atom(0);
 const contextRootRoute = createRootRouteWithContext<{ title: string }>()({
@@ -31,18 +38,16 @@ const SelectionCounter = () => {
 };
 
 const ArticleList = () => (
-  <>
-    <h1>Articles</h1>
+  <AdminPage heading="Articles">
     <SelectionCounter />
     <Link to="/articles/1">Article 1</Link>
-  </>
+  </AdminPage>
 );
 
 const ArticleDetail = () => (
-  <>
-    <h1>Article 1</h1>
+  <AdminPage heading="Article 1">
     <SelectionCounter />
-  </>
+  </AdminPage>
 );
 
 const createArticleRouter = () => {
@@ -64,7 +69,14 @@ const createArticleRouter = () => {
 };
 
 describe(AdminProvider, () => {
-  afterEach(cleanup);
+  beforeEach(() => {
+    // jsdom has no scrolling implementation; routing still runs normally.
+    vi.spyOn(window, "scrollTo").mockImplementation(() => {});
+  });
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+  });
 
   it("renders base controls inside routes and retains Jotai state across navigation", async () => {
     const user = userEvent.setup();
@@ -118,6 +130,24 @@ describe(AdminProvider, () => {
       await screen.findByRole("button", { name: "Selected: 3" })
     );
     expect(store.get(countAtom)).toBe(4);
+  });
+
+  it("provides customized building blocks throughout navigation without resetting atoms", async () => {
+    const router = createArticleRouter();
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <AdminProvider router={router} components={{ Page: BrandedPage }} />
+    );
+    const listPage = await screen.findByRole("region", { name: "Articles" });
+    expect(listPage.dataset.brand).toBe("example");
+    await user.click(screen.getByRole("button", { name: "Selected: 0" }));
+    await user.click(screen.getByRole("link", { name: "Article 1" }));
+    const detailPage = await screen.findByRole("region", { name: "Article 1" });
+    expect(detailPage.dataset.brand).toBe("example");
+    rerender(
+      <AdminProvider router={router} components={{ Page: BrandedPage }} />
+    );
+    expect(screen.getByRole("button", { name: "Selected: 1" })).toBeDefined();
   });
 
   it("preserves typed application router context", async () => {

@@ -11,6 +11,18 @@
     ".": {
       "types": "./dist/admin-provider.d.ts",
       "import": "./dist/admin-provider.js"
+    },
+    "./layout": {
+      "types": "./dist/admin-layout.d.ts",
+      "import": "./dist/admin-layout.js"
+    },
+    "./page": {
+      "types": "./dist/admin-page.d.ts",
+      "import": "./dist/admin-page.js"
+    },
+    "./building-blocks": {
+      "types": "./dist/admin-building-blocks.d.ts",
+      "import": "./dist/admin-building-blocks.js"
     }
   },
   "scripts": {
