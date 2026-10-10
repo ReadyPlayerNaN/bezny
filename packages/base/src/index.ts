@@ -25,6 +25,18 @@ export {
   type ButtonVariant,
 } from "./controls/button.js";
 
+export {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+  SelectGroup,
+  SelectLabel,
+  SelectSeparator,
+  type SelectProps,
+  type SelectContentProps,
+} from "./inputs/select.js";
 export { TextInput, type TextInputProps } from "./inputs/text-input.js";
 export { ToggleInput, type ToggleInputProps } from "./inputs/toggle-input.js";
 export {

@@ -87,6 +87,15 @@ $-definitions: (
   "color-text-normal": foundational.token("color-ink-normal"),
   "color-surface": foundational.token("color-white"),
   "color-surface-disabled": foundational.token("color-cloud-light"),
+  "panel-width": foundational.size(256),
+  "dialog-width": foundational.size(512),
+  "panel-shadow": foundational.token("shadow-panel"),
+  "overlay-background": foundational.token("color-overlay"),
+  "overlay-z-index": foundational.token("z-index-overlay"),
+  "spacing-compact": foundational.size(4),
+  "spacing-small": foundational.size(8),
+  "spacing-normal": foundational.size(16),
+  "spacing-large": foundational.size(24),
 );
 
 $-dark-colors: (

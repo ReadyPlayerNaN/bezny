@@ -1,0 +1,45 @@
+@use "css-properties";
+@use "logical";
+
+// Structural purposes shared by panels, menus, and composed content surfaces.
+$-definitions: (
+  "surface-background": logical.token("color-surface"),
+  "surface-text": logical.token("color-text-strong"),
+  "surface-muted": logical.token("color-text-normal"),
+  "surface-border": logical.token("color-border"),
+  "surface-border-width": logical.token("control-border-width"),
+  "surface-radius": logical.token("control-radius"),
+  "surface-hover": logical.token("color-neutral-hover"),
+  "surface-accent": logical.token("color-brand"),
+  "surface-on-accent": logical.token("color-on-accent"),
+  "surface-danger": logical.token("color-danger-text"),
+  "surface-font-family": logical.token("font-family-body"),
+  "surface-font-size": logical.token("field-font-size"),
+  "surface-line-height": logical.token("field-line-height"),
+  "surface-font-weight": logical.token("font-weight-bold"),
+  "surface-padding": logical.token("spacing-normal"),
+  "surface-padding-small": logical.token("spacing-small"),
+  "surface-gap": logical.token("spacing-small"),
+  "surface-compact": logical.token("spacing-compact"),
+  "surface-padding-large": logical.token("spacing-large"),
+  "surface-height": logical.token("control-height-normal"),
+  "surface-width": logical.token("panel-width"),
+  "surface-dialog-width": logical.token("dialog-width"),
+  "surface-shadow": logical.token("panel-shadow"),
+  "surface-overlay": logical.token("overlay-background"),
+  "surface-z-index": logical.token("overlay-z-index"),
+  "surface-focus-ring": logical.token("focus-ring"),
+  "surface-opacity-disabled": logical.token("opacity-disabled"),
+);
+
+@function token($name) {
+  @return css-properties.reference(
+    $-definitions,
+    "surface-#{$name}",
+    "structural"
+  );
+}
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "structural");
+}

@@ -1,0 +1,73 @@
+@use "./select-appearance" as appearance;
+.trigger,
+.content {
+  @include appearance.declarations;
+  box-sizing: border-box;
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+}
+.trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: appearance.token("gap");
+  min-height: appearance.token("height");
+  padding-inline: appearance.token("padding");
+  &:focus-visible {
+    outline: none;
+    box-shadow: appearance.token("focus-ring");
+  }
+  &[data-disabled] {
+    opacity: appearance.token("opacity-disabled");
+    cursor: not-allowed;
+  }
+  &[data-placeholder] {
+    color: appearance.token("muted");
+  }
+}
+.content {
+  z-index: appearance.token("z-index");
+  min-width: var(--radix-select-trigger-width);
+  max-height: var(--radix-select-content-available-height);
+  overflow: hidden;
+  box-shadow: appearance.token("shadow");
+}
+.viewport {
+  padding: appearance.token("padding-small");
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: appearance.token("gap");
+  padding: appearance.token("padding-small");
+  border-radius: appearance.token("radius");
+  cursor: default;
+  outline: none;
+  &[data-highlighted] {
+    background: appearance.token("hover");
+  }
+  &[data-disabled] {
+    opacity: appearance.token("opacity-disabled");
+  }
+}
+.icon {
+  width: appearance.token("font-size");
+  height: appearance.token("font-size");
+}
+.label {
+  padding: appearance.token("padding-small");
+  color: appearance.token("muted");
+}
+.separator {
+  height: appearance.token("border-width");
+  background: appearance.token("border");
+}
+.scroll {
+  display: flex;
+  justify-content: center;
+}

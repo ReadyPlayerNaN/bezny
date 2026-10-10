@@ -78,6 +78,8 @@ Override foundational base colours on `:root` to update their derived states at 
 
 Button palette and sizing are represented through all four layers. Normal buttons use `1rem` text with `1.25rem` line height and a `2.5rem` minimum height; small buttons use `0.75rem`, `1rem`, and `2rem`, respectively. Both light and dark palettes can be themed through Bezny's CSS tokens.
 
+See [composed components](COMPONENTS.md) for Select and additional interactive/content components.
+
 ## Inputs and fields
 
 **Inputs** are reusable RHF-unbound controls: `TextInput`, `TextareaInput`, `CheckboxInput`, `RadioGroupInput`, `RadioInput`, and `ToggleInput`. They work without a form provider and accept native/Radix control props and React 19 refs. Checkbox, radio, and toggle behavior comes from Radix; text entry uses native HTML controls.

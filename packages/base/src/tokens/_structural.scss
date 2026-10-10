@@ -1,6 +1,7 @@
 @use "sass:map";
 @use "css-properties";
 @use "logical";
+@use "surfaces";
 
 $-definitions: (
   "theme-background": logical.token("color-page"),
@@ -153,4 +154,5 @@ $heading-font-weight: css-properties.reference(
 
 @mixin declarations {
   @include css-properties.declarations($-definitions, "structural");
+  @include surfaces.declarations;
 }
