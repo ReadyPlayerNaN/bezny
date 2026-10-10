@@ -58,11 +58,27 @@ export const DefaultAdminPageHeader = ({
   actions,
 }: AdminPageHeaderProps) => (
   <div>
-    <Heading level={1} id={headingId}>
-      {heading}
-    </Heading>
+    <div
+      data-admin-page-heading-row
+      style={{
+        alignItems: "center",
+        display: "flex",
+        justifyContent: "space-between",
+      }}
+    >
+      <Heading level={1} id={headingId} style={{ margin: 0, minWidth: 0 }}>
+        {heading}
+      </Heading>
+      {actions !== null && actions !== undefined && (
+        <div
+          data-admin-page-actions
+          style={{ flexShrink: 0, marginInlineStart: "auto" }}
+        >
+          {actions}
+        </div>
+      )}
+    </div>
     {description !== null && description !== undefined && <p>{description}</p>}
-    {actions !== null && actions !== undefined && <div>{actions}</div>}
   </div>
 );
 

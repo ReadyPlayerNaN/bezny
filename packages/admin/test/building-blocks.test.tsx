@@ -93,6 +93,24 @@ describe("admin building blocks", () => {
     expect(screen.getByRole("contentinfo").textContent).toBe("Copyright");
   });
 
+  it("places page actions beside the heading with the description below", () => {
+    render(
+      <AdminPage
+        heading="Articles"
+        description="Manage articles"
+        actions={<Button>Create article</Button>}
+      />
+    );
+    const heading = screen.getByRole("heading", { name: "Articles" });
+    const row = heading.parentElement;
+    const action = screen.getByRole("button", { name: "Create article" });
+    expect(row?.dataset.adminPageHeadingRow).toBe("true");
+    expect(row?.style.display).toBe("flex");
+    expect(row?.style.justifyContent).toBe("space-between");
+    expect(row?.lastElementChild?.contains(action)).toBeTruthy();
+    expect(row?.nextElementSibling?.textContent).toBe("Manage articles");
+  });
+
   it("omits empty optional regions and uses unique heading associations", () => {
     render(
       <AdminLayout>

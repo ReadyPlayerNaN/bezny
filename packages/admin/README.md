@@ -56,7 +56,7 @@ export function App() {
 }
 ```
 
-Import the base stylesheet once at the application entrypoint. Admin adds no stylesheet and does not duplicate or re-export base components. Its layout/page defaults are deliberately **unstyled semantic compositions**; use root `className`/`style` props or replace a block to implement your application design.
+Import the base stylesheet once at the application entrypoint. Admin adds no stylesheet and does not duplicate or re-export base components. Its layout/page defaults are semantic compositions without a visual theme. The default page header uses a flex row with the heading first and actions at the inline end (right in LTR), with the description below. Keep collection create buttons and detail action menus in the `actions` slot for consistent placement. Use root `className`/`style` props or replace a block to implement your application design.
 
 ## Composition and customization
 
