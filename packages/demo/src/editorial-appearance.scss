@@ -5,8 +5,6 @@
 
 // Demo-owned control aliases consume structural purposes only.
 $-definitions: (
-  "avatar-trigger-size": structural.token("icon-button-size"),
-  "avatar-trigger-radius": structural.token("avatar-radius"),
   "header-height": structural.token("shell-header-height"),
   "status-height": structural.token("shell-status-height"),
   "status-font-size": structural.token("shell-status-font-size"),

@@ -1,4 +1,5 @@
-import { useId } from "react";
+import { isValidElement, useId } from "react";
+import type { ReactElement } from "react";
 
 import { Icon } from "../content/icon.js";
 import type { IconLabel, LucideIcon } from "../content/icon.js";
@@ -22,7 +23,7 @@ export type IconButtonProps = Omit<
   | "aria-label"
   | "aria-labelledby"
 > &
-  IconLabel & { icon: LucideIcon };
+  IconLabel & { icon: LucideIcon | ReactElement };
 
 /** A fixed circular native button, with its popup label on the focusable control. */
 export const IconButton = ({
@@ -39,11 +40,15 @@ export const IconButton = ({
       id={buttonId}
       className={[styles.iconButton, className].filter(Boolean).join(" ")}
     >
-      <Icon
-        icon={icon}
-        aria-labelledby={props["aria-labelledby"] ?? buttonId}
-        aria-hidden="true"
-      />
+      {isValidElement(icon) ? (
+        icon
+      ) : (
+        <Icon
+          icon={icon}
+          aria-labelledby={props["aria-labelledby"] ?? buttonId}
+          aria-hidden="true"
+        />
+      )}
     </Button>
   );
   if (props["aria-labelledby"]) {

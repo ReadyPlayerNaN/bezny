@@ -3,6 +3,7 @@ import {
   Avatar,
   AvatarFallback,
   Button,
+  IconButton,
   Dialog,
   DialogClose,
   DialogContent,
@@ -100,16 +101,16 @@ export const EditorialAccountMenu = () => {
     <Dialog open={editing} onOpenChange={setEditing}>
       <DropdownMenu dir={i18n.dir()}>
         <DropdownMenuTrigger asChild>
-          <Button
+          <IconButton
             variant="secondary"
-            className={styles.avatarTrigger}
             ref={triggerRef}
             aria-label={t("accountMenu")}
-          >
-            <Avatar size="small" aria-hidden="true">
-              <AvatarFallback>{initials}</AvatarFallback>
-            </Avatar>
-          </Button>
+            icon={
+              <Avatar size="small" aria-hidden="true">
+                <AvatarFallback>{initials}</AvatarFallback>
+              </Avatar>
+            }
+          />
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"

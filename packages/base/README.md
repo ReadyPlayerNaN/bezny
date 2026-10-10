@@ -115,6 +115,8 @@ import { Plane } from "lucide-react";
 
 `IconButton` is a native, circular `Button` with fixed `2.5rem` width/height, no padding, and a `1rem` icon. It forwards button props, events, and refs, including disabled/loading states. Use `aria-label` for a hover/focus popup or `aria-labelledby` for visible page text. The button—not a nested SVG—is the focusable popup trigger. It intentionally has no `size`, `fullWidth`, or polymorphic API.
 
+The `icon` prop also accepts a decorative React element, such as `<Avatar size="small" aria-hidden="true">…</Avatar>`, to reuse the same button styling and tooltip for avatar controls. Custom content must be non-interactive; the button supplies its accessible label.
+
 Geometry follows the four-layer token chain: `--bezny-control-button-icon-button-<size|icon-size|radius>` consumes `--bezny-structural-icon-button-<size|icon-size|radius>`. The size/radius resolve through logical normal control height; the icon size uses the logical small icon scale.
 
 ### Filter buttons

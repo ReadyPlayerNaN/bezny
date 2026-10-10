@@ -5,7 +5,7 @@ import { Plane } from "lucide-react";
 import { createRef } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import { Icon, IconButton } from "../src/index.js";
+import { Avatar, AvatarFallback, Icon, IconButton } from "../src/index.js";
 
 import styles from "../src/controls/button.module.scss";
 
@@ -76,6 +76,32 @@ describe("labelled icons and icon buttons", () => {
     ).toBe("true");
     await user.click(screen.getByRole("button", { name: "Travel" }));
     expect(onClick).not.toHaveBeenCalled();
+  });
+
+  it("uses the same button styling and tooltip for avatar content", async () => {
+    const user = userEvent.setup();
+    const ref = createRef<HTMLButtonElement>();
+    render(
+      <IconButton
+        ref={ref}
+        aria-label="Account menu"
+        variant="secondary"
+        icon={
+          <Avatar size="small" aria-hidden="true">
+            <AvatarFallback>DE</AvatarFallback>
+          </Avatar>
+        }
+      />
+    );
+    const button = screen.getByRole("button", { name: "Account menu" });
+    expect(ref.current).toBe(button);
+    expect(button.classList.contains(styles.iconButton ?? "")).toBeTruthy();
+    expect(button.textContent).toBe("DE");
+    await user.tab();
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toBe("Account menu");
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("tooltip")).toBeNull());
   });
 
   it("reveals the icon button label on hover", async () => {

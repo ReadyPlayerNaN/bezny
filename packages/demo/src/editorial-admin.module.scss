@@ -10,8 +10,7 @@
 .form,
 .selectionBar,
 .statusBar,
-.actionMenu,
-.avatarTrigger {
+.actionMenu {
   @include appearance.declarations;
 }
 
@@ -73,13 +72,6 @@
   align-items: center;
   flex-wrap: nowrap;
   gap: appearance.token("gap");
-}
-
-.avatarTrigger {
-  padding: 0;
-  inline-size: appearance.token("avatar-trigger-size");
-  block-size: appearance.token("avatar-trigger-size");
-  border-radius: appearance.token("avatar-trigger-radius");
 }
 
 .page,
