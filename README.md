@@ -76,6 +76,7 @@ This builds `@bezny/base` and starts the Vite demo server. Open the local URL pr
 
 ## Structure
 
+- `packages/admin/` — administration building-block foundation composing Jotai, TanStack Router, and `@bezny/base` ([usage and future requirements](packages/admin/README.md))
 - `packages/base/` — React headings, Lucide icon wrappers, and buttons, built with Vite and SCSS modules ([usage](packages/base/README.md))
 - `packages/demo/` — private Vite component showcase consuming `@bezny/base`
 - `packages/typescript-config/` — shared strict TypeScript configuration
