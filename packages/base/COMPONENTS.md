@@ -55,3 +55,11 @@ Ported from aipocapso's `controls/badge`. `<Badge type="success">Ready</Badge>` 
 ## Cards
 
 Ported `Card`, `CardTitle`, `CardBody`, `CardProperties`, and `MultiBlockCard`. Card is a section/heading-level boundary; titles retain semantic inherited heading levels with card-specific visual sizing. Compose actions in CardTitle and properties in CardBody. MultiBlockCard wraps each non-empty direct child in a padded body with dividers between blocks. Use keyed elements for reorderable blocks. Native props and React 19 refs are preserved. Surfaces, spacing, title sizing, and separators use `--bezny-control-card-*`.
+
+## Entity rows and entity cards
+
+`EntityRowList` accepts source-compatible row data (id/title/link/description, icon/decoration/leading, badge/meta/trailing, expanded content, version links, and actions). `EntityRow`, `EntityRowTitle`, `SelectableRow`, and `EntityCard` are also available. Links are ordinary anchors, not an application router. Pass custom React nodes for router-aware titles/trailing content when needed. Rows have default/small variants and tokenized padding/typography. Selection checkboxes remain visible for discoverability instead of hover-only controls.
+
+Action keys and row IDs must be unique. Callback actions are bulkable by default; link and `bulkable: false` actions never appear in multi-selection menus. Shared keys determine the intersection, including nested submenus. `onBulkSelect(ids)` runs once, otherwise corresponding callbacks run for every selected row. Disabled actions in any selected row disable that shared action. Selection clears only on success; async errors retain the menu/selection, announce a retryable error, and call optional `onActionError`.
+
+Context menus use local `ContextMenu` components for right-click, long press, Shift+F10, submenu navigation, and focus. Native selection controls support keyboard activation; selected lists support drag selection and Shift-drag clearing, excluding nested interactive content. Removing rows/actions prunes selection. Token prefix: `--bezny-control-entity-row-*`.

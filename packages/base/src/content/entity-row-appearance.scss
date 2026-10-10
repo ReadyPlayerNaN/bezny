@@ -1,0 +1,32 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/surfaces";
+$-definitions: ();
+@each $name
+    in (
+      background,
+      text,
+      muted,
+      border,
+      border-width,
+      radius,
+      hover,
+      accent,
+      padding,
+      padding-small,
+      gap,
+      font-family,
+      font-size,
+      line-height,
+      font-weight,
+      focus-ring
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-entity-row");
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-entity-row");
+}

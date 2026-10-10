@@ -1,0 +1,94 @@
+@use "./entity-row-appearance" as appearance;
+.list {
+  display: grid;
+}
+.row,
+.title {
+  @include appearance.declarations;
+}
+.row {
+  margin: 0;
+  min-inline-size: 0;
+  border: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: appearance.token("gap");
+  padding: appearance.token("padding");
+  border-bottom: appearance.token("border-width") solid
+    appearance.token("border");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  &[data-variant="small"] {
+    padding-block: appearance.token("padding-small");
+  }
+  &[data-selected="true"] {
+    background: appearance.token("hover");
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: appearance.token("focus-ring");
+  }
+}
+.selection {
+  display: flex;
+  align-items: center;
+  gap: appearance.token("gap");
+}
+.content {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  gap: appearance.token("gap");
+}
+.main {
+  flex: 1;
+  min-width: 0;
+}
+.header,
+.trailing {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: appearance.token("gap");
+}
+.title {
+  margin: 0;
+  font-family: appearance.token("font-family");
+}
+.header > .title {
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  font-weight: appearance.token("font-weight");
+}
+.title a,
+.version {
+  color: appearance.token("accent");
+  text-decoration: none;
+  &:hover {
+    text-decoration: underline;
+  }
+}
+.description,
+.meta {
+  color: appearance.token("muted");
+}
+.decoration {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.2;
+}
+.row[data-selected="true"] .decoration {
+  display: none;
+}
+.row > :not(.decoration) {
+  position: relative;
+}
+.expanded {
+  margin-top: appearance.token("gap");
+}
