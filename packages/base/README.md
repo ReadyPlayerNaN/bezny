@@ -96,6 +96,8 @@ Geometry follows the four-layer token chain: `--bezny-control-button-icon-button
 
 ### Filter buttons
 
+Enabled filter buttons use the neutral hover surface, or the primary hover colour when selected. Disabled filters do not change background on hover. `--bezny-control-filter-selected-hover` reuses the structural primary-button hover token, so theme and brand overrides propagate consistently.
+
 `FilterBadge` and filter picker triggers have a `2rem` minimum height, `0.75rem` inline padding, and pill-shaped corners with a `2.5rem` radius. Filter panels retain their existing radius and padding. The scoped `--bezny-control-filter-button-<height|padding|radius>` aliases reference matching structural tokens, which use logical small control height, small control padding, and normal control height respectively.
 
 ## Inputs and fields

@@ -49,6 +49,33 @@ test("filter buttons use full-height pill radii and smaller padding without chan
   );
 });
 
+test("enabled filter buttons have distinct neutral and selected hover backgrounds", () => {
+  assert.match(
+    css,
+    /\.badge:hover:not\(:disabled\) \{\s*background: var\(--bezny-control-filter-hover\);\s*\}/u
+  );
+  assert.match(
+    css,
+    /\.badge:hover:not\(:disabled\)\[data-selected=true\] \{\s*background: var\(--bezny-control-filter-selected-hover\);\s*\}/u
+  );
+  assert.equal(
+    declarations["--bezny-control-filter-selected-hover"],
+    "var(--bezny-structural-button-primary-background-hover)"
+  );
+  assert.equal(
+    declarations["--bezny-structural-button-primary-background-hover"],
+    "var(--bezny-logical-color-brand-hover)"
+  );
+  assert.notEqual(
+    resolve("--bezny-control-filter-selected-hover"),
+    resolve("--bezny-control-filter-accent")
+  );
+  assert.notEqual(
+    resolve("--bezny-control-filter-hover"),
+    resolve("--bezny-control-filter-background")
+  );
+});
+
 test("filter button control tokens reference structural purposes and validate their keys", () => {
   assert.equal(
     declarations["--bezny-control-filter-button-radius"],

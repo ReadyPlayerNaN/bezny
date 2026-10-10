@@ -23,6 +23,12 @@
     background: appearance.token("accent");
     color: appearance.token("on-accent");
   }
+  &:hover:not(:disabled) {
+    background: appearance.token("hover");
+    &[data-selected="true"] {
+      background: appearance.token("selected-hover");
+    }
+  }
   &:focus-visible {
     outline: none;
     box-shadow: appearance.token("focus-ring");
