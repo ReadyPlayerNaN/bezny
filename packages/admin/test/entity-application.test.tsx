@@ -12,6 +12,11 @@ import { atom, useAtomValue } from "jotai";
 import { useEffect, useMemo } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
+import { defineAdminEntity } from "../src/admin-data-adapter.js";
+import type {
+  AdminDataAdapter,
+  AdminEntityDefinition,
+} from "../src/admin-data-adapter.js";
 import {
   useAdminEntityCommands,
   useAdminPageCommands,
@@ -22,22 +27,19 @@ import {
   adminSelectionAtom,
   createAdminEntityRegistry,
 } from "../src/admin-entity-model.js";
-import type { AdminCommand, AdminEntity } from "../src/admin-entity-model.js";
+import type { AdminCommand } from "../src/admin-entity-model.js";
 import {
   AdminApplicationProvider,
   createAdminApplication,
 } from "../src/admin-entity-routing.js";
+import type { AdminApplication } from "../src/admin-entity-routing.js";
 
-const recordsAtom = atom([
-  { id: "1", label: "Example" },
-  { id: "a/b", label: "Encoded record" },
-]);
 const permissionAtom = atom(true);
 const pageVersionAtom = atom(0);
 const runAction = vi.fn<() => void>();
 const runSave = vi.fn<() => void>();
 const captureCommands = vi.fn<(commands: readonly AdminCommand[]) => void>();
-
+const applications: AdminApplication[] = [];
 const Commands = () => {
   const { paletteCommands } = useAdminEntityCommands();
   useEffect(() => {
@@ -68,10 +70,7 @@ const Root = () => (
   </>
 );
 const NotFound = () => <h1>Unavailable</h1>;
-const ListScreen = () => {
-  const { entity } = useAdminEntityContext();
-  return <h1>{entity?.label}</h1>;
-};
+const ListScreen = () => <h1>{useAdminEntityContext().entity?.label}</h1>;
 const RecordScreen = () => {
   const { entity, recordId, view } = useAdminEntityContext();
   return (
@@ -81,13 +80,13 @@ const RecordScreen = () => {
   );
 };
 const CreateScreen = () => {
-  const { entity } = useAdminEntityContext();
+  const key = useAdminEntityContext().entity?.key;
   const commands = useMemo<AdminCommand[]>(
-    () => [{ execute: runSave, id: "save", label: `Save ${entity?.key}` }],
-    [entity]
+    () => [{ execute: runSave, id: "save", label: `Save ${key}` }],
+    [key]
   );
   useAdminPageCommands(commands);
-  return <h1>Create {entity?.key}</h1>;
+  return <h1>Create {key}</h1>;
 };
 const VersionedScreen = () => {
   const version = useAtomValue(pageVersionAtom);
@@ -98,51 +97,113 @@ const VersionedScreen = () => {
   useAdminPageCommands(commands);
   return <h1>Versioned screen</h1>;
 };
-
-const writableEntity: AdminEntity = {
-  actions: [
-    {
-      enabled: permissionAtom,
-      execute: runAction,
-      id: "archive",
-      label: (scope) => `Archive ${scope.records[0]?.label}`,
-      target: "record",
+interface ReferenceRecord {
+  id: string;
+  label: string;
+}
+const parseValues = (value: unknown) => {
+  if (typeof value !== "string") {
+    throw new TypeError("Expected label.");
+  }
+  return value;
+};
+const fixtureEntities = () => {
+  const datasets = new Map<string, ReferenceRecord[]>([
+    [
+      "books",
+      [
+        { id: "1", label: "Example" },
+        { id: "a/b", label: "Encoded record" },
+      ],
+    ],
+    ["people", [{ id: "1", label: "Example" }]],
+  ]);
+  const adapter = (key: string): AdminDataAdapter<ReferenceRecord, string> => ({
+    create: async (label) => {
+      await Promise.resolve();
+      return { id: "new", label };
     },
-  ],
-  key: "books",
-  label: "Books",
-  records: recordsAtom,
-  screens: {
-    create: CreateScreen,
-    detail: RecordScreen,
-    list: ListScreen,
-    update: RecordScreen,
-  },
-  singularLabel: "Book",
+    dispose: () => {
+      datasets.clear();
+    },
+    get: async (id) => {
+      await Promise.resolve();
+      return datasets.get(key)?.find((record) => record.id === id) ?? null;
+    },
+    list: async (query) => {
+      await Promise.resolve();
+      const records = datasets.get(key) ?? [];
+      return {
+        items: records.slice(
+          (query.page - 1) * query.pageSize,
+          query.page * query.pageSize
+        ),
+        total: records.length,
+      };
+    },
+    update: async (id, label) => {
+      await Promise.resolve();
+      return { id, label };
+    },
+  });
+  const writable = defineAdminEntity({
+    actions: [
+      {
+        enabled: permissionAtom,
+        execute: runAction,
+        id: "archive",
+        label: (scope) => `Archive ${scope.records[0]?.label}`,
+        target: "record",
+      },
+    ],
+    adapter: adapter("books"),
+    key: "books",
+    label: "Books",
+    parseValues,
+    reference: (record) => record,
+    screens: {
+      create: CreateScreen,
+      detail: RecordScreen,
+      list: ListScreen,
+      update: RecordScreen,
+    },
+    singularLabel: "Book",
+  });
+  const readonly = defineAdminEntity({
+    adapter: adapter("people"),
+    key: "people",
+    label: "People",
+    parseValues,
+    reference: (record) => record,
+    screens: { detail: RecordScreen, list: ListScreen },
+    singularLabel: "Person",
+  });
+  return {
+    readonly,
+    replace: (key: string, records: ReferenceRecord[]) => {
+      datasets.set(key, records);
+    },
+    writable,
+  };
 };
-const readonlyEntity: AdminEntity = {
-  key: "people",
-  label: "People",
-  records: recordsAtom,
-  screens: { detail: RecordScreen, list: ListScreen },
-  singularLabel: "Person",
-};
-
 const renderApplication = async (
   path = "/books",
-  entities: readonly AdminEntity[] = [writableEntity, readonlyEntity]
+  entities?: readonly AdminEntityDefinition[]
 ) => {
+  const fixture = fixtureEntities();
   const application = createAdminApplication({
     NotFound,
     Root,
-    entities,
+    entities: entities ?? [fixture.writable, fixture.readonly],
     history: createMemoryHistory({ initialEntries: [path] }),
   });
+  applications.push(application);
   render(<AdminApplicationProvider application={application} />);
   await screen.findByRole("heading");
   return {
     application,
     commands: within(screen.getByRole("region", { name: "Commands" })),
+    fixture,
     user: userEvent.setup(),
   };
 };
@@ -150,11 +211,13 @@ const renderApplication = async (
 describe("entity application", () => {
   beforeEach(() => {
     vi.spyOn(window, "scrollTo").mockImplementation(() => {});
-    runAction.mockClear();
-    runSave.mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
     cleanup();
+    for (const application of applications.splice(0)) {
+      application.dispose();
+    }
     vi.restoreAllMocks();
   });
 
@@ -177,31 +240,30 @@ describe("entity application", () => {
     ).toBeNull();
   });
 
-  it("supports a renamed entity without adding routes or palette entries", async () => {
-    const renamed = {
-      ...writableEntity,
-      key: "documents",
-      label: "Documents",
-      singularLabel: "Document",
-    };
-    const { user, commands, application } = await renderApplication(
-      "/documents",
-      [renamed]
-    );
-    await user.click(commands.getByRole("button", { name: "View Example" }));
-    await screen.findByRole("heading", { name: "documents:1:detail" });
-    expect(application.router.state.location.pathname).toBe("/documents/1");
-    await user.click(commands.getByRole("button", { name: "Edit Example" }));
-    await screen.findByRole("heading", { name: "documents:1:update" });
-    expect(application.router.state.location.pathname).toBe(
-      "/documents/1/edit"
-    );
-    expect(
-      commands.getByRole("button", { name: "Create document" })
-    ).toBeDefined();
-  });
+  it.each(["documents", "constructor"])(
+    "supports renamed entity %s without adding routes or palette entries",
+    async (key) => {
+      const fixture = fixtureEntities();
+      const renamed = {
+        ...fixture.writable,
+        key,
+        label: "Documents",
+        singularLabel: "Document",
+      };
+      const { user, commands, application } = await renderApplication(
+        `/${key}`,
+        [renamed]
+      );
+      await user.click(commands.getByRole("button", { name: "View Example" }));
+      await screen.findByRole("heading", { name: `${key}:1:detail` });
+      expect(application.router.state.location.pathname).toBe(`/${key}/1`);
+      await user.click(commands.getByRole("button", { name: "Edit Example" }));
+      await screen.findByRole("heading", { name: `${key}:1:update` });
+      expect(application.router.state.location.pathname).toBe(`/${key}/1/edit`);
+    }
+  );
 
-  it("uses the matched entity and decoded record ID for direct URLs and generated navigation", async () => {
+  it("uses matched entities and decoded IDs for direct URLs and navigation", async () => {
     const { commands, user, application } =
       await renderApplication("/books/a%2Fb");
     expect(screen.getByRole("heading").textContent).toBe("books:a/b:detail");
@@ -231,7 +293,7 @@ describe("entity application", () => {
     ).toBeDefined();
   });
 
-  it("does not mutate another entity's selection through stale row or clear commands", async () => {
+  it("does not mutate another entity's selection through stale commands", async () => {
     const { application, commands, user } = await renderApplication();
     const staleSelect = captureCommands.mock.lastCall?.[0].find(
       (command) => command.label === "Select Example"
@@ -253,7 +315,7 @@ describe("entity application", () => {
     });
   });
 
-  it("registers real screen callbacks and removes them when the matched screen leaves", async () => {
+  it("registers real screen callbacks and removes them when the screen leaves", async () => {
     const { commands, user, application } =
       await renderApplication("/books/create");
     await user.click(
@@ -268,10 +330,11 @@ describe("entity application", () => {
     expect(runSave).toHaveBeenCalledOnce();
   });
 
-  it("invalidates page callbacks when their registration is replaced on the same screen", async () => {
+  it("invalidates replaced page callbacks on the same screen", async () => {
+    const fixture = fixtureEntities();
     const entity = {
-      ...writableEntity,
-      screens: { ...writableEntity.screens, create: VersionedScreen },
+      ...fixture.writable,
+      screens: { ...fixture.writable.screens, create: VersionedScreen },
     };
     const { application, commands, user } = await renderApplication(
       "/books/create",
@@ -289,10 +352,9 @@ describe("entity application", () => {
     expect(runSave).toHaveBeenCalledOnce();
   });
 
-  it("removes stale record actions and rechecks availability at execution", async () => {
-    const { commands, application, user } = await renderApplication();
+  it("rechecks permissions and removes stale record actions after adapter refresh", async () => {
+    const { commands, application, user, fixture } = await renderApplication();
     await user.click(commands.getByRole("button", { name: "Archive Example" }));
-    expect(runAction).toHaveBeenCalledOnce();
     const stale = captureCommands.mock.lastCall?.[0].find(
       (command) => command.label === "Archive Example"
     );
@@ -304,87 +366,85 @@ describe("entity application", () => {
     ).toBeNull();
     await stale?.execute();
     expect(runAction).toHaveBeenCalledOnce();
-    act(() => {
-      application.store.set(recordsAtom, []);
+    fixture.replace("books", []);
+    await act(async () => {
+      await application.session.refresh();
     });
-    expect(commands.queryByRole("button", { name: "View Example" })).toBeNull();
-  });
-
-  it("renders unavailable entities, records, and unsupported operations without fabricated actions", async () => {
-    const { commands } = await renderApplication("/people/create");
-    expect(screen.getByRole("heading", { name: "Unavailable" })).toBeDefined();
-    expect(
-      commands.queryByRole("button", { name: "Create person" })
-    ).toBeNull();
     expect(commands.queryByRole("button", { name: "View Example" })).toBeNull();
   });
 
   it.each([
     "/ghost/1",
     "/books/unknown",
+    "/people/create",
     "/people/1/edit",
     "/outside/the/entity/route/tree",
-  ])(
-    "handles unavailable route %s without exposing stale record actions",
-    async (path) => {
-      const { commands } = await renderApplication(path);
-      expect(
-        screen.getByRole("heading", { name: "Unavailable" })
-      ).toBeDefined();
-      expect(
-        commands.queryByRole("button", { name: "Archive Example" })
-      ).toBeNull();
-      expect(
-        commands.queryByRole("button", { name: "Edit Example" })
-      ).toBeNull();
-    }
-  );
-
-  it("rejects reserved and duplicate record references", () => {
-    const reserved = {
-      ...writableEntity,
-      records: atom([{ id: "create", label: "Reserved" }]),
-    };
-    expect(() =>
-      createAdminApplication({
-        NotFound,
-        Root,
-        entities: [reserved],
-        history: createMemoryHistory(),
-      })
-    ).toThrow("Invalid or reserved record ID");
-    const duplicate = {
-      ...writableEntity,
-      records: atom([
-        { id: "1", label: "First" },
-        { id: "1", label: "Second" },
-      ]),
-    };
-    expect(() =>
-      createAdminApplication({
-        NotFound,
-        Root,
-        entities: [duplicate],
-        history: createMemoryHistory(),
-      })
-    ).toThrow("Duplicate record ID");
+  ])("handles unavailable route %s without stale actions", async (path) => {
+    const { commands } = await renderApplication(path);
+    expect(screen.getByRole("heading", { name: "Unavailable" })).toBeDefined();
+    expect(
+      commands.queryByRole("button", { name: "Archive Example" })
+    ).toBeNull();
+    expect(commands.queryByRole("button", { name: "Edit Example" })).toBeNull();
   });
 
-  it("rejects duplicate entities, invalid slugs, and duplicate action identities", () => {
+  it("releases application data and subscriptions across repeated mount cycles", async () => {
+    const fixture = fixtureEntities();
+    const application = createAdminApplication({
+      NotFound,
+      Root,
+      entities: [fixture.writable],
+      history: createMemoryHistory({ initialEntries: ["/books"] }),
+    });
+    applications.push(application);
+    for (let cycle = 0; cycle < 5; cycle += 1) {
+      const view = render(
+        <AdminApplicationProvider application={application} />
+      );
+      // oxlint-disable-next-line no-await-in-loop -- Mount/dispose cycles must run sequentially against the same application.
+      await screen.findByRole("heading", { name: "Books" });
+      expect(application.session.diagnostics().activeRecords).toBe(2);
+      view.unmount();
+      expect(application.session.diagnostics()).toMatchObject({
+        activeRecords: 0,
+        cacheEntries: 0,
+        expiryScheduled: false,
+        pendingRequests: 0,
+        subscriptions: 0,
+      });
+      expect(
+        application.store.get(application.session.snapshotAtom).items
+      ).toStrictEqual([]);
+    }
+  });
+
+  it("rejects invalid entity and action identities and incompatible adapter capabilities", () => {
+    const fixture = fixtureEntities();
     expect(() =>
-      createAdminEntityRegistry([writableEntity, writableEntity])
+      createAdminEntityRegistry([fixture.writable, fixture.writable])
     ).toThrow("Duplicate admin entity key");
     expect(() =>
-      createAdminEntityRegistry([{ ...writableEntity, key: "not/a/slug" }])
+      createAdminEntityRegistry([{ ...fixture.writable, key: "not/a/slug" }])
     ).toThrow("Invalid admin entity key");
-    const [action] = writableEntity.actions ?? [];
+    const action = fixture.writable.actions?.[0];
     if (!action) {
       throw new Error("Expected fixture action.");
     }
     expect(() =>
       createAdminEntityRegistry([
-        { ...writableEntity, actions: [action, action] },
+        { ...fixture.writable, actions: [action, action] },
       ])
     ).toThrow("Duplicate action");
+    expect(() =>
+      createAdminEntityRegistry([
+        {
+          ...fixture.writable,
+          adapter: {
+            get: fixture.writable.adapter.get,
+            list: fixture.writable.adapter.list,
+          },
+        },
+      ])
+    ).toThrow("Create screen requires a create adapter");
   });
 });

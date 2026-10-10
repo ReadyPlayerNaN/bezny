@@ -3,7 +3,10 @@ import {
   useAdminEntityNavigate,
   useAdminPageCommands,
 } from "@bezny/admin/commands";
-import { useAdminEntityContext } from "@bezny/admin/context";
+import {
+  useAdminEntityContext,
+  useAdminDataSession,
+} from "@bezny/admin/context";
 import { adminSelectionAtom } from "@bezny/admin/entities";
 import type { AdminCommand } from "@bezny/admin/entities";
 import { AdminPage } from "@bezny/admin/page";
@@ -17,11 +20,16 @@ import {
   TextareaField,
 } from "@bezny/base";
 import type { EntityRowData } from "@bezny/base";
-import { useAtomValue, useStore } from "jotai";
+import { useStore } from "jotai";
 import { useCallback, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
-import { editorialResources, noticeAtom } from "./editorial-records.js";
+import {
+  editorialResources,
+  noticeAtom,
+  parseEditorialRecord,
+  editorialTextLimits,
+} from "./editorial-records.js";
 import type { EditorialRecord, EditorialValues } from "./editorial-records.js";
 
 import styles from "./editorial-admin.module.scss";
@@ -48,8 +56,10 @@ const useEditorialResource = () => {
 
 export const EditorialListPage = () => {
   const resource = useEditorialResource();
-  const records = useAtomValue(resource.records);
-  const { selectedIds } = useAdminEntityContext();
+  const { selectedIds, data } = useAdminEntityContext();
+  const records = (data?.items ?? []).map((item) =>
+    parseEditorialRecord(item.data)
+  );
   const store = useStore();
   const commands = useAdminEntityCommands();
   return (
@@ -71,7 +81,10 @@ export const EditorialListPage = () => {
           {resource.singularLabel.toLocaleLowerCase()}.
         </p>
       ) : (
-        <section aria-label={`${resource.label} in this workspace`}>
+        <section
+          aria-label={`${resource.label} in this workspace`}
+          data-admin-entity={resource.key}
+        >
           <EntityRowList
             selectedIds={selectedIds}
             onSelectedIdsChange={(ids) =>
@@ -126,10 +139,9 @@ export const MissingEntityPage = () => {
 };
 
 const useCurrentRecord = () => {
-  const resource = useEditorialResource();
-  const { recordId } = useAdminEntityContext();
-  const records = useAtomValue(resource.records);
-  return records.find((record) => record.id === recordId);
+  const { recordId, data } = useAdminEntityContext();
+  const record = data?.items.find((item) => item.id === recordId);
+  return record ? parseEditorialRecord(record.data) : undefined;
 };
 export const EditorialDetailPage = () => {
   const record = useCurrentRecord();
@@ -167,6 +179,7 @@ const EditorialForm = ({ record }: { record?: EditorialRecord }) => {
   const resource = useEditorialResource();
   const store = useStore();
   const navigate = useAdminEntityNavigate();
+  const session = useAdminDataSession();
   const form = useForm<EditorialValues>({
     defaultValues: {
       body: record?.body ?? "",
@@ -176,29 +189,27 @@ const EditorialForm = ({ record }: { record?: EditorialRecord }) => {
   });
   const save = useCallback(
     async (values: EditorialValues) => {
-      const nextId = store.get(resource.nextId);
-      const id = record?.id ?? String(nextId);
-      const saved = {
-        ...values,
-        body: values.body.trim(),
-        id,
-        title: values.title.trim(),
-      };
-      store.set(resource.records, (records) =>
-        record
-          ? records.map((item) => (item.id === id ? saved : item))
-          : [...records, saved]
-      );
-      if (!record) {
-        store.set(resource.nextId, nextId + 1);
+      try {
+        const saved = record
+          ? await session.update(resource.key, record.id, values)
+          : await session.create(resource.key, values);
+        store.set(
+          noticeAtom,
+          `${resource.singularLabel} ${record ? "updated" : "created"}.`
+        );
+        await navigate({
+          entity: resource.key,
+          recordId: saved.id,
+          view: "detail",
+        });
+      } catch (error) {
+        form.setError("root", {
+          message:
+            error instanceof Error ? error.message : "Unable to save record.",
+        });
       }
-      store.set(
-        noticeAtom,
-        `${resource.singularLabel} ${record ? "updated" : "created"}.`
-      );
-      await navigate({ entity: resource.key, recordId: id, view: "detail" });
     },
-    [navigate, record, resource, store]
+    [form, navigate, record, resource, session, store]
   );
   const pageCommands = useMemo<AdminCommand[]>(
     () => [
@@ -226,10 +237,18 @@ const EditorialForm = ({ record }: { record?: EditorialRecord }) => {
         noValidate
         onSubmit={form.handleSubmit(save)}
       >
+        {form.formState.errors.root?.message && (
+          <p role="alert">{form.formState.errors.root.message}</p>
+        )}
         <TextField<EditorialValues>
           name="title"
           label="Title"
+          maxLength={editorialTextLimits.title}
           rules={{
+            maxLength: {
+              message: `Use at most ${editorialTextLimits.title} title characters.`,
+              value: editorialTextLimits.title,
+            },
             required: "Enter a title.",
             validate: (value) =>
               (typeof value === "string" && value.trim().length > 0) ||
@@ -239,8 +258,13 @@ const EditorialForm = ({ record }: { record?: EditorialRecord }) => {
         <TextareaField<EditorialValues>
           name="body"
           label="Body"
+          maxLength={editorialTextLimits.body}
           rows={8}
           rules={{
+            maxLength: {
+              message: `Use at most ${editorialTextLimits.body} content characters.`,
+              value: editorialTextLimits.body,
+            },
             required: `Enter ${resource.singularLabel.toLocaleLowerCase()} content.`,
             validate: (value) =>
               (typeof value === "string" && value.trim().length > 0) ||

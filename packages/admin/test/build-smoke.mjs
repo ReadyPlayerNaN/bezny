@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 
 import { AdminProvider } from "@bezny/admin";
+import { defineAdminEntity } from "@bezny/admin/adapters";
 import {
   AdminApplicationProvider,
   createAdminApplication,
@@ -21,6 +22,7 @@ import {
   useAdminEntityContext,
   useAdminEntityRegistry,
 } from "@bezny/admin/context";
+import { createAdminDataSession } from "@bezny/admin/data";
 import { createAdminEntityRegistry } from "@bezny/admin/entities";
 import { AdminLayout } from "@bezny/admin/layout";
 import { AdminPage } from "@bezny/admin/page";
@@ -38,6 +40,8 @@ for (const component of [
   AdminApplicationProvider,
   createAdminApplication,
   createAdminEntityRegistry,
+  defineAdminEntity,
+  createAdminDataSession,
   useAdminEntityCommands,
   useAdminEntityNavigate,
   useAdminPageCommands,

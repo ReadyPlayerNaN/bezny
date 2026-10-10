@@ -14,7 +14,9 @@ import { atom } from "jotai";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createDemoApplication, DemoApp } from "../src/demo-application.js";
-import { articlesAtom, pagesAtom } from "../src/editorial-records.js";
+import type { DemoApplication } from "../src/demo-application.js";
+
+const applications: DemoApplication[] = [];
 
 const selectedArticleIdsAtom = atom(
   (get) => get(adminSelectionAtom)?.ids ?? []
@@ -23,6 +25,7 @@ const selectedArticleIdsAtom = atom(
 const renderDemo = async (pathname = "/articles") => {
   const history = createMemoryHistory({ initialEntries: [pathname] });
   const application = createDemoApplication(history);
+  applications.push(application);
   render(<DemoApp application={application} />);
   await screen.findByRole("heading", { level: 1 });
   return {
@@ -56,6 +59,9 @@ describe("editorial admin", () => {
   });
   afterEach(() => {
     cleanup();
+    for (const application of applications.splice(0)) {
+      application.dispose();
+    }
     vi.restoreAllMocks();
   });
 
@@ -103,9 +109,28 @@ describe("editorial admin", () => {
     await user.click(dialog.getByRole("button", { name: "Confirm deletion" }));
     await waitFor(() =>
       expect(
-        application.store.get(articlesAtom).map((record) => record.id)
+        application.repository.inspect("articles").map((record) => record.id)
       ).toStrictEqual(["2", "3"])
     );
+  });
+
+  it("restores keyboard focus to the owning entity row after cancelling its menu confirmation", async () => {
+    const { user, main } = await renderDemo();
+    const row = main.getByRole("group", { name: "Item 1" });
+    row.focus();
+    await user.keyboard("{Shift>}{F10}{/Shift}");
+    const item = await screen.findByRole("menuitem", {
+      name: "Delete Welcome to Bezny",
+    });
+    item.focus();
+    await user.keyboard("{ArrowUp}");
+    expect(document.activeElement).toBe(
+      screen.getByRole("menuitem", { name: "Edit Welcome to Bezny" })
+    );
+    await user.keyboard("{ArrowDown}{Enter}");
+    const dialog = within(await screen.findByRole("alertdialog"));
+    await user.click(dialog.getByRole("button", { name: "Cancel deletion" }));
+    await waitFor(() => expect(document.activeElement).toBe(row));
   });
 
   it("creates an article using RHF fields, validation, submission, and focus refs", async () => {
@@ -128,7 +153,9 @@ describe("editorial admin", () => {
     await main.findByRole("heading", { level: 1, name: "New article" });
     expect(application.router.state.location.pathname).toBe("/articles/4");
     expect(
-      application.store.get(articlesAtom).find((article) => article.id === "4")
+      application.repository
+        .inspect("articles")
+        .find((article) => article.id === "4")
     ).toStrictEqual({
       body: "A new publication.",
       id: "4",
@@ -160,8 +187,9 @@ describe("editorial admin", () => {
       main.findByRole("heading", { level: 1, name: "Updated welcome" })
     ).resolves.toBeDefined();
     expect(
-      application.store.get(articlesAtom).find((article) => article.id === "1")
-        ?.title
+      application.repository
+        .inspect("articles")
+        .find((article) => article.id === "1")?.title
     ).toBe("Updated welcome");
   });
 
@@ -176,7 +204,7 @@ describe("editorial admin", () => {
     await expect(
       main.findByRole("heading", { level: 1, name: "Articles" })
     ).resolves.toBeDefined();
-    expect(application.store.get(articlesAtom)[0]?.title).toBe(
+    expect(application.repository.inspect("articles")[0]?.title).toBe(
       "Welcome to Bezny"
     );
   });
@@ -238,7 +266,7 @@ describe("editorial admin", () => {
     await waitFor(() => {
       expect(document.activeElement).toBe(deleteButton);
     });
-    expect(application.store.get(articlesAtom)).toHaveLength(3);
+    expect(application.repository.inspect("articles")).toHaveLength(3);
     expect(application.store.get(selectedArticleIdsAtom)).toStrictEqual(["2"]);
   });
 
@@ -251,7 +279,7 @@ describe("editorial admin", () => {
     await user.click(dialog.getByRole("button", { name: "Confirm deletion" }));
     await main.findByRole("heading", { level: 1, name: "Articles" });
     expect(
-      application.store.get(articlesAtom).map((article) => article.id)
+      application.repository.inspect("articles").map((article) => article.id)
     ).toStrictEqual(["2", "3"]);
     expect(
       screen.getByRole("status", { name: "Notifications" }).textContent
@@ -308,10 +336,10 @@ describe("editorial admin", () => {
     expect(
       dialog.getByText(/Welcome to Bezny, Planning the next release/u)
     ).toBeDefined();
-    expect(application.store.get(articlesAtom)).toHaveLength(3);
+    expect(application.repository.inspect("articles")).toHaveLength(3);
     await user.click(dialog.getByRole("button", { name: "Confirm deletion" }));
     await waitFor(() => {
-      expect(application.store.get(articlesAtom)).toHaveLength(1);
+      expect(application.repository.inspect("articles")).toHaveLength(1);
     });
     expect(application.store.get(selectedArticleIdsAtom)).toStrictEqual([]);
     expect(
@@ -335,7 +363,7 @@ describe("editorial admin", () => {
     await expect(
       main.findByRole("heading", { level: 1, name: "Palette article" })
     ).resolves.toBeDefined();
-    expect(application.store.get(articlesAtom)).toHaveLength(4);
+    expect(application.repository.inspect("articles")).toHaveLength(4);
   });
 
   it("supports keyboard palette search, execution, Escape, and focus restoration", async () => {
@@ -398,7 +426,7 @@ describe("editorial admin", () => {
     await expect(
       main.findByText("No articles yet. Create your first article.")
     ).resolves.toBeDefined();
-    expect(application.store.get(articlesAtom)).toStrictEqual([]);
+    expect(application.repository.inspect("articles")).toStrictEqual([]);
     expect(application.store.get(selectedArticleIdsAtom)).toStrictEqual([]);
     expect(
       screen.getByRole("status", { name: "Current context" }).textContent
@@ -426,8 +454,8 @@ describe("editorial admin", () => {
     await runCommand(user, "Save page");
     await main.findByRole("heading", { level: 1, name: "Contact" });
     expect(application.router.state.location.pathname).toBe("/pages/2");
-    expect(application.store.get(pagesAtom)).toHaveLength(2);
-    expect(application.store.get(articlesAtom)).toHaveLength(3);
+    expect(application.repository.inspect("pages")).toHaveLength(2);
+    expect(application.repository.inspect("articles")).toHaveLength(3);
   });
 
   it("resets form state when the same generic create route changes entities", async () => {

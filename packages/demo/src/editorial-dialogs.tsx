@@ -2,6 +2,7 @@ import {
   useAdminEntityCommands,
   useAdminEntityNavigate,
 } from "@bezny/admin/commands";
+import { useAdminDataSession } from "@bezny/admin/context";
 import { adminSelectionAtom } from "@bezny/admin/entities";
 import type { AdminCommand } from "@bezny/admin/entities";
 import {
@@ -20,7 +21,7 @@ import {
   DialogTrigger,
   TextInput,
 } from "@bezny/base";
-import { useAtom, useAtomValue, useStore } from "jotai";
+import { useAtom, useStore } from "jotai";
 import { useRef, useState } from "react";
 
 import {
@@ -109,31 +110,41 @@ export const EditorialDeleteDialog = () => {
   if (!resource) {
     throw new Error("No editorial resource registered.");
   }
-  const allRecords = useAtomValue(resource.records);
+  const session = useAdminDataSession();
+  const [failure, setFailure] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
   const store = useStore();
   const navigate = useAdminEntityNavigate();
   const targetIds = new Set(request?.ids);
-  const records = allRecords.filter((record) => targetIds.has(record.id));
+  const labels = request?.labels ?? [];
   const confirm = async () => {
-    if (!request || records.length === 0) {
+    if (!request || busy || labels.length === 0) {
       return;
     }
-    store.set(resource.records, (current) =>
-      current.filter((record) => !targetIds.has(record.id))
-    );
-    store.set(adminSelectionAtom, (current) =>
-      current?.entity === request.entity
-        ? {
-            entity: current.entity,
-            ids: current.ids.filter((id) => !targetIds.has(id)),
-          }
-        : current
-    );
-    store.set(
-      noticeAtom,
-      `${records.length} ${records.length === 1 ? resource.singularLabel.toLocaleLowerCase() : resource.label.toLocaleLowerCase()} deleted.`
-    );
-    await navigate({ entity: request.entity, view: "list" });
+    setBusy(true);
+    setFailure(null);
+    try {
+      await session.remove(request.entity, request.ids);
+      store.set(adminSelectionAtom, (current) =>
+        current?.entity === request.entity
+          ? {
+              entity: current.entity,
+              ids: current.ids.filter((id) => !targetIds.has(id)),
+            }
+          : current
+      );
+      store.set(
+        noticeAtom,
+        `${labels.length} ${labels.length === 1 ? resource.singularLabel.toLocaleLowerCase() : resource.label.toLocaleLowerCase()} deleted.`
+      );
+      setRequest(null);
+      await navigate({ entity: request.entity, view: "list" });
+    } catch (error) {
+      setFailure(
+        error instanceof Error ? error.message : "Unable to delete records."
+      );
+    }
+    setBusy(false);
   };
   return (
     <AlertDialog
@@ -141,11 +152,17 @@ export const EditorialDeleteDialog = () => {
       onOpenChange={(open) => {
         if (!open) {
           setRequest(null);
+          setFailure(null);
         }
       }}
     >
       {request && (
         <AlertDialogContent
+          onEscapeKeyDown={(event) => {
+            if (busy) {
+              event.preventDefault();
+            }
+          }}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
             const target = request.returnFocus?.isConnected
@@ -158,19 +175,23 @@ export const EditorialDeleteDialog = () => {
             Delete {resource.label.toLocaleLowerCase()}?
           </AlertDialogTitle>
           <AlertDialogDescription>
-            This permanently deletes{" "}
-            {records.map((article) => article.title).join(", ")}. This cannot be
-            undone.
+            This permanently deletes {labels.join(", ")}. This cannot be undone.
           </AlertDialogDescription>
+          {failure && <p role="alert">{failure}</p>}
           <div className={styles.actions}>
             <AlertDialogCancel asChild>
-              <Button variant="secondary">Cancel deletion</Button>
+              <Button variant="secondary" disabled={busy}>
+                Cancel deletion
+              </Button>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button
                 variant="critical"
-                disabled={records.length === 0}
-                onClick={confirm}
+                disabled={busy || labels.length === 0}
+                onClick={async (event) => {
+                  event.preventDefault();
+                  await confirm();
+                }}
               >
                 Confirm deletion
               </Button>

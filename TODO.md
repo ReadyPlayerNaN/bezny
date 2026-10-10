@@ -2,14 +2,17 @@
 
 > Every implemented feature must also be implemented and demonstrated in `@bezny/demo` as part of the same functional slice.
 
-- [ ] Resolve memory leaks and unbounded data retention while keeping Jotai.
+- [x] Resolve memory leaks and unbounded data retention while keeping Jotai.
+  - Implemented: application-owned Jotai snapshots, paginated adapters, bounded entry/byte/TTL cache, immutable detached JSON payloads, cancellation/late-response guards, subscription cleanup, and idempotent disposal. Demo uses a capped adapter-backed repository and HMR disposal; field lengths are bounded independently of frontend validation.
   - Separate long-lived entity definitions from record-data lifetimes.
   - Define loading, pagination, bounded caching, eviction, and application-disposal behavior.
   - Clean up subscriptions and stale references; test repeated navigation and application mount/disposal.
-- [ ] Define and implement an abstract API for configuring `@bezny/admin` application entities, their data adapters, and their actions.
+- [x] Define and implement an abstract API for configuring `@bezny/admin` application entities, their data adapters, and their actions.
+  - Implemented: typed `defineAdminEntity` and LCRUD adapters, separated data-session/query/serialization modules, session-aware action scopes, capability/reference validation, shared routing/context/catalog, and public API documentation. Demo registers both resources exclusively through these abstractions.
   - Keep routing, entity context, ordinary UI actions, and command-palette actions driven by the same configuration.
   - Separate entity definitions, adapter/data lifecycle, action execution, and presentation responsibilities; split modules or packages further where needed.
   - Migrate the demo to demonstrate the public abstractions rather than entity-specific infrastructure.
+  - Verified: 43 admin tests and 23 demo tests, workspace build/typecheck/tests, Ultracite, and production Chromium LCRUD/palette smoke; tests cover repeated navigation/mount-disposal, LRU/TTL/byte bounds, non-JSON rejection, mutation invalidation, permissions, callback ownership, and disposal failures.
 - [ ] Make the admin UI multilingual using an established i18n library—not a custom translation mechanism.
   - Integrate localization into entity labels, action labels, command-palette content, forms, validation feedback, and other entity UI.
   - Distinguish UI translations from multilingual entity content and define adapter/form support for localized content.

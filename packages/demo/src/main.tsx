@@ -13,8 +13,16 @@ if (!root) {
 
 const application = createDemoApplication();
 
-createRoot(root).render(
+const renderer = createRoot(root);
+renderer.render(
   <StrictMode>
     <DemoApp application={application} />
   </StrictMode>
 );
+
+if (import.meta.hot) {
+  import.meta.hot.dispose(() => {
+    renderer.unmount();
+    application.dispose();
+  });
+}

@@ -7,33 +7,65 @@ import {
 } from "@tanstack/react-router";
 import type { RouterHistory } from "@tanstack/react-router";
 import { createStore } from "jotai";
+import { useEffect } from "react";
 import type { FunctionComponent } from "react";
 
 import type { AdminBuildingBlockOverrides } from "./admin-building-blocks.js";
+import type { AdminEntityDefinition } from "./admin-data-adapter.js";
+import { createAdminDataSession } from "./admin-data-session.js";
+import type { AdminCachePolicy } from "./admin-data-session.js";
+import { useAdminEntityCommands } from "./admin-entity-commands.js";
 import {
   AdminEntityRegistryProvider,
   useAdminEntityContext,
   useAdminEntityPresentation,
+  useAdminDataSession,
 } from "./admin-entity-context.js";
 import {
   adminSelectionAtom,
   createAdminEntityRegistry,
 } from "./admin-entity-model.js";
-import type {
-  AdminEntity,
-  AdminStore,
-  AdminEntityView,
-} from "./admin-entity-model.js";
+import type { AdminStore, AdminEntityView } from "./admin-entity-model.js";
 import {
   adminEntityPaths,
   adminEntityViewForRoute,
 } from "./admin-entity-paths.js";
 import { AdminProvider } from "./admin-provider.js";
 
+const AdminDataBoundary = ({ Root }: { Root: FunctionComponent }) => {
+  const { request } = useAdminEntityContext();
+  const session = useAdminDataSession();
+  useEffect(() => {
+    void session.activate(request);
+  }, [request, session]);
+  return <Root />;
+};
+
 const EntityScreen = () => {
-  const { entity, view, kind } = useAdminEntityContext();
+  const { entity, view, kind, data } = useAdminEntityContext();
+  const { refresh } = useAdminEntityCommands();
   const { NotFound } = useAdminEntityPresentation();
   const Screen = entity && view ? entity.screens[view] : undefined;
+  if (kind === "loading") {
+    return <output aria-label="Loading records">Loading records…</output>;
+  }
+  if (kind === "error") {
+    return (
+      <>
+        <p role="alert">{data?.error ?? "Application unavailable."}</p>
+        {refresh && (
+          <button
+            type="button"
+            onClick={async () => {
+              await refresh.execute();
+            }}
+          >
+            {refresh.label}
+          </button>
+        )}
+      </>
+    );
+  }
   if (!Screen || kind === "unavailable") {
     return <NotFound />;
   }
@@ -41,7 +73,8 @@ const EntityScreen = () => {
 };
 
 export interface AdminApplicationOptions {
-  entities: readonly AdminEntity[];
+  entities: readonly AdminEntityDefinition[];
+  cache?: Partial<AdminCachePolicy>;
   Root: FunctionComponent;
   NotFound: FunctionComponent;
   history?: RouterHistory;
@@ -54,28 +87,17 @@ export const createAdminApplication = ({
   NotFound,
   history = createBrowserHistory(),
   store = createStore(),
+  cache,
 }: AdminApplicationOptions) => {
   const registry = createAdminEntityRegistry(entities);
-  for (const entity of registry.entities) {
-    const ids = new Set<string>();
-    for (const record of store.get(entity.records)) {
-      if (!record.id || record.id === "create") {
-        throw new Error(
-          `Invalid or reserved record ID for ${entity.key}: ${record.id}`
-        );
-      }
-      if (ids.has(record.id)) {
-        throw new Error(`Duplicate record ID for ${entity.key}: ${record.id}`);
-      }
-      ids.add(record.id);
-    }
-  }
+  const session = createAdminDataSession(registry, store, cache);
+  const ApplicationRoot = () => <AdminDataBoundary Root={Root} />;
   const [firstEntity] = registry.entities;
   if (!firstEntity) {
     throw new Error("An admin application requires an entity.");
   }
   const root = createRootRoute({
-    component: Root,
+    component: ApplicationRoot,
     notFoundComponent: NotFound,
   });
   const index = createRoute({
@@ -108,18 +130,14 @@ export const createAdminApplication = ({
     routeFor("update"),
   ]);
   const router = createRouter({ history, routeTree });
-  router.subscribe("onResolved", () => {
-    const match = router.state.matches.at(-1);
-    const selection = store.get(adminSelectionAtom);
-    if (
-      selection &&
-      (adminEntityViewForRoute(match?.routeId) !== "list" ||
-        match?.params.entity !== selection.entity)
-    ) {
-      store.set(adminSelectionAtom, null);
-    }
-  });
-  return { NotFound, registry, router, store };
+  return {
+    NotFound,
+    dispose: session.dispose,
+    registry,
+    router,
+    session,
+    store,
+  };
 };
 export type AdminApplication = ReturnType<typeof createAdminApplication>;
 
@@ -129,15 +147,37 @@ export const AdminApplicationProvider = ({
 }: {
   application: AdminApplication;
   components?: AdminBuildingBlockOverrides;
-}) => (
-  <AdminEntityRegistryProvider
-    registry={application.registry}
-    NotFound={application.NotFound}
-  >
-    <AdminProvider
-      router={application.router}
-      store={application.store}
-      {...(components ? { components } : {})}
-    />
-  </AdminEntityRegistryProvider>
-);
+}) => {
+  useEffect(() => {
+    const unsubscribe = application.router.subscribe("onResolved", () => {
+      const match = application.router.state.matches.at(-1);
+      const selection = application.store.get(adminSelectionAtom);
+      if (
+        selection &&
+        (adminEntityViewForRoute(match?.routeId) !== "list" ||
+          match?.params.entity !== selection.entity)
+      ) {
+        application.store.set(adminSelectionAtom, null);
+      }
+    });
+    const unregister = application.session.onDispose(unsubscribe);
+    return () => {
+      unregister();
+      unsubscribe();
+      application.session.pause();
+    };
+  }, [application]);
+  return (
+    <AdminEntityRegistryProvider
+      registry={application.registry}
+      session={application.session}
+      NotFound={application.NotFound}
+    >
+      <AdminProvider
+        router={application.router}
+        store={application.store}
+        {...(components ? { components } : {})}
+      />
+    </AdminEntityRegistryProvider>
+  );
+};

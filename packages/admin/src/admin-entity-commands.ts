@@ -5,6 +5,7 @@ import { useCallback, useEffect, useId, useMemo } from "react";
 import {
   useAdminEntityContext,
   useAdminEntityRegistry,
+  useAdminDataSession,
 } from "./admin-entity-context.js";
 import {
   adminPageCommandsAtom,
@@ -28,9 +29,12 @@ export const useAdminEntityNavigate = (): AdminEntityNavigate => {
   return useCallback(
     async (location) => {
       if ("recordId" in location) {
-        if (location.recordId === "create") {
+        if (
+          !location.recordId ||
+          location.recordId.toLowerCase() === "create"
+        ) {
           throw new Error(
-            'Record ID "create" is reserved for the create page.'
+            'Record IDs must be non-empty; "create" is reserved for the create page.'
           );
         }
         await navigate({
@@ -123,6 +127,21 @@ export const useAdminEntityCommands = () => {
   // Subscribe to reactive action permissions without conditionally calling hooks.
   useAtomValue(enabledSnapshot);
   const context = useAdminEntityContext();
+  const session = useAdminDataSession();
+  const refresh: AdminCommand | null =
+    context.entity &&
+    context.view &&
+    context.entity.screens[context.view] &&
+    context.view !== "create"
+      ? {
+          execute: session.refresh,
+          id: `${context.entity.key}.refresh`,
+          label:
+            context.kind === "error"
+              ? "Retry loading records"
+              : "Refresh records",
+        }
+      : null;
   const navigate = useAdminEntityNavigate();
   const store = useStore();
   const router = useRouter();
@@ -146,7 +165,13 @@ export const useAdminEntityCommands = () => {
     target: "record" | "selection",
     records: readonly AdminRecordReference[]
   ): AdminCommand[] => {
-    if (!context.view || records.length === 0) {
+    if (
+      !context.view ||
+      records.length === 0 ||
+      context.kind === "loading" ||
+      context.kind === "error" ||
+      context.kind === "unavailable"
+    ) {
       return [];
     }
     const scope: AdminActionScope = {
@@ -154,6 +179,7 @@ export const useAdminEntityCommands = () => {
       ids: records.map((record) => record.id),
       navigate,
       records,
+      session,
       store,
       view: context.view,
     };
@@ -167,7 +193,13 @@ export const useAdminEntityCommands = () => {
   };
   const forRecord = (recordId: string): AdminCommand[] => {
     const record = context.records.find((item) => item.id === recordId);
-    if (!record || record.id === "create" || !context.entity) {
+    if (
+      !record ||
+      record.id === "create" ||
+      !context.entity ||
+      context.kind === "loading" ||
+      context.kind === "error"
+    ) {
       return [];
     }
     const routeCommands: AdminCommand[] = [];
@@ -256,7 +288,9 @@ export const useAdminEntityCommands = () => {
         ? context.records.map((record) => forSelection(record.id))
         : []),
       ...pageCommands,
+      ...(refresh ? [refresh] : []),
     ],
+    refresh,
     selectionCommands,
   };
 };

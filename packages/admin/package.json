@@ -39,6 +39,14 @@
     "./commands": {
       "types": "./dist/admin-entity-commands.d.ts",
       "import": "./dist/admin-entity-commands.js"
+    },
+    "./adapters": {
+      "types": "./dist/admin-data-adapter.d.ts",
+      "import": "./dist/admin-data-adapter.js"
+    },
+    "./data": {
+      "types": "./dist/admin-data-session.d.ts",
+      "import": "./dist/admin-data-session.js"
     }
   },
   "scripts": {

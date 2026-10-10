@@ -1,114 +1,127 @@
 # Registered entity applications
 
-An entity registration is the source of truth for its **screens, URLs, context, and commands**. Do not write one route tree and then separately invent a palette based on pathname tests.
+One entity configuration drives screens, generic URLs, route context, and commands. Entity definitions describe a resource; **they do not own permanent collection data atoms**.
 
-## Route contract
-
-`createAdminApplication` owns these TanStack Router patterns:
-
-| Operation | Pattern                   | Example instantiations              |
-| --------- | ------------------------- | ----------------------------------- |
-| List      | `/$entity`                | `/articles`, `/pages`               |
-| Create    | `/$entity/create`         | `/articles/create`, `/pages/create` |
-| Detail    | `/$entity/$recordId`      | `/articles/1`, `/pages/1`           |
-| Update    | `/$entity/$recordId/edit` | `/articles/1/edit`, `/pages/1/edit` |
-
-In conventional URL notation the detail route is `/:entity/:id`. `/articles/1` is an instance of that route, not an article-specific route definition. Commands navigate with typed parameters, letting TanStack encode IDs; context uses the actual match and decoded parameters, not string splitting, regexes, or `endsWith` checks.
-
-Entity keys are unique lowercase slugs. Record IDs must be non-empty, unique within their entity, and not `create`, which is reserved for the static create screen. The application factory validates initial references. Data adapters must maintain these invariants on updates. Identical IDs in different entities are independent.
-
-## Registration and mounting
+## Typed adapters and entity definitions
 
 ```tsx
+import { defineAdminEntity } from "@bezny/admin/adapters";
 import {
   createAdminApplication,
   AdminApplicationProvider,
 } from "@bezny/admin/application";
-import { useAdminEntityCommands } from "@bezny/admin/commands";
 import { useAdminEntityContext } from "@bezny/admin/context";
-import type { AdminEntity } from "@bezny/admin/entities";
 import { AdminLayout } from "@bezny/admin/layout";
 import { AdminPage } from "@bezny/admin/page";
 import { Outlet } from "@tanstack/react-router";
-import { atom } from "jotai";
 
-const documentReferences = atom([{ id: "1", label: "Introduction" }]);
+import { documentAdapter } from "./document-adapter";
+import { parseDocumentValues } from "./document-validation";
 
 const DocumentList = () => {
-  const { entity } = useAdminEntityContext();
-  return <AdminPage heading={entity?.label}>Your document list</AdminPage>;
+  const { entity, records } = useAdminEntityContext();
+  return (
+    <AdminPage heading={entity?.label}>
+      {records.map((record) => (
+        <p key={record.id}>{record.label}</p>
+      ))}
+    </AdminPage>
+  );
 };
 const DocumentDetail = () => {
   const { recordId } = useAdminEntityContext();
-  return (
-    <AdminPage heading={`Document ${recordId}`}>Your document data</AdminPage>
-  );
+  return <AdminPage heading={`Document ${recordId}`} />;
 };
+const documents = defineAdminEntity({
+  key: "documents",
+  label: "Documents",
+  singularLabel: "Document",
+  adapter: documentAdapter,
+  reference: (record) => ({ id: record.id, label: record.title }),
+  parseValues: parseDocumentValues,
+  screens: { list: DocumentList, detail: DocumentDetail },
+});
 const Root = () => (
   <AdminLayout>
     <Outlet />
   </AdminLayout>
 );
 const NotFound = () => <AdminPage heading="Unavailable" />;
-
-const documents = {
-  key: "documents",
-  label: "Documents",
-  singularLabel: "Document",
-  records: documentReferences,
-  screens: { list: DocumentList, detail: DocumentDetail },
-} satisfies AdminEntity;
-
 const application = createAdminApplication({
   entities: [documents],
   Root,
   NotFound,
+  cache: {
+    maxEntries: 8,
+    maxBytes: 2_000_000,
+    ttlMs: 30_000,
+    maxPageSize: 100,
+  },
 });
 export const App = () => <AdminApplicationProvider application={application} />;
 ```
 
-Create an application once, outside render. The factory supplies a router, registry, and isolated Jotai store. Supply `history` for testing or custom routing environments and `store` to connect loaders/non-React data access. `AdminApplicationProvider` accepts the same presentation `components` overrides as `AdminProvider`. `AdminProvider` remains available for applications owning an unrelated router; entity hooks require the entity application provider.
+`documentAdapter` implements `AdminDataAdapter<Document, DocumentValues>`:
 
-`list` is required; `create`, `detail`, and `update` are optional capabilities. Missing screens produce the configured unavailable screen and **no corresponding route command**. Unknown entities, missing records, and unsupported operations do not manufacture record actions. The first registered collection is the `/` landing destination.
+- `list(query, { signal })` returns `{ items, total }`. Respect `query.page`, `pageSize`, `filters`, and `locale`; return only the requested page.
+- `get(id, { signal })` returns that record or `null`.
+- Optional `create(values, request)`, `update(id, values, request)`, and `remove(ids, request)` perform backend mutations.
+- Optional `dispose()` releases adapter-owned resources when the application is permanently disposed. It must be safe if multiple definitions share a backend.
 
-`records` is a Jotai read atom of stable `{ id, label }` references. It is not a database or a generic schema for the entire record. Applications own data fetching, complete record data, forms, and rendering. Derived reference atoms can use `selectAtom` with equality to avoid rerenders for irrelevant data changes.
+Honor cancellation signals and validate backend responses in your adapter. `defineAdminEntity` preserves record/value generics, validates references and list bounds, wraps complete records in `{ id, label, data }` envelopes, and parses unknown form values before passing typed values to mutations. The application independently limits cached payload size. Payloads must be plain JSON-compatible data, not class instances, DOM nodes, cycles, or subscriptions. The cache validates graph depth/node count, creates detached canonical copies, and freezes them so accidental backend/client mutation cannot bypass its bounds.
 
-## One command catalog
+`list` is a required screen; `create`, `detail`, and `update` are optional capabilities. Create/update screens require corresponding adapter operations. Omitted screens mean omitted route commands, not pretend operations. Entity keys are unique lowercase slugs; record IDs are non-empty, unique within each returned page, and cannot be `create` (case-insensitively reserved for the create route). Get/update adapters must return the requested ID. Invalid async data becomes a recoverable loading error rather than retained invalid state.
 
-`useAdminEntityCommands()` exposes:
+## Route contract
 
-- `navigationCommands`: list/create navigation for all registered entities and supported screens. Use these for application navigation and the palette.
-- `list`, nullable `create`: the current entity's collection/page commands.
-- `forRecord(id)`: supported detail/update commands and registered record actions. Use these unchanged in rows and detail pages.
-- `forSelection(id)`: the same selection toggle for a row checkbox and the palette.
-- `selectionCommands`: registered bulk actions and clear-selection.
-- `pageCommands`: callbacks registered by the active screen.
-- `paletteCommands`: the composed catalog of the above, scoped to the actual matched screen and records.
+| Operation | TanStack pattern          | Example instances                   |
+| --------- | ------------------------- | ----------------------------------- |
+| List      | `/$entity`                | `/articles`, `/pages`               |
+| Create    | `/$entity/create`         | `/articles/create`, `/pages/create` |
+| Detail    | `/$entity/$recordId`      | `/articles/1`, `/pages/1`           |
+| Update    | `/$entity/$recordId/edit` | `/articles/1/edit`, `/pages/1/edit` |
 
-Every command carries stable identity, a display label, and one execution function. Route commands also carry an `AdminEntityLocation`. The demo's palette renders this catalog directly; it has no entity-specific entries or navigation code.
+The detail URL is conventionally `/:entity/:id`. Context reads actual matches and decoded parameters, never pathname regexes/string splitting. Navigation uses typed domain locations and TanStack encoding. Unsupported entities, records, and operations render `NotFound` within the application shell. `/` redirects to the first collection.
 
-`useAdminEntityNavigate()` accepts domain locations such as `{ entity: "documents", view: "detail", recordId: "1" }`, not handwritten URLs. Use it after saves, deletions, or other domain operations.
+Create an application once, outside render. Supply `history` for custom routing/testing, `store` for explicit Jotai ownership, and `cache` to configure data bounds. `AdminApplicationProvider` accepts existing presentation `components` overrides. The low-level `AdminProvider` remains available for unrelated application-owned routing.
 
-### Record and selection actions
+## Data ownership and lifecycle
 
-Register actions on the entity with an `id`, `target` (`record` or `selection`), label function, and execution function. Their `AdminActionScope` includes the entity, matched view, target references/IDs, Jotai store, and domain navigation function. A destructive action should **request a confirmation dialog**, not perform deletion directly. The demo registers the same confirmation request for row and bulk deletion.
+`useAdminDataSession()` exposes `create`, `update`, `remove`, `refresh`, and `invalidate`, plus the active `snapshotAtom` and diagnostic counters. Backend changes invalidate the entity's cached pages/details and refresh the active request. Screens own RHF forms and schemas; they do not duplicate mutation/cache logic. Parse `context.data.items[n].data` with your domain schema when reading complete record payloads.
 
-Use an `enabled` boolean atom for reactive permissions/availability, and optionally `isAvailable(scope)` for context/record-dependent rules. The common catalog filters all UI surfaces consistently and rechecks enabled state, target existence, and availability at execution. Authorization must also be enforced by a backend; client checks are not a security boundary.
+Jotai holds a single active page/detail snapshot and small UI state (selection, commands, queries). Runtime reference atoms hold only the active bounded page's `{ id, label }` values; they start empty and are explicitly cleared. The cache is application-owned, bounded by entry count **and serialized bytes**, and expires inactive entries automatically. One active page may remain visible after its cache entry expires; its own payload also respects the byte budget. Thus retained data is bounded by the cache budget plus one active snapshot, not the number of previously visited records.
 
-### Real screen callbacks, not DOM lookups
+The runtime:
 
-Forms can register memoized page commands with `useAdminPageCommands(commands)`. Bind Save to the same RHF `handleSubmit(save)` callback as the form, and Cancel to domain navigation. The palette executes those callbacks directly: it does not query a hardcoded form ID or pretend a route necessarily contains a submit button.
+- Cancels superseded reads and ignores late responses, even if an adapter neglects cancellation.
+- Rejects oversized pages/payloads instead of retaining them.
+- Clears active data, cache entries, timers, query state, selection, page callbacks, and router subscriptions when the provider unmounts.
+- Allows remounting the same application with an empty cache and fresh reads.
+- Permanently releases resources through idempotent `application.dispose()`, including adapter `dispose()` hooks. Dispose after unmounting when abandoning an application; disposed applications are not reusable.
 
-Page commands are scoped to entity, view, and record ID. They disappear when the screen changes; stale callbacks become inert after registration is cleaned up. Keep command arrays stable with `useMemo`, and define their real callback dependencies. There is currently one active page-command registration per screen; compose a screen's commands into one registration rather than allowing independent panels to compete for it.
+Adapters own domain persistence separately. Do not close over unbounded client-side collections in production adapters; use a remote/persistent backend. The demo uses a capped application-owned mock repository (200 records, bounded field lengths), clears it on disposal, and disposes its application during Vite hot-module replacement. The immutable seed data is a small constant fixture, not cached runtime state.
 
-## Entity context and selection
+## Shared commands and actions
 
-`useAdminEntityContext()` exposes `entity`, `view`, decoded `recordId`, current record references, valid selected IDs, and a `kind` of `collection`, `entity`, `selection`, or `unavailable`.
+`useAdminEntityCommands()` supplies:
 
-Selection is Jotai state with an entity namespace. Leaving a list or switching entities clears it, including browser back/forward transitions. Unknown/deleted IDs are excluded from active selection. Row actions explicitly bind that row's ID; bulk actions bind the current valid selection. Registry context, TanStack routing, and form state retain separate responsibilities.
+- `navigationCommands` for all registered collection/create routes.
+- Current entity `list`, nullable `create`, and nullable `refresh`/retry.
+- `forRecord(id)` for supported View/Edit and registered record actions.
+- `forSelection(id)` for a checkbox/palette selection toggle.
+- `selectionCommands` for bulk actions and clear-selection.
+- Registered `pageCommands` and a composed `paletteCommands` catalog.
 
-## Example and boundaries
+Commands carry stable identity, labels, one execution function, and optional typed `location`. Use the same instances/execution paths for navigation, rows, details, menus, and palette presentation. `useAdminEntityNavigate()` accepts `{ entity, view, recordId? }` instead of handwritten URLs.
 
-[`@bezny/demo`](../demo/README.md) registers **Articles and Pages** once each, backed by separate in-memory datasets but sharing presentation and form code. Both entity paths and palette entries work without adding another route definition or another palette branch.
+An entity action has an `id`, `target` (`record`/`selection`), label function, execution callback, optional destructive flag, reactive `enabled` boolean atom, and optional context-dependent `isAvailable(scope)`. The scope includes entity, matched view, target IDs/references, Jotai store, data session, and domain navigation. Use the session for mutations/cache invalidation; request confirmation before destructive changes. Actual backend authorization remains mandatory.
 
-This is a registered-entity foundation, not a production backend/data-access framework. Async loading policies, pagination, schema-driven fields, custom non-entity route composition, and richer palette presentation remain future slices. The existing customization API continues to let applications replace layout/page presentation.
+Targets/permissions are revalidated at execution. Bulk commands also revalidate their selection snapshot; stale selection commands cannot mutate a different entity. IDs in different entity namespaces never collide. Selection is limited to current visible references and clears when changing collections, queries, or leaving a list (including browser history).
+
+`useAdminPageCommands(memoizedCommands)` registers real screen callbacks, such as RHF `handleSubmit(save)` and Cancel. These leave the palette when the screen leaves; superseded callback registrations become inert even on the same screen. Compose one registration per active screen rather than competing registrations from independent panels.
+
+## Demo and verification
+
+[`@bezny/demo`](../demo/README.md) registers Articles and Pages through this public API. Their adapter-backed LCRUD, shared `EntityRowList` context menus, and actual form callbacks demonstrate the same routing/command infrastructure without a second route or palette implementation.
+
+Tests verify adapter validation, bounded navigation/cache growth, byte limits, LRU/TTL eviction, cancellation/late responses, mutation invalidation, repeated mount/unmount, idempotent disposal, generic/encoded routing, permissions, scoped selection, callback ownership, and demo workflows. Filter/pagination controls and multilingual presentation are tracked separately in the repository TODO.

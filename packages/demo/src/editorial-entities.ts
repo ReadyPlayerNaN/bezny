@@ -1,5 +1,6 @@
-import type { AdminActionScope, AdminEntity } from "@bezny/admin/entities";
-import { selectAtom } from "jotai/utils";
+import { defineAdminEntity } from "@bezny/admin/adapters";
+import type { AdminEntityDefinition } from "@bezny/admin/adapters";
+import type { AdminActionScope } from "@bezny/admin/entities";
 
 import {
   EditorialCreatePage,
@@ -7,61 +8,76 @@ import {
   EditorialListPage,
   EditorialUpdatePage,
 } from "./editorial-pages.js";
+import type { EditorialRepository } from "./editorial-records.js";
 import {
   deletionRequestAtom,
   editorialResources,
+  parseEditorialValues,
 } from "./editorial-records.js";
 
+const deletionFocusTarget = (scope: AdminActionScope): HTMLElement | null => {
+  const active = document.activeElement;
+  if (!(active instanceof HTMLElement)) {
+    return null;
+  }
+  if (active.closest('[role="menu"]')) {
+    for (const row of document.querySelectorAll<HTMLElement>(
+      "[data-admin-entity] [data-selection-id]"
+    )) {
+      if (
+        row.dataset.selectionId === scope.ids[0] &&
+        row.closest<HTMLElement>("[data-admin-entity]")?.dataset.adminEntity ===
+          scope.entity.key
+      ) {
+        return row;
+      }
+    }
+  }
+  return active;
+};
 const requestDeletion = (scope: AdminActionScope) => {
   scope.store.set(deletionRequestAtom, {
     entity: scope.entity.key,
     ids: scope.ids,
-    returnFocus:
-      document.activeElement instanceof HTMLElement
-        ? document.activeElement
-        : null,
+    labels: scope.records.map((record) => record.label),
+    returnFocus: deletionFocusTarget(scope),
   });
 };
 
 /** Register a resource once. No entity-specific route or palette entries. */
-export const editorialEntities: AdminEntity[] = editorialResources.map(
-  (resource) => ({
-    actions: [
-      {
-        destructive: true,
-        execute: requestDeletion,
-        id: "delete",
-        label: (scope) => `Delete ${scope.records[0]?.label ?? "record"}`,
-        target: "record",
+export const createEditorialEntities = (
+  repository: EditorialRepository
+): AdminEntityDefinition[] =>
+  editorialResources.map((resource) =>
+    defineAdminEntity({
+      actions: [
+        {
+          destructive: true,
+          execute: requestDeletion,
+          id: "delete",
+          label: (scope) => `Delete ${scope.records[0]?.label ?? "record"}`,
+          target: "record",
+        },
+        {
+          destructive: true,
+          execute: requestDeletion,
+          id: "delete-selected",
+          label: (scope) =>
+            `Delete selected ${scope.entity.label.toLocaleLowerCase()}`,
+          target: "selection",
+        },
+      ],
+      adapter: repository.adapter(resource.key),
+      key: resource.key,
+      label: resource.label,
+      parseValues: parseEditorialValues,
+      reference: (record) => ({ id: record.id, label: record.title }),
+      screens: {
+        create: EditorialCreatePage,
+        detail: EditorialDetailPage,
+        list: EditorialListPage,
+        update: EditorialUpdatePage,
       },
-      {
-        destructive: true,
-        execute: requestDeletion,
-        id: "delete-selected",
-        label: (scope) =>
-          `Delete selected ${scope.entity.label.toLocaleLowerCase()}`,
-        target: "selection",
-      },
-    ],
-    key: resource.key,
-    label: resource.label,
-    records: selectAtom(
-      resource.records,
-      (records) =>
-        records.map((record) => ({ id: record.id, label: record.title })),
-      (previous, next) =>
-        previous.length === next.length &&
-        previous.every(
-          (record, index) =>
-            record.id === next[index]?.id && record.label === next[index]?.label
-        )
-    ),
-    screens: {
-      create: EditorialCreatePage,
-      detail: EditorialDetailPage,
-      list: EditorialListPage,
-      update: EditorialUpdatePage,
-    },
-    singularLabel: resource.singularLabel,
-  })
-);
+      singularLabel: resource.singularLabel,
+    })
+  );

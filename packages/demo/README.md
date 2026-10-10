@@ -13,7 +13,7 @@ The dev script builds base/admin first, then starts Vite (normally `http://local
 
 ## One registration drives routes and commands
 
-`editorialResources` describes the Articles and Pages datasets. `editorialEntities` registers their reference atoms, labels, screens, and record/bulk delete actions with `createAdminApplication`.
+`editorialResources` describes Articles and Pages without retaining dataset atoms. `createEditorialEntities` uses typed `defineAdminEntity` configurations to register their adapters, references, screens, and record/bulk delete actions with `createAdminApplication`.
 
 The application has no entity-specific route definitions:
 
@@ -26,7 +26,7 @@ The application has no entity-specific route definitions:
 
 The sidebar/navigation and searchable palette both consume `useAdminEntityCommands`. The palette does not reconstruct routes, parse pathname strings, or maintain a separate action list. Adding another entity registration makes its collection/create commands available automatically; supported record screens provide View/Edit commands automatically.
 
-Shared list/detail pages render the same `forRecord` commands as the palette. Record delete targets that row even with another selection; bulk delete uses valid selected IDs. Both request the same Radix-backed confirmation dialog. Confirmation deletes the requested entity's records and navigates through the shared entity-location API.
+Shared `EntityRowList` rows, their Radix context menus, and detail pages render the same `forRecord` commands as the palette. Record delete targets that row even with another selection; bulk delete uses valid selected IDs. Both request the same Radix-backed confirmation dialog. Confirmation deletes the requested entity's records and navigates through the shared entity-location API.
 
 ## Real screen context and form callbacks
 
@@ -42,15 +42,15 @@ Open **Command palette** with its header button (mouse, Enter, or Space). Type t
 
 Data adapters, complete record data, forms, and confirmation presentation are demo-owned. Generic routing, registry validation, entity context, selection state, action availability, and the command catalog are admin-owned. See [the entity API](../admin/ENTITIES.md) for reusable contracts.
 
-Data is still deliberately **in memory**: three articles and one page are seeded, edits persist across routes, and reload resets everything. There is no backend, authentication, permissions service, pagination, or unsaved-change blocker. This demo proves shared entity infrastructure; it does not pretend to be a production content system.
+The mock backend is deliberately **in memory and bounded**: three articles and one page are seeded, at most 200 records are retained with bounded field lengths, edits persist across routes, and reload resets everything. Jotai does not hold entire datasets: the admin session owns one active page/detail and an entry/byte/TTL-bounded cache, aborts stale requests, and clears data/timers/subscriptions on unmount. Permanent application disposal clears the mock repository too; Vite HMR unmounts and disposes the old application. There is no production backend, authentication, permissions service, pagination UI, or unsaved-change blocker. This demo proves shared entity infrastructure; it does not pretend to be a production content system.
 
 For built `dist/` hosting, serve `index.html` for application deep links.
 
 ## Source map
 
 - `src/demo-application.tsx`: creates/mounts the shared admin application; no per-entity routes.
-- `src/editorial-entities.ts`: entity registrations and delete-action adapters; no palette entries.
-- `src/editorial-records.ts`: entity datasets and editorial data-source descriptors.
+- `src/editorial-entities.ts`: typed entity/adapter/action registrations; no palette entries.
+- `src/editorial-records.ts`: bounded mock backend, typed adapters, DTO validation, and data-source descriptors.
 - `src/editorial-pages.tsx`: entity-independent list/detail/form screens and real page callbacks.
 - `src/editorial-dialogs.tsx`: palette presentation and entity-aware delete confirmation.
 - `src/editorial-layout.tsx`: presentation replacements, registered navigation, matched context.

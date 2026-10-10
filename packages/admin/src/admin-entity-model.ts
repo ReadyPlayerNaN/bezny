@@ -1,6 +1,8 @@
 import { atom } from "jotai";
-import type { Atom, createStore } from "jotai";
-import type { ComponentType } from "react";
+import type { Atom, PrimitiveAtom, createStore } from "jotai";
+
+import type { AdminEntityDefinition } from "./admin-data-adapter.js";
+import type { AdminDataSession } from "./admin-data-session.js";
 
 export type AdminEntityView = "list" | "create" | "detail" | "update";
 export interface AdminRecordReference {
@@ -29,6 +31,7 @@ export interface AdminActionScope {
   records: readonly AdminRecordReference[];
   ids: readonly string[];
   store: AdminStore;
+  session: AdminDataSession;
   navigate: AdminEntityNavigate;
 }
 export interface AdminEntityAction {
@@ -40,18 +43,9 @@ export interface AdminEntityAction {
   enabled?: Atom<boolean>;
   isAvailable?: (scope: AdminActionScope) => boolean;
 }
-export interface AdminEntity {
-  key: string;
-  label: string;
-  singularLabel: string;
-  records: Atom<readonly AdminRecordReference[]>;
-  screens: {
-    list: ComponentType;
-    create?: ComponentType;
-    detail?: ComponentType;
-    update?: ComponentType;
-  };
-  actions?: readonly AdminEntityAction[];
+/** Runtime metadata; references are only the active bounded page/detail, never an entire dataset. */
+export interface AdminEntity extends AdminEntityDefinition {
+  records: PrimitiveAtom<readonly AdminRecordReference[]>;
 }
 export interface AdminEntityRegistry {
   entities: readonly AdminEntity[];
@@ -59,7 +53,7 @@ export interface AdminEntityRegistry {
 }
 const entityKeyPattern = /^[a-z][a-z0-9-]*$/u;
 export const createAdminEntityRegistry = (
-  entities: readonly AdminEntity[]
+  entities: readonly AdminEntityDefinition[]
 ): AdminEntityRegistry => {
   if (entities.length === 0) {
     throw new Error("An admin application requires at least one entity.");
@@ -79,9 +73,20 @@ export const createAdminEntityRegistry = (
       }
       actionIds.add(action.id);
     }
-    byKey.set(entity.key, entity);
+    if (entity.screens.create && !entity.adapter.create) {
+      throw new Error(`Create screen requires a create adapter: ${entity.key}`);
+    }
+    if (entity.screens.update && !entity.adapter.update) {
+      throw new Error(
+        `Update screen requires an update adapter: ${entity.key}`
+      );
+    }
+    byKey.set(entity.key, {
+      ...entity,
+      records: atom<readonly AdminRecordReference[]>([]),
+    });
   }
-  return { entities: [...entities], get: (key) => byKey.get(key) };
+  return { entities: [...byKey.values()], get: (key) => byKey.get(key) };
 };
 
 export interface AdminSelection {
