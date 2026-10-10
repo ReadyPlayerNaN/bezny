@@ -1,9 +1,15 @@
 @use "sass:map";
 @use "../../base/src/tokens/css-properties";
 @use "../../base/src/tokens/surfaces";
+@use "../../base/src/tokens/structural";
 
-// Demo-owned control aliases consume existing structural purposes only.
-$-definitions: ();
+// Demo-owned control aliases consume structural purposes only.
+$-definitions: (
+  "header-height": structural.token("shell-header-height"),
+  "status-height": structural.token("shell-status-height"),
+  "status-font-size": structural.token("shell-status-font-size"),
+  "status-line-height": structural.token("shell-status-line-height"),
+);
 @each $name
     in (
       background,

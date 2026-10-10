@@ -9,12 +9,14 @@
 .commands,
 .form,
 .selectionBar,
+.statusBar,
 .actionMenu {
   @include appearance.declarations;
 }
 
 .application {
   color: appearance.token("text");
+  padding-block-end: appearance.token("status-height");
 
   > header,
   > nav,
@@ -31,6 +33,13 @@
       appearance.token("border");
   }
 
+  > header {
+    box-sizing: border-box;
+    height: appearance.token("header-height");
+    max-height: appearance.token("header-height");
+    padding-block: 0;
+  }
+
   > footer {
     color: appearance.token("muted");
   }
@@ -45,10 +54,20 @@
 }
 
 .header {
+  height: 100%;
+  flex-wrap: nowrap;
   justify-content: space-between;
+
+  > strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 
 .headerTools {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   flex-wrap: nowrap;
@@ -95,11 +114,39 @@
   }
 }
 
+.statusBar {
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline: 0;
+  z-index: appearance.token("z-index");
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  height: appearance.token("status-height");
+  padding-inline: appearance.token("gap");
+  border-block-start: appearance.token("border-width") solid
+    appearance.token("border");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("status-font-size");
+  line-height: appearance.token("status-line-height");
+  white-space: nowrap;
+
+  > span {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 .selectionBar {
   margin: 0;
   min-inline-size: 0;
   position: fixed;
-  inset-block-end: appearance.token("padding");
+  inset-block-end: calc(
+    #{appearance.token("status-height")} + #{appearance.token("padding")}
+  );
   left: 50%;
   transform: translateX(-50%);
   z-index: appearance.token("z-index");

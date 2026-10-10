@@ -104,9 +104,6 @@ export const EditorialShell = () => {
         header={
           <div className={styles.header}>
             <strong>{t("shell")}</strong>
-            <output aria-label={t("currentContext")}>
-              {t("context", { label: contextLabel })}
-            </output>
             <div className={styles.headerTools}>
               <EditorialLanguageMenu />
               <EditorialCommandPalette />
@@ -123,7 +120,19 @@ export const EditorialShell = () => {
           </div>
         }
         navigationLabel={t("navigation")}
-        footer={t("footer")}
+        footer={
+          <>
+            {t("footer")}
+            <output
+              className={styles.statusBar}
+              aria-label={t("currentContext")}
+            >
+              <span title={t("context", { label: contextLabel })}>
+                {t("context", { label: contextLabel })}
+              </span>
+            </output>
+          </>
+        }
       >
         <output aria-label={t("notifications")}>{noticeText}</output>
         <Outlet />

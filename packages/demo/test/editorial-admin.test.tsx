@@ -82,6 +82,22 @@ describe("editorial admin", () => {
     );
   });
 
+  it("moves live context out of the banner into the bottom status bar", async () => {
+    await renderDemo();
+    const banner = within(screen.getByRole("banner"));
+    const context = screen.getByRole("status", { name: "Current context" });
+    expect(
+      banner.queryByRole("status", { name: "Current context" })
+    ).toBeNull();
+    expect(
+      within(screen.getByRole("contentinfo")).getByRole("status", {
+        name: "Current context",
+      })
+    ).toBe(context);
+    expect(context.className).toContain("statusBar");
+    expect(context.textContent).toBe("Context: Articles");
+  });
+
   it("uses icon-only header tools with languages before the command palette and keyboard dropdown focus", async () => {
     const { user } = await renderDemo();
     const language = screen.getByRole("button", { name: "UI language" });
