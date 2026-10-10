@@ -116,9 +116,11 @@ export const EditorialShell = () => {
         }
         navigation={
           <div className={styles.actions}>
-            {commands.navigationCommands.map((command) => (
-              <AdminCommandButton key={command.id} command={command} />
-            ))}
+            {commands.navigationCommands.map((command) =>
+              command.id.endsWith(".list") ? (
+                <AdminCommandButton key={command.id} command={command} />
+              ) : null
+            )}
           </div>
         }
         navigationLabel={t("navigation")}

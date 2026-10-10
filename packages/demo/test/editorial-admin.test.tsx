@@ -82,6 +82,22 @@ describe("editorial admin", () => {
     );
   });
 
+  it("limits page navigation to lists while retaining creation in page headers and the palette", async () => {
+    const { user, main } = await renderDemo();
+    const navigation = within(
+      screen.getByRole("navigation", { name: "Editorial navigation" })
+    );
+    expect(
+      navigation.getAllByRole("button").map((button) => button.textContent)
+    ).toStrictEqual(["List articles", "List pages"]);
+    expect(main.getByRole("button", { name: "Create article" })).toBeDefined();
+    const palette = await openPalette(user);
+    expect(
+      palette.getByRole("button", { name: "Create article" })
+    ).toBeDefined();
+    expect(palette.getByRole("button", { name: "Create page" })).toBeDefined();
+  });
+
   it("uses shared EntityRow menus without changing a row action's target to the selection", async () => {
     const { user, main, application } = await renderDemo();
     await user.click(
