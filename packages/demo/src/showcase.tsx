@@ -1,6 +1,30 @@
-import { Button, Heading, Icon, Main, Section, Submit } from "@bezny/base";
+import {
+  Button,
+  Heading,
+  HeadingLevelProvider,
+  Icon,
+  Main,
+  Section,
+  Submit,
+  useHeadingLevel,
+  wrapIcon,
+} from "@bezny/base";
 import { Plane } from "lucide-react";
 import { useState } from "react";
+
+import { FieldExamples } from "./field-examples.js";
+import { InputExamples } from "./input-examples.js";
+
+const TravelIcon = wrapIcon(Plane);
+const HeadingContextExample = () => {
+  const level = useHeadingLevel();
+  return (
+    <>
+      <Heading>Explicit heading level</Heading>
+      <p>useHeadingLevel reports level {level}.</p>
+    </>
+  );
+};
 
 export const Showcase = () => {
   const [clickCount, setClickCount] = useState(0);
@@ -18,6 +42,12 @@ export const Showcase = () => {
             <Heading>Deeper heading</Heading>
           </Section>
         </Section>
+        <HeadingLevelProvider level={5}>
+          <HeadingContextExample />
+          <Section>
+            <Heading>Level six heading</Heading>
+          </Section>
+        </HeadingLevelProvider>
       </Section>
       <Section>
         <Heading>Icons</Heading>
@@ -26,7 +56,8 @@ export const Showcase = () => {
             <Icon icon={Plane} aria-hidden="true" /> Travel
           </Heading>
         </Section>
-        <Icon icon={Plane} aria-label="Airplane" />
+        <Icon icon={Plane} aria-label="Airplane" />{" "}
+        <TravelIcon aria-label="Wrapped airplane" />
       </Section>
       <Section>
         <Heading>Buttons</Heading>
@@ -38,7 +69,9 @@ export const Showcase = () => {
           <Button variant="critical">Critical</Button>
         </p>
         <p>
-          <output>Primary button clicks: {clickCount}</output>
+          <output aria-label="Primary click count">
+            Primary button clicks: {clickCount}
+          </output>
         </p>
         <p>
           <Button size="small">Small</Button> <Button disabled>Disabled</Button>{" "}
@@ -52,6 +85,8 @@ export const Showcase = () => {
         </p>
         <Button fullWidth>Full width</Button>
       </Section>
+      <InputExamples />
+      <FieldExamples />
     </Main>
   );
 };

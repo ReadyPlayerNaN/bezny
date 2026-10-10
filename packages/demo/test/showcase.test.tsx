@@ -27,11 +27,26 @@ describe("component showcase", () => {
     ).toBeTruthy();
   });
 
+  it("renders explicit heading context through level six", () => {
+    render(<Showcase />);
+
+    expect(
+      screen.getByRole("heading", { level: 5, name: "Explicit heading level" })
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("heading", { level: 6, name: "Level six heading" })
+    ).toBeTruthy();
+    expect(screen.getByText("useHeadingLevel reports level 5.")).toBeTruthy();
+  });
+
   it("renders an accessible icon", () => {
     render(<Showcase />);
 
     expect(
       screen.getByRole("graphics-symbol", { name: "Airplane" })
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("graphics-symbol", { name: "Wrapped airplane" })
     ).toBeTruthy();
   });
 
@@ -39,9 +54,9 @@ describe("component showcase", () => {
     render(<Showcase />);
 
     fireEvent.click(screen.getByRole("button", { name: "Primary" }));
-    expect(screen.getByRole("status").textContent).toBe(
-      "Primary button clicks: 1"
-    );
+    expect(
+      screen.getByRole("status", { name: "Primary click count" }).textContent
+    ).toBe("Primary button clicks: 1");
     expect(
       screen.getByRole("button", { name: "Disabled" }).hasAttribute("disabled")
     ).toBeTruthy();
