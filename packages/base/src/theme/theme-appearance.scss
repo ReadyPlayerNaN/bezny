@@ -1,0 +1,22 @@
+@use "../tokens/css-properties";
+@use "../tokens/structural";
+
+$-definitions: (
+  "background": structural.token("theme-background"),
+  "text": structural.token("theme-text"),
+  "font-family": structural.token("theme-font-family"),
+);
+
+$background: css-properties.reference($-definitions, "background", "control-theme");
+$text: css-properties.reference($-definitions, "text", "control-theme");
+$font-family: css-properties.reference($-definitions, "font-family", "control-theme");
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-theme");
+}
+
+@mixin appearance {
+  background-color: $background;
+  color: $text;
+  font-family: $font-family;
+}

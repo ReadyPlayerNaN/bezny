@@ -72,11 +72,11 @@ import { Plane } from "lucide-react";
 - `asComponent` accepts an element or component and preserves its props and React 19 ref. Non-native controls receive button semantics, keyboard activation, and a focusable default tab index. Custom components must forward the provided props/ref.
 - Disabled non-native controls are removed from tab order, suppress navigation, and stop click propagation. Focus rings and reduced-motion styling are included.
 
-The default primary colour is blue (`#007eb0`), paired with white text. Primary, secondary, and critical hover/active colours are derived in the logical layer with CSS `color-mix(in srgb, …)`: hover mixes 90% of the foundational base with black, and active mixes 80%. Base colours, black, and the absolute mixing weights are foundational; interaction states are not.
+The default primary colour is blue (`#007eb0`), paired with white text in both modes. Hover/active colours are derived in the logical layer with CSS `color-mix(in srgb, …)`: hover retains 90% of the foundational base and active retains 80%. Light-mode states mix with black; dark-mode secondary states mix with white. Primary and critical states continue darkening in dark mode to preserve white-label contrast. Base colours and absolute mixing weights are foundational; interaction states are not.
 
 Override foundational base colours on `:root` to update their derived states at runtime. Logical state tokens reference only foundational tokens, preserving adjacent-layer dependencies. The former foundational product/red hover/active tokens and cloud hover/dark tokens are removed; use the logical `color-<brand|neutral|danger>-<hover|active>` tokens for state-specific overrides. Browsers must support CSS `color-mix()`.
 
-Button palette and sizing are represented through all four layers. Normal buttons use `1rem` text with `1.25rem` line height and a `2.5rem` minimum height; small buttons use `0.75rem`, `1rem`, and `2rem`, respectively. Automatic dark-mode tokens from the source application's full theme are not copied; the palette can be themed through Bezny's CSS tokens.
+Button palette and sizing are represented through all four layers. Normal buttons use `1rem` text with `1.25rem` line height and a `2.5rem` minimum height; small buttons use `0.75rem`, `1rem`, and `2rem`, respectively. Both light and dark palettes can be themed through Bezny's CSS tokens.
 
 ## Inputs and fields
 
@@ -164,9 +164,40 @@ Fields preserve externally supplied `aria-describedby` IDs and append generated 
 
 Install `react-hook-form` in the consuming application when importing its APIs. The library keeps RHF, React, Radix, and Lucide external in the Vite build, so form components use the same provider runtime as their consumers.
 
+## Light and dark mode
+
+Importing `@bezny/base/style.css` enables OS-based colour mode automatically through `prefers-color-scheme`. Changes to OS settings update the page without JavaScript. The stylesheet sets the theme boundary's background, inherited text/font, and `color-scheme` for native controls, scrollbars, and browser UI.
+
+Override the OS preference with a CSS class, preferably on `<html>`:
+
+| Root element                 | Colour mode         |
+| ---------------------------- | ------------------- |
+| `<html class="bezny-light">` | Always light        |
+| `<html class="bezny-dark">`  | Always dark         |
+| `<html>` (neither class)     | Follow OS (default) |
+
+Remove both classes to restore automatic mode; replace the old class rather than accumulating modes. If both classes are present, dark wins. No `data-theme` attribute or theme provider is used. Applications own preference persistence and any theme-switcher UI. To avoid a flash, set a saved explicit class before the stylesheet loads.
+
+Classes also work with React `className` on a wrapper or with a class on `<body>`. Nested explicit boundaries are supported, including light content inside a dark page:
+
+```tsx
+<div className="bezny-dark">
+  <Heading>Dark interface</Heading>
+  <section className="bezny-light">
+    <TextInput aria-label="Light preview" />
+  </section>
+</div>
+```
+
+Every boundary redeclares logical and structural aliases so controls resolve against their local palette rather than already-resolved ancestor values. Unclassified descendants inherit the surrounding mode. Portals inherit their actual DOM container's mode, not React context; apply the same class to the portal container when using a nested theme.
+
+Dark mode provides dark page/input/disabled surfaces, light text and feedback, brighter error text and focus rings, visible control borders, and lighter secondary interaction states. Typography and spacing do not change. Default text and button labels meet WCAG AA's 4.5:1 contrast in both modes; input boundaries meet 3:1. Disabled controls retain their intentional reduced opacity. Custom palette overrides must be contrast-checked again.
+
+To customise themes, override logical colour mappings on the relevant boundary after the stylesheet (using foundational references in Sass). To customise foundational colours within a nested boundary, re-emit the logical and structural declarations there as well; inherited aliases do not recompute automatically. The source `logical.declarations(light|dark)` mixin validates the mode and emits the full logical system. Sass modules remain internal package source, not public exports.
+
 ## Styling
 
-Styles use locally scoped SCSS module classes and the project's four-layer [SCSS token architecture](../../README.md#scss-token-architecture). Shared defaults are included in `@bezny/base/style.css`; control aliases are bound on each heading. Text color inherits from the surrounding interface.
+Styles use locally scoped SCSS module classes and the project's four-layer [SCSS token architecture](../../README.md#scss-token-architecture). Shared defaults and theme boundaries are included in `@bezny/base/style.css`; control aliases are bound on each component. Text color inherits from the surrounding interface.
 
 - `src/tokens/_css-properties.scss` — pure CSS-name/reference functions and declaration mixins, inspired by [Bulma](https://github.com/jgthms/bulma/blob/main/sass/utilities/css-variables.scss).
 - `src/tokens/_foundational.scss` — absolute sizes in `rem`, font family, and weight.
@@ -175,7 +206,8 @@ Styles use locally scoped SCSS module classes and the project's four-layer [SCSS
 - `src/content/heading-typography.scss` and `src/content/heading.module.scss` — heading control aliases and their usage.
 - `src/controls/button-appearance.scss` and `src/controls/button.module.scss` — button control aliases, states, variants, and sizes.
 - `src/inputs/toggle-appearance.scss` and `src/inputs/toggle-input.module.scss` — scoped switch control tokens and track/thumb states.
-- `src/tokens.scss` — shared `:root` defaults, included by the heading SCSS module.
+- `src/theme/theme-appearance.scss` — theme-boundary control tokens for the canvas and inherited typography.
+- `src/tokens.scss` — shared `:root` defaults, automatic OS mode, and explicit `.bezny-light`/`.bezny-dark` boundaries.
 
 Toggle tokens use `--bezny-control-toggle-*`, bound on the switch root and inherited by its thumb. Default `width`, `height`, `thumb-size`, and `inset` are `2.5rem`, `1.5rem`, `1.25rem`, and `0.125rem`. Theme `background`, `checked-background`, `thumb-background`, `focus-ring`, `border-error`, `opacity-disabled`, and `duration-interaction` through the same adjacent-layer token chain. Component-scoped overrides affect only that switch; shared foundational/logical overrides belong on `:root`.
 
@@ -232,5 +264,13 @@ pnpm --filter @bezny/base build
 pnpm --filter @bezny/base typecheck
 pnpm --filter @bezny/base test
 ```
+
+Real-browser theme and contrast tests require Chromium (or a compatible Chrome executable):
+
+```sh
+CHROMIUM_PATH=/usr/bin/chromium node --test test/theme.browser.mjs
+```
+
+Run this from `packages/base` after building. The tests exercise both OS preferences, explicit class overrides, returning to automatic mode, nested boundaries, native colour schemes, component colours, derived states, focus rings, and contrast.
 
 Build first when running package tests directly. The root `pnpm test` builds automatically through Turbo. Builds emit `dist/index.js`, type declarations, source maps, and `dist/style.css`. React and its JSX runtime remain external; consumers supply React through the peer dependency.

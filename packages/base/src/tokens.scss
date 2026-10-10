@@ -1,9 +1,34 @@
 @use "./tokens/foundational";
 @use "./tokens/logical";
 @use "./tokens/structural";
+@use "./theme/theme-appearance";
+
+@mixin -theme($mode) {
+  @include logical.declarations($mode);
+  // Rebind aliases at every boundary so nested themes do not inherit
+  // values already resolved in the surrounding theme.
+  @include structural.declarations;
+  @include theme-appearance.declarations;
+  @include theme-appearance.appearance;
+  color-scheme: $mode;
+}
 
 :root {
   @include foundational.declarations;
-  @include logical.declarations;
-  @include structural.declarations;
+  @include -theme(light);
+}
+
+@media (prefers-color-scheme: dark) {
+  :global(:root:not(.bezny-light):not(.bezny-dark)) {
+    @include -theme(dark);
+  }
+}
+
+:global(.bezny-light) {
+  @include -theme(light);
+}
+
+// If both classes are present, dark wins. Prefer exactly one explicit mode.
+:global(.bezny-dark) {
+  @include -theme(dark);
 }

@@ -1,11 +1,12 @@
+@use "sass:map";
 @use "css-properties";
 @use "foundational";
 
-@function -darkened-color($base-color, $base-weight) {
+@function -mixed-color($base-color, $base-weight, $mix-color: "color-black") {
   @return color-mix(
     in srgb,
     foundational.token($base-color) foundational.token($base-weight),
-    foundational.token("color-black")
+    foundational.token($mix-color)
   );
 }
 
@@ -50,14 +51,17 @@ $-definitions: (
   "control-spinner-size": foundational.size(16),
   "control-spinner-border-width": foundational.size(2),
   "color-brand": foundational.token("color-product-normal"),
-  "color-brand-hover": -darkened-color("color-product-normal", "mix-weight-90"),
-  "color-brand-active": -darkened-color("color-product-normal", "mix-weight-80"),
+  "color-brand-hover": -mixed-color("color-product-normal", "mix-weight-90"),
+  "color-brand-active": -mixed-color("color-product-normal", "mix-weight-80"),
   "color-neutral": foundational.token("color-cloud-normal"),
-  "color-neutral-hover": -darkened-color("color-cloud-normal", "mix-weight-90"),
-  "color-neutral-active": -darkened-color("color-cloud-normal", "mix-weight-80"),
+  "color-neutral-hover": -mixed-color("color-cloud-normal", "mix-weight-90"),
+  "color-neutral-active": -mixed-color("color-cloud-normal", "mix-weight-80"),
   "color-danger": foundational.token("color-red-normal"),
-  "color-danger-hover": -darkened-color("color-red-normal", "mix-weight-90"),
-  "color-danger-active": -darkened-color("color-red-normal", "mix-weight-80"),
+  "color-danger-hover": -mixed-color("color-red-normal", "mix-weight-90"),
+  "color-danger-active": -mixed-color("color-red-normal", "mix-weight-80"),
+  "color-danger-text": foundational.token("color-red-normal"),
+  "color-border": foundational.token("color-slate-normal"),
+  "color-page": foundational.token("color-white"),
   "color-on-accent": foundational.token("color-white"),
   "color-text-strong": foundational.token("color-ink-dark"),
   "focus-ring": foundational.token("shadow-focus"),
@@ -83,6 +87,21 @@ $-definitions: (
   "color-text-normal": foundational.token("color-ink-normal"),
   "color-surface": foundational.token("color-white"),
   "color-surface-disabled": foundational.token("color-cloud-light"),
+);
+
+$-dark-colors: (
+  "color-neutral": foundational.token("color-ink-soft"),
+  "color-neutral-hover":
+    -mixed-color("color-ink-soft", "mix-weight-90", "color-white"),
+  "color-neutral-active":
+    -mixed-color("color-ink-soft", "mix-weight-80", "color-white"),
+  "color-text-strong": foundational.token("color-cloud-light"),
+  "color-text-normal": foundational.token("color-cloud-muted"),
+  "color-page": foundational.token("color-ink-dark"),
+  "color-surface": foundational.token("color-ink-normal"),
+  "color-surface-disabled": foundational.token("color-ink-dark"),
+  "color-danger-text": foundational.token("color-red-light"),
+  "focus-ring": foundational.token("shadow-focus-strong"),
 );
 
 @function token($token-name) {
@@ -124,6 +143,13 @@ $font-weight-bold: css-properties.reference(
   );
 }
 
-@mixin declarations {
-  @include css-properties.declarations($-definitions, "logical");
+@mixin declarations($mode: light) {
+  @if $mode != light and $mode != dark {
+    @error "Unknown colour mode: #{$mode}";
+  }
+  $definitions: $-definitions;
+  @if $mode == dark {
+    $definitions: map.merge($definitions, $-dark-colors);
+  }
+  @include css-properties.declarations($definitions, "logical");
 }

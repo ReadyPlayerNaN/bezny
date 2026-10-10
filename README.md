@@ -48,6 +48,8 @@ Bezny uses four layers of tokens, with dependencies flowing in one direction:
 
 The implementation follows [Bulma's Sass/CSS-variable separation](https://github.com/jgthms/bulma/blob/main/sass/utilities/css-variables.scss): pure functions return runtime CSS references, while mixins emit declarations. Bezny additionally validates token keys against their definition maps. Components consume exported Sass variables containing CSS `var()` values, so runtime theming is preserved. Tests verify that referenced declarations are emitted and scoped correctly.
 
+The stylesheet follows OS light/dark settings by default. Override with `.bezny-light` or `.bezny-dark` on `<html>` or a scoped wrapper; nested explicit themes rebind their token aliases. See [light and dark mode](packages/base/README.md#light-and-dark-mode) for usage and customisation.
+
 The project-local [using-scss-tokens skill](.agents/skills/using-scss-tokens/SKILL.md) provides the implementation workflow.
 
 ## Requirements

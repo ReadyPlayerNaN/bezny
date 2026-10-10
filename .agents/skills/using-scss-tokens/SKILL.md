@@ -29,7 +29,8 @@ Follow [Bulma's separation of reference functions from declaration mixins](https
 - `packages/base/src/tokens/_css-properties.scss` builds names, validates references against definition maps, and emits declarations through mixins.
 - Layer modules keep private definition maps. Their public Sass variables and domain-specific accessors return CSS `var()` expressions rather than resolved literals.
 - Reference functions are pure: no global registry mutation, automatic declaration emission, or dependency on previous registration calls.
-- Declaration mixins emit in their caller's scope. Shared layers are emitted at `:root`; component control aliases are emitted on the component selector.
+- Declaration mixins emit in their caller's scope. Foundations are emitted at `:root`; logical and structural aliases are rebound at `:root` and every explicit `.bezny-light`/`.bezny-dark` boundary. Component control aliases are emitted on the component selector.
+- With no explicit root class, use `prefers-color-scheme` to follow the OS. Explicit theme classes override the OS; never use `data-theme`. Preserve nested boundaries by re-emitting dependent aliases in their local scope. Keep absolute colours foundational and theme-specific semantic mappings logical.
 - Unknown map keys and missing Sass exports fail compilation. The emitted-CSS tests still ensure definitions actually reach the stylesheet and exist in each heading's scope.
 
 ## Workflow

@@ -3,6 +3,9 @@
 @use "logical";
 
 $-definitions: (
+  "theme-background": logical.token("color-page"),
+  "theme-text": logical.token("color-text-strong"),
+  "theme-font-family": logical.$font-family-body,
   "heading-font-family": logical.$font-family-body,
   "heading-font-weight": logical.$font-weight-bold,
   "button-font-family": logical.$font-family-body,
@@ -23,9 +26,9 @@ $-definitions: (
   "input-radius": logical.token("control-radius"),
   "input-background": logical.token("color-surface"),
   "input-background-disabled": logical.token("color-surface-disabled"),
-  "input-border": logical.token("color-neutral-active"),
+  "input-border": logical.token("color-border"),
   "input-border-focus": logical.token("color-brand"),
-  "input-border-error": logical.token("color-danger"),
+  "input-border-error": logical.token("color-danger-text"),
   "input-text": logical.token("color-text-strong"),
   "input-placeholder": logical.token("color-text-normal"),
   "input-font-family": logical.$font-family-body,
@@ -48,7 +51,7 @@ $-definitions: (
   "toggle-checked-background": logical.token("color-brand"),
   "toggle-thumb-background": logical.token("color-on-accent"),
   "toggle-border-width": logical.token("control-border-width"),
-  "toggle-border-error": logical.token("color-danger"),
+  "toggle-border-error": logical.token("color-danger-text"),
   "toggle-focus-ring": logical.token("focus-ring"),
   "toggle-opacity-disabled": logical.token("opacity-field-disabled"),
   "toggle-duration-interaction": logical.token("duration-interaction"),
@@ -62,7 +65,7 @@ $-definitions: (
   "field-feedback-font-size": logical.token("feedback-font-size"),
   "field-feedback-line-height": logical.token("feedback-line-height"),
   "field-help-color": logical.token("color-text-normal"),
-  "field-error-color": logical.token("color-danger"),
+  "field-error-color": logical.token("color-danger-text"),
 );
 
 @each $size in (normal, small) {
@@ -81,7 +84,7 @@ $-definitions: (
   $border-color: "color-#{$palette}";
   $text-color: "color-on-accent";
   @if $variant == secondary {
-    $border-color: "color-neutral-active";
+    $border-color: "color-border";
     $text-color: "color-text-strong";
   }
   $-definitions: map.merge(

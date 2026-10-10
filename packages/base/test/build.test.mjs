@@ -26,7 +26,7 @@ const tokenPattern = /(?<name>--bezny-[\w-]+)\s*:\s*(?<value>[^;}]+)/gu;
 const referencePattern = /^var\((?<name>--bezny-[\w-]+)\)$/u;
 const tokenValueReferencePattern = /var\((?<name>--bezny-[\w-]+)\)/gu;
 const derivedColorPattern =
-  /^color-mix\(in srgb,\s*var\(--bezny-foundation-[\w-]+\) var\(--bezny-foundation-mix-weight-\d+\),\s*var\(--bezny-foundation-color-black\)\)$/u;
+  /^color-mix\(in srgb,\s*var\(--bezny-foundation-[\w-]+\) var\(--bezny-foundation-mix-weight-\d+\),\s*var\(--bezny-foundation-color-(?:black|white)\)\)$/u;
 const cssReferencePattern = /var\((?<name>--bezny-[\w-]+)/gu;
 const pixelPattern = /(?:\d*\.)?\d+px\b/u;
 const layerPattern =
