@@ -7,7 +7,9 @@
 .application,
 .actions,
 .commands,
-.form {
+.form,
+.selectionBar,
+.selectionMenu {
   @include appearance.declarations;
 }
 
@@ -81,6 +83,64 @@
     padding: appearance.token("padding");
     border-block-end: appearance.token("border-width") solid
       appearance.token("border");
+  }
+}
+
+.selectionBar {
+  margin: 0;
+  min-inline-size: 0;
+  position: fixed;
+  inset-block-end: appearance.token("padding");
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: appearance.token("z-index");
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: appearance.token("gap");
+  max-inline-size: calc(100% - 2 * #{appearance.token("padding")});
+  padding: appearance.token("gap");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  box-shadow: appearance.token("shadow");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  > span {
+    white-space: nowrap;
+  }
+}
+.selectionIcon {
+  width: appearance.token("font-size");
+  height: appearance.token("font-size");
+}
+.selectionMenu {
+  z-index: appearance.token("z-index");
+  max-height: var(--radix-dropdown-menu-content-available-height);
+  max-width: var(--radix-dropdown-menu-content-available-width);
+  overflow-y: auto;
+  padding: appearance.token("gap");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  box-shadow: appearance.token("shadow");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+}
+.selectionMenuItem {
+  padding: appearance.token("gap");
+  border-radius: appearance.token("radius");
+  outline: none;
+  cursor: default;
+  &[data-highlighted] {
+    background: appearance.token("hover");
+  }
+  &[data-destructive="true"] {
+    color: appearance.token("danger");
   }
 }
 

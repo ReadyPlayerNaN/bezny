@@ -161,6 +161,56 @@ describe("editorial admin", () => {
     expect(application.store.get(selectedArticleIdsAtom)).toStrictEqual([]);
   });
 
+  it("shows a compact selection bar with wrapped Lucide icons and keyboard-operated shared actions", async () => {
+    const { user, main } = await renderDemo();
+    expect(main.queryByRole("group", { name: "Selected items" })).toBeNull();
+    await user.click(
+      main.getByRole("checkbox", { name: "Select Welcome to Bezny" })
+    );
+    await user.click(
+      main.getByRole("checkbox", { name: "Select Planning the next release" })
+    );
+    const bar = main.getByRole("group", { name: "Selected items" });
+    expect(bar.textContent).toBe("2 selected");
+    expect(
+      bar.querySelectorAll('svg[role="graphics-symbol"][aria-hidden="true"]')
+    ).toHaveLength(2);
+    const trigger = within(bar).getByRole("button", {
+      name: "Selection actions",
+    });
+    trigger.focus();
+    await user.keyboard("{Enter}");
+    await screen.findByRole("menuitem", { name: "Delete selected articles" });
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+    await user.click(
+      within(bar).getByRole("button", { name: "Clear selection" })
+    );
+    expect(main.queryByRole("group", { name: "Selected items" })).toBeNull();
+  });
+
+  it("restores selection-menu trigger focus after cancelling shared deletion", async () => {
+    const { user, main, application } = await renderDemo();
+    await user.click(
+      main.getByRole("checkbox", { name: "Select Welcome to Bezny" })
+    );
+    const trigger = main.getByRole("button", { name: "Selection actions" });
+    trigger.focus();
+    await user.keyboard("{ArrowDown}");
+    const item = await screen.findByRole("menuitem", {
+      name: "Delete selected articles",
+    });
+    expect(document.activeElement).toBe(item);
+    await user.keyboard("{Enter}");
+    const dialog = within(await screen.findByRole("alertdialog"));
+    expect(document.activeElement).toBe(
+      dialog.getByRole("button", { name: "Cancel deletion" })
+    );
+    await user.click(dialog.getByRole("button", { name: "Cancel deletion" }));
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(application.store.get(selectedArticleIdsAtom)).toStrictEqual(["1"]);
+  });
+
   it("shares filter execution between ordinary controls and parameterized palette commands", async () => {
     const { user, main } = await renderDemo();
     await user.click(main.getByRole("button", { name: "Search: All" }));
@@ -578,8 +628,9 @@ describe("editorial admin", () => {
       // oxlint-disable-next-line eslint/no-await-in-loop -- User interactions must settle sequentially, not race.
       await user.click(checkbox);
     }
+    await user.click(main.getByRole("button", { name: "Selection actions" }));
     await user.click(
-      main.getByRole("button", { name: "Delete selected articles" })
+      await screen.findByRole("menuitem", { name: "Delete selected articles" })
     );
     const dialog = within(await screen.findByRole("alertdialog"));
     await user.click(dialog.getByRole("button", { name: "Confirm deletion" }));

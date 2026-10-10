@@ -72,6 +72,25 @@ describe("editorial localization", () => {
     }
   );
 
+  it("localizes the floating selection count and inherits RTL dropdown direction", async () => {
+    const { user } = await renderLocalizedDemo("ar");
+    await screen.findByRole("heading", { name: "مرحبًا ببيزني" });
+    await user.click(
+      screen.getByRole("checkbox", { name: "تحديد مرحبًا ببيزني" })
+    );
+    const bar = screen.getByRole("group", { name: "العناصر المحددة" });
+    expect(bar.textContent).toBe("١ محدد");
+    const trigger = within(bar).getByRole("button", {
+      name: "إجراءات التحديد",
+    });
+    trigger.focus();
+    await user.keyboard("{ArrowDown}");
+    const menu = await screen.findByRole("menu");
+    expect(menu.getAttribute("dir")).toBe("rtl");
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+  });
+
   it("switches locale through the palette using the same language action as ordinary UI", async () => {
     const { user } = await renderLocalizedDemo("en");
     await screen.findByRole("heading", { name: "Welcome to Bezny" });

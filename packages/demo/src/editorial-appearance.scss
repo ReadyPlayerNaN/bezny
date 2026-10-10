@@ -16,7 +16,14 @@ $-definitions: ();
       padding-large,
       gap,
       radius,
-      focus-ring
+      focus-ring,
+      font-family,
+      font-size,
+      line-height,
+      shadow,
+      z-index,
+      hover,
+      danger
     )
 {
   $-definitions: map.set($-definitions, $name, surfaces.token($name));

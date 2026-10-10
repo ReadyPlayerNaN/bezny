@@ -43,6 +43,7 @@ import {
   editorialTextLimits,
 } from "./editorial-records.js";
 import type { EditorialRecord, EditorialValues } from "./editorial-records.js";
+import { EditorialSelectionBar } from "./editorial-selection-bar.js";
 
 import styles from "./editorial-admin.module.scss";
 
@@ -111,11 +112,7 @@ export const EditorialListPage = () => {
       {data?.status !== "ready" && data?.status !== "error" && (
         <output aria-label={adminT("loading")}>{adminT("loading")}</output>
       )}
-      <div className={styles.actions}>
-        {commands.selectionCommands.map((command) => (
-          <AdminCommandButton key={command.id} command={command} />
-        ))}
-      </div>
+      <EditorialSelectionBar />
       {data?.status === "ready" &&
         (records.length === 0 ? (
           <p>
