@@ -119,6 +119,26 @@ describe("editorial admin", () => {
     expect(palette.getByRole("button", { name: "Create page" })).toBeDefined();
   });
 
+  it.each([
+    { entity: "articles", title: "Welcome to Bezny" },
+    { entity: "pages", title: "About us" },
+  ])(
+    "provides a detail hyperlink on every $entity row and supports keyboard navigation",
+    async ({ entity, title }) => {
+      const { user, main, application } = await renderDemo(`/${entity}`);
+      for (const row of main.getAllByRole("group")) {
+        expect(within(row).getByRole("link").getAttribute("href")).toBe(
+          `/${entity}/${row.dataset.selectionId}`
+        );
+      }
+      const link = main.getByRole("link", { name: title });
+      link.focus();
+      await user.keyboard("{Enter}");
+      await main.findByRole("heading", { level: 1, name: title });
+      expect(application.router.state.location.pathname).toBe(`/${entity}/1`);
+    }
+  );
+
   it("uses shared EntityRow menus without changing a row action's target to the selection", async () => {
     const { user, main, application } = await renderDemo();
     await user.click(

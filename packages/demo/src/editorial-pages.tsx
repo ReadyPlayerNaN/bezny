@@ -25,6 +25,7 @@ import {
   TextareaField,
 } from "@bezny/base";
 import type { EntityRowData } from "@bezny/base";
+import { Link } from "@tanstack/react-router";
 import { useStore } from "jotai";
 import { useCallback, useMemo } from "react";
 import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
@@ -128,7 +129,13 @@ export const EditorialListPage = () => {
           >
             <EntityRowList
               groupLabel={(row) => t("item", { id: row.id })}
-              menuLabel={(row) => t("actions", { title: row.title })}
+              menuLabel={(row) =>
+                t("actions", {
+                  title:
+                    records.find((record) => record.id === row.id)?.title ??
+                    row.id,
+                })
+              }
               actionErrorLabel={t("saveError")}
               menuSummary={() =>
                 t("selected", {
@@ -164,7 +171,14 @@ export const EditorialListPage = () => {
                     </Badge>
                   ),
                   id: record.id,
-                  title: record.title,
+                  title: (
+                    <Link
+                      to="/$entity/$recordId"
+                      params={{ entity: resource.key, recordId: record.id }}
+                    >
+                      {record.title}
+                    </Link>
+                  ),
                 };
               })}
             />
