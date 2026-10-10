@@ -48,8 +48,10 @@ export const EditorialCommandPalette = () => {
   const trigger = useRef<HTMLButtonElement>(null);
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
-    setQuery("");
-    setEditing(null);
+    if (nextOpen) {
+      setQuery("");
+      setEditing(null);
+    }
   };
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
@@ -71,8 +73,10 @@ export const EditorialCommandPalette = () => {
       }
       event.preventDefault();
       setOpen((current) => !current);
-      setQuery("");
-      setEditing(null);
+      if (!open) {
+        setQuery("");
+        setEditing(null);
+      }
     };
     document.addEventListener("keydown", handleShortcut);
     return () => document.removeEventListener("keydown", handleShortcut);
@@ -190,9 +194,15 @@ export const EditorialDeleteDialog = () => {
   const { t, i18n } = useTranslation("editorial");
   const registry = useAdminEntityRegistry();
   const [request, setRequest] = useAtom(deletionRequestAtom);
+  // Keep the last presentation until Radix finishes the exit animation.
+  const [displayRequest, setDisplayRequest] = useState(request);
+  if (request && request !== displayRequest) {
+    setDisplayRequest(request);
+  }
   const [firstResource] = editorialResources;
   const resource =
-    registry.get(request?.entity ?? firstResource?.key ?? "") ?? firstResource;
+    registry.get(displayRequest?.entity ?? firstResource?.key ?? "") ??
+    firstResource;
   if (!resource) {
     throw new Error("No editorial resource registered.");
   }
@@ -202,7 +212,7 @@ export const EditorialDeleteDialog = () => {
   const store = useStore();
   const navigate = useAdminEntityNavigate();
   const targetIds = new Set(request?.ids);
-  const labels = request?.labels ?? [];
+  const labels = displayRequest?.labels ?? [];
   const confirm = async () => {
     if (!request || busy || labels.length === 0) {
       return;
@@ -237,11 +247,10 @@ export const EditorialDeleteDialog = () => {
       onOpenChange={(open) => {
         if (!open) {
           setRequest(null);
-          setFailure(null);
         }
       }}
     >
-      {request && (
+      {displayRequest && (
         <AlertDialogContent
           dir={i18n.dir()}
           onEscapeKeyDown={(event) => {
@@ -251,8 +260,10 @@ export const EditorialDeleteDialog = () => {
           }}
           onCloseAutoFocus={(event) => {
             event.preventDefault();
-            const target = request.returnFocus?.isConnected
-              ? request.returnFocus
+            setDisplayRequest(null);
+            setFailure(null);
+            const target = displayRequest.returnFocus?.isConnected
+              ? displayRequest.returnFocus
               : document.querySelector<HTMLElement>("#command-palette-trigger");
             target?.focus();
           }}

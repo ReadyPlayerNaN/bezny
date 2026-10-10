@@ -1,7 +1,15 @@
 @use "sass:map";
 @use "../tokens/css-properties";
 @use "../tokens/surfaces";
-$-definitions: ();
+@use "../tokens/structural";
+$-definitions: (
+  "duration-enter": structural.token("dialog-duration-enter"),
+  "duration-exit": structural.token("dialog-duration-exit"),
+  "easing-enter": structural.token("dialog-easing-enter"),
+  "easing-exit": structural.token("dialog-easing-exit"),
+  "scale-hidden": structural.token("dialog-scale-hidden"),
+  "backdrop-blur": structural.token("dialog-backdrop-blur"),
+);
 @each $name
     in (
       background,

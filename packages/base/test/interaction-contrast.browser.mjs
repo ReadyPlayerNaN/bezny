@@ -149,7 +149,7 @@ test("links, status badges, destructive labels and keyboard rings maintain contr
     const fixture = path.join(directory, "contrast.html");
     writeFileSync(
       fixture,
-      `<!doctype html><html><head><style>${stylesheet}</style><style>* { transition: none !important; }</style></head><body>${content}<pre id="contrast-results"></pre><script>document.getElementById('contrast-results').textContent = JSON.stringify((${sampleInteractions.toString()})());</script></body></html>`
+      `<!doctype html><html><head><style>${stylesheet}</style><style>* { transition: none !important; }</style></head><body>${content}<pre id="contrast-results"></pre><script>window.addEventListener('load', () => setTimeout(() => { document.getElementById('contrast-results').textContent = JSON.stringify((${sampleInteractions.toString()})()); }, 50));</script></body></html>`
     );
     const browser = spawnSync(
       process.env.CHROMIUM_PATH ?? "chromium",
@@ -159,6 +159,8 @@ test("links, status badges, destructive labels and keyboard rings maintain contr
         "--disable-gpu",
         "--no-first-run",
         `--user-data-dir=${path.join(directory, "profile")}`,
+        // Let the document activate before measuring keyboard-visible focus.
+        "--virtual-time-budget=1000",
         "--dump-dom",
         pathToFileURL(fixture).href,
       ],

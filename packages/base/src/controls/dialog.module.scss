@@ -5,6 +5,16 @@
   inset: 0;
   z-index: appearance.token("z-index");
   background: appearance.token("overlay");
+  backdrop-filter: blur(appearance.token("backdrop-blur"));
+  &[data-state="open"] {
+    animation: backdrop-enter appearance.token("duration-enter")
+      appearance.token("easing-enter") both;
+  }
+  &[data-state="closed"] {
+    pointer-events: none;
+    animation: backdrop-exit appearance.token("duration-exit")
+      appearance.token("easing-exit") both;
+  }
 }
 .content {
   @include appearance.declarations;
@@ -34,6 +44,62 @@
   font-size: appearance.token("font-size");
   line-height: appearance.token("line-height");
   box-shadow: appearance.token("shadow");
+  &[data-state="open"] {
+    animation: dialog-enter appearance.token("duration-enter")
+      appearance.token("easing-enter") both;
+  }
+  &[data-state="closed"] {
+    pointer-events: none;
+    animation: dialog-exit appearance.token("duration-exit")
+      appearance.token("easing-exit") both;
+  }
+}
+@keyframes backdrop-enter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes backdrop-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+// Individual scale composes with centering transforms, RTL and caller positioning.
+@keyframes dialog-enter {
+  from {
+    opacity: 0;
+    scale: appearance.token("scale-hidden");
+  }
+  to {
+    opacity: 1;
+    scale: 1;
+  }
+}
+@keyframes dialog-exit {
+  from {
+    opacity: 1;
+    scale: 1;
+  }
+  to {
+    opacity: 0;
+    scale: appearance.token("scale-hidden");
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .overlay[data-state],
+  .content[data-state] {
+    animation: none;
+  }
+  .overlay[data-state="closed"],
+  .content[data-state="closed"] {
+    opacity: 0;
+  }
 }
 .title {
   margin: 0;

@@ -63,6 +63,10 @@ $-definitions: (
   "shadow-focus-strong": 0 0 0 0.1875rem rgb(88 196 237 / 85%),
   "opacity-field-disabled": 0.64,
   "opacity-disabled": 0.56,
+  "duration-modal": 200ms,
+  "easing-enter": ease-out,
+  "easing-exit": ease-in,
+  "scale-subtle": 0.96,
   "duration-interaction": 120ms,
   "duration-spinner": 700ms,
 );

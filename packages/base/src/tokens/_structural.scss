@@ -5,6 +5,12 @@
 
 $-definitions: (
   "command-list-max-height": logical.token("command-list-max-height"),
+  "dialog-duration-enter": logical.token("duration-modal-enter"),
+  "dialog-duration-exit": logical.token("duration-modal-exit"),
+  "dialog-easing-enter": logical.token("easing-enter"),
+  "dialog-easing-exit": logical.token("easing-exit"),
+  "dialog-scale-hidden": logical.token("scale-modal-hidden"),
+  "dialog-backdrop-blur": logical.token("blur-backdrop"),
   "theme-background": logical.token("color-page"),
   "theme-text": logical.token("color-text-strong"),
   "theme-font-family": logical.$font-family-body,
