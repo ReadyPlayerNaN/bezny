@@ -78,7 +78,7 @@ Override foundational base colours on `:root` to update their derived states at 
 
 Button palette and sizing are represented through all four layers. Normal buttons use `1rem` text with `1.25rem` line height and a `2.5rem` minimum height; small buttons use `0.75rem`, `1rem`, and `2rem`, respectively. Automatic dark-mode tokens from the source application's full theme are not copied; the palette can be themed through Bezny's CSS tokens.
 
-## Inputs and field presentation
+## Inputs and fields
 
 **Inputs** are reusable RHF-unbound controls: `TextInput`, `TextareaInput`, `CheckboxInput`, `RadioGroupInput`, and `RadioInput`. They work without a form provider and accept native/Radix control props and React 19 refs. Checkbox and radio behavior comes from Radix; text entry uses native HTML controls.
 
@@ -95,6 +95,65 @@ Button palette and sizing are represented through all four layers. Normal button
 ```
 
 All input and field presentation styles use scoped SCSS modules and the same four-layer token system. The source's typography is converted to `rem`.
+
+**Fields** are RHF-ready compositions: `TextField`, `EmailField`, `CheckboxField`, `RadioField`, and `TextareaField`. They include `FieldLabel` and `FieldFeedback`, bind through `useController`, and accept a typed `name`, optional `control`, `rules`, `defaultValue`, `disabled`, and normal input presentation props. They work under a `FormProvider` or with explicit `control`.
+
+```tsx
+import {
+  CheckboxField,
+  EmailField,
+  RadioField,
+  Submit,
+  TextareaField,
+  TextField,
+} from "@bezny/base";
+import { FormProvider, useForm } from "react-hook-form";
+
+export function ProfileEditor() {
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      accepted: false,
+      plan: "basic",
+      notes: "",
+    },
+  });
+  return (
+    <FormProvider {...form}>
+      <form
+        noValidate
+        onSubmit={form.handleSubmit((values) => saveProfile(values))}
+      >
+        <TextField
+          name="name"
+          label="Name"
+          help="Use your full name"
+          rules={{ required: "Name is required" }}
+        />
+        <EmailField name="email" label="Email" />
+        <CheckboxField name="accepted" label="Accept terms" />
+        <RadioField
+          name="plan"
+          label="Plan"
+          options={[
+            { label: "Basic", value: "basic" },
+            { label: "Pro", value: "pro" },
+          ]}
+        />
+        <TextareaField name="notes" label="Notes" />
+        <Submit>Save</Submit>
+      </form>
+    </FormProvider>
+  );
+}
+```
+
+`saveProfile` is application-owned. Supply default values to RHF and use a resolver or `rules` for validation. `EmailField` sets native `type="email"`; it does not impose an email regex or schema. With `noValidate`, RHF owns error presentation rather than browser validation bubbles. Required rules also drive required markers and native required semantics.
+
+Fields preserve externally supplied `aria-describedby` IDs and append generated help/error IDs. They set `aria-invalid` on invalid controls, announce error messages, and connect RHF focus refs to actual inputs/buttons. `RadioField` accepts string-valued `options` with labels and optional `disabled` flags; values must be unique. It labels the group and focuses the selected enabled option, or the first enabled option, on validation errors. `CheckboxField` binds boolean form values; use unbound `CheckboxInput` for tri-state controls.
+
+Install `react-hook-form` in the consuming application when importing its APIs. The library keeps RHF, React, Radix, and Lucide external in the Vite build, so form components use the same provider runtime as their consumers.
 
 ## Styling
 
