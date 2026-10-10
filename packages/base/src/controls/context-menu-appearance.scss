@@ -1,0 +1,37 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/surfaces";
+$-definitions: ();
+@each $name
+    in (
+      background,
+      text,
+      muted,
+      danger,
+      border,
+      border-width,
+      radius,
+      hover,
+      font-family,
+      font-size,
+      line-height,
+      padding-small,
+      gap,
+      width,
+      shadow,
+      z-index,
+      opacity-disabled
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+@function token($name) {
+  @return css-properties.reference(
+    $-definitions,
+    $name,
+    "control-context-menu"
+  );
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-context-menu");
+}

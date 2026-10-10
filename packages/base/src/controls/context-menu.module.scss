@@ -1,0 +1,47 @@
+@use "./context-menu-appearance" as appearance;
+.content {
+  @include appearance.declarations;
+  z-index: appearance.token("z-index");
+  min-width: appearance.token("width");
+  max-height: var(--radix-context-menu-content-available-height);
+  overflow-y: auto;
+  padding: appearance.token("padding-small");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  box-shadow: appearance.token("shadow");
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: appearance.token("gap");
+  padding: appearance.token("padding-small");
+  border-radius: appearance.token("radius");
+  outline: none;
+  cursor: default;
+  &[data-highlighted] {
+    background: appearance.token("hover");
+  }
+  &[data-disabled] {
+    opacity: appearance.token("opacity-disabled");
+  }
+  &[data-tone="critical"] {
+    color: appearance.token("danger");
+  }
+}
+.label {
+  padding: appearance.token("padding-small");
+  color: appearance.token("muted");
+}
+.separator {
+  height: appearance.token("border-width");
+  background: appearance.token("border");
+}
+.icon {
+  width: appearance.token("font-size");
+  height: appearance.token("font-size");
+}
