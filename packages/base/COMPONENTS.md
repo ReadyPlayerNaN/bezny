@@ -63,3 +63,23 @@ Ported `Card`, `CardTitle`, `CardBody`, `CardProperties`, and `MultiBlockCard`. 
 Action keys and row IDs must be unique. Callback actions are bulkable by default; link and `bulkable: false` actions never appear in multi-selection menus. Shared keys determine the intersection, including nested submenus. `onBulkSelect(ids)` runs once, otherwise corresponding callbacks run for every selected row. Disabled actions in any selected row disable that shared action. Selection clears only on success; async errors retain the menu/selection, announce a retryable error, and call optional `onActionError`.
 
 Context menus use local `ContextMenu` components for right-click, long press, Shift+F10, submenu navigation, and focus. Native selection controls support keyboard activation; selected lists support drag selection and Shift-drag clearing, excluding nested interactive content. Removing rows/actions prunes selection. Token prefix: `--bezny-control-entity-row-*`.
+
+## Filters
+
+Ported the reusable behavior from aipocapso's `calls/` filters, dropping the application-specific `Call` prefix and airline/backend coupling:
+
+- `FilterBadge`: native selected-state filter button with label/ref/disabled props.
+- `ValueFilter`: nullable text/datetime draft, custom summary, Apply/Enter and Clear.
+- `ModeFilter<TValue>`: searchable single/multiple choices, optional All, custom summaries.
+- `ChoiceFilter<TValue>`: nullable single-choice version of the airline picker; `searchLabel`, `allLabel`, and `emptyLabel` replace domain-specific wording.
+- `TagFilter<TValue>`: multi-choice tag summaries and clear-all behavior.
+- `Filters`: active/always-visible filters and searchable additive staging, with `onItemOpen(key)` and `render({ autoOpen })` handoff.
+
+```tsx
+<ValueFilter label="Owner" value={owner} onChange={setOwner} />
+<ChoiceFilter label="Status" value={status} onChange={setStatus}
+  options={[{ value: "ready", label: "Ready" }, { value: "pending", label: "Pending" }]} />
+<TagFilter label="Tags" value={tags} onChange={setTags} options={tagOptions} />
+```
+
+Values and query/backend state remain application-owned; these are not RHF fields. Filter dialogs use Radix Popover for collision-aware placement, outside and Escape dismissal, portals, and focus return, rather than the source's custom backdrops/global listeners. Single choices use Radix radio navigation; multi choices and picker buttons use native Tab/Space/Enter behavior. Search inputs are real dialog inputs, not invalid embedded menuitems. Disabled options cannot be chosen. Drafts reset on reopening; ValueFilter reflects external value changes. `autoOpen` opens on mount or a false-to-true transition, not on every render. Pass `container` to filters for a nested theme. Token prefix: `--bezny-control-filter-*`. Filter keys and option values must be unique; choice values must be non-empty strings (empty represents All internally).

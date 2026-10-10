@@ -1,0 +1,71 @@
+@use "./filter-appearance" as appearance;
+.badge,
+.panel,
+.list {
+  @include appearance.declarations;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: appearance.token("gap");
+  min-height: appearance.token("height");
+  padding-inline: appearance.token("padding");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  &[data-selected="true"] {
+    background: appearance.token("accent");
+    color: appearance.token("on-accent");
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: appearance.token("focus-ring");
+  }
+  &:disabled {
+    opacity: appearance.token("opacity-disabled");
+    cursor: not-allowed;
+  }
+}
+.panel {
+  z-index: appearance.token("z-index");
+  box-sizing: border-box;
+  width: appearance.token("width");
+  max-width: var(--radix-popover-content-available-width);
+  max-height: var(--radix-popover-content-available-height);
+  overflow-y: auto;
+  display: grid;
+  gap: appearance.token("gap");
+  padding: appearance.token("padding");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  box-shadow: appearance.token("shadow");
+}
+.list,
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: appearance.token("gap");
+}
+.options {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+  display: grid;
+  gap: appearance.token("gap");
+}
+.option {
+  display: flex;
+  align-items: center;
+  gap: appearance.token("gap");
+}
