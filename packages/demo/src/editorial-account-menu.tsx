@@ -1,7 +1,5 @@
 import { adminSelectionAtom } from "@bezny/admin/entities";
 import {
-  Avatar,
-  AvatarFallback,
   Button,
   IconButton,
   Dialog,
@@ -105,11 +103,7 @@ export const EditorialAccountMenu = () => {
             variant="secondary"
             ref={triggerRef}
             aria-label={t("accountMenu")}
-            icon={
-              <Avatar size="small" aria-hidden="true">
-                <AvatarFallback>{initials}</AvatarFallback>
-              </Avatar>
-            }
+            icon={<span aria-hidden="true">{initials}</span>}
           />
         </DropdownMenuTrigger>
         <DropdownMenuContent

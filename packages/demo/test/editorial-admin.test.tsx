@@ -103,6 +103,16 @@ describe("editorial admin", () => {
     expect(context.textContent).toBe("Context: Articles");
   });
 
+  it("matches the header icon button styling without a nested avatar surface", async () => {
+    await renderDemo();
+    const account = screen.getByRole("button", { name: "Account menu" });
+    const command = screen.getByRole("button", { name: "Command palette" });
+    expect(account.className).toBe(command.className);
+    const initials = within(account).getByText("DE");
+    expect(initials.getAttribute("class")).toBeNull();
+    expect(initials.childElementCount).toBe(0);
+  });
+
   it("moves language selection into the avatar menu and preserves keyboard focus", async () => {
     const { user } = await renderDemo();
     const account = screen.getByRole("button", { name: "Account menu" });
