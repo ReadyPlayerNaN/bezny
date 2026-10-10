@@ -201,7 +201,7 @@ test("structural and foundational overrides propagate through heading aliases", 
 test("built buttons resolve all variants and sizes through complete token chains", () => {
   const expectedBackgrounds = {
     critical: "#df1111",
-    primary: "#008f7b",
+    primary: "#007eb0",
     secondary: "#e8edf1",
   };
   for (const variant of ["primary", "secondary", "critical"]) {
@@ -221,6 +221,20 @@ test("built buttons resolve all variants and sizes through complete token chains
         resolveToken("--bezny-control-button-background", tokens),
         expectedBackgrounds[variant]
       );
+      if (variant === "primary") {
+        assert.equal(
+          resolveToken("--bezny-control-button-background-hover", tokens),
+          "#00719e"
+        );
+        assert.equal(
+          resolveToken("--bezny-control-button-background-active", tokens),
+          "#00658d"
+        );
+        assert.equal(
+          resolveToken("--bezny-control-button-text", tokens),
+          "#fff"
+        );
+      }
       assert.equal(
         resolveToken("--bezny-control-button-height", tokens),
         size === "small" ? "2rem" : "2.5rem"

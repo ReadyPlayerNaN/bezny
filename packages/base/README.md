@@ -72,7 +72,9 @@ import { Plane } from "lucide-react";
 - `asComponent` accepts an element or component and preserves its props and React 19 ref. Non-native controls receive button semantics, keyboard activation, and a focusable default tab index. Custom components must forward the provided props/ref.
 - Disabled non-native controls are removed from tab order, suppress navigation, and stop click propagation. Focus rings and reduced-motion styling are included.
 
-The source's default button palette and sizing are represented through all four layers. Normal buttons use `1rem` text with `1.25rem` line height and a `2.5rem` minimum height; small buttons use `0.75rem`, `1rem`, and `2rem`, respectively. Automatic dark-mode tokens from the source application's full theme are not copied; the palette can be themed through Bezny's CSS tokens.
+The default primary palette is blue: `#007eb0`, with `#00719e` on hover and `#00658d` when active, paired with white text.
+
+Button palette and sizing are represented through all four layers. Normal buttons use `1rem` text with `1.25rem` line height and a `2.5rem` minimum height; small buttons use `0.75rem`, `1rem`, and `2rem`, respectively. Automatic dark-mode tokens from the source application's full theme are not copied; the palette can be themed through Bezny's CSS tokens.
 
 ## Inputs and field presentation
 
