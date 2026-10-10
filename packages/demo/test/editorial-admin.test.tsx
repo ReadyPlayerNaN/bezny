@@ -114,6 +114,111 @@ describe("editorial admin", () => {
     );
   });
 
+  it("shares filter execution between ordinary controls and parameterized palette commands", async () => {
+    const { user, main } = await renderDemo();
+    await user.click(main.getByRole("button", { name: "Search: All" }));
+    await user.type(
+      screen.getByRole("textbox", { name: "Search" }),
+      "Planning"
+    );
+    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await waitFor(() =>
+      expect(
+        main.queryByRole("heading", { name: "Welcome to Bezny" })
+      ).toBeNull()
+    );
+    await user.click(screen.getByRole("button", { name: "Command palette" }));
+    await user.click(screen.getByRole("button", { name: "Filter by Search" }));
+    const input = screen.getByRole("textbox", { name: "Search" });
+    await user.clear(input);
+    await user.type(input, "Welcome");
+    await user.click(screen.getByRole("button", { name: "Apply command" }));
+    await main.findByRole("heading", { name: "Welcome to Bezny" });
+    expect(main.getByLabelText("Pagination").textContent).toBe(
+      "Page 1 of 1 · 1 records"
+    );
+  });
+
+  it("configures choice filters and page size through parameterized palette commands", async () => {
+    const { application, user, main } = await renderDemo();
+    await user.click(screen.getByRole("button", { name: "Command palette" }));
+    await user.click(screen.getByRole("button", { name: "Filter by Status" }));
+    await user.click(screen.getByRole("combobox", { name: "Status" }));
+    await user.click(await screen.findByRole("option", { name: "Draft" }));
+    await user.click(screen.getByRole("button", { name: "Apply command" }));
+    await waitFor(() =>
+      expect(main.getByLabelText("Pagination").textContent).toBe(
+        "Page 1 of 1 · 1 records"
+      )
+    );
+    await user.click(screen.getByRole("button", { name: "Command palette" }));
+    await user.click(screen.getByRole("button", { name: "Change page size" }));
+    await user.click(
+      screen.getByRole("combobox", { name: "Records per page" })
+    );
+    await user.click(await screen.findByRole("option", { name: "10" }));
+    await user.click(screen.getByRole("button", { name: "Apply command" }));
+    await waitFor(() =>
+      expect(
+        application.store.get(application.session.snapshotAtom).query.pageSize
+      ).toBe(10)
+    );
+  });
+
+  it("paginates through the palette and resets page/selection when filtering", async () => {
+    const { application, user, main } = await renderDemo();
+    await act(async () => {
+      await application.session.create("articles", {
+        body: "Additional content",
+        published: false,
+        title: "Fourth article",
+      });
+    });
+    await user.click(
+      main.getByRole("checkbox", { name: "Select Welcome to Bezny" })
+    );
+    await user.click(screen.getByRole("button", { name: "Command palette" }));
+    await user.click(screen.getByRole("button", { name: "Next page" }));
+    await main.findByRole("heading", { name: "Fourth article" });
+    expect(main.getByLabelText("Pagination").textContent).toBe(
+      "Page 2 of 2 · 4 records"
+    );
+    expect(application.store.get(adminSelectionAtom)).toBeNull();
+    await user.click(main.getByRole("button", { name: "Search: All" }));
+    await user.type(screen.getByRole("textbox", { name: "Search" }), "Welcome");
+    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await main.findByRole("heading", { name: "Welcome to Bezny" });
+    expect(main.getByLabelText("Pagination").textContent).toBe(
+      "Page 1 of 1 · 1 records"
+    );
+  });
+
+  it("clamps pagination after deleting the last record on a later page", async () => {
+    const { application, user, main } = await renderDemo();
+    await act(async () => {
+      await application.session.create("articles", {
+        body: "Page boundary",
+        published: false,
+        title: "Fourth article",
+      });
+    });
+    await user.click(await main.findByRole("button", { name: "Next page" }));
+    await user.click(
+      await main.findByRole("button", { name: "Delete Fourth article" })
+    );
+    await user.click(
+      within(await screen.findByRole("alertdialog")).getByRole("button", {
+        name: "Confirm deletion",
+      })
+    );
+    await waitFor(() =>
+      expect(main.getByLabelText("Pagination").textContent).toBe(
+        "Page 1 of 1 · 3 records"
+      )
+    );
+    expect(main.queryByRole("heading", { name: "Fourth article" })).toBeNull();
+  });
+
   it("restores keyboard focus to the owning entity row after cancelling its menu confirmation", async () => {
     const { user, main } = await renderDemo();
     const row = main.getByRole("group", { name: "Item 1" });

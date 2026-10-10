@@ -120,8 +120,16 @@ Targets/permissions are revalidated at execution. Bulk commands also revalidate 
 
 `useAdminPageCommands(memoizedCommands)` registers real screen callbacks, such as RHF `handleSubmit(save)` and Cancel. These leave the palette when the screen leaves; superseded callback registrations become inert even on the same screen. Compose one registration per active screen rather than competing registrations from independent panels.
 
+## Collection filters and pagination
+
+Configure `filters: [{ key: "search", label: "Search" }, { key: "status", label: "Status", options: [{ value: "draft", label: "Draft" }] }]` and `pageSize` on the entity. Filter keys/options must be unique; an empty option is reserved for clearing. The adapter receives normalized string filters, a one-based page, and a bounded page size, and returns the filtered total (not merely the page length).
+
+`useAdminListControls()` from `@bezny/admin/list` exposes `filterCommands`, `paginationCommands`, optional `clear`, `query`, `total`, and `pageCount`. These parameterized commands are automatically included in `useAdminEntityCommands().paletteCommands`. A command's optional `input` describes its current value, label, constraints/options, and validated `execute(value)` callback. Render the same callbacks in ordinary filters and a palette input editor; do not maintain separate query logic.
+
+Changing a filter, clearing filters, or changing page size resets to page 1 and clears selection. Previous/Next are offered only within known bounds; Go to page validates integers/range. Empty collections have one empty page. Removing the last record on a later page clamps to the new last page. Stale query commands cannot overwrite a newer request. Queries persist across entity routes in small entity-keyed Jotai state, not in URLs; unmount clears them. List screens remain mounted while loading/error so controls stay usable; render loading, error/retry, and empty states distinctly.
+
 ## Demo and verification
 
 [`@bezny/demo`](../demo/README.md) registers Articles and Pages through this public API. Their adapter-backed LCRUD, shared `EntityRowList` context menus, and actual form callbacks demonstrate the same routing/command infrastructure without a second route or palette implementation.
 
-Tests verify adapter validation, bounded navigation/cache growth, byte limits, LRU/TTL eviction, cancellation/late responses, mutation invalidation, repeated mount/unmount, idempotent disposal, generic/encoded routing, permissions, scoped selection, callback ownership, and demo workflows. Filter/pagination controls and multilingual presentation are tracked separately in the repository TODO.
+Tests verify adapter validation, bounded navigation/cache growth, byte limits, LRU/TTL eviction, cancellation/late responses, mutation invalidation, repeated mount/unmount, idempotent disposal, generic/encoded routing, permissions, scoped selection, callback ownership, and demo workflows. The demo also renders shared text/choice filters, pagination buttons, and parameterized palette commands for arbitrary filters, page numbers, and page sizes. Multilingual presentation is tracked separately in the repository TODO.

@@ -24,6 +24,7 @@ import { useStore } from "jotai";
 import { useCallback, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 
+import { EditorialListControls } from "./editorial-list-controls.js";
 import {
   editorialResources,
   noticeAtom,
@@ -70,58 +71,74 @@ export const EditorialListPage = () => {
         commands.create && <AdminCommandButton command={commands.create} />
       }
     >
+      <EditorialListControls />
+      {data?.status === "error" && (
+        <>
+          <p role="alert">{data.error}</p>
+          {commands.refresh && (
+            <AdminCommandButton command={commands.refresh} />
+          )}
+        </>
+      )}
+      {data?.status !== "ready" && data?.status !== "error" && (
+        <output aria-label="Loading records">Loading records…</output>
+      )}
       <div className={styles.actions}>
         {commands.selectionCommands.map((command) => (
           <AdminCommandButton key={command.id} command={command} />
         ))}
       </div>
-      {records.length === 0 ? (
-        <p>
-          No {resource.label.toLocaleLowerCase()} yet. Create your first{" "}
-          {resource.singularLabel.toLocaleLowerCase()}.
-        </p>
-      ) : (
-        <section
-          aria-label={`${resource.label} in this workspace`}
-          data-admin-entity={resource.key}
-        >
-          <EntityRowList
-            selectedIds={selectedIds}
-            onSelectedIdsChange={(ids) =>
-              store.set(adminSelectionAtom, { entity: resource.key, ids })
-            }
-            selectable
-            selectionMenu={false}
-            selectLabel={(row) => commands.forSelection(row.id).label}
-            rows={records.map<EntityRowData>((record) => {
-              const actions = commands.forRecord(record.id);
-              return {
-                actions: actions.map((command) => ({
-                  bulkable: false,
-                  key: command.id,
-                  label: command.label,
-                  onSelect: command.execute,
-                  tone: command.destructive ? "critical" : "secondary",
-                })),
-                badge: (
-                  <Badge type={record.published ? "success" : "neutral"}>
-                    {record.published ? "Published" : "Draft"}
-                  </Badge>
-                ),
-                id: record.id,
-                title: record.title,
-                trailing: (
-                  <div className={styles.actions}>
-                    {actions.map((command) => (
-                      <AdminCommandButton key={command.id} command={command} />
-                    ))}
-                  </div>
-                ),
-              };
-            })}
-          />
-        </section>
-      )}
+      {data?.status === "ready" &&
+        (records.length === 0 ? (
+          <p>
+            No {resource.label.toLocaleLowerCase()} yet. Create your first{" "}
+            {resource.singularLabel.toLocaleLowerCase()}.
+          </p>
+        ) : (
+          <section
+            aria-label={`${resource.label} in this workspace`}
+            data-admin-entity={resource.key}
+          >
+            <EntityRowList
+              selectedIds={selectedIds}
+              onSelectedIdsChange={(ids) =>
+                store.set(adminSelectionAtom, { entity: resource.key, ids })
+              }
+              selectable
+              selectionMenu={false}
+              selectLabel={(row) => commands.forSelection(row.id).label}
+              rows={records.map<EntityRowData>((record) => {
+                const actions = commands.forRecord(record.id);
+                return {
+                  actions: actions.map((command) => ({
+                    bulkable: false,
+                    key: command.id,
+                    label: command.label,
+                    onSelect: command.execute,
+                    tone: command.destructive ? "critical" : "secondary",
+                  })),
+                  badge: (
+                    <Badge type={record.published ? "success" : "neutral"}>
+                      {record.published ? "Published" : "Draft"}
+                    </Badge>
+                  ),
+                  id: record.id,
+                  title: record.title,
+                  trailing: (
+                    <div className={styles.actions}>
+                      {actions.map((command) => (
+                        <AdminCommandButton
+                          key={command.id}
+                          command={command}
+                        />
+                      ))}
+                    </div>
+                  ),
+                };
+              })}
+            />
+          </section>
+        ))}
     </AdminPage>
   );
 };

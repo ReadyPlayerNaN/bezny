@@ -12,6 +12,7 @@ export interface ValueFilterProps {
   value: string | null;
   onChange: (value: string | null) => void;
   placeholder?: string;
+  maxLength?: number | undefined;
   inputType?: "text" | "datetime-local";
   summarize?: (label: string, value: string | null) => string;
   autoOpen?: boolean;
@@ -23,6 +24,7 @@ const ValueFilterEditor = ({
   onChange,
   placeholder = "Filter value",
   inputType = "text",
+  maxLength,
   close,
 }: ValueFilterProps & { close: () => void }) => {
   const [draft, setDraft] = useState(value ?? "");
@@ -42,6 +44,7 @@ const ValueFilterEditor = ({
         aria-label={label}
         placeholder={placeholder}
         type={inputType}
+        maxLength={maxLength}
         value={draft}
         onChange={(event) => setDraft(event.target.value)}
         onKeyDown={(event) => {

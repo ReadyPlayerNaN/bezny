@@ -22,5 +22,8 @@
   - Preserve row-target versus selection-target semantics and destructive-action confirmation.
   - Use Radix for context-menu interaction and verify keyboard access, focus behavior, and accessible semantics.
   - Implemented: demo lists use `EntityRowList` (the shared row implementation), controlled Jotai selection, row-scoped context menus, and the same commands as detail pages and the palette. Verified with 8 base row tests and 19 demo tests, including Shift+F10, Escape/focus restoration, and confirmation targeting despite another selected row.
-- [ ] Implement entity-list filters, integrated with entity configuration, data adapters, and the command palette.
-- [ ] Implement entity-list pagination, integrated with data adapters and the command palette, with consistent behavior when filters change.
+- [x] Implement entity-list filters, integrated with entity configuration, data adapters, and the command palette.
+  - Implemented: validated entity filter definitions, shared text/choice filter commands and parameterized palette inputs, bounded drafts, clearing, filtered adapter totals, and stale-query guards. Demo renders base filters and the same palette callbacks.
+- [x] Implement entity-list pagination, integrated with data adapters and the command palette, with consistent behavior when filters change.
+  - Implemented: one-based adapter paging, previous/next, arbitrary page and page-size palette inputs, filter/page-size selection resets, empty-page handling, and last-page clamping after deletion. Demo demonstrates both ordinary paging and palette/query workflows.
+  - Verified: 44 admin tests, 27 demo tests, 98 base tests, workspace build/typecheck/tests, Ultracite, and production Chromium filters/paging/palette smoke. Query tests cover ordinary/palette parity, text/choice filters, page-size changes, selection clearing, stale callbacks, and deletion at page boundaries.

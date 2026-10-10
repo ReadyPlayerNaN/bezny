@@ -22,6 +22,17 @@ export interface AdminCommand {
   label: string;
   execute: () => void | Promise<void>;
   destructive?: boolean;
+  input?: {
+    label: string;
+    value: string;
+    allowEmpty?: boolean;
+    type?: "text" | "number";
+    min?: number;
+    max?: number;
+    maxLength?: number;
+    options?: readonly { value: string; label: string }[];
+    execute: (value: string) => void | Promise<void>;
+  };
   location?: AdminEntityLocation;
 }
 
@@ -52,6 +63,32 @@ export interface AdminEntityRegistry {
   get: (key: string) => AdminEntity | undefined;
 }
 const entityKeyPattern = /^[a-z][a-z0-9-]*$/u;
+const validateListDefinition = (entity: AdminEntityDefinition) => {
+  if (
+    entity.pageSize !== undefined &&
+    (!Number.isSafeInteger(entity.pageSize) || entity.pageSize < 1)
+  ) {
+    throw new Error(`Invalid page size for ${entity.key}`);
+  }
+  const filterKeys = new Set<string>();
+  for (const filter of entity.filters ?? []) {
+    if (!entityKeyPattern.test(filter.key) || filterKeys.has(filter.key)) {
+      throw new Error(
+        `Invalid or duplicate filter ${filter.key} for ${entity.key}`
+      );
+    }
+    filterKeys.add(filter.key);
+    const values = new Set<string>();
+    for (const option of filter.options ?? []) {
+      if (!option.value || values.has(option.value)) {
+        throw new Error(
+          `Invalid or duplicate option for ${entity.key}/${filter.key}`
+        );
+      }
+      values.add(option.value);
+    }
+  }
+};
 export const createAdminEntityRegistry = (
   entities: readonly AdminEntityDefinition[]
 ): AdminEntityRegistry => {
@@ -66,6 +103,7 @@ export const createAdminEntityRegistry = (
     if (byKey.has(entity.key)) {
       throw new Error(`Duplicate admin entity key: ${entity.key}`);
     }
+    validateListDefinition(entity);
     const actionIds = new Set<string>();
     for (const action of entity.actions ?? []) {
       if (actionIds.has(action.id)) {

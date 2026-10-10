@@ -82,6 +82,25 @@ describe(Filters, () => {
     expect(handleChange).toHaveBeenLastCalledWith(null);
   });
 
+  it("bounds a value filter's draft through its native input maximum", async () => {
+    const user = userEvent.setup();
+    const handleChange = vi.fn<(value: string | null) => void>();
+    render(
+      <ValueFilter
+        label="Owner"
+        value={null}
+        maxLength={3}
+        onChange={handleChange}
+      />
+    );
+    await user.click(screen.getByRole("button", { name: "Owner: All" }));
+    await user.type(
+      await screen.findByRole("textbox", { name: "Owner" }),
+      "Adaline{Enter}"
+    );
+    expect(handleChange).toHaveBeenCalledWith("Ada");
+  });
+
   it("discards uncommitted drafts on Escape and reflects external values", async () => {
     const user = userEvent.setup();
     const handleChange = vi.fn<(value: string | null) => void>();

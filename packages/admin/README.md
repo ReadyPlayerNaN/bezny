@@ -18,6 +18,7 @@ This private workspace package builds ESM JavaScript and TypeScript declarations
 | `@bezny/admin/commands` | Shared entity/navigation commands, domain navigation, active-screen command registration |
 | `@bezny/admin/adapters` | Typed `defineAdminEntity`, LCRUD adapter/configuration contracts |
 | `@bezny/admin/data` | Bounded data-session contracts, cache policy, and diagnostics |
+| `@bezny/admin/list` | Shared filter/pagination controls and parameterized commands |
 
 `AdminProvider` places a Jotai provider around TanStack's `RouterProvider`, so route components can use atoms and Bezny controls together. It accepts:
 

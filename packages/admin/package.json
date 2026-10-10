@@ -44,6 +44,10 @@
       "types": "./dist/admin-data-adapter.d.ts",
       "import": "./dist/admin-data-adapter.js"
     },
+    "./list": {
+      "types": "./dist/admin-list-controls.d.ts",
+      "default": "./dist/admin-list-controls.js"
+    },
     "./data": {
       "types": "./dist/admin-data-session.d.ts",
       "import": "./dist/admin-data-session.js"

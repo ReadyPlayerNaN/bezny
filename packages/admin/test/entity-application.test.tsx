@@ -9,7 +9,7 @@ import {
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { atom, useAtomValue } from "jotai";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { defineAdminEntity } from "../src/admin-data-adapter.js";
@@ -33,6 +33,7 @@ import {
   createAdminApplication,
 } from "../src/admin-entity-routing.js";
 import type { AdminApplication } from "../src/admin-entity-routing.js";
+import { useAdminListControls } from "../src/admin-list-controls.js";
 
 const permissionAtom = atom(true);
 const pageVersionAtom = atom(0);
@@ -88,6 +89,38 @@ const CreateScreen = () => {
   useAdminPageCommands(commands);
   return <h1>Create {key}</h1>;
 };
+const QueryScreen = () => {
+  const { filterCommands, paginationCommands } = useAdminListControls();
+  const savedNext = useRef<AdminCommand | null>(null);
+  useEffect(() => {
+    if (!savedNext.current) {
+      savedNext.current =
+        paginationCommands.find((command) => command.label === "Next page") ??
+        null;
+    }
+  }, [paginationCommands]);
+  return (
+    <>
+      <ListScreen />
+      <button
+        type="button"
+        onClick={() => {
+          void filterCommands[0]?.input?.execute("Example");
+        }}
+      >
+        Filter Example
+      </button>
+      <button
+        type="button"
+        onClick={() => {
+          void savedNext.current?.execute();
+        }}
+      >
+        Run stale next
+      </button>
+    </>
+  );
+};
 const VersionedScreen = () => {
   const version = useAtomValue(pageVersionAtom);
   const commands = useMemo<AdminCommand[]>(
@@ -132,7 +165,13 @@ const fixtureEntities = () => {
     },
     list: async (query) => {
       await Promise.resolve();
-      const records = datasets.get(key) ?? [];
+      const records = (datasets.get(key) ?? []).filter(
+        (record) =>
+          !query.filters.search ||
+          record.label
+            .toLowerCase()
+            .includes(query.filters.search.toLowerCase())
+      );
       return {
         items: records.slice(
           (query.page - 1) * query.pageSize,
@@ -328,6 +367,35 @@ describe("entity application", () => {
     expect(commands.queryByRole("button", { name: "Save books" })).toBeNull();
     await stale?.execute();
     expect(runSave).toHaveBeenCalledOnce();
+  });
+
+  it("configures pagination and filters with guarded shared parameterized commands", async () => {
+    const { writable: book } = fixtureEntities();
+    const { commands, application, user } = await renderApplication("/books", [
+      {
+        ...book,
+        filters: [{ key: "search", label: "Search" }],
+        pageSize: 1,
+        screens: { ...book.screens, list: QueryScreen },
+      },
+    ]);
+    await user.click(commands.getByRole("button", { name: "Next page" }));
+    await commands.findByRole("button", { name: "View Encoded record" });
+    await user.click(screen.getByRole("button", { name: "Filter Example" }));
+    await waitFor(() =>
+      expect(
+        application.store.get(application.session.snapshotAtom)
+      ).toMatchObject({
+        query: { filters: { search: "Example" }, page: 1 },
+        status: "ready",
+        total: 1,
+      })
+    );
+    await user.click(screen.getByRole("button", { name: "Run stale next" }));
+    expect(
+      application.store.get(application.session.snapshotAtom).query.page
+    ).toBe(1);
+    expect(commands.queryByRole("button", { name: "Next page" })).toBeNull();
   });
 
   it("invalidates replaced page callbacks on the same screen", async () => {

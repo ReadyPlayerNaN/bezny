@@ -46,6 +46,9 @@ const EntityScreen = () => {
   const { refresh } = useAdminEntityCommands();
   const { NotFound } = useAdminEntityPresentation();
   const Screen = entity && view ? entity.screens[view] : undefined;
+  if (Screen && view === "list" && kind !== "unavailable") {
+    return <Screen />;
+  }
   if (kind === "loading") {
     return <output aria-label="Loading records">Loading records…</output>;
   }
@@ -91,6 +94,13 @@ export const createAdminApplication = ({
 }: AdminApplicationOptions) => {
   const registry = createAdminEntityRegistry(entities);
   const session = createAdminDataSession(registry, store, cache);
+  if (
+    registry.entities.some(
+      (entity) => (entity.pageSize ?? 25) > session.policy.maxPageSize
+    )
+  ) {
+    throw new Error("Entity page size exceeds application maximum.");
+  }
   const ApplicationRoot = () => <AdminDataBoundary Root={Root} />;
   const [firstEntity] = registry.entities;
   if (!firstEntity) {

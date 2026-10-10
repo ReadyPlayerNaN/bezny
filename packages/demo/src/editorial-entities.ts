@@ -68,8 +68,20 @@ export const createEditorialEntities = (
         },
       ],
       adapter: repository.adapter(resource.key),
+      filters: [
+        { key: "search", label: "Search" },
+        {
+          key: "status",
+          label: "Status",
+          options: [
+            { label: "Draft", value: "draft" },
+            { label: "Published", value: "published" },
+          ],
+        },
+      ],
       key: resource.key,
       label: resource.label,
+      pageSize: 3,
       parseValues: parseEditorialValues,
       reference: (record) => ({ id: record.id, label: record.title }),
       screens: {

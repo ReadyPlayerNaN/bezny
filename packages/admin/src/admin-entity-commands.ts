@@ -23,6 +23,7 @@ import {
   adminEntityPaths,
   adminEntityViewForRoute,
 } from "./admin-entity-paths.js";
+import { useAdminListControls } from "./admin-list-controls.js";
 
 export const useAdminEntityNavigate = (): AdminEntityNavigate => {
   const navigate = useNavigate();
@@ -126,6 +127,7 @@ export const useAdminEntityCommands = () => {
   );
   // Subscribe to reactive action permissions without conditionally calling hooks.
   useAtomValue(enabledSnapshot);
+  const listControls = useAdminListControls();
   const context = useAdminEntityContext();
   const session = useAdminDataSession();
   const refresh: AdminCommand | null =
@@ -288,6 +290,9 @@ export const useAdminEntityCommands = () => {
         ? context.records.map((record) => forSelection(record.id))
         : []),
       ...pageCommands,
+      ...listControls.filterCommands,
+      ...listControls.paginationCommands,
+      ...(listControls.clear ? [listControls.clear] : []),
       ...(refresh ? [refresh] : []),
     ],
     refresh,

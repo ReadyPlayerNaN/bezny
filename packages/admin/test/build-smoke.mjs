@@ -25,6 +25,7 @@ import {
 import { createAdminDataSession } from "@bezny/admin/data";
 import { createAdminEntityRegistry } from "@bezny/admin/entities";
 import { AdminLayout } from "@bezny/admin/layout";
+import { useAdminListControls } from "@bezny/admin/list";
 import { AdminPage } from "@bezny/admin/page";
 
 // Verify the public export without Vitest's module resolution or transforms.
@@ -42,6 +43,7 @@ for (const component of [
   createAdminEntityRegistry,
   defineAdminEntity,
   createAdminDataSession,
+  useAdminListControls,
   useAdminEntityCommands,
   useAdminEntityNavigate,
   useAdminPageCommands,

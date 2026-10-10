@@ -24,6 +24,7 @@ import {
 import { useAtom, useStore } from "jotai";
 import { useRef, useState } from "react";
 
+import { EditorialCommandInput } from "./editorial-command-input.js";
 import {
   deletionRequestAtom,
   editorialResources,
@@ -36,6 +37,7 @@ export const EditorialCommandPalette = () => {
   const { paletteCommands } = useAdminEntityCommands();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [editing, setEditing] = useState<AdminCommand | null>(null);
   const pendingCommand = useRef<AdminCommand | null>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const matching = paletteCommands.filter((command) =>
@@ -47,6 +49,7 @@ export const EditorialCommandPalette = () => {
       onOpenChange={(nextOpen) => {
         setOpen(nextOpen);
         setQuery("");
+        setEditing(null);
       }}
     >
       <DialogTrigger asChild>
@@ -71,28 +74,49 @@ export const EditorialCommandPalette = () => {
           Search registered entity routes and actions for the current context.
           Tab to a command and press Enter.
         </DialogDescription>
-        <TextInput
-          aria-label="Search commands"
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
-        />
-        <ul className={styles.commands} aria-label="Available commands">
-          {matching.map((command) => (
-            <li key={command.id}>
-              <Button
-                fullWidth
-                variant={command.destructive ? "critical" : "secondary"}
-                onClick={() => {
-                  pendingCommand.current = command;
-                  setOpen(false);
-                }}
-              >
-                {command.label}
-              </Button>
-            </li>
-          ))}
-        </ul>
-        {matching.length === 0 && <output>No matching commands.</output>}
+        {editing ? (
+          <EditorialCommandInput
+            key={editing.id}
+            command={editing}
+            cancel={() => setEditing(null)}
+            apply={(value) => {
+              pendingCommand.current = {
+                ...editing,
+                execute: () => editing.input?.execute(value),
+              };
+              setOpen(false);
+            }}
+          />
+        ) : (
+          <>
+            <TextInput
+              aria-label="Search commands"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            <ul className={styles.commands} aria-label="Available commands">
+              {matching.map((command) => (
+                <li key={command.id}>
+                  <Button
+                    fullWidth
+                    variant={command.destructive ? "critical" : "secondary"}
+                    onClick={() => {
+                      if (command.input) {
+                        setEditing(command);
+                      } else {
+                        pendingCommand.current = command;
+                        setOpen(false);
+                      }
+                    }}
+                  >
+                    {command.label}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+            {matching.length === 0 && <output>No matching commands.</output>}
+          </>
+        )}
         <DialogClose asChild>
           <Button variant="secondary">Close palette</Button>
         </DialogClose>
