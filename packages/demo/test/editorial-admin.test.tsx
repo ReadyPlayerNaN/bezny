@@ -1,3 +1,4 @@
+import { adminSelectionAtom } from "@bezny/admin/entities";
 import { createMemoryHistory } from "@tanstack/react-router";
 import {
   act,
@@ -8,10 +9,15 @@ import {
   within,
 } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { atom } from "jotai";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { articlesAtom, selectedArticleIdsAtom } from "../src/article-state.js";
 import { createDemoApplication, DemoApp } from "../src/demo-application.js";
+import { articlesAtom, pagesAtom } from "../src/editorial-records.js";
+
+const selectedArticleIdsAtom = atom(
+  (get) => get(adminSelectionAtom)?.ids ?? []
+);
 
 const renderDemo = async (pathname = "/articles") => {
   const history = createMemoryHistory({ initialEntries: [pathname] });
@@ -362,6 +368,55 @@ describe("editorial admin", () => {
     expect(
       screen.getByRole("status", { name: "Current context" }).textContent
     ).toBe("Context: Articles");
+  });
+
+  it("routes and commands a second registered entity without article-specific routing", async () => {
+    const { user, main, application } = await renderDemo();
+    await user.click(
+      main.getByRole("checkbox", { name: "Select Welcome to Bezny" })
+    );
+    await runCommand(user, "List pages");
+    await main.findByRole("heading", { level: 1, name: "Pages" });
+    expect(
+      screen.getByRole("status", { name: "Current context" }).textContent
+    ).toBe("Context: Pages");
+    expect(application.store.get(adminSelectionAtom)).toBeNull();
+    await runCommand(user, "Create page");
+    await main.findByRole("heading", { level: 1, name: "Create page" });
+    await user.type(main.getByRole("textbox", { name: "Title" }), "Contact");
+    await user.type(
+      main.getByRole("textbox", { name: "Body" }),
+      "Contact our publication."
+    );
+    await runCommand(user, "Save page");
+    await main.findByRole("heading", { level: 1, name: "Contact" });
+    expect(application.router.state.location.pathname).toBe("/pages/2");
+    expect(application.store.get(pagesAtom)).toHaveLength(2);
+    expect(application.store.get(articlesAtom)).toHaveLength(3);
+  });
+
+  it("resets form state when the same generic create route changes entities", async () => {
+    const { user, main } = await renderDemo("/articles/create");
+    await user.type(
+      main.getByRole("textbox", { name: "Title" }),
+      "Unsaved article"
+    );
+    await user.type(
+      main.getByRole("textbox", { name: "Body" }),
+      "Article body"
+    );
+    await runCommand(user, "Create page");
+    await main.findByRole("heading", { level: 1, name: "Create page" });
+    expect(main.getByRole("textbox", { name: "Title" })).toHaveProperty(
+      "value",
+      ""
+    );
+    expect(main.getByRole("textbox", { name: "Body" })).toHaveProperty(
+      "value",
+      ""
+    );
+    await runCommand(user, "Save page");
+    await expect(main.findByText("Enter page content.")).resolves.toBeDefined();
   });
 
   it("handles direct missing-entity URLs without stale entity actions", async () => {

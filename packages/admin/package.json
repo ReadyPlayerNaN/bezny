@@ -23,6 +23,22 @@
     "./building-blocks": {
       "types": "./dist/admin-building-blocks.d.ts",
       "import": "./dist/admin-building-blocks.js"
+    },
+    "./entities": {
+      "types": "./dist/admin-entity-model.d.ts",
+      "import": "./dist/admin-entity-model.js"
+    },
+    "./application": {
+      "types": "./dist/admin-entity-routing.d.ts",
+      "import": "./dist/admin-entity-routing.js"
+    },
+    "./context": {
+      "types": "./dist/admin-entity-context.d.ts",
+      "import": "./dist/admin-entity-context.js"
+    },
+    "./commands": {
+      "types": "./dist/admin-entity-commands.d.ts",
+      "import": "./dist/admin-entity-commands.js"
     }
   },
   "scripts": {

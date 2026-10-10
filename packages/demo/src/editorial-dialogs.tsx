@@ -1,4 +1,10 @@
 import {
+  useAdminEntityCommands,
+  useAdminEntityNavigate,
+} from "@bezny/admin/commands";
+import { adminSelectionAtom } from "@bezny/admin/entities";
+import type { AdminCommand } from "@bezny/admin/entities";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -14,26 +20,22 @@ import {
   DialogTrigger,
   TextInput,
 } from "@bezny/base";
-import { useNavigate } from "@tanstack/react-router";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useStore } from "jotai";
 import { useRef, useState } from "react";
 
-import { useArticleCommands } from "./article-actions.js";
-import type { ArticleCommand } from "./article-actions.js";
 import {
-  articlesAtom,
   deletionRequestAtom,
+  editorialResources,
   noticeAtom,
-  selectedArticleIdsAtom,
-} from "./article-state.js";
+} from "./editorial-records.js";
 
 import styles from "./editorial-admin.module.scss";
 
-export const ArticleCommandPalette = () => {
-  const { paletteCommands } = useArticleCommands();
+export const EditorialCommandPalette = () => {
+  const { paletteCommands } = useAdminEntityCommands();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
-  const pendingCommand = useRef<ArticleCommand | null>(null);
+  const pendingCommand = useRef<AdminCommand | null>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const matching = paletteCommands.filter((command) =>
     command.label.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase())
@@ -65,8 +67,8 @@ export const ArticleCommandPalette = () => {
       >
         <DialogTitle>Command palette</DialogTitle>
         <DialogDescription>
-          Search actions for the current article context. Tab to a command and
-          press Enter.
+          Search registered entity routes and actions for the current context.
+          Tab to a command and press Enter.
         </DialogDescription>
         <TextInput
           aria-label="Search commands"
@@ -98,26 +100,40 @@ export const ArticleCommandPalette = () => {
   );
 };
 
-export const ArticleDeleteDialog = () => {
+export const EditorialDeleteDialog = () => {
   const [request, setRequest] = useAtom(deletionRequestAtom);
-  const [articles, setArticles] = useAtom(articlesAtom);
-  const setSelection = useSetAtom(selectedArticleIdsAtom);
-  const setNotice = useSetAtom(noticeAtom);
-  const navigate = useNavigate();
+  const [firstResource] = editorialResources;
+  const resource =
+    editorialResources.find((item) => item.key === request?.entity) ??
+    firstResource;
+  if (!resource) {
+    throw new Error("No editorial resource registered.");
+  }
+  const allRecords = useAtomValue(resource.records);
+  const store = useStore();
+  const navigate = useAdminEntityNavigate();
   const targetIds = new Set(request?.ids);
-  const records = articles.filter((article) => targetIds.has(article.id));
+  const records = allRecords.filter((record) => targetIds.has(record.id));
   const confirm = async () => {
     if (!request || records.length === 0) {
       return;
     }
-    setArticles((current) =>
-      current.filter((article) => !targetIds.has(article.id))
+    store.set(resource.records, (current) =>
+      current.filter((record) => !targetIds.has(record.id))
     );
-    setSelection((ids) => ids.filter((id) => !targetIds.has(id)));
-    setNotice(
-      `${records.length} article${records.length === 1 ? "" : "s"} deleted.`
+    store.set(adminSelectionAtom, (current) =>
+      current?.entity === request.entity
+        ? {
+            entity: current.entity,
+            ids: current.ids.filter((id) => !targetIds.has(id)),
+          }
+        : current
     );
-    await navigate({ to: "/articles" });
+    store.set(
+      noticeAtom,
+      `${records.length} ${records.length === 1 ? resource.singularLabel.toLocaleLowerCase() : resource.label.toLocaleLowerCase()} deleted.`
+    );
+    await navigate({ entity: request.entity, view: "list" });
   };
   return (
     <AlertDialog
@@ -138,7 +154,9 @@ export const ArticleDeleteDialog = () => {
             target?.focus();
           }}
         >
-          <AlertDialogTitle>Delete articles?</AlertDialogTitle>
+          <AlertDialogTitle>
+            Delete {resource.label.toLocaleLowerCase()}?
+          </AlertDialogTitle>
           <AlertDialogDescription>
             This permanently deletes{" "}
             {records.map((article) => article.title).join(", ")}. This cannot be

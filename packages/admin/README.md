@@ -12,6 +12,10 @@ This private workspace package builds ESM JavaScript and TypeScript declarations
 | `@bezny/admin/layout` | `AdminLayout` |
 | `@bezny/admin/page` | `AdminPage` |
 | `@bezny/admin/building-blocks` | `AdminBuildingBlocksProvider`, `useAdminBuildingBlocks`, default implementations, and their prop/override types |
+| `@bezny/admin/entities` | Entity/action/command contracts, registry validation, entity-scoped selection |
+| `@bezny/admin/application` | `createAdminApplication`, `AdminApplicationProvider` |
+| `@bezny/admin/context` | Matched entity context and registry hooks |
+| `@bezny/admin/commands` | Shared entity/navigation commands, domain navigation, active-screen command registration |
 
 `AdminProvider` places a Jotai provider around TanStack's `RouterProvider`, so route components can use atoms and Bezny controls together. It accepts:
 
@@ -97,26 +101,26 @@ const components = {
 const Root = () => (
   <AdminLayout
     header="Editorial"
-    navigation={<Link to="/articles">Articles</Link>}
+    navigation={<Link to="/dashboard">Dashboard</Link>}
   >
     <Outlet />
   </AdminLayout>
 );
 
-const Articles = () => (
-  <AdminPage heading="Articles" description="Manage your publication">
-    <p>Your article list goes here.</p>
+const Dashboard = () => (
+  <AdminPage heading="Dashboard" description="Publication overview">
+    <p>Your dashboard goes here.</p>
   </AdminPage>
 );
 
 const rootRoute = createRootRoute({ component: Root });
-const articlesRoute = createRoute({
+const dashboardRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/articles",
-  component: Articles,
+  path: "/dashboard",
+  component: Dashboard,
 });
 const router = createRouter({
-  routeTree: rootRoute.addChildren([articlesRoute]),
+  routeTree: rootRoute.addChildren([dashboardRoute]),
 });
 
 export const App = () => (
@@ -145,16 +149,20 @@ Define replacements at module scope. Changing the override object alone does not
 - Preserve forwarded native props, refs, children, and supplied content slots where appropriate. `AdminLayoutProps`, `AdminPageProps`, and `AdminPageHeaderProps` describe these contracts.
 - Keep exactly one main landmark in the shell and maintain accessible navigation names and heading hierarchy.
 - A custom page header must apply `headingId` to its heading; the default page uses that ID for its accessible name. A whole-page replacement owns that association itself.
-- `header`, `navigation`, `footer`, `description`, and `actions` are caller-supplied React content, not a second action-registration or navigation system. These blocks do not implement LCRUD or palette commands yet. Future action building blocks must obey the parity requirements below.
+- `header`, `navigation`, `footer`, `description`, and `actions` are caller-supplied React content, not a second action-registration or navigation system. These presentation blocks do not themselves own LCRUD or palette commands. Use the entity application's command catalog for those workflows and preserve the parity requirements below.
 - Presentation configuration is distinct from entity UI context, Jotai state, and TanStack router dependency context.
+
+## Registered entity applications
+
+Use [registered entity applications](ENTITIES.md) when building an entity-oriented admin. One entity registry drives the generic `/$entity`, `/$entity/create`, `/$entity/$recordId`, and `/$entity/$recordId/edit` routes and the shared command catalog. Context comes from route matches, not pathname parsing. Form screens register real callbacks for the palette rather than hardcoding form IDs. The low-level provider above remains useful when owning a different route tree.
 
 ## Runnable application example
 
-[`@bezny/demo`](../demo/README.md) implements an editorial administration application with customized layout/page/header blocks, article LCRUD pages, Jotai-backed data and selection, and a searchable palette sharing commands with the ordinary UI. Run `pnpm --filter @bezny/demo dev` from the repository root. Entity/context/action code in that application remains demo-owned; the requirements below still guide reusable framework APIs.
+[`@bezny/demo`](../demo/README.md) registers Articles and Pages using the shared entity application API. It supplies customized presentation, Jotai-backed datasets, RHF forms, and deletion confirmation; generic routes, entity context, selection, and the command catalog come from `@bezny/admin`. Run `pnpm --filter @bezny/demo dev` from the repository root.
 
 ## Required direction for future development
 
-The following are implementation requirements, **not features already implemented by this foundation**. Public entity, action, palette, and context APIs remain to be designed.
+The following are ongoing implementation requirements. Registered entities now share routes, context, selection, and commands; additional entity controls, data adapters, and reusable palette presentation must preserve these contracts.
 
 ### 1. Command-palette parity
 

@@ -72,7 +72,7 @@ pnpm test
 pnpm --filter @bezny/demo dev
 ```
 
-This builds `@bezny/base` and `@bezny/admin`, then starts the Vite demo server. Open the local URL printed in the terminal to manage articles through a customized admin shell, LCRUD pages, selection context, and a searchable command palette ([demo details](packages/demo/README.md)). Changes are kept in memory and reset on reload.
+This builds `@bezny/base` and `@bezny/admin`, then starts the Vite demo server. Open the local URL printed in the terminal to manage registered Articles and Pages through generic entity routes, customized admin pages, selection context, and one shared navigation/command catalog ([demo details](packages/demo/README.md)). Changes are kept in memory and reset on reload.
 
 ## Structure
 

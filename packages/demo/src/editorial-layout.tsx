@@ -9,17 +9,18 @@ import type {
   AdminPageProps,
   AdminPageHeaderProps,
 } from "@bezny/admin/building-blocks";
+import { useAdminEntityCommands } from "@bezny/admin/commands";
+import { useAdminEntityContext } from "@bezny/admin/context";
 import { AdminLayout } from "@bezny/admin/layout";
 import { Outlet } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 
-import { useArticleCommands, useArticleContext } from "./article-actions.js";
 import {
-  ArticleCommandPalette,
-  ArticleDeleteDialog,
-} from "./article-dialogs.js";
-import { ArticleCommandButton } from "./article-pages.js";
-import { describeArticleContext, noticeAtom } from "./article-state.js";
+  EditorialCommandPalette,
+  EditorialDeleteDialog,
+} from "./editorial-dialogs.js";
+import { AdminCommandButton } from "./editorial-pages.js";
+import { noticeAtom } from "./editorial-records.js";
 
 import styles from "./editorial-admin.module.scss";
 
@@ -48,8 +49,16 @@ export const editorialComponents = {
 } satisfies AdminBuildingBlockOverrides;
 
 export const EditorialShell = () => {
-  const commands = useArticleCommands();
-  const context = useArticleContext();
+  const commands = useAdminEntityCommands();
+  const context = useAdminEntityContext();
+  let contextLabel = `No available ${context.entity?.singularLabel.toLocaleLowerCase() ?? "entity"}`;
+  if (context.kind === "collection") {
+    contextLabel = context.entity?.label ?? "";
+  } else if (context.kind === "entity") {
+    contextLabel = `${context.entity?.singularLabel} ${context.recordId}`;
+  } else if (context.kind === "selection") {
+    contextLabel = `Selected ${context.entity?.label.toLocaleLowerCase()}: ${context.selectedIds.join(", ")}`;
+  }
   const notice = useAtomValue(noticeAtom);
   return (
     <>
@@ -58,15 +67,16 @@ export const EditorialShell = () => {
           <div className={styles.header}>
             <strong>Bezny editorial</strong>
             <output aria-label="Current context">
-              Context: {describeArticleContext(context)}
+              Context: {contextLabel}
             </output>
-            <ArticleCommandPalette />
+            <EditorialCommandPalette />
           </div>
         }
         navigation={
           <div className={styles.actions}>
-            <ArticleCommandButton command={commands.list} />
-            <ArticleCommandButton command={commands.create} />
+            {commands.navigationCommands.map((command) => (
+              <AdminCommandButton key={command.id} command={command} />
+            ))}
           </div>
         }
         navigationLabel="Editorial navigation"
@@ -75,7 +85,7 @@ export const EditorialShell = () => {
         <output aria-label="Notifications">{notice}</output>
         <Outlet />
       </AdminLayout>
-      <ArticleDeleteDialog />
+      <EditorialDeleteDialog />
     </>
   );
 };

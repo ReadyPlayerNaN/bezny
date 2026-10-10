@@ -1,74 +1,68 @@
 # @bezny/demo
 
-A runnable editorial administration application built with **@bezny/admin**, rather than a standalone component showcase.
+A runnable editorial admin using `@bezny/admin`'s **registered entities**, not a parallel article-specific router and palette.
 
-## Run it
-
-From the repository root:
+## Run
 
 ```sh
 pnpm install
 pnpm --filter @bezny/demo dev
 ```
 
-The dev script builds `@bezny/base` and `@bezny/admin`, then starts Vite (normally `http://localhost:5173`). Open `/articles`, or enter any of the entity URLs directly. Rebuild the library packages after changing their source; demo source updates through Vite.
+The dev script builds base/admin first, then starts Vite (normally `http://localhost:5173`). `/` opens the first registered entity, Articles. Pages is a second independent entity with the same UI/data shape. Rebuild the library packages after editing their source; demo edits update through Vite.
 
-## What the application demonstrates
+## One registration drives routes and commands
 
-- `AdminProvider` owns a typed TanStack router, an isolated Jotai workspace, and application-wide `Layout`, `Page`, and `PageHeader` replacements.
-- `AdminLayout` contains the editorial header, navigation, current-context display, one main landmark, and footer. A parent route renders `Outlet`; individual routes compose `AdminPage`.
-- The article list has selectable rows, publication badges, and shared View/Edit/Delete actions. The detail page exposes the same edit/delete actions.
-- Create and update forms use React Hook Form with Bezny fields, validation feedback, and invalid-field focus.
-- Deletion uses Bezny's Radix-based alert dialog with explicit confirmation, cancel/escape behavior, focus restoration, post-delete navigation, and selection cleanup.
-- A searchable command palette uses Bezny's Radix-based dialog. Collection, row/detail, selection, and form commands use the same action definitions or submission path as the ordinary UI. Deletion from the palette opens the same confirmation dialog; it never bypasses confirmation.
+`editorialResources` describes the Articles and Pages datasets. `editorialEntities` registers their reference atoms, labels, screens, and record/bulk delete actions with `createAdminApplication`.
 
-### Routes
+The application has no entity-specific route definitions:
 
-| URL                | Screen                         |
-| ------------------ | ------------------------------ |
-| `/`                | Redirects to `/articles`       |
-| `/articles`        | List and selection             |
-| `/articles/create` | Create page                    |
-| `/articles/1`      | Detail page (seed article `1`) |
-| `/articles/1/edit` | Update page                    |
+| Generic route             | Article instance   | Page instance   |
+| ------------------------- | ------------------ | --------------- |
+| `/$entity`                | `/articles`        | `/pages`        |
+| `/$entity/create`         | `/articles/create` | `/pages/create` |
+| `/$entity/$recordId`      | `/articles/1`      | `/pages/1`      |
+| `/$entity/$recordId/edit` | `/articles/1/edit` | `/pages/1/edit` |
 
-Missing records display a not-found page without stale entity actions. Static create routes are distinct from article IDs. Browser back/forward navigation updates context.
+The sidebar/navigation and searchable palette both consume `useAdminEntityCommands`. The palette does not reconstruct routes, parse pathname strings, or maintain a separate action list. Adding another entity registration makes its collection/create commands available automatically; supported record screens provide View/Edit commands automatically.
 
-### Context and commands
+Shared list/detail pages render the same `forRecord` commands as the palette. Record delete targets that row even with another selection; bulk delete uses valid selected IDs. Both request the same Radix-backed confirmation dialog. Confirmation deletes the requested entity's records and navigates through the shared entity-location API.
 
-The header reports `Articles` on the collection, `Article 1` on its detail/edit pages, and stable IDs for selected articles. Selecting all three seed articles gives `Selected articles: 1, 2, 3`. Clearing selection restores collection context; leaving the collection clears selection. Explicit row actions target that row, not whichever articles happen to be selected. Bulk deletion targets the selection.
+## Real screen context and form callbacks
 
-Open **Command palette** with the header button (mouse, Enter, or Space). Focus starts in the search input. Type a command name, Tab to a result, and press Enter; Escape closes the palette and restores focus. This intentionally uses native buttons and Radix dialog focus behavior rather than emulating listbox keyboard behavior. Form commands submit through `requestSubmit()` and RHF, so validation cannot be bypassed.
+The header displays context from `useAdminEntityContext`: collection, decoded entity record ID, selected IDs, or unavailable target. Jotai selection is entity-scoped, so article `1` and page `1` cannot be confused. Leaving the collection or switching entities clears selection, including browser history navigation.
 
-The demo supplies application-specific entity/context/command code. These are **not yet reusable entity APIs exported by @bezny/admin**. It exercises the existing admin composition/customization API and gives future framework features a concrete integration example.
+Create/edit screens use RHF and Bezny fields. They register Save/Cancel with `useAdminPageCommands`, binding actual form callbacks. The palette submits through the same RHF handler as the form, with the same validation and focus behavior. No hardcoded form ID or `requestSubmit()` DOM lookup is needed. Commands disappear when their owning screen leaves.
 
-## Data and limitations
+Open **Command palette** with its header button (mouse, Enter, or Space). Type to filter, Tab to a command, and Enter to execute. Escape closes it and restores focus. Radix owns modal focus, dismissal, and accessibility; native buttons supply command activation. The palette intentionally does not emulate arrow-key listbox behavior.
 
-Three articles are seeded in an in-memory Jotai store. Creates, edits, deletes, and selections persist across routes in the current session only. Reloading resets the workspace. There is no backend, authentication, permissions system, storage synchronization, or unsaved-change blocker. All seed records are editable; a production application must add authorization to the common command execution path.
+## Presentation and data boundaries
 
-The Vite development server serves deep links through its SPA fallback. When hosting the built `dist/`, configure your server to serve `index.html` for application URLs such as `/articles/1/edit`.
+`AdminApplicationProvider` receives customized Layout/Page/PageHeader blocks. A parent `AdminLayout` contains one main landmark and an `Outlet`; entity screens use `AdminPage`. Styles consume demo control aliases backed by existing structural surface tokens and the base stylesheet. OS light/dark theming remains available.
+
+Data adapters, complete record data, forms, and confirmation presentation are demo-owned. Generic routing, registry validation, entity context, selection state, action availability, and the command catalog are admin-owned. See [the entity API](../admin/ENTITIES.md) for reusable contracts.
+
+Data is still deliberately **in memory**: three articles and one page are seeded, edits persist across routes, and reload resets everything. There is no backend, authentication, permissions service, pagination, or unsaved-change blocker. This demo proves shared entity infrastructure; it does not pretend to be a production content system.
+
+For built `dist/` hosting, serve `index.html` for application deep links.
 
 ## Source map
 
-- `src/demo-application.tsx`: application factory, router, admin provider, and selection cleanup.
-- `src/editorial-layout.tsx`: customized admin blocks and route shell.
-- `src/article-state.ts`: seeded records and stable entity-context model.
-- `src/article-actions.ts`: shared context-sensitive command definitions.
-- `src/article-pages.tsx`: list, detail, create/update, and missing-record pages.
-- `src/article-dialogs.tsx`: searchable palette and shared delete confirmation.
-- `src/editorial-appearance.scss` and `src/editorial-admin.module.scss`: demo control tokens and scoped presentation. Control aliases reference existing structural surface tokens in the workspace's internal Sass modules; the base stylesheet supplies foundational, logical, and structural declarations. No new public Sass export is implied.
+- `src/demo-application.tsx`: creates/mounts the shared admin application; no per-entity routes.
+- `src/editorial-entities.ts`: entity registrations and delete-action adapters; no palette entries.
+- `src/editorial-records.ts`: entity datasets and editorial data-source descriptors.
+- `src/editorial-pages.tsx`: entity-independent list/detail/form screens and real page callbacks.
+- `src/editorial-dialogs.tsx`: palette presentation and entity-aware delete confirmation.
+- `src/editorial-layout.tsx`: presentation replacements, registered navigation, matched context.
+- `src/editorial-appearance.scss`, `src/editorial-admin.module.scss`: scoped presentation using internal workspace Sass token accessors.
 
-Override demo control aliases on the scope where they are declared (`.application`, `.actions`, `.commands`, or `.form`), or customize the admin replacement components. Import `@bezny/base/style.css` once at the application entrypoint to retain OS light/dark theming.
-
-## Verification
-
-From the repository root:
+## Checks
 
 ```sh
 pnpm build
 pnpm typecheck
 pnpm test
-pnpm exec ultracite check packages/demo
+pnpm exec ultracite check packages/admin packages/demo
 ```
 
-The workspace task graph builds library dependencies before demo checks. Tests cover LCRUD, validation/submission/focus, row-versus-selection targeting, history context, action/palette parity, keyboard palette interaction, delete confirm/cancel, missing records, store isolation, and the complete Sass token reference chain.
+Admin tests verify arbitrary/renamed entity registrations, generic routing and encoded IDs, route/capability-command parity, permission updates, missing targets, scoped selection, real screen command registration/cleanup, and invalid registrations. Demo tests exercise LCRUD, two independent entities, shared palette/UI actions, forms, history, and modal keyboard/focus behavior. Sass tests verify pure accessors and emitted token references.
