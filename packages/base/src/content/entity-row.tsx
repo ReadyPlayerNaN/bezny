@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 
+import type { ContextMenuContentProps } from "../controls/context-menu.js";
 import { Badge } from "./badge.js";
 import {
   combineEntityRowActions,
@@ -31,8 +32,12 @@ export interface EntityRowData {
   expanded?: ReactNode;
   actions?: readonly EntityRowAction[];
 }
-export type EntityRowProps = EntityRowData & { variant?: EntityRowVariant };
-export const EntityRow = ({
+export type EntityRowProps = EntityRowData & {
+  variant?: EntityRowVariant;
+  onActionError?: (error: unknown) => void;
+  menuContainer?: ContextMenuContentProps["container"];
+};
+const EntityRowContent = ({
   title,
   titleHref,
   leading,
@@ -77,11 +82,13 @@ export interface EntityRowListProps {
   rows: readonly EntityRowData[];
   variant?: EntityRowVariant;
   onActionError?: (error: unknown) => void;
+  menuContainer?: ContextMenuContentProps["container"];
 }
 export const EntityRowList = ({
   rows,
   variant = "default",
   onActionError,
+  menuContainer,
 }: EntityRowListProps) => {
   const [storedIds, setStoredIds] = useState<string[]>([]);
   const eligibleIds = new Set<string>();
@@ -133,11 +140,25 @@ export const EntityRowList = ({
             icon={row.icon}
             decoration={row.decoration}
             {...(onActionError ? { onActionError } : {})}
+            {...(menuContainer ? { menuContainer } : {})}
           >
-            <EntityRow {...row} variant={variant} />
+            <EntityRowContent {...row} variant={variant} />
           </SelectableRow>
         );
       })}
     </div>
   );
 };
+export const EntityRow = ({
+  variant = "default",
+  onActionError,
+  menuContainer,
+  ...row
+}: EntityRowProps) => (
+  <EntityRowList
+    rows={[row]}
+    variant={variant}
+    {...(onActionError ? { onActionError } : {})}
+    {...(menuContainer ? { menuContainer } : {})}
+  />
+);

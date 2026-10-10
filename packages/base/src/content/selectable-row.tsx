@@ -11,6 +11,7 @@ import {
   ContextMenuSubTrigger,
   ContextMenuSubContent,
 } from "../controls/context-menu.js";
+import type { ContextMenuContentProps } from "../controls/context-menu.js";
 import { CheckboxInput } from "../inputs/checkbox-input.js";
 import type { EntityRowVariant } from "./entity-row-title.js";
 
@@ -36,6 +37,7 @@ export interface SelectableRowProps {
   onContextMenuOpen?: () => void;
   onActionError?: (error: unknown) => void;
   menuItems: readonly SelectableRowMenuItem[];
+  menuContainer?: ContextMenuContentProps["container"];
   menuSummary?: ReactNode;
   children: ReactNode;
   variant?: EntityRowVariant;
@@ -53,6 +55,7 @@ export const SelectableRow = ({
   onContextMenuOpen,
   onActionError,
   menuItems,
+  menuContainer,
   menuSummary,
   children,
   variant = "default",
@@ -92,7 +95,9 @@ export const SelectableRow = ({
             <ContextMenuSubTrigger disabled={disabled}>
               {item.label}
             </ContextMenuSubTrigger>
-            <ContextMenuSubContent>
+            <ContextMenuSubContent
+              {...(menuContainer ? { container: menuContainer } : {})}
+            >
               {renderActions(item.submenu)}
             </ContextMenuSubContent>
           </ContextMenuSub>
@@ -203,7 +208,9 @@ export const SelectableRow = ({
         </fieldset>
       </ContextMenuTrigger>
       {menuItems.length > 0 ? (
-        <ContextMenuContent>
+        <ContextMenuContent
+          {...(menuContainer ? { container: menuContainer } : {})}
+        >
           {menuSummary ? (
             <ContextMenuLabel>{menuSummary}</ContextMenuLabel>
           ) : null}

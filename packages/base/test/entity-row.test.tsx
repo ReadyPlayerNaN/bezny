@@ -10,11 +10,38 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { combineEntityRowActions } from "../src/content/entity-row-actions.js";
-import { EntityCard, EntityRowList, SelectableRow } from "../src/index.js";
+import {
+  EntityCard,
+  EntityRow,
+  EntityRowList,
+  SelectableRow,
+} from "../src/index.js";
 import type { EntityRowData } from "../src/index.js";
 
 describe("Entity rows", () => {
   afterEach(cleanup);
+
+  it("gives standalone rows local context menus and a caller-owned portal boundary", async () => {
+    const user = userEvent.setup();
+    const container = document.createElement("div");
+    container.className = "bezny-dark";
+    document.body.append(container);
+    const handleSelect = vi.fn<() => void>();
+    render(
+      <EntityRow
+        id="a"
+        title="Alpha"
+        menuContainer={container}
+        actions={[{ key: "archive", label: "Archive", onSelect: handleSelect }]}
+      />
+    );
+    fireEvent.contextMenu(screen.getByRole("group", { name: "Item a" }));
+    const menu = await screen.findByRole("menu");
+    expect(container.contains(menu)).toBeTruthy();
+    await user.click(screen.getByRole("menuitem", { name: "Archive" }));
+    expect(handleSelect).toHaveBeenCalledOnce();
+    container.remove();
+  });
 
   it("intersects submenu actions and invokes corresponding callbacks for every selected row", async () => {
     const handleFirst = vi.fn<() => void>();
