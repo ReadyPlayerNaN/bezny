@@ -4,6 +4,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   createEditorialAuthentication,
   editorialSessionTokenKey,
+  editorialSimulatedSessionKey,
 } from "../src/editorial-auth-session.js";
 import {
   editorialSessionStatusAtom,
@@ -14,7 +15,7 @@ const blockedStorage = () => {
   throw new Error("Storage blocked");
 };
 
-describe("editorial token session lifecycle", () => {
+describe("browser-only simulated token session", () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
@@ -38,61 +39,75 @@ describe("editorial token session lifecycle", () => {
     authentication.dispose();
   });
 
-  it("ignores late restoration responses after disposal without erasing the persisted token", async () => {
-    window.sessionStorage.setItem(editorialSessionTokenKey, "opaque-token");
-    const response = Promise.withResolvers<Response>();
-    vi.spyOn(globalThis, "fetch").mockImplementationOnce(
-      async () => await response.promise
-    );
+  it("ignores pending restoration after disposal without erasing the persisted token", async () => {
+    const original = createEditorialAuthentication(createStore());
+    await original.signInSocial("google");
+    const token = window.sessionStorage.getItem(editorialSessionTokenKey);
     const store = createStore();
     const authentication = createEditorialAuthentication(store);
     const restoring = authentication.restore();
     authentication.dispose();
-    response.resolve(
-      Response.json({
-        user: { email: "ada@example.com", name: "Ada", provider: "email" },
-      })
-    );
     await restoring;
     expect(store.get(editorialUserAtom)).toBeNull();
-    expect(window.sessionStorage.getItem(editorialSessionTokenKey)).toBe(
-      "opaque-token"
-    );
+    expect(window.sessionStorage.getItem(editorialSessionTokenKey)).toBe(token);
+    original.dispose();
   });
 
-  it("preserves the session when profile saving or backend logout fails", async () => {
+  it("expires simulated sessions and clears both token and mock session record", async () => {
+    const clock = vi.spyOn(Date, "now").mockReturnValue(0);
+    const original = createEditorialAuthentication(createStore());
+    await original.signInSocial("github");
+    original.dispose();
+    clock.mockReturnValue(8 * 60 * 60 * 1000);
     const store = createStore();
     const authentication = createEditorialAuthentication(store);
+    await authentication.restore();
+    expect(store.get(editorialUserAtom)).toBeNull();
+    expect(window.sessionStorage.getItem(editorialSessionTokenKey)).toBeNull();
+    expect(
+      window.sessionStorage.getItem(editorialSimulatedSessionKey)
+    ).toBeNull();
+    expect(store.get(editorialSessionStatusAtom)).toBe("ready");
+    authentication.dispose();
+  });
+
+  it.each([
+    "not-json",
+    JSON.stringify({
+      expiresAt: Number.MAX_SAFE_INTEGER,
+      token: "different-token",
+      user: { email: "ada@example.com", name: "Ada", provider: "email" },
+    }),
+    JSON.stringify({
+      expiresAt: Number.MAX_SAFE_INTEGER,
+      token: "opaque-token",
+      user: { name: "Ada" },
+    }),
+  ])(
+    "discards malformed or mismatched mock session data: %s",
+    async (serialized) => {
+      window.sessionStorage.setItem(editorialSessionTokenKey, "opaque-token");
+      window.sessionStorage.setItem(editorialSimulatedSessionKey, serialized);
+      const store = createStore();
+      const authentication = createEditorialAuthentication(store);
+      await authentication.restore();
+      expect(store.get(editorialUserAtom)).toBeNull();
+      expect(window.sessionStorage).toHaveLength(0);
+      authentication.dispose();
+    }
+  );
+
+  it("does not store passwords in either simulated session entry", async () => {
+    const authentication = createEditorialAuthentication(createStore());
     await authentication.signIn({
       email: "editor@example.com",
       password: "bezny-demo",
     });
     const token = window.sessionStorage.getItem(editorialSessionTokenKey);
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
-      new Response(null, { status: 503 })
-    );
-    await expect(
-      authentication.updateAccount({ email: "ada@example.com", name: "Ada" })
-    ).rejects.toThrow("Account update failed");
-    expect(store.get(editorialUserAtom)?.name).toBe("Demo Editor");
-    vi.mocked(globalThis.fetch).mockResolvedValueOnce(
-      new Response(null, { status: 503 })
-    );
-    await expect(authentication.logout()).rejects.toThrow("Logout failed");
-    expect(window.sessionStorage.getItem(editorialSessionTokenKey)).toBe(token);
-    authentication.dispose();
-  });
-
-  it("does not grant a session for a malformed backend response", async () => {
-    window.sessionStorage.setItem(editorialSessionTokenKey, "opaque-token");
-    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce(
-      Response.json({ user: { name: "Ada" } })
-    );
-    const store = createStore();
-    const authentication = createEditorialAuthentication(store);
-    await authentication.restore();
-    expect(store.get(editorialUserAtom)).toBeNull();
-    expect(store.get(editorialSessionStatusAtom)).toBe("error");
+    const session = window.sessionStorage.getItem(editorialSimulatedSessionKey);
+    expect(token).not.toContain("bezny-demo");
+    expect(session).not.toContain("password");
+    expect(session).not.toContain("bezny-demo");
     authentication.dispose();
   });
 });

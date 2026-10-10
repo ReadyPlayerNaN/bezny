@@ -1,19 +1,7 @@
 import { beforeEach, vi } from "vitest";
 
-import { createEditorialAuthBackend } from "../server/editorial-auth-backend.js";
-
 beforeEach(() => {
   window.sessionStorage.clear();
-  const backend = createEditorialAuthBackend();
-  vi.stubGlobal(
-    "fetch",
-    async (input: string | URL | Request, init?: RequestInit) => {
-      const url = input instanceof Request ? input.url : String(input);
-      return await backend(
-        new Request(new URL(url, "http://localhost"), { ...init, signal: null })
-      );
-    }
-  );
 });
 
 window.scrollTo = vi.fn();

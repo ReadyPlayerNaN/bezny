@@ -15,7 +15,6 @@ import {
   useAdminEntityRegistry,
 } from "@bezny/admin/context";
 import { AdminLayout } from "@bezny/admin/layout";
-import { Button } from "@bezny/base";
 import { Outlet } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
@@ -23,7 +22,6 @@ import { useTranslation } from "react-i18next";
 
 import { EditorialAccountMenu } from "./editorial-account-menu.js";
 import {
-  editorialAuthenticationAtom,
   editorialSessionStatusAtom,
   editorialUserAtom,
 } from "./editorial-auth-state.js";
@@ -153,22 +151,10 @@ export const EditorialShell = () => {
   }, [i18n, language]);
   const user = useAtomValue(editorialUserAtom);
   const sessionStatus = useAtomValue(editorialSessionStatusAtom);
-  const authentication = useAtomValue(editorialAuthenticationAtom);
   if (sessionStatus !== "ready") {
     return (
       <main lang={language} dir={i18n.dir(language)}>
-        <p role={sessionStatus === "error" ? "alert" : "status"}>
-          {t(sessionStatus === "error" ? "sessionError" : "sessionLoading")}
-        </p>
-        {sessionStatus === "error" ? (
-          <Button
-            onClick={async () => {
-              await authentication?.restore();
-            }}
-          >
-            {t("retrySession")}
-          </Button>
-        ) : null}
+        <output>{t("sessionLoading")}</output>
       </main>
     );
   }

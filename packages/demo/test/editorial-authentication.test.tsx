@@ -12,7 +12,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { createDemoApplication, DemoApp } from "../src/demo-application.js";
 import type { DemoApplication } from "../src/demo-application.js";
-import { editorialSessionTokenKey } from "../src/editorial-auth-session.js";
+import {
+  editorialSessionTokenKey,
+  editorialSimulatedSessionKey,
+} from "../src/editorial-auth-session.js";
 import { editorialUserAtom } from "../src/editorial-auth-state.js";
 
 const applications: DemoApplication[] = [];
@@ -29,7 +32,7 @@ const renderLogin = async (locale = "en", path = "/articles") => {
   return { application, user: userEvent.setup() };
 };
 const openAccount = async (user: ReturnType<typeof userEvent.setup>) => {
-  await user.click(screen.getByRole("button", { name: "Account menu" }));
+  await user.click(await screen.findByRole("button", { name: "Account menu" }));
   return within(await screen.findByRole("menu", { name: "Account menu" }));
 };
 
@@ -39,6 +42,7 @@ describe("demo authentication", () => {
     for (const application of applications.splice(0)) {
       application.dispose();
     }
+    vi.restoreAllMocks();
   });
 
   it("starts logged out on deep links, rejects wrong credentials and signs in without storing passwords", async () => {
@@ -190,7 +194,7 @@ describe("demo authentication", () => {
   );
 
   it.each(["email", "Google", "GitHub"])(
-    "restores %s login from a backend token after refresh and revokes it on logout",
+    "restores %s login from a simulated token after refresh and clears it on logout",
     async (provider) => {
       const { application, user } = await renderLogin();
       if (provider === "email") {
@@ -210,7 +214,7 @@ describe("demo authentication", () => {
       await screen.findByRole("button", { name: "Account menu" });
       const token = window.sessionStorage.getItem(editorialSessionTokenKey);
       expect(token).toMatch(/^[a-f\d-]{36}$/u);
-      expect(window.sessionStorage).toHaveLength(1);
+      expect(window.sessionStorage).toHaveLength(2);
       const identity = application.store.get(editorialUserAtom);
       cleanup();
       application.dispose();
@@ -227,17 +231,16 @@ describe("demo authentication", () => {
       expect(
         window.sessionStorage.getItem(editorialSessionTokenKey)
       ).toBeNull();
-      const revoked = await fetch("/api/session", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      expect(revoked.status).toBe(401);
+      expect(
+        window.sessionStorage.getItem(editorialSimulatedSessionKey)
+      ).toBeNull();
       cleanup();
       refreshed.dispose();
       await renderLogin();
     }
   );
 
-  it("loads edited profile details from the backend after refresh", async () => {
+  it("restores edited profile details from the browser simulation after refresh", async () => {
     const { application, user } = await renderLogin();
     await user.click(
       screen.getByRole("button", { name: "Continue with Google" })
@@ -284,26 +287,26 @@ describe("demo authentication", () => {
     expect(window.sessionStorage.getItem(editorialSessionTokenKey)).toBeNull();
   });
 
-  it("retains the token on a network failure and offers session restoration retry", async () => {
+  it("simulates sign-in, refresh and logout without authentication network requests", async () => {
+    const fetchSpy = vi
+      .spyOn(globalThis, "fetch")
+      .mockRejectedValue(new Error("No network allowed"));
     const { application, user } = await renderLogin();
     await user.click(
       screen.getByRole("button", { name: "Continue with Google" })
     );
     await screen.findByRole("button", { name: "Account menu" });
-    const token = window.sessionStorage.getItem(editorialSessionTokenKey);
     cleanup();
     application.dispose();
-    vi.spyOn(globalThis, "fetch").mockRejectedValueOnce(new Error("Offline"));
     const refreshed = createDemoApplication(
       createMemoryHistory({ initialEntries: ["/articles"] })
     );
     applications.push(refreshed);
     render(<DemoApp application={refreshed} />);
-    await screen.findByRole("alert");
-    expect(window.sessionStorage.getItem(editorialSessionTokenKey)).toBe(token);
-    await user.click(screen.getByRole("button", { name: "Try again" }));
-    await screen.findByRole("button", { name: "Account menu" });
-    expect(refreshed.store.get(editorialUserAtom)?.provider).toBe("google");
+    const menu = await openAccount(user);
+    await user.click(menu.getByRole("menuitem", { name: "Log out" }));
+    await screen.findByRole("heading", { name: "Sign in to Bezny" });
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 
   it("keeps sessions application-scoped and clears the user on disposal", async () => {

@@ -9,7 +9,6 @@ export const demoEditorialUser: EditorialUser = {
   provider: "email",
 };
 export const demoPassword = "bezny-demo";
-export const editorialSessionEndpoint = "/api/session";
 
 export const parseEditorialUser = (value: unknown): EditorialUser | null => {
   if (

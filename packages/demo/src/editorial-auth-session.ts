@@ -1,7 +1,8 @@
 import type { createStore } from "jotai";
 
 import {
-  editorialSessionEndpoint,
+  demoEditorialUser,
+  demoPassword,
   parseEditorialUser,
 } from "./editorial-auth-contract.js";
 import type { EditorialUser } from "./editorial-auth-contract.js";
@@ -11,6 +12,13 @@ import {
 } from "./editorial-auth-state.js";
 
 export const editorialSessionTokenKey = "bezny.demo.session-token.v1";
+export const editorialSimulatedSessionKey = "bezny.demo.simulated-session.v1";
+const sessionLifetime = 8 * 60 * 60 * 1000;
+interface SimulatedSession {
+  token: string;
+  user: EditorialUser;
+  expiresAt: number;
+}
 export interface EditorialAuthentication {
   signIn: (credentials: { email: string; password: string }) => Promise<void>;
   signInSocial: (provider: "google" | "github") => Promise<void>;
@@ -28,150 +36,140 @@ const getSessionStorage = (): Storage | null => {
     return null;
   }
 };
-const readToken = (storage: Storage | null): string | null => {
-  try {
-    return storage?.getItem(editorialSessionTokenKey) ?? null;
-  } catch {
+const parseSession = (value: unknown): SimulatedSession | null => {
+  if (
+    typeof value !== "object" ||
+    value === null ||
+    !("token" in value) ||
+    typeof value.token !== "string" ||
+    !("expiresAt" in value) ||
+    typeof value.expiresAt !== "number" ||
+    !Number.isFinite(value.expiresAt) ||
+    !("user" in value)
+  ) {
     return null;
   }
-};
-const persistToken = (storage: Storage | null, token: string | null) => {
-  try {
-    if (token) {
-      storage?.setItem(editorialSessionTokenKey, token);
-    } else {
-      storage?.removeItem(editorialSessionTokenKey);
-    }
-  } catch {
-    /* Authentication remains usable if browser storage is blocked. */
-  }
-};
-const readUserResponse = (body: unknown): EditorialUser => {
-  const user =
-    typeof body === "object" && body !== null && "user" in body
-      ? parseEditorialUser(body.user)
-      : null;
-  if (!user) {
-    throw new Error("Invalid authentication response");
-  }
-  return user;
+  const user = parseEditorialUser(value.user);
+  return user ? { expiresAt: value.expiresAt, token: value.token, user } : null;
 };
 
-/** The browser persists only an opaque backend-issued token, never profile/password data. */
+/** Browser-only simulation. Tokens and mock session records are not real authentication. */
 export const createEditorialAuthentication = (
   store: ReturnType<typeof createStore>
 ): EditorialAuthentication => {
-  const storage = getSessionStorage();
-  let token = readToken(storage);
+  let storage = getSessionStorage();
+  let session: SimulatedSession | null = null;
   let disposed = false;
-  const controller = new AbortController();
-  const request = async (path = "", init: RequestInit = {}) => {
-    const response = await fetch(`${editorialSessionEndpoint}${path}`, {
-      ...init,
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      signal: controller.signal,
-    });
-    return response;
+  const persistSession = () => {
+    try {
+      if (session) {
+        storage?.setItem(editorialSessionTokenKey, session.token);
+        storage?.setItem(editorialSimulatedSessionKey, JSON.stringify(session));
+      } else {
+        storage?.removeItem(editorialSessionTokenKey);
+        storage?.removeItem(editorialSimulatedSessionKey);
+      }
+    } catch {
+      storage = null;
+    }
+  };
+  const readSession = (): SimulatedSession | null => {
+    if (!storage) {
+      return session;
+    }
+    let token: string | null;
+    let serialized: string | null;
+    try {
+      token = storage.getItem(editorialSessionTokenKey);
+      serialized = storage.getItem(editorialSimulatedSessionKey);
+    } catch {
+      storage = null;
+      return session;
+    }
+    if (!token || !serialized) {
+      return null;
+    }
+    try {
+      const parsed: unknown = JSON.parse(serialized);
+      const restored = parseSession(parsed);
+      return restored?.token === token ? restored : null;
+    } catch {
+      return null;
+    }
   };
   const clearSession = () => {
-    token = null;
-    persistToken(storage, null);
+    session = null;
+    persistSession();
     store.set(editorialUserAtom, null);
   };
-  const authenticate = async (path: string, body: unknown) => {
-    const response = await request(path, {
-      body: JSON.stringify(body),
-      method: "POST",
-    });
-    if (!response.ok) {
-      throw new Error("Authentication failed");
+  const activeSession = () => {
+    session = readSession();
+    if (!session || session.expiresAt <= Date.now()) {
+      clearSession();
+      throw new Error("Invalid or expired simulated session");
     }
-    const result: unknown = await response.json();
-    const user = readUserResponse(result);
-    if (
-      typeof result !== "object" ||
-      result === null ||
-      !("token" in result) ||
-      typeof result.token !== "string" ||
-      !result.token
-    ) {
-      throw new Error("Missing session token");
+    return session;
+  };
+  const simulate = async (action: () => void) => {
+    await Promise.resolve();
+    if (!disposed) {
+      action();
     }
-    if (disposed) {
-      return;
-    }
-    const { token: issuedToken } = result;
-    token = issuedToken;
-    persistToken(storage, token);
+  };
+  const signIn = (user: EditorialUser) => {
+    session = {
+      expiresAt: Date.now() + sessionLifetime,
+      token: crypto.randomUUID(),
+      user,
+    };
+    persistSession();
     store.set(editorialUserAtom, user);
     store.set(editorialSessionStatusAtom, "ready");
   };
   return {
     dispose: () => {
       disposed = true;
-      controller.abort();
       store.set(editorialUserAtom, null);
     },
-    logout: async () => {
-      const response = await request("", { method: "DELETE" });
-      if (!response.ok && response.status !== 401) {
-        throw new Error("Logout failed");
-      }
-      if (!disposed) {
-        clearSession();
-      }
-    },
-    restore: async () => {
-      if (!token) {
-        store.set(editorialSessionStatusAtom, "ready");
-        return;
-      }
-      store.set(editorialSessionStatusAtom, "loading");
-      try {
-        const response = await request();
-        if (disposed) {
-          return;
-        }
-        if (response.status === 401) {
-          clearSession();
+    logout: () => simulate(clearSession),
+    restore: () =>
+      simulate(() => {
+        session = readSession();
+        if (session && session.expiresAt > Date.now()) {
+          store.set(editorialUserAtom, session.user);
         } else {
-          if (!response.ok) {
-            throw new Error("Session restoration failed");
-          }
-          const result: unknown = await response.json();
-          if (disposed) {
-            return;
-          }
-          store.set(editorialUserAtom, readUserResponse(result));
+          clearSession();
         }
         store.set(editorialSessionStatusAtom, "ready");
-      } catch {
-        if (!disposed) {
-          store.set(editorialSessionStatusAtom, "error");
+      }),
+    signIn: (credentials) =>
+      simulate(() => {
+        if (
+          credentials.email.trim().toLowerCase() !== demoEditorialUser.email ||
+          credentials.password !== demoPassword
+        ) {
+          throw new Error("Invalid demo credentials");
         }
-      }
-    },
-    signIn: async (credentials) => {
-      await authenticate("/email", credentials);
-    },
-    signInSocial: async (provider) => {
-      await authenticate("/social", { provider });
-    },
-    updateAccount: async (values) => {
-      const response = await request("", {
-        body: JSON.stringify(values),
-        method: "PATCH",
-      });
-      if (!response.ok) {
-        throw new Error("Account update failed");
-      }
-      const result: unknown = await response.json();
-      if (!disposed) {
-        store.set(editorialUserAtom, readUserResponse(result));
-      }
-    },
+        signIn({ ...demoEditorialUser });
+      }),
+    signInSocial: (provider) =>
+      simulate(() => {
+        signIn({
+          email: `${provider}@example.com`,
+          name: `${provider === "google" ? "Google" : "GitHub"} Editor`,
+          provider,
+        });
+      }),
+    updateAccount: (values) =>
+      simulate(() => {
+        const current = activeSession();
+        const user = parseEditorialUser({ ...current.user, ...values });
+        if (!user) {
+          throw new Error("Invalid profile");
+        }
+        session = { ...current, user };
+        persistSession();
+        store.set(editorialUserAtom, user);
+      }),
   };
 };
