@@ -1,0 +1,77 @@
+@use "./dropdown-menu-appearance" as appearance;
+.content {
+  @include appearance.declarations;
+  box-sizing: border-box;
+  z-index: appearance.token("z-index");
+  min-width: min(
+    appearance.token("width"),
+    var(--radix-dropdown-menu-content-available-width)
+  );
+  max-width: var(--radix-dropdown-menu-content-available-width);
+  max-height: var(--radix-dropdown-menu-content-available-height);
+  overflow-y: auto;
+  padding: appearance.token("padding-small");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  box-shadow: appearance.token("shadow");
+  transform-origin: var(--radix-dropdown-menu-content-transform-origin);
+}
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: appearance.token("gap");
+  padding: appearance.token("padding-small");
+  border-radius: appearance.token("radius");
+  outline: none;
+  cursor: default;
+  &[data-highlighted] {
+    background: appearance.token("hover");
+  }
+  &[data-disabled] {
+    opacity: appearance.token("opacity-disabled");
+  }
+  &[data-tone="critical"] {
+    color: appearance.token("danger");
+  }
+}
+.selectionItem {
+  padding-inline-start: calc(
+    appearance.token("padding-small") + appearance.token("font-size") +
+      appearance.token("gap")
+  );
+}
+.indicator {
+  position: absolute;
+  inset-inline-start: appearance.token("padding-small");
+  inset-block-start: 50%;
+  translate: 0 -50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: appearance.token("font-size");
+  height: appearance.token("font-size");
+}
+.label {
+  padding: appearance.token("padding-small");
+  color: appearance.token("muted");
+}
+.separator {
+  height: appearance.token("border-width");
+  background: appearance.token("border");
+}
+.icon {
+  width: appearance.token("font-size");
+  height: appearance.token("font-size");
+}
+.chevron {
+  margin-inline-start: auto;
+}
+.content[dir="rtl"] .chevron {
+  transform: rotate(180deg);
+}

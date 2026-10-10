@@ -104,3 +104,30 @@ Use `Popover`, `PopoverTrigger`, `PopoverContent`, `PopoverClose`, optional `Pop
 ```
 
 Styles bind `--bezny-control-popover-*` to the shared structural surface palette, border, radius, typography, padding, width, shadow, and stacking tokens. Radix geometry variables remain intact. For tall content, constrain a scrolling inner region with `--radix-popover-content-available-height` rather than clipping the optional arrow. `forceMount` reaches both Content and its owned portal; callers using it manage closed-state visibility/lifecycle, as with Radix.
+
+## Dropdown menu
+
+Compose `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, and `DropdownMenuItem` for button-triggered action menus. Content owns its portal. Pass `container` to both Content and SubContent for nested theme boundaries. Root preserves controlled/uncontrolled state, modal/non-modal behavior, and `dir`. Radix supplies roving focus, keyboard activation, typeahead, disabled-item handling, dismissal, and submenu direction keys.
+
+```tsx
+<DropdownMenu>
+  <DropdownMenuTrigger asChild>
+    <Button>Actions</Button>
+  </DropdownMenuTrigger>
+  <DropdownMenuContent>
+    <DropdownMenuItem onSelect={archive}>Archive</DropdownMenuItem>
+    <DropdownMenuSub>
+      <DropdownMenuSubTrigger>More</DropdownMenuSubTrigger>
+      <DropdownMenuSubContent>
+        <DropdownMenuItem tone="critical" onSelect={remove}>
+          Delete
+        </DropdownMenuItem>
+      </DropdownMenuSubContent>
+    </DropdownMenuSub>
+  </DropdownMenuContent>
+</DropdownMenu>
+```
+
+Also exports Group, Label, Separator, CheckboxItem, RadioGroup/RadioItem, ItemIndicator, and Sub/SubTrigger/SubContent. Checkbox items support `"indeterminate"`; selection items include reserved indicator space and a default check/minus icon. SubTrigger includes a direction-aware chevron. Every DOM part forwards refs/classes and primitive props. With `asChild` on selection items or SubTrigger, supply one child and your own indicator/chevron markup; the wrapper does not insert siblings that would break Radix Slot composition. Item supports `tone="critical"`; use `onSelect` (and `event.preventDefault()` to retain the menu), not a separate click-only action handler.
+
+Styles bind `--bezny-control-dropdown-menu-*` to structural surface colours, spacing, typography, disabled opacity, borders, shadow, and stacking tokens. Menus scroll within Radix's available viewport size. Content/SubContent preserve `forceMount` through their owned portals; callers manage closed-state lifecycle when opting in. Triggers are intentionally styled through `asChild` + Button.
