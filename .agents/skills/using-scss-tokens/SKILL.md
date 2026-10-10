@@ -18,6 +18,8 @@ Dependencies flow **Foundational → Logical → Structural → Control**.
 3. **Structural tokens** reference logical tokens only, giving system values purpose such as heading typography.
 4. **Control tokens** belong to components and reference structural tokens only, applying those values to the control.
 
+Interaction colours belong in the logical layer: derive hover/active colours with CSS `color-mix()` using foundational base colours and absolute mixing weights. Do not store hover/active shades as foundational literals. Derived expressions must reference foundational tokens only, so root base-colour overrides propagate at runtime.
+
 “Primitive” is another name for foundational, not an extra layer. Component declarations consume control tokens, not lower layers directly. Do not introduce reverse references, skip layers, or repeat raw design values above the foundational layer. Non-token layout mechanics (such as resetting a margin to zero) need not become design tokens.
 
 ## Sass-backed CSS references

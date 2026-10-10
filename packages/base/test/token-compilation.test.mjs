@@ -45,6 +45,16 @@ test("unknown scale keys and heading levels fail Sass compilation", () => {
       module: "tokens/foundational",
     },
     {
+      errorPattern: /Unknown foundation token: color-product-hover/u,
+      expression: 'foundational.token("color-product-hover")',
+      module: "tokens/foundational",
+    },
+    {
+      errorPattern: /Unknown foundation token: color-product-active/u,
+      expression: 'foundational.token("color-product-active")',
+      module: "tokens/foundational",
+    },
+    {
       errorPattern: /Unknown logical token: font-size-missing/u,
       expression: 'logical.font-size("missing")',
       module: "tokens/logical",

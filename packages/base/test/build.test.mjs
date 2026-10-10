@@ -23,6 +23,9 @@ const rulePattern = /\.(?<name>[\w-]+)\s*\{(?<body>[^}]+)\}/gu;
 const rootPattern = /:root\s*\{(?<body>[^}]+)\}/gu;
 const tokenPattern = /(?<name>--bezny-[\w-]+)\s*:\s*(?<value>[^;}]+)/gu;
 const referencePattern = /^var\((?<name>--bezny-[\w-]+)\)$/u;
+const tokenValueReferencePattern = /var\((?<name>--bezny-[\w-]+)\)/gu;
+const derivedColorPattern =
+  /^color-mix\(in srgb,\s*var\(--bezny-foundation-[\w-]+\) var\(--bezny-foundation-mix-weight-\d+\),\s*var\(--bezny-foundation-color-black\)\)$/u;
 const cssReferencePattern = /var\((?<name>--bezny-[\w-]+)/gu;
 const pixelPattern = /(?:\d*\.)?\d+px\b/u;
 const layerPattern =
@@ -53,7 +56,12 @@ const resolveToken = (name, tokens, seen = new Set()) => {
   seen.add(name);
   const value = tokens[name];
   const reference = value.match(referencePattern);
-  return reference ? resolveToken(reference.groups.name, tokens, seen) : value;
+  if (reference) {
+    return resolveToken(reference.groups.name, tokens, seen);
+  }
+  return value.replace(tokenValueReferencePattern, (_match, referenceName) =>
+    resolveToken(referenceName, tokens, new Set(seen))
+  );
 };
 
 const headingTokens = (level, overrides = {}) => {
@@ -95,16 +103,24 @@ test("shared token defaults are emitted once and use adjacent layers only", () =
         assert.ok(value.endsWith("rem"), `${name} must use rem`);
       }
     } else {
-      const reference = value.match(referencePattern);
-      assert.ok(reference, `${name} must be a single token reference`);
+      const isDerivedColor =
+        layer === "logical" &&
+        name.startsWith("--bezny-logical-color-") &&
+        derivedColorPattern.test(value);
       assert.ok(
-        reference.groups.name.startsWith(`--bezny-${expectedParents[layer]}-`),
-        `${name} skips a layer`
+        referencePattern.test(value) || isDerivedColor,
+        `${name} must be an alias or a logical derived colour`
       );
-      assert.ok(
-        declarations.some(([declared]) => declared === reference.groups.name),
-        `${name} references a missing token`
-      );
+      for (const { groups } of value.matchAll(tokenValueReferencePattern)) {
+        assert.ok(
+          groups.name.startsWith(`--bezny-${expectedParents[layer]}-`),
+          `${name} skips a layer`
+        );
+        assert.ok(
+          declarations.some(([declared]) => declared === groups.name),
+          `${name} references a missing token`
+        );
+      }
     }
   }
   assert.doesNotMatch(css, pixelPattern);
@@ -198,6 +214,46 @@ test("structural and foundational overrides propagate through heading aliases", 
   );
 });
 
+test("interaction colours derive from foundational bases and follow root overrides", () => {
+  for (const [palette, baseToken, baseColor] of [
+    ["brand", "color-product-normal", "#007eb0"],
+    ["neutral", "color-cloud-normal", "#e8edf1"],
+    ["danger", "color-red-normal", "#df1111"],
+  ]) {
+    for (const [state, weight] of [
+      ["hover", "90%"],
+      ["active", "80%"],
+    ]) {
+      const name = `--bezny-logical-color-${palette}-${state}`;
+      assert.match(rootTokens[name], derivedColorPattern);
+      assert.equal(
+        resolveToken(name, rootTokens),
+        `color-mix(in srgb, ${baseColor} ${weight}, #000)`
+      );
+      assert.equal(
+        resolveToken(name, {
+          ...rootTokens,
+          [`--bezny-foundation-${baseToken}`]: "#8040c0",
+        }),
+        `color-mix(in srgb, #8040c0 ${weight}, #000)`
+      );
+    }
+  }
+  assert.equal(
+    resolveToken("--bezny-logical-color-brand-hover", {
+      ...rootTokens,
+      "--bezny-foundation-mix-weight-90": "95%",
+    }),
+    "color-mix(in srgb, #007eb0 95%, #000)"
+  );
+  for (const name of Object.keys(rootTokens)) {
+    if (name.startsWith("--bezny-foundation-color-")) {
+      assert.ok(!name.endsWith("-hover") && !name.endsWith("-active"), name);
+    }
+  }
+  assert.ok(!Object.hasOwn(rootTokens, "--bezny-foundation-color-cloud-dark"));
+});
+
 test("built buttons resolve all variants and sizes through complete token chains", () => {
   const expectedBackgrounds = {
     critical: "#df1111",
@@ -224,11 +280,11 @@ test("built buttons resolve all variants and sizes through complete token chains
       if (variant === "primary") {
         assert.equal(
           resolveToken("--bezny-control-button-background-hover", tokens),
-          "#00719e"
+          "color-mix(in srgb, #007eb0 90%, #000)"
         );
         assert.equal(
           resolveToken("--bezny-control-button-background-active", tokens),
-          "#00658d"
+          "color-mix(in srgb, #007eb0 80%, #000)"
         );
         assert.equal(
           resolveToken("--bezny-control-button-text", tokens),

@@ -72,7 +72,9 @@ import { Plane } from "lucide-react";
 - `asComponent` accepts an element or component and preserves its props and React 19 ref. Non-native controls receive button semantics, keyboard activation, and a focusable default tab index. Custom components must forward the provided props/ref.
 - Disabled non-native controls are removed from tab order, suppress navigation, and stop click propagation. Focus rings and reduced-motion styling are included.
 
-The default primary palette is blue: `#007eb0`, with `#00719e` on hover and `#00658d` when active, paired with white text.
+The default primary colour is blue (`#007eb0`), paired with white text. Primary, secondary, and critical hover/active colours are derived in the logical layer with CSS `color-mix(in srgb, …)`: hover mixes 90% of the foundational base with black, and active mixes 80%. Base colours, black, and the absolute mixing weights are foundational; interaction states are not.
+
+Override foundational base colours on `:root` to update their derived states at runtime. Logical state tokens reference only foundational tokens, preserving adjacent-layer dependencies. The former foundational product/red hover/active tokens and cloud hover/dark tokens are removed; use the logical `color-<brand|neutral|danger>-<hover|active>` tokens for state-specific overrides. Browsers must support CSS `color-mix()`.
 
 Button palette and sizing are represented through all four layers. Normal buttons use `1rem` text with `1.25rem` line height and a `2.5rem` minimum height; small buttons use `0.75rem`, `1rem`, and `2rem`, respectively. Automatic dark-mode tokens from the source application's full theme are not copied; the palette can be themed through Bezny's CSS tokens.
 

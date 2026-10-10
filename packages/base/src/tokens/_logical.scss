@@ -1,6 +1,14 @@
 @use "css-properties";
 @use "foundational";
 
+@function -darkened-color($base-color, $base-weight) {
+  @return color-mix(
+    in srgb,
+    foundational.token($base-color) foundational.token($base-weight),
+    foundational.token("color-black")
+  );
+}
+
 $-definitions: (
   "font-size-xs": foundational.size(14),
   "font-size-sm": foundational.size(16),
@@ -42,14 +50,14 @@ $-definitions: (
   "control-spinner-size": foundational.size(16),
   "control-spinner-border-width": foundational.size(2),
   "color-brand": foundational.token("color-product-normal"),
-  "color-brand-hover": foundational.token("color-product-hover"),
-  "color-brand-active": foundational.token("color-product-active"),
+  "color-brand-hover": -darkened-color("color-product-normal", "mix-weight-90"),
+  "color-brand-active": -darkened-color("color-product-normal", "mix-weight-80"),
   "color-neutral": foundational.token("color-cloud-normal"),
-  "color-neutral-hover": foundational.token("color-cloud-hover"),
-  "color-neutral-active": foundational.token("color-cloud-dark"),
+  "color-neutral-hover": -darkened-color("color-cloud-normal", "mix-weight-90"),
+  "color-neutral-active": -darkened-color("color-cloud-normal", "mix-weight-80"),
   "color-danger": foundational.token("color-red-normal"),
-  "color-danger-hover": foundational.token("color-red-hover"),
-  "color-danger-active": foundational.token("color-red-active"),
+  "color-danger-hover": -darkened-color("color-red-normal", "mix-weight-90"),
+  "color-danger-active": -darkened-color("color-red-normal", "mix-weight-80"),
   "color-on-accent": foundational.token("color-white"),
   "color-text-strong": foundational.token("color-ink-dark"),
   "focus-ring": foundational.token("shadow-focus"),
