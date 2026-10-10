@@ -12,9 +12,13 @@ export {
   Icon,
   wrapIcon,
   type IconProps,
+  type IconLabel,
+  type LabelledIconProps,
   type LucideIcon,
   type LucideProps,
 } from "./content/icon.js";
+
+export { IconButton, type IconButtonProps } from "./controls/icon-button.js";
 
 export {
   Button,

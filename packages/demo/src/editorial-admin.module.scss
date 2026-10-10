@@ -121,10 +121,6 @@
     white-space: nowrap;
   }
 }
-.actionIcon {
-  width: appearance.token("font-size");
-  height: appearance.token("font-size");
-}
 .actionMenu {
   z-index: appearance.token("z-index");
   max-height: var(--radix-dropdown-menu-content-available-height);

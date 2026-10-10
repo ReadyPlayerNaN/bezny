@@ -14,6 +14,7 @@ import {
   ScrollDownButton,
 } from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { useId } from "react";
 import type { ComponentPropsWithRef } from "react";
 
 import { Icon } from "../content/icon.js";
@@ -29,18 +30,29 @@ export type SelectProps = ComponentPropsWithRef<typeof Root>;
 export const SelectTrigger = ({
   children,
   className,
+  id,
   ...props
-}: ComponentPropsWithRef<typeof Trigger>) => (
-  <Trigger
-    {...props}
-    className={[styles.trigger, className].filter(Boolean).join(" ")}
-  >
-    {children}
-    <SelectIcon>
-      <Icon icon={ChevronDown} aria-hidden="true" className={styles.icon} />
-    </SelectIcon>
-  </Trigger>
-);
+}: ComponentPropsWithRef<typeof Trigger>) => {
+  const generatedId = useId();
+  const triggerId = id ?? generatedId;
+  return (
+    <Trigger
+      {...props}
+      id={triggerId}
+      className={[styles.trigger, className].filter(Boolean).join(" ")}
+    >
+      {children}
+      <SelectIcon>
+        <Icon
+          icon={ChevronDown}
+          aria-labelledby={props["aria-labelledby"] ?? triggerId}
+          aria-hidden="true"
+          className={styles.icon}
+        />
+      </SelectIcon>
+    </Trigger>
+  );
+};
 export type SelectContentProps = Omit<
   ComponentPropsWithRef<typeof Content>,
   "asChild"
@@ -62,11 +74,15 @@ export const SelectContent = ({
       className={[styles.content, className].filter(Boolean).join(" ")}
     >
       <ScrollUpButton className={styles.scroll}>
-        <Icon icon={ChevronUp} aria-hidden="true" className={styles.icon} />
+        <Icon icon={ChevronUp} aria-label="Scroll up" className={styles.icon} />
       </ScrollUpButton>
       <Viewport className={styles.viewport}>{children}</Viewport>
       <ScrollDownButton className={styles.scroll}>
-        <Icon icon={ChevronDown} aria-hidden="true" className={styles.icon} />
+        <Icon
+          icon={ChevronDown}
+          aria-label="Scroll down"
+          className={styles.icon}
+        />
       </ScrollDownButton>
     </Content>
   </Portal>
@@ -75,17 +91,25 @@ export const SelectItem = ({
   children,
   className,
   ...props
-}: Omit<ComponentPropsWithRef<typeof Item>, "asChild">) => (
-  <Item
-    {...props}
-    className={[styles.item, className].filter(Boolean).join(" ")}
-  >
-    <ItemIndicator>
-      <Icon icon={Check} aria-hidden="true" className={styles.icon} />
-    </ItemIndicator>
-    <ItemText>{children}</ItemText>
-  </Item>
-);
+}: Omit<ComponentPropsWithRef<typeof Item>, "asChild">) => {
+  const labelId = useId();
+  return (
+    <Item
+      {...props}
+      className={[styles.item, className].filter(Boolean).join(" ")}
+    >
+      <ItemIndicator>
+        <Icon
+          icon={Check}
+          aria-labelledby={labelId}
+          aria-hidden="true"
+          className={styles.icon}
+        />
+      </ItemIndicator>
+      <ItemText id={labelId}>{children}</ItemText>
+    </Item>
+  );
+};
 export const SelectLabel = ({
   className,
   ...props

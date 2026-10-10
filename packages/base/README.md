@@ -32,7 +32,7 @@ An explicit `level` takes precedence over the inherited level. Native HTML attri
 
 ## Icons
 
-`Icon` and `wrapIcon` are ported from `aipocapso`'s Lucide wrapper. They enforce `role="graphics-symbol"`, preserve SVG attributes, events, children, decorative `aria-hidden` semantics, and refs, and add no DOM wrapper. Ref forwarding uses React 19 ref props.
+`Icon` and `wrapIcon` enforce `role="graphics-symbol"` and require a label. Link visible text with `aria-labelledby` (the standard spelling), or supply `aria-label` to show a Radix tooltip popup on hover and keyboard focus. SVG props and React 19 refs are preserved; visible-label icons add no DOM wrapper.
 
 ```tsx
 import { Icon, wrapIcon } from "@bezny/base";
@@ -41,10 +41,11 @@ import { Plane } from "lucide-react";
 const AirlineIcon = wrapIcon(Plane);
 
 <Icon icon={Plane} aria-label="Airline" />;
-<AirlineIcon aria-hidden="true" />;
+<span id="airline-label">Airline</span>;
+<AirlineIcon aria-labelledby="airline-label" />;
 ```
 
-The wrapper accepts any Lucide icon; this package does not copy the source application's domain-specific icon catalogue. Label meaningful icons or mark decorative ones `aria-hidden="true"`. Heading typography sizes their symbols.
+Every icon needs one of these label paths, including decorative indicators. `aria-hidden="true"` may prevent duplicate announcements inside an already-labelled control, but is not a substitute for a label association. Heading typography sizes its symbols. `wrapIcon` retains the same required label API.
 
 ## Buttons
 
@@ -55,8 +56,8 @@ import { Button, Icon, Submit } from "@bezny/base";
 import { Plane } from "lucide-react";
 
 <Button variant="secondary" size="small">
-  <Icon icon={Plane} aria-hidden="true" />
-  Travel
+  <Icon icon={Plane} aria-labelledby="travel-label" aria-hidden="true" />
+  <span id="travel-label">Travel</span>
 </Button>;
 <Submit loading>Save</Submit>;
 <Button asComponent="a" href="#details">
@@ -79,6 +80,19 @@ Override foundational base colours on `:root` to update their derived states at 
 Button palette and sizing are represented through all four layers. Normal buttons use `1rem` text with `1.25rem` line height and a `2.5rem` minimum height; small buttons use `0.75rem`, `1rem`, and `2rem`, respectively. Both light and dark palettes can be themed through Bezny's CSS tokens.
 
 See [composed components](COMPONENTS.md) for Select and additional interactive/content components.
+
+### Icon buttons
+
+```tsx
+import { IconButton } from "@bezny/base";
+import { Plane } from "lucide-react";
+
+<IconButton icon={Plane} aria-label="Book travel" variant="secondary" />;
+```
+
+`IconButton` is a native, circular `Button` with fixed `2.5rem` width/height, no padding, and a `1rem` icon. It forwards button props, events, and refs, including disabled/loading states. Use `aria-label` for a hover/focus popup or `aria-labelledby` for visible page text. The button—not a nested SVG—is the focusable popup trigger. It intentionally has no `size`, `fullWidth`, or polymorphic API.
+
+Geometry follows the four-layer token chain: `--bezny-control-button-icon-button-<size|icon-size|radius>` consumes `--bezny-structural-icon-button-<size|icon-size|radius>`. The size/radius resolve through logical normal control height; the icon size uses the logical small icon scale.
 
 ## Inputs and fields
 

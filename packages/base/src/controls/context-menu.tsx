@@ -12,6 +12,7 @@ import {
   Separator,
 } from "@radix-ui/react-context-menu";
 import { Check, Minus, ChevronRight } from "lucide-react";
+import { useId } from "react";
 import type { ComponentPropsWithRef } from "react";
 
 import { Icon } from "../content/icon.js";
@@ -114,49 +115,69 @@ export const ContextMenuCheckboxItem = ({
   children,
   className,
   ...props
-}: Omit<ComponentPropsWithRef<typeof CheckboxItem>, "asChild">) => (
-  <CheckboxItem
-    {...props}
-    className={[styles.item, className].filter(Boolean).join(" ")}
-  >
-    <ItemIndicator>
-      <Icon
-        icon={props.checked === "indeterminate" ? Minus : Check}
-        aria-hidden="true"
-        className={styles.icon}
-      />
-    </ItemIndicator>
-    {children}
-  </CheckboxItem>
-);
+}: Omit<ComponentPropsWithRef<typeof CheckboxItem>, "asChild">) => {
+  const labelId = useId();
+  return (
+    <CheckboxItem
+      {...props}
+      className={[styles.item, className].filter(Boolean).join(" ")}
+    >
+      <ItemIndicator>
+        <Icon
+          icon={props.checked === "indeterminate" ? Minus : Check}
+          aria-labelledby={labelId}
+          aria-hidden="true"
+          className={styles.icon}
+        />
+      </ItemIndicator>
+      <span id={labelId}>{children}</span>
+    </CheckboxItem>
+  );
+};
 export const ContextMenuRadioItem = ({
   children,
   className,
   ...props
-}: Omit<ComponentPropsWithRef<typeof RadioItem>, "asChild">) => (
-  <RadioItem
-    {...props}
-    className={[styles.item, className].filter(Boolean).join(" ")}
-  >
-    <ItemIndicator>
-      <Icon icon={Check} aria-hidden="true" className={styles.icon} />
-    </ItemIndicator>
-    {children}
-  </RadioItem>
-);
+}: Omit<ComponentPropsWithRef<typeof RadioItem>, "asChild">) => {
+  const labelId = useId();
+  return (
+    <RadioItem
+      {...props}
+      className={[styles.item, className].filter(Boolean).join(" ")}
+    >
+      <ItemIndicator>
+        <Icon
+          icon={Check}
+          aria-labelledby={labelId}
+          aria-hidden="true"
+          className={styles.icon}
+        />
+      </ItemIndicator>
+      <span id={labelId}>{children}</span>
+    </RadioItem>
+  );
+};
 export const ContextMenuSubTrigger = ({
   children,
   className,
   ...props
-}: Omit<ComponentPropsWithRef<typeof SubTrigger>, "asChild">) => (
-  <SubTrigger
-    {...props}
-    className={[styles.item, className].filter(Boolean).join(" ")}
-  >
-    {children}
-    <Icon icon={ChevronRight} aria-hidden="true" className={styles.icon} />
-  </SubTrigger>
-);
+}: Omit<ComponentPropsWithRef<typeof SubTrigger>, "asChild">) => {
+  const labelId = useId();
+  return (
+    <SubTrigger
+      {...props}
+      className={[styles.item, className].filter(Boolean).join(" ")}
+    >
+      <span id={labelId}>{children}</span>
+      <Icon
+        icon={ChevronRight}
+        aria-labelledby={labelId}
+        aria-hidden="true"
+        className={styles.icon}
+      />
+    </SubTrigger>
+  );
+};
 export const ContextMenuLabel = ({
   className,
   ...props

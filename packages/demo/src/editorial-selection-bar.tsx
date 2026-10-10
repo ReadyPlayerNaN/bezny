@@ -1,7 +1,7 @@
 import { useAdminEntityCommands } from "@bezny/admin/commands";
 import { useAdminEntityContext } from "@bezny/admin/context";
 import type { AdminCommand } from "@bezny/admin/entities";
-import { Button, Icon } from "@bezny/base";
+import { IconButton } from "@bezny/base";
 import {
   Root,
   Trigger,
@@ -54,18 +54,13 @@ export const EditorialSelectionBar = () => {
       </span>
       <Root>
         <Trigger asChild>
-          <Button
+          <IconButton
             ref={trigger}
             variant="secondary"
+            icon={SquareMenu}
             aria-label={t("selectionActions")}
             disabled={actions.length === 0}
-          >
-            <Icon
-              icon={SquareMenu}
-              className={styles.actionIcon}
-              aria-hidden="true"
-            />
-          </Button>
+          />
         </Trigger>
         <Portal>
           <Content
@@ -99,8 +94,9 @@ export const EditorialSelectionBar = () => {
           </Content>
         </Portal>
       </Root>
-      <Button
+      <IconButton
         variant="secondary"
+        icon={X}
         aria-label={clear.label}
         onClick={async () => {
           const row = document.querySelector<HTMLElement>(
@@ -109,9 +105,7 @@ export const EditorialSelectionBar = () => {
           await execute(clear);
           row?.focus();
         }}
-      >
-        <Icon icon={X} className={styles.actionIcon} aria-hidden="true" />
-      </Button>
+      />
       {failed && <span role="alert">{t("saveError")}</span>}
     </fieldset>
   );

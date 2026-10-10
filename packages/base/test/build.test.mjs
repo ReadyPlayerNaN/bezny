@@ -7,11 +7,13 @@ import {
   Button,
   Heading,
   HeadingLevelProvider,
+  IconButton,
   Main,
   Section,
   ToggleInput,
   useHeadingLevel,
 } from "@bezny/base";
+import { Plane } from "lucide-react";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -137,6 +139,41 @@ test("every CSS variable reference in the built stylesheet has a declaration", (
       `Missing declaration for ${groups.name}`
     );
   }
+});
+
+test("icon buttons resolve fixed circular geometry and icon sizes", () => {
+  const html = renderToStaticMarkup(
+    createElement(IconButton, { "aria-label": "Travel", icon: Plane })
+  );
+  const classes = html.match(classPattern).groups.classes.split(" ");
+  const tokens = {
+    ...rootTokens,
+    ...Object.fromEntries(
+      classes.flatMap((name) => tokenEntries(rules.get(name) ?? ""))
+    ),
+  };
+  assert.equal(
+    resolveToken("--bezny-control-button-icon-button-size", tokens),
+    "2.5rem"
+  );
+  assert.equal(
+    resolveToken("--bezny-control-button-icon-button-icon-size", tokens),
+    "1rem"
+  );
+  assert.equal(
+    resolveToken("--bezny-control-button-icon-button-radius", tokens),
+    "2.5rem"
+  );
+  const geometry = classes.map((name) => rules.get(name) ?? "").join(";");
+  assert.match(geometry, /padding:0(?:;|$)/u);
+  assert.match(
+    geometry,
+    /width:var\(--bezny-control-button-icon-button-size\)/u
+  );
+  assert.match(
+    geometry,
+    /height:var\(--bezny-control-button-icon-button-size\)/u
+  );
 });
 
 test("built toggles bind scoped geometry and colour tokens through all four layers", () => {

@@ -1,5 +1,5 @@
 import { useAdminEntityCommands } from "@bezny/admin/commands";
-import { Button, Icon } from "@bezny/base";
+import { IconButton } from "@bezny/base";
 import {
   Root,
   Trigger,
@@ -20,13 +20,11 @@ export const EditorialLanguageMenu = () => {
   return (
     <Root>
       <Trigger asChild>
-        <Button variant="secondary" aria-label={t("language")}>
-          <Icon
-            icon={Languages}
-            className={styles.actionIcon}
-            aria-hidden="true"
-          />
-        </Button>
+        <IconButton
+          variant="secondary"
+          icon={Languages}
+          aria-label={t("language")}
+        />
       </Trigger>
       <Portal>
         <Content

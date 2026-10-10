@@ -15,6 +15,9 @@ $-definitions: (
   "font-weight": structural.token("button-font-weight"),
   "gap": structural.token("button-gap"),
   "radius": structural.token("button-radius"),
+  "icon-button-size": structural.token("icon-button-size"),
+  "icon-button-icon-size": structural.token("icon-button-icon-size"),
+  "icon-button-radius": structural.token("icon-button-radius"),
   "border-width": structural.token("button-border-width"),
   "spinner-size": structural.token("button-spinner-size"),
   "spinner-border-width": structural.token("button-spinner-border-width"),
@@ -65,6 +68,9 @@ $font-weight: css-properties.reference(
 );
 $gap: css-properties.reference($-definitions, "gap", "control-button");
 $radius: css-properties.reference($-definitions, "radius", "control-button");
+$icon-button-size: css-properties.reference($-definitions, "icon-button-size", "control-button");
+$icon-button-icon-size: css-properties.reference($-definitions, "icon-button-icon-size", "control-button");
+$icon-button-radius: css-properties.reference($-definitions, "icon-button-radius", "control-button");
 $border-width: css-properties.reference(
   $-definitions,
   "border-width",

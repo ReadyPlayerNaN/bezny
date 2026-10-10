@@ -64,7 +64,12 @@ describe("icon wrapper", () => {
   });
 
   it("preserves decorative accessibility", () => {
-    const { container } = render(<Copy aria-hidden="true" />);
+    const { container } = render(
+      <>
+        <span id="copy-label">Copy</span>
+        <Copy aria-labelledby="copy-label" aria-hidden="true" />
+      </>
+    );
     expect(container.querySelector("svg")?.getAttribute("role")).toBe(
       "graphics-symbol"
     );

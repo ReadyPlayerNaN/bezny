@@ -197,8 +197,8 @@ describe("button", () => {
   it("renders wrapped icons within its label", () => {
     render(
       <Button>
-        <Icon icon={Plane} aria-hidden="true" />
-        Travel
+        <Icon icon={Plane} aria-labelledby="travel-label" aria-hidden="true" />
+        <span id="travel-label">Travel</span>
       </Button>
     );
     expect(

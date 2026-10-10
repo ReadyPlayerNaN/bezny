@@ -78,6 +78,23 @@
   justify-content: center;
 }
 
+.iconButton {
+  width: button-appearance.$icon-button-size;
+  min-width: button-appearance.$icon-button-size;
+  max-width: button-appearance.$icon-button-size;
+  height: button-appearance.$icon-button-size;
+  min-height: button-appearance.$icon-button-size;
+  max-height: button-appearance.$icon-button-size;
+  flex-shrink: 0;
+  padding: 0;
+  border-radius: button-appearance.$icon-button-radius;
+
+  svg {
+    width: button-appearance.$icon-button-icon-size;
+    height: button-appearance.$icon-button-icon-size;
+  }
+}
+
 .loading .label {
   opacity: 0;
 }

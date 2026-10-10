@@ -22,7 +22,7 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
-  Icon,
+  IconButton,
   TextInput,
 } from "@bezny/base";
 import { useAtom, useStore } from "jotai";
@@ -60,18 +60,13 @@ export const EditorialCommandPalette = () => {
       }}
     >
       <DialogTrigger asChild>
-        <Button
+        <IconButton
           ref={trigger}
           id="command-palette-trigger"
           variant="secondary"
+          icon={Command}
           aria-label={t("palette")}
-        >
-          <Icon
-            icon={Command}
-            className={styles.actionIcon}
-            aria-hidden="true"
-          />
-        </Button>
+        />
       </DialogTrigger>
       <DialogContent
         dir={i18n.dir()}
