@@ -71,7 +71,10 @@ export const ContextMenuContent = ({
   className,
   ...props
 }: ContextMenuContentProps) => (
-  <Portal {...(container ? { container } : {})}>
+  <Portal
+    {...(container ? { container } : {})}
+    {...(props.forceMount ? { forceMount: true as const } : {})}
+  >
     <Content
       {...props}
       className={[styles.content, className].filter(Boolean).join(" ")}
@@ -83,7 +86,10 @@ export const ContextMenuSubContent = ({
   className,
   ...props
 }: ComponentPropsWithRef<typeof SubContent> & PortalContainer) => (
-  <Portal {...(container ? { container } : {})}>
+  <Portal
+    {...(container ? { container } : {})}
+    {...(props.forceMount ? { forceMount: true as const } : {})}
+  >
     <SubContent
       {...props}
       className={[styles.content, className].filter(Boolean).join(" ")}

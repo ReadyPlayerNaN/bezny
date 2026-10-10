@@ -23,6 +23,20 @@ import {
 describe(ContextMenu, () => {
   afterEach(cleanup);
 
+  it("preserves force-mounted menu content for controlled animation integrations", async () => {
+    render(
+      <ContextMenu open={false}>
+        <ContextMenuTrigger>Row</ContextMenuTrigger>
+        <ContextMenuContent forceMount>
+          <ContextMenuItem>Animation target</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    );
+    await expect(
+      screen.findByRole("menuitem", { name: "Animation target" })
+    ).resolves.toBeTruthy();
+  });
+
   it("opens by keyboard, skips disabled items, selects, and restores focus", async () => {
     const user = userEvent.setup();
     const handleSelect = vi.fn<() => void>();

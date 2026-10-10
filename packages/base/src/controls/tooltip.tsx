@@ -18,7 +18,10 @@ export const TooltipContent = ({
   container,
   ...props
 }: TooltipContentProps) => (
-  <Portal {...(container ? { container } : {})}>
+  <Portal
+    {...(container ? { container } : {})}
+    {...(props.forceMount ? { forceMount: true as const } : {})}
+  >
     <Content
       {...props}
       className={[styles.content, className].filter(Boolean).join(" ")}

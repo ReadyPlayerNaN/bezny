@@ -14,6 +14,19 @@ import {
 describe(Tooltip, () => {
   afterEach(cleanup);
 
+  it("preserves force-mounted content when the root is closed", async () => {
+    render(
+      <TooltipProvider>
+        <Tooltip open={false}>
+          <TooltipTrigger>Details</TooltipTrigger>
+          <TooltipContent forceMount>Animation target</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toBe("Animation target");
+  });
+
   it("describes the focused trigger and dismisses on Escape", async () => {
     const user = userEvent.setup();
     render(

@@ -18,7 +18,7 @@ Import components from `@bezny/base` and styles from `@bezny/base/style.css`. Al
 
 `Select` retains Radix's controlled/uncontrolled value/open state, disabled, required, name, typeahead, keyboard, and focus contracts. `SelectContent` owns its portal, scrolling buttons, and viewport; `SelectItem` owns text/indicator. Compose `SelectGroup`, `SelectLabel`, and `SelectSeparator` as needed. Values must be unique, non-empty strings. Give the trigger a label and forward RHF's ref/blur to `SelectTrigger` and value/change to `Select` when using Controller. This input is unbound: it does not require RHF.
 
-Portalled content inherits its actual DOM container's theme, not React context. Pass `container` to content for nested `.bezny-light`/`.bezny-dark` boundaries. Default content is portalled to `document.body`. Radix runtime positioning variables are retained; design values use `--bezny-control-select-*` aliases.
+Portalled content inherits its actual DOM container's theme, not React context. Pass `container` to content for nested `.bezny-light`/`.bezny-dark` boundaries. Default content is portalled to `document.body`. Content `forceMount` is also forwarded to its owned portal for animation integrations; as with Radix, callers using force mounting are responsible for closed-state visibility/lifecycle. Radix runtime positioning variables are retained; design values use `--bezny-control-select-*` aliases.
 
 ## ToggleGroup
 

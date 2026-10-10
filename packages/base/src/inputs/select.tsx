@@ -52,7 +52,10 @@ export const SelectContent = ({
   position = "popper",
   ...props
 }: SelectContentProps) => (
-  <Portal {...(container ? { container } : {})}>
+  <Portal
+    {...(container ? { container } : {})}
+    {...(props.forceMount ? { forceMount: true as const } : {})}
+  >
     <Content
       {...props}
       position={position}
