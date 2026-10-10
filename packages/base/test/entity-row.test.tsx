@@ -56,6 +56,49 @@ describe("Entity rows", () => {
     expect(handleChange).toHaveBeenCalledOnce();
   });
 
+  it("uses explicit shared commands for multiple selected rows without clearing caller-owned confirmation state", async () => {
+    const user = userEvent.setup();
+    const requestDeletion = vi.fn<() => void>();
+    const changeSelection = vi.fn<(ids: string[]) => void>();
+    render(
+      <EntityRowList
+        selectable
+        selectedIds={["1", "2"]}
+        onSelectedIdsChange={changeSelection}
+        selectionActions={[
+          {
+            key: "delete-selected",
+            label: "Delete selected records",
+            onSelect: requestDeletion,
+          },
+        ]}
+        rows={[
+          {
+            actions: [
+              {
+                key: "view-1",
+                label: "View One",
+                onSelect: vi.fn<() => void>(),
+              },
+            ],
+            id: "1",
+            title: "One",
+          },
+          { id: "2", title: "Two" },
+        ]}
+      />
+    );
+    const row = screen.getByRole("group", { name: "Item 1" });
+    row.focus();
+    await user.keyboard("{Shift>}{F10}{/Shift}");
+    expect(screen.queryByRole("menuitem", { name: "View One" })).toBeNull();
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete selected records" })
+    );
+    expect(requestDeletion).toHaveBeenCalledOnce();
+    expect(changeSelection).not.toHaveBeenCalled();
+  });
+
   it("accepts localized group and context-menu labels", async () => {
     const user = userEvent.setup();
     render(

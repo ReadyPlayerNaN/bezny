@@ -25,12 +25,27 @@
   &[data-variant="small"] {
     padding-block: appearance.token("padding-small");
   }
+  &:hover,
+  &:focus-within,
   &[data-selected="true"] {
     background: appearance.token("hover");
   }
   &:focus-visible {
     outline: none;
     box-shadow: appearance.token("focus-ring");
+  }
+}
+.row [data-selection-control] {
+  opacity: 0;
+}
+.row:hover [data-selection-control],
+.row:focus-within [data-selection-control],
+.row[data-selected="true"] [data-selection-control] {
+  opacity: 1;
+}
+@media (hover: none) {
+  .row [data-selection-control] {
+    opacity: 1;
   }
 }
 .selection {

@@ -12,6 +12,7 @@ import { EntityRowTitle } from "./entity-row-title.js";
 import type { EntityRowVariant } from "./entity-row-title.js";
 import { Section } from "./heading.js";
 import { SelectableRow } from "./selectable-row.js";
+import type { SelectableRowMenuItem } from "./selectable-row.js";
 import { useRowSelectionDrag } from "./use-row-selection-drag.js";
 
 import styles from "./entity-row.module.scss";
@@ -84,6 +85,8 @@ export interface EntityRowListProps {
   onSelectedIdsChange?: (ids: string[]) => void;
   selectable?: boolean;
   selectionMenu?: boolean;
+  /** Explicit application-owned commands for a multi-selection. They own confirmation and clearing. */
+  selectionActions?: readonly SelectableRowMenuItem[];
   selectLabel?: (row: EntityRowData, selected: boolean) => string;
   groupLabel?: (row: EntityRowData) => string;
   menuLabel?: (row: EntityRowData) => string;
@@ -102,6 +105,7 @@ export const EntityRowList = ({
   onSelectedIdsChange,
   selectable: selectableOverride,
   selectionMenu = true,
+  selectionActions,
   selectLabel,
   groupLabel,
   menuLabel,
@@ -165,11 +169,15 @@ export const EntityRowList = ({
                 handleSelect();
               }
             }}
-            menuItems={combineEntityRowActions(contexts, () => {
-              if (selectionMenu) {
-                updateSelection([]);
-              }
-            })}
+            menuItems={
+              contexts.length > 1 && selectionActions !== undefined
+                ? selectionActions
+                : combineEntityRowActions(contexts, () => {
+                    if (selectionMenu && selectionActions === undefined) {
+                      updateSelection([]);
+                    }
+                  })
+            }
             menuSummary={
               contexts.length > 1
                 ? (menuSummary?.(contexts.length) ??

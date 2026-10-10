@@ -26,7 +26,7 @@ The application has no entity-specific route definitions:
 
 The sidebar/navigation and searchable palette both consume `useAdminEntityCommands`. The palette does not reconstruct routes, parse pathname strings, or maintain a separate action list. Adding another entity registration makes its collection/create commands available automatically; supported record screens provide View/Edit commands automatically.
 
-Shared `EntityRowList` rows, their Radix context menus, and detail pages render the same `forRecord` commands as the palette. Record delete targets that row even with another selection; bulk delete uses valid selected IDs. Both request the same Radix-backed confirmation dialog. Confirmation deletes the requested entity's records and navigates through the shared entity-location API.
+Shared `EntityRowList` rows show actions only in Radix context menus (right-click, touch hold, or Shift+F10), not duplicated inline buttons. Rows highlight on hover/focus, and selection checkboxes appear on hover/focus or while selected; touch devices keep them visible. Single/unselected row menus and detail pages use the same `forRecord` commands as the palette. Menus opened on a selected row in a multi-selection instead use the same `selectionCommands` as the toolbar/palette. Record delete targets that row even with another selection; bulk delete uses valid selected IDs. Cancelling bulk confirmation preserves selection. Both request the same Radix-backed confirmation dialog. Confirmation deletes the requested entity's records and navigates through the shared entity-location API.
 
 ## Real screen context and form callbacks
 

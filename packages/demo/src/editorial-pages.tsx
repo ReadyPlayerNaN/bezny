@@ -133,12 +133,23 @@ export const EditorialListPage = () => {
               groupLabel={(row) => t("item", { id: row.id })}
               menuLabel={(row) => t("actions", { title: row.title })}
               actionErrorLabel={t("saveError")}
+              menuSummary={() =>
+                t("selected", {
+                  entity: resource.label.toLocaleLowerCase(),
+                  ids: selectedIds.join(", "),
+                })
+              }
               selectedIds={selectedIds}
               onSelectedIdsChange={(ids) =>
                 store.set(adminSelectionAtom, { entity: resource.key, ids })
               }
               selectable
-              selectionMenu={false}
+              selectionActions={commands.selectionCommands.map((command) => ({
+                key: command.id,
+                label: command.label,
+                onSelect: command.execute,
+                tone: command.destructive ? "critical" : "secondary",
+              }))}
               selectLabel={(row) => commands.forSelection(row.id).label}
               rows={records.map<EntityRowData>((record) => {
                 const actions = commands.forRecord(record.id);
@@ -157,16 +168,6 @@ export const EditorialListPage = () => {
                   ),
                   id: record.id,
                   title: record.title,
-                  trailing: (
-                    <div className={styles.actions}>
-                      {actions.map((command) => (
-                        <AdminCommandButton
-                          key={command.id}
-                          command={command}
-                        />
-                      ))}
-                    </div>
-                  ),
                 };
               })}
             />

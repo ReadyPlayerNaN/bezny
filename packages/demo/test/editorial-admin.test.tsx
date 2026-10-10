@@ -114,6 +114,53 @@ describe("editorial admin", () => {
     );
   });
 
+  it("hides inline row actions and confirms shared selection actions from selected-row menus", async () => {
+    const { user, main, application } = await renderDemo();
+    const row = main.getByRole("group", { name: "Item 1" });
+    expect(
+      within(row).queryByRole("button", { name: "Delete Welcome to Bezny" })
+    ).toBeNull();
+    await user.click(
+      main.getByRole("checkbox", { name: "Select Welcome to Bezny" })
+    );
+    await user.click(
+      main.getByRole("checkbox", { name: "Select Planning the next release" })
+    );
+    row.focus();
+    await user.keyboard("{Shift>}{F10}{/Shift}");
+    expect(
+      screen.queryByRole("menuitem", { name: "Edit Welcome to Bezny" })
+    ).toBeNull();
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete selected articles" })
+    );
+    await user.click(
+      within(await screen.findByRole("alertdialog")).getByRole("button", {
+        name: "Cancel deletion",
+      })
+    );
+    expect(application.store.get(selectedArticleIdsAtom)).toStrictEqual([
+      "1",
+      "2",
+    ]);
+    row.focus();
+    await user.keyboard("{Shift>}{F10}{/Shift}");
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete selected articles" })
+    );
+    await user.click(
+      within(await screen.findByRole("alertdialog")).getByRole("button", {
+        name: "Confirm deletion",
+      })
+    );
+    await waitFor(() =>
+      expect(
+        application.repository.inspect("articles").map((record) => record.id)
+      ).toStrictEqual(["3"])
+    );
+    expect(application.store.get(selectedArticleIdsAtom)).toStrictEqual([]);
+  });
+
   it("shares filter execution between ordinary controls and parameterized palette commands", async () => {
     const { user, main } = await renderDemo();
     await user.click(main.getByRole("button", { name: "Search: All" }));
@@ -203,8 +250,9 @@ describe("editorial admin", () => {
       });
     });
     await user.click(await main.findByRole("button", { name: "Next page" }));
+    fireEvent.contextMenu(await main.findByRole("group", { name: "Item 4" }));
     await user.click(
-      await main.findByRole("button", { name: "Delete Fourth article" })
+      await screen.findByRole("menuitem", { name: "Delete Fourth article" })
     );
     await user.click(
       within(await screen.findByRole("alertdialog")).getByRole("button", {
@@ -276,8 +324,10 @@ describe("editorial admin", () => {
 
   it("opens row detail and edit actions and persists changes in the same workspace", async () => {
     const { user, main, application } = await renderDemo();
+    const row = main.getByRole("group", { name: "Item 1" });
+    fireEvent.contextMenu(row);
     await user.click(
-      main.getByRole("button", { name: "View Welcome to Bezny" })
+      await screen.findByRole("menuitem", { name: "View Welcome to Bezny" })
     );
     await main.findByRole("heading", { level: 1, name: "Welcome to Bezny" });
     expect(
@@ -330,9 +380,7 @@ describe("editorial admin", () => {
     expect(
       screen.getByRole("status", { name: "Current context" }).textContent
     ).toBe("Context: Selected articles: 1, 2, 3");
-    await user.click(
-      main.getByRole("button", { name: "View Welcome to Bezny" })
-    );
+    await runCommand(user, "View Welcome to Bezny");
     await main.findByRole("heading", { level: 1, name: "Welcome to Bezny" });
     expect(application.store.get(selectedArticleIdsAtom)).toStrictEqual([]);
     act(() => {
@@ -356,10 +404,12 @@ describe("editorial admin", () => {
     await user.click(
       main.getByRole("checkbox", { name: "Select Planning the next release" })
     );
-    const deleteButton = main.getByRole("button", {
-      name: "Delete Welcome to Bezny",
-    });
-    await user.click(deleteButton);
+    const row = main.getByRole("group", { name: "Item 1" });
+    row.focus();
+    await user.keyboard("{Shift>}{F10}{/Shift}");
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete Welcome to Bezny" })
+    );
     const dialog = within(
       await screen.findByRole("alertdialog", { name: "Delete articles?" })
     );
@@ -371,7 +421,7 @@ describe("editorial admin", () => {
     );
     await user.click(dialog.getByRole("button", { name: "Cancel deletion" }));
     await waitFor(() => {
-      expect(document.activeElement).toBe(deleteButton);
+      expect(document.activeElement).toBe(row);
     });
     expect(application.repository.inspect("articles")).toHaveLength(3);
     expect(application.store.get(selectedArticleIdsAtom)).toStrictEqual(["2"]);
@@ -396,11 +446,12 @@ describe("editorial admin", () => {
 
   it("offers row and collection actions in the searchable palette and executes selection commands", async () => {
     const { user, main } = await renderDemo();
-    const labels = within(
-      main.getByRole("region", { name: "Articles in this workspace" })
-    )
-      .getAllByRole("button")
-      .map((button) => button.textContent);
+    fireEvent.contextMenu(main.getByRole("group", { name: "Item 1" }));
+    await screen.findByRole("menu");
+    const labels = screen
+      .getAllByRole("menuitem")
+      .map((item) => item.textContent);
+    await user.keyboard("{Escape}");
     const palette = await openPalette(user);
     expect(
       labels.every(
@@ -499,10 +550,12 @@ describe("editorial admin", () => {
 
   it("traps focus in deletion confirmation and Escape restores the row action", async () => {
     const { user, main } = await renderDemo();
-    const trigger = main.getByRole("button", {
-      name: "Delete Welcome to Bezny",
-    });
-    await user.click(trigger);
+    const trigger = main.getByRole("group", { name: "Item 1" });
+    trigger.focus();
+    await user.keyboard("{Shift>}{F10}{/Shift}");
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete Welcome to Bezny" })
+    );
     const dialog = within(await screen.findByRole("alertdialog"));
     await user.tab();
     expect(document.activeElement).toBe(
