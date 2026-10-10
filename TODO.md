@@ -1,5 +1,7 @@
 # TODO
 
+> Every implemented feature must also be implemented and demonstrated in `@bezny/demo` as part of the same functional slice.
+
 - [ ] Resolve memory leaks and unbounded data retention while keeping Jotai.
   - Separate long-lived entity definitions from record-data lifetimes.
   - Define loading, pagination, bounded caching, eviction, and application-disposal behavior.
@@ -16,3 +18,5 @@
   - Reuse the shared entity action catalog for row context menus, detail actions, and the command palette.
   - Preserve row-target versus selection-target semantics and destructive-action confirmation.
   - Use Radix for context-menu interaction and verify keyboard access, focus behavior, and accessible semantics.
+- [ ] Implement entity-list filters, integrated with entity configuration, data adapters, and the command palette.
+- [ ] Implement entity-list pagination, integrated with data adapters and the command palette, with consistent behavior when filters change.
