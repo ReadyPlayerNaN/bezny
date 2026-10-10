@@ -1,0 +1,57 @@
+@use "./card-appearance" as appearance;
+.card,
+.title,
+.body,
+.properties {
+  @include appearance.declarations;
+}
+.card {
+  min-width: 0;
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  box-shadow: appearance.token("shadow");
+}
+.title {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: appearance.token("gap");
+  padding: appearance.token("padding-large");
+}
+.title > .heading {
+  flex: 1;
+  min-width: 0;
+  font-size: appearance.token("title-font-size");
+  line-height: appearance.token("title-line-height");
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: appearance.token("gap");
+}
+.body {
+  padding: appearance.token("padding-large");
+  display: flex;
+  flex-direction: column;
+  gap: appearance.token("gap");
+}
+.body > * {
+  margin-block: 0;
+}
+.title + .body {
+  padding-top: 0;
+}
+.properties {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  gap: appearance.token("gap");
+}
+.separator {
+  margin: 0;
+  border: 0;
+  border-top: appearance.token("border-width") solid appearance.token("border");
+}

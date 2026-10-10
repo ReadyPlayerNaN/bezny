@@ -51,3 +51,7 @@ Compose `AlertDialog`, `AlertDialogTrigger`, `AlertDialogContent`, `AlertDialogT
 ## Badge
 
 Ported from aipocapso's `controls/badge`. `<Badge type="success">Ready</Badge>` retains neutral/info/success/warning/critical tones, uppercase pill typography, and ordinary span props/React 19 refs. Labels remain ordinary content, not live announcements. Status palettes map through logical light/dark aliases rather than independent OS media queries. Token prefix: `--bezny-control-badge-*`.
+
+## Cards
+
+Ported `Card`, `CardTitle`, `CardBody`, `CardProperties`, and `MultiBlockCard`. Card is a section/heading-level boundary; titles retain semantic inherited heading levels with card-specific visual sizing. Compose actions in CardTitle and properties in CardBody. MultiBlockCard wraps each non-empty direct child in a padded body with dividers between blocks. Use keyed elements for reorderable blocks. Native props and React 19 refs are preserved. Surfaces, spacing, title sizing, and separators use `--bezny-control-card-*`.
