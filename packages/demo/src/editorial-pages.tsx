@@ -37,6 +37,7 @@ import {
   isEditorialContentLocale,
 } from "./editorial-content.js";
 import { EditorialListControls } from "./editorial-list-controls.js";
+import { EditorialPageActions } from "./editorial-page-actions.js";
 import {
   editorialResources,
   noticeAtom,
@@ -219,16 +220,15 @@ export const EditorialDetailPage = () => {
     <AdminPage
       heading={record.title}
       actions={
-        <div className={styles.actions}>
-          <AdminCommandButton command={commands.list} />
-          {commands
-            .forRecord(record.id)
-            .map((command) =>
-              command.location?.view === "detail" ? null : (
-                <AdminCommandButton key={command.id} command={command} />
-              )
-            )}
-        </div>
+        <EditorialPageActions
+          title={record.title}
+          commands={[
+            commands.list,
+            ...commands
+              .forRecord(record.id)
+              .filter((command) => command.location?.view !== "detail"),
+          ]}
+        />
       }
     >
       <p>

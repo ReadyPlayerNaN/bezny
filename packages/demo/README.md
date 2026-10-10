@@ -30,6 +30,8 @@ Every listed entity record has its title rendered as a TanStack Router detail hy
 
 ## Real screen context and form callbacks
 
+Collection create buttons sit beside the page heading, at the right in LTR, with descriptions below. Detail pages use the same header action slot for one localized **Actions** dropdown containing list, edit, and delete commands. The dropdown closes before executing a command so navigation and confirmation dialogs can take focus; cancelling deletion restores focus to the Actions trigger.
+
 The header displays context from `useAdminEntityContext`: collection, decoded entity record ID, selected IDs, or unavailable target. Jotai selection is entity-scoped, so article `1` and page `1` cannot be confused. Leaving the collection or switching entities clears selection, including browser history navigation.
 
 Create/edit screens use RHF and Bezny fields. They register Save/Cancel with `useAdminPageCommands`, binding actual form callbacks. The palette submits through the same RHF handler as the form, with the same validation and focus behavior. No hardcoded form ID or `requestSubmit()` DOM lookup is needed. Commands disappear when their owning screen leaves.

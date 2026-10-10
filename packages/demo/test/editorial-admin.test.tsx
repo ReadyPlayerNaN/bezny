@@ -120,6 +120,24 @@ describe("editorial admin", () => {
   });
 
   it.each([
+    { create: "Create article", entity: "articles", heading: "Articles" },
+    { create: "Create page", entity: "pages", heading: "Pages" },
+  ])(
+    "places $create beside its collection heading",
+    async ({ entity, heading, create }) => {
+      const { main } = await renderDemo(`/${entity}`);
+      const title = main.getByRole("heading", { level: 1, name: heading });
+      const row = title.parentElement;
+      const button = main.getByRole("button", { name: create });
+      expect(row?.dataset.adminPageHeadingRow).toBe("true");
+      expect(row?.lastElementChild?.contains(button)).toBeTruthy();
+      expect(row?.nextElementSibling?.textContent).toBe(
+        `Write, publish, and manage your ${entity}.`
+      );
+    }
+  );
+
+  it.each([
     { entity: "articles", title: "Welcome to Bezny" },
     { entity: "pages", title: "About us" },
   ])(
@@ -441,7 +459,10 @@ describe("editorial admin", () => {
       screen.getByRole("status", { name: "Current context" }).textContent
     ).toBe("Context: Article 1");
     await user.click(
-      main.getByRole("button", { name: "Edit Welcome to Bezny" })
+      main.getByRole("button", { name: "Actions for Welcome to Bezny" })
+    );
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Edit Welcome to Bezny" })
     );
     const title = await main.findByRole("textbox", { name: "Title" });
     await user.clear(title);
@@ -534,10 +555,51 @@ describe("editorial admin", () => {
     expect(application.store.get(selectedArticleIdsAtom)).toStrictEqual(["2"]);
   });
 
+  it("offers detail actions next to the title and restores menu focus after dismissal", async () => {
+    const { user, main } = await renderDemo("/articles/1");
+    const heading = main.getByRole("heading", {
+      level: 1,
+      name: "Welcome to Bezny",
+    });
+    const trigger = main.getByRole("button", {
+      name: "Actions for Welcome to Bezny",
+    });
+    expect(
+      heading.parentElement?.lastElementChild?.contains(trigger)
+    ).toBeTruthy();
+    expect(
+      main.queryByRole("button", { name: "Edit Welcome to Bezny" })
+    ).toBeNull();
+    trigger.focus();
+    await user.keyboard("{ArrowDown}");
+    const menu = within(
+      await screen.findByRole("menu", { name: "Actions for Welcome to Bezny" })
+    );
+    expect(
+      menu.getAllByRole("menuitem").map((item) => item.textContent)
+    ).toStrictEqual([
+      "List articles",
+      "Edit Welcome to Bezny",
+      "Delete Welcome to Bezny",
+    ]);
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+    await user.click(trigger);
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete Welcome to Bezny" })
+    );
+    const dialog = within(await screen.findByRole("alertdialog"));
+    await user.click(dialog.getByRole("button", { name: "Cancel deletion" }));
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+  });
+
   it("confirms deletion from a detail page and navigates to the collection", async () => {
     const { user, main, application } = await renderDemo("/articles/1");
     await user.click(
-      main.getByRole("button", { name: "Delete Welcome to Bezny" })
+      main.getByRole("button", { name: "Actions for Welcome to Bezny" })
+    );
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete Welcome to Bezny" })
     );
     const dialog = within(await screen.findByRole("alertdialog"));
     await user.click(dialog.getByRole("button", { name: "Confirm deletion" }));
