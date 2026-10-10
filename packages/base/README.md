@@ -30,6 +30,29 @@ export function Page() {
 
 An explicit `level` takes precedence over the inherited level. Native HTML attributes, children, and custom classes are forwarded.
 
+## Login screen
+
+`LoginScreen` composes an RHF email/password form and optional social sign-in buttons. The host owns authentication and navigation; no credentials are stored by the component.
+
+```tsx
+<LoginScreen
+  onLogin={async ({ email, password }) => {
+    await authentication.signIn(email, password);
+  }}
+  socialProviders={[
+    {
+      id: "github",
+      label: "Continue with GitHub",
+      onLogin: authentication.signInWithGitHub,
+    },
+  ]}
+/>
+```
+
+Callbacks may be synchronous or asynchronous. Pending authentication disables both login paths; rejected callbacks display a generic accessible error and allow retry. `labels` overrides all headings, field labels, validation and failure messages for localization; `description` accepts instructions. Import `LoginScreen` from `@bezny/base` and the shared stylesheet as above.
+
+Login control aliases (`--bezny-control-login-*`) bind structural surface purposes on the screen: background, text, border, border-width, radius, padding-large, gap, font-family, font-size, line-height, shadow, and dialog-width. Customize shared structural aliases where they are declared, rather than bypassing the token chain.
+
 ## Icons
 
 `Icon` and `wrapIcon` enforce `role="graphics-symbol"` and require a label. Link visible text with `aria-labelledby` (the standard spelling), or supply `aria-label` to show a Radix tooltip popup on hover and keyboard focus. SVG props and React 19 refs are preserved; visible-label icons add no DOM wrapper.

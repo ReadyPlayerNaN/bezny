@@ -1,0 +1,36 @@
+@use "login-appearance" as appearance;
+
+.screen {
+  @include appearance.declarations;
+  display: grid;
+  place-items: center;
+  min-block-size: 100dvh;
+  box-sizing: border-box;
+  padding: appearance.token("padding-large");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+}
+
+.panel {
+  box-sizing: border-box;
+  inline-size: 100%;
+  max-inline-size: appearance.token("dialog-width");
+  padding: appearance.token("padding-large");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  box-shadow: appearance.token("shadow");
+}
+
+.form {
+  display: grid;
+  gap: appearance.token("gap");
+  margin-block-start: appearance.token("padding-large");
+}
+
+.separator {
+  margin: 0;
+  text-align: center;
+}

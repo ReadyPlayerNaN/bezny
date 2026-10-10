@@ -233,3 +233,10 @@ export {
 } from "./filters/choice-filter.js";
 export { TagFilter, type TagFilterProps } from "./filters/tag-filter.js";
 export type { FieldBindingProps } from "./fields/use-field-binding.js";
+export {
+  LoginScreen,
+  type LoginScreenProps,
+  type LoginCredentials,
+  type LoginScreenLabels,
+  type SocialLoginProvider,
+} from "./auth/login-screen.js";

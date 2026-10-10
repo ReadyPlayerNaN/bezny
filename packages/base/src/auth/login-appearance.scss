@@ -1,0 +1,31 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/surfaces";
+
+$-definitions: ();
+@each $name
+    in (
+      background,
+      text,
+      border,
+      border-width,
+      radius,
+      padding-large,
+      gap,
+      font-family,
+      font-size,
+      line-height,
+      shadow,
+      dialog-width
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-login");
+}
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-login");
+}
