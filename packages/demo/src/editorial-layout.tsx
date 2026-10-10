@@ -24,6 +24,7 @@ import {
   EditorialCommandPalette,
   EditorialDeleteDialog,
 } from "./editorial-dialogs.js";
+import { EditorialLanguageMenu } from "./editorial-language-menu.js";
 import { AdminCommandButton } from "./editorial-pages.js";
 import { noticeAtom } from "./editorial-records.js";
 
@@ -106,12 +107,10 @@ export const EditorialShell = () => {
             <output aria-label={t("currentContext")}>
               {t("context", { label: contextLabel })}
             </output>
-            <EditorialCommandPalette />
-            <fieldset aria-label={t("language")}>
-              {commands.languageCommands.map((command) => (
-                <AdminCommandButton key={command.id} command={command} />
-              ))}
-            </fieldset>
+            <div className={styles.headerTools}>
+              <EditorialLanguageMenu />
+              <EditorialCommandPalette />
+            </div>
           </div>
         }
         navigation={

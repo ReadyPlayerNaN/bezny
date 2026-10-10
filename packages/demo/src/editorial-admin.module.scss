@@ -9,7 +9,7 @@
 .commands,
 .form,
 .selectionBar,
-.selectionMenu {
+.actionMenu {
   @include appearance.declarations;
 }
 
@@ -46,6 +46,15 @@
 
 .header {
   justify-content: space-between;
+}
+
+.headerTools {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: appearance.token("gap");
+  // Keep Languages physically left of Command in both reading directions.
+  direction: ltr;
 }
 
 .page,
@@ -112,11 +121,11 @@
     white-space: nowrap;
   }
 }
-.selectionIcon {
+.actionIcon {
   width: appearance.token("font-size");
   height: appearance.token("font-size");
 }
-.selectionMenu {
+.actionMenu {
   z-index: appearance.token("z-index");
   max-height: var(--radix-dropdown-menu-content-available-height);
   max-width: var(--radix-dropdown-menu-content-available-width);
@@ -131,7 +140,7 @@
   font-size: appearance.token("font-size");
   line-height: appearance.token("line-height");
 }
-.selectionMenuItem {
+.actionMenuItem {
   padding: appearance.token("gap");
   border-radius: appearance.token("radius");
   outline: none;

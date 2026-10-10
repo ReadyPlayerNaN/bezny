@@ -102,8 +102,11 @@ describe("editorial localization", () => {
     );
     await screen.findByRole("heading", { name: "Vítejte v Bezny" });
     expect(screen.getByRole("button", { name: "Paleta příkazů" })).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Jazyk rozhraní" }));
     await user.click(
-      screen.getByRole("button", { name: "Změnit jazyk na العربية" })
+      await screen.findByRole("menuitemradio", {
+        name: "Změnit jazyk na العربية",
+      })
     );
     await screen.findByRole("heading", { name: "مرحبًا ببيزني" });
     expect(screen.getByLabelText("ترقيم الصفحات").textContent).toBe(
@@ -157,8 +160,11 @@ describe("editorial localization", () => {
       .find((item) => item.id === "1");
     expect(record?.content?.cs?.title).toBe("Nový název");
     expect(record?.content?.en?.title).toBe("Welcome to Bezny");
+    await user.click(screen.getByRole("button", { name: "UI language" }));
     await user.click(
-      screen.getByRole("button", { name: "Change language to Čeština" })
+      await screen.findByRole("menuitemradio", {
+        name: "Change language to Čeština",
+      })
     );
     await screen.findByRole("heading", { name: "Nový název" });
     expect(screen.getByRole("status", { name: "Oznámení" }).textContent).toBe(

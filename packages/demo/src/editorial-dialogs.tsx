@@ -22,9 +22,11 @@ import {
   DialogDescription,
   DialogTitle,
   DialogTrigger,
+  Icon,
   TextInput,
 } from "@bezny/base";
 import { useAtom, useStore } from "jotai";
+import { Command } from "lucide-react";
 import { useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -58,8 +60,17 @@ export const EditorialCommandPalette = () => {
       }}
     >
       <DialogTrigger asChild>
-        <Button ref={trigger} id="command-palette-trigger" variant="secondary">
-          {t("palette")}
+        <Button
+          ref={trigger}
+          id="command-palette-trigger"
+          variant="secondary"
+          aria-label={t("palette")}
+        >
+          <Icon
+            icon={Command}
+            className={styles.actionIcon}
+            aria-hidden="true"
+          />
         </Button>
       </DialogTrigger>
       <DialogContent

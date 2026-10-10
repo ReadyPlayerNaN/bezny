@@ -82,6 +82,27 @@ describe("editorial admin", () => {
     );
   });
 
+  it("uses icon-only header tools with languages before the command palette and keyboard dropdown focus", async () => {
+    const { user } = await renderDemo();
+    const language = screen.getByRole("button", { name: "UI language" });
+    const palette = screen.getByRole("button", { name: "Command palette" });
+    expect([language.textContent, palette.textContent]).toStrictEqual(["", ""]);
+    expect(
+      language.parentElement?.querySelectorAll(
+        'svg[role="graphics-symbol"][aria-hidden="true"]'
+      )
+    ).toHaveLength(2);
+    expect(language.nextElementSibling).toBe(palette);
+    language.focus();
+    await user.keyboard("{ArrowDown}");
+    const current = await screen.findByRole("menuitemradio", {
+      name: "Change language to English",
+    });
+    expect(current.getAttribute("aria-checked")).toBe("true");
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(document.activeElement).toBe(language));
+  });
+
   it("limits page navigation to lists while retaining creation in page headers and the palette", async () => {
     const { user, main } = await renderDemo();
     const navigation = within(

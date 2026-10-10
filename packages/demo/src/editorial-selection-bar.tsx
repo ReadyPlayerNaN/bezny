@@ -62,14 +62,14 @@ export const EditorialSelectionBar = () => {
           >
             <Icon
               icon={SquareMenu}
-              className={styles.selectionIcon}
+              className={styles.actionIcon}
               aria-hidden="true"
             />
           </Button>
         </Trigger>
         <Portal>
           <Content
-            className={styles.selectionMenu}
+            className={styles.actionMenu}
             side="top"
             align="center"
             aria-label={t("selectionActions")}
@@ -87,7 +87,7 @@ export const EditorialSelectionBar = () => {
             {actions.map((command) => (
               <Item
                 key={command.id}
-                className={styles.selectionMenuItem}
+                className={styles.actionMenuItem}
                 data-destructive={command.destructive}
                 onSelect={() => {
                   pending.current = command;
@@ -110,7 +110,7 @@ export const EditorialSelectionBar = () => {
           row?.focus();
         }}
       >
-        <Icon icon={X} className={styles.selectionIcon} aria-hidden="true" />
+        <Icon icon={X} className={styles.actionIcon} aria-hidden="true" />
       </Button>
       {failed && <span role="alert">{t("saveError")}</span>}
     </fieldset>
