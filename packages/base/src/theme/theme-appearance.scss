@@ -7,9 +7,17 @@ $-definitions: (
   "font-family": structural.token("theme-font-family"),
 );
 
-$background: css-properties.reference($-definitions, "background", "control-theme");
+$background: css-properties.reference(
+  $-definitions,
+  "background",
+  "control-theme"
+);
 $text: css-properties.reference($-definitions, "text", "control-theme");
-$font-family: css-properties.reference($-definitions, "font-family", "control-theme");
+$font-family: css-properties.reference(
+  $-definitions,
+  "font-family",
+  "control-theme"
+);
 
 @mixin declarations {
   @include css-properties.declarations($-definitions, "control-theme");
