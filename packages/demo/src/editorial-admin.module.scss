@@ -1,0 +1,99 @@
+@use "editorial-appearance" as appearance;
+
+:global(body) {
+  margin: 0;
+}
+
+.application,
+.actions,
+.commands,
+.form {
+  @include appearance.declarations;
+}
+
+.application {
+  color: appearance.token("text");
+
+  > header,
+  > nav,
+  > footer,
+  > main {
+    padding: appearance.token("padding-large");
+  }
+
+  > header,
+  > nav,
+  > footer {
+    background: appearance.token("background");
+    border-block-end: appearance.token("border-width") solid
+      appearance.token("border");
+  }
+
+  > footer {
+    color: appearance.token("muted");
+  }
+}
+
+.header,
+.actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: appearance.token("gap");
+}
+
+.header {
+  justify-content: space-between;
+}
+
+.page,
+.form {
+  display: grid;
+  gap: appearance.token("padding-large");
+}
+
+.pageHeader {
+  padding-block-end: appearance.token("padding");
+  border-block-end: appearance.token("border-width") solid
+    appearance.token("border");
+
+  h1 {
+    margin-block-start: 0;
+  }
+}
+
+.tableContainer {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: start;
+
+  caption {
+    text-align: start;
+    padding-block: appearance.token("padding");
+  }
+  th,
+  td {
+    text-align: start;
+    padding: appearance.token("padding");
+    border-block-end: appearance.token("border-width") solid
+      appearance.token("border");
+  }
+}
+
+.articleBody {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.commands {
+  display: grid;
+  gap: appearance.token("gap");
+  padding: 0;
+  list-style: none;
+  max-height: 50dvh;
+  overflow-y: auto;
+}

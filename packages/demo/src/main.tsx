@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 
-import { Showcase } from "./showcase.js";
+import { createDemoApplication, DemoApp } from "./demo-application.js";
 
 import "@bezny/base/style.css";
 
@@ -11,8 +11,10 @@ if (!root) {
   throw new Error("The demo requires a root element.");
 }
 
+const application = createDemoApplication();
+
 createRoot(root).render(
   <StrictMode>
-    <Showcase />
+    <DemoApp application={application} />
   </StrictMode>
 );

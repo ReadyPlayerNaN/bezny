@@ -1,0 +1,35 @@
+@use "sass:map";
+@use "../../base/src/tokens/css-properties";
+@use "../../base/src/tokens/surfaces";
+
+// Demo-owned control aliases consume existing structural purposes only.
+$-definitions: ();
+@each $name
+    in (
+      background,
+      text,
+      muted,
+      accent,
+      border,
+      border-width,
+      padding,
+      padding-large,
+      gap,
+      radius,
+      focus-ring
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+
+@function token($name) {
+  @return css-properties.reference(
+    $-definitions,
+    $name,
+    "control-editorial-demo"
+  );
+}
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-editorial-demo");
+}

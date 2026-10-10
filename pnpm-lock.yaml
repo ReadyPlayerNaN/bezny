@@ -151,12 +151,18 @@ importers:
 
   packages/demo:
     dependencies:
+      '@bezny/admin':
+        specifier: workspace:*
+        version: link:../admin
       '@bezny/base':
         specifier: workspace:*
         version: link:../base
-      lucide-react:
-        specifier: 1.54.0
-        version: 1.54.0(@types/react@19.3.0)(react@19.3.0)
+      '@tanstack/react-router':
+        specifier: 1.170.41
+        version: 1.170.41(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+      jotai:
+        specifier: 3.0.1
+        version: 3.0.1(@types/react@19.3.0)(react@19.3.0)
       react:
         specifier: 19.3.0
         version: 19.3.0
@@ -188,6 +194,9 @@ importers:
       jsdom:
         specifier: 30.1.2
         version: 30.1.2
+      sass:
+        specifier: 1.105.1
+        version: 1.105.1
       typescript:
         specifier: 7.0.2
         version: 7.0.2

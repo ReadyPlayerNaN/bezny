@@ -66,19 +66,19 @@ pnpm typecheck
 pnpm test
 ```
 
-## Component showcase
+## Administration demo
 
 ```sh
 pnpm --filter @bezny/demo dev
 ```
 
-This builds `@bezny/base` and starts the Vite demo server. Open the local URL printed in the terminal to explore headings, icons, and buttons ([demo details](packages/demo/README.md)).
+This builds `@bezny/base` and `@bezny/admin`, then starts the Vite demo server. Open the local URL printed in the terminal to manage articles through a customized admin shell, LCRUD pages, selection context, and a searchable command palette ([demo details](packages/demo/README.md)). Changes are kept in memory and reset on reload.
 
 ## Structure
 
 - `packages/admin/` — administration building-block foundation composing Jotai, TanStack Router, and `@bezny/base` ([usage and future requirements](packages/admin/README.md))
 - `packages/base/` — React headings, Lucide icon wrappers, and buttons, built with Vite and SCSS modules ([usage](packages/base/README.md))
-- `packages/demo/` — private Vite component showcase consuming `@bezny/base`
+- `packages/demo/` — private Vite editorial administration application consuming `@bezny/admin` and `@bezny/base`
 - `packages/typescript-config/` — shared strict TypeScript configuration
 - `turbo.json` — build, typecheck, and test pipelines
 

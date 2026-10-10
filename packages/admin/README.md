@@ -148,6 +148,10 @@ Define replacements at module scope. Changing the override object alone does not
 - `header`, `navigation`, `footer`, `description`, and `actions` are caller-supplied React content, not a second action-registration or navigation system. These blocks do not implement LCRUD or palette commands yet. Future action building blocks must obey the parity requirements below.
 - Presentation configuration is distinct from entity UI context, Jotai state, and TanStack router dependency context.
 
+## Runnable application example
+
+[`@bezny/demo`](../demo/README.md) implements an editorial administration application with customized layout/page/header blocks, article LCRUD pages, Jotai-backed data and selection, and a searchable palette sharing commands with the ordinary UI. Run `pnpm --filter @bezny/demo dev` from the repository root. Entity/context/action code in that application remains demo-owned; the requirements below still guide reusable framework APIs.
+
 ## Required direction for future development
 
 The following are implementation requirements, **not features already implemented by this foundation**. Public entity, action, palette, and context APIs remain to be designed.
