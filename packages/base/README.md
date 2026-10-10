@@ -96,7 +96,7 @@ Geometry follows the four-layer token chain: `--bezny-control-button-icon-button
 
 ### Filter buttons
 
-`FilterBadge` and filter picker triggers use pill-shaped corners with a full-height `2.5rem` radius and compact `0.5rem` inline padding (half the normal button padding). Filter panels retain their existing radius and padding. The scoped `--bezny-control-filter-button-<radius|padding>` aliases reference `--bezny-structural-filter-button-<radius|padding>`, which use logical normal control height and small spacing respectively.
+`FilterBadge` and filter picker triggers have a `2rem` minimum height, `0.75rem` inline padding, and pill-shaped corners with a `2.5rem` radius. Filter panels retain their existing radius and padding. The scoped `--bezny-control-filter-button-<height|padding|radius>` aliases reference matching structural tokens, which use logical small control height, small control padding, and normal control height respectively.
 
 ## Inputs and fields
 

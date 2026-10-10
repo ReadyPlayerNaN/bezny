@@ -5,6 +5,7 @@
 $-definitions: (
   "button-radius": structural.token("filter-button-radius"),
   "button-padding": structural.token("filter-button-padding"),
+  "button-height": structural.token("filter-button-height"),
 );
 @each $name
     in (

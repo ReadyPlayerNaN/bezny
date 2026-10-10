@@ -26,14 +26,19 @@ const resolve = (name) => {
 
 test("filter buttons use full-height pill radii and smaller padding without changing panels", () => {
   assert.equal(resolve("--bezny-control-filter-button-radius"), "2.5rem");
+  assert.equal(resolve("--bezny-control-filter-button-height"), "2rem");
+  assert.equal(resolve("--bezny-control-filter-button-padding"), "0.75rem");
   assert.equal(resolve("--bezny-control-filter-height"), "2.5rem");
-  assert.equal(resolve("--bezny-control-filter-button-padding"), "0.5rem");
   assert.equal(resolve("--bezny-control-filter-padding"), "1rem");
   assert.equal(resolve("--bezny-control-filter-radius"), "0.375rem");
   const badge = css.match(/\.badge \{(?<body>[^}]+)\}/u)?.groups.body;
   assert.ok(badge);
   assert.match(badge, /box-sizing: border-box/u);
   assert.match(badge, /padding-block: 0/u);
+  assert.match(
+    badge,
+    /min-height: var\(--bezny-control-filter-button-height\)/u
+  );
   assert.match(
     badge,
     /padding-inline: var\(--bezny-control-filter-button-padding\)/u
@@ -59,7 +64,15 @@ test("filter button control tokens reference structural purposes and validate th
   );
   assert.equal(
     declarations["--bezny-structural-filter-button-padding"],
-    "var(--bezny-logical-spacing-small)"
+    "var(--bezny-logical-control-padding-small)"
+  );
+  assert.equal(
+    declarations["--bezny-control-filter-button-height"],
+    "var(--bezny-structural-filter-button-height)"
+  );
+  assert.equal(
+    declarations["--bezny-structural-filter-button-height"],
+    "var(--bezny-logical-control-height-small)"
   );
   assert.throws(
     () =>

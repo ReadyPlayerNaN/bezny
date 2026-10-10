@@ -9,7 +9,7 @@
   display: inline-flex;
   align-items: center;
   gap: appearance.token("gap");
-  min-height: appearance.token("height");
+  min-height: appearance.token("button-height");
   padding-block: 0;
   padding-inline: appearance.token("button-padding");
   border: appearance.token("border-width") solid appearance.token("border");
