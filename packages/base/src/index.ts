@@ -118,4 +118,14 @@ export {
   DialogClose,
   type DialogContentProps,
 } from "./controls/dialog.js";
+export {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogAction,
+  AlertDialogCancel,
+  type AlertDialogContentProps,
+} from "./controls/alert-dialog.js";
 export type { FieldBindingProps } from "./fields/use-field-binding.js";
