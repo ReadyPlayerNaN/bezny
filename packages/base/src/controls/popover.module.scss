@@ -1,0 +1,21 @@
+@use "./popover-appearance" as appearance;
+.content {
+  @include appearance.declarations;
+  box-sizing: border-box;
+  z-index: appearance.token("z-index");
+  width: appearance.token("width");
+  max-width: var(--radix-popover-content-available-width);
+  padding: appearance.token("padding");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  box-shadow: appearance.token("shadow");
+  transform-origin: var(--radix-popover-content-transform-origin);
+}
+.arrow {
+  fill: appearance.token("background");
+}

@@ -83,3 +83,24 @@ Ported the reusable behavior from aipocapso's `calls/` filters, dropping the app
 ```
 
 Values and query/backend state remain application-owned; these are not RHF fields. Filter dialogs use Radix Popover for collision-aware placement, outside and Escape dismissal, portals, and focus return, rather than the source's custom backdrops/global listeners. Single choices use Radix radio navigation; multi choices and picker buttons use native Tab/Space/Enter behavior. Search inputs are real dialog inputs, not invalid embedded menuitems. Disabled options cannot be chosen. Drafts reset on reopening; ValueFilter reflects external value changes. `autoOpen` opens on mount or a false-to-true transition, not on every render. Pass `container` to filters for a nested theme. Token prefix: `--bezny-control-filter-*`. Filter keys and option values must be unique; choice values must be non-empty strings (empty represents All internally).
+
+## Popover
+
+Use `Popover`, `PopoverTrigger`, `PopoverContent`, `PopoverClose`, optional `PopoverAnchor`, and `PopoverArrow`. Content owns its portal; pass `container` for a nested theme boundary. Root supports controlled/uncontrolled state and optional modal behavior. Radix owns positioning, collision handling, focus, and dismissal. Trigger/Close can compose Bezny Button through `asChild`; Content/Anchor also preserve `asChild`, refs, and cancellable Radix events. Name the content with `aria-label` or `aria-labelledby`.
+
+```tsx
+<Popover>
+  <PopoverTrigger asChild>
+    <Button>Details</Button>
+  </PopoverTrigger>
+  <PopoverContent aria-label="Account details">
+    Account details
+    <PopoverClose asChild>
+      <Button>Done</Button>
+    </PopoverClose>
+    <PopoverArrow />
+  </PopoverContent>
+</Popover>
+```
+
+Styles bind `--bezny-control-popover-*` to the shared structural surface palette, border, radius, typography, padding, width, shadow, and stacking tokens. Radix geometry variables remain intact. For tall content, constrain a scrolling inner region with `--radix-popover-content-available-height` rather than clipping the optional arrow. `forceMount` reaches both Content and its owned portal; callers using it manage closed-state visibility/lifecycle, as with Radix.

@@ -110,6 +110,20 @@ export {
   type ContextMenuItemProps,
 } from "./controls/context-menu.js";
 export {
+  Popover,
+  PopoverTrigger,
+  PopoverAnchor,
+  PopoverContent,
+  PopoverClose,
+  PopoverArrow,
+  type PopoverProps,
+  type PopoverTriggerProps,
+  type PopoverAnchorProps,
+  type PopoverContentProps,
+  type PopoverCloseProps,
+  type PopoverArrowProps,
+} from "./controls/popover.js";
+export {
   Dialog,
   DialogTrigger,
   DialogContent,
