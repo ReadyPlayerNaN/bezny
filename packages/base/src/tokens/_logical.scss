@@ -47,6 +47,8 @@ $-definitions: (
   "control-line-height-normal": foundational.size(20),
   "control-line-height-small": foundational.size(16),
   "control-radius": foundational.size(6),
+  "radius-round": foundational.token("radius-round"),
+  "media-size-large": foundational.size(48),
   "control-border-width": foundational.size(1),
   "control-spinner-size": foundational.size(16),
   "control-spinner-border-width": foundational.size(2),

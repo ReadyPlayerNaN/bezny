@@ -176,6 +176,16 @@ export {
   AlertDialogCancel,
   type AlertDialogContentProps,
 } from "./controls/alert-dialog.js";
+export {
+  Avatar,
+  AvatarImage,
+  AvatarFallback,
+  type AvatarSize,
+  type AvatarProps,
+  type AvatarImageProps,
+  type AvatarImageLoadingStatus,
+  type AvatarFallbackProps,
+} from "./content/avatar.js";
 export { Badge, type BadgeProps, type BadgeType } from "./content/badge.js";
 export {
   Card,

@@ -131,3 +131,20 @@ Compose `DropdownMenu`, `DropdownMenuTrigger`, `DropdownMenuContent`, and `Dropd
 Also exports Group, Label, Separator, CheckboxItem, RadioGroup/RadioItem, ItemIndicator, and Sub/SubTrigger/SubContent. Checkbox items support `"indeterminate"`; selection items include reserved indicator space and a default check/minus icon. SubTrigger includes a direction-aware chevron. Every DOM part forwards refs/classes and primitive props. With `asChild` on selection items or SubTrigger, supply one child and your own indicator/chevron markup; the wrapper does not insert siblings that would break Radix Slot composition. Item supports `tone="critical"`; use `onSelect` (and `event.preventDefault()` to retain the menu), not a separate click-only action handler.
 
 Styles bind `--bezny-control-dropdown-menu-*` to structural surface colours, spacing, typography, disabled opacity, borders, shadow, and stacking tokens. Menus scroll within Radix's available viewport size. Content/SubContent preserve `forceMount` through their owned portals; callers manage closed-state lifecycle when opting in. Triggers are intentionally styled through `asChild` + Button.
+
+## Avatar
+
+Compose `Avatar`, one `AvatarImage`, and `AvatarFallback`. Radix preloads the image and displays fallback while loading or after an error; `delayMs` on Fallback optionally avoids flashing. `onLoadingStatusChange` reports the native `idle`/`loading`/`loaded`/`error` lifecycle. All three parts forward DOM props, refs, classes, and `asChild`. Image requires an `alt` string (empty for decoration). No image loading or fallback timers are independently reimplemented by Bezny.
+
+```tsx
+<Avatar size="normal">
+  <AvatarImage src={user.photoUrl} alt={user.name} />
+  <AvatarFallback role="img" aria-label={user.name}>
+    AL
+  </AvatarFallback>
+</Avatar>
+```
+
+Provide meaningful alt text and an accessible fallback: full visible text, or `role="img"` plus `aria-label` for initials. When a nearby visible name already identifies a purely decorative avatar, use `aria-hidden="true"` on Avatar and `alt=""` on Image. Avatar is not inherently interactive; wrap it in a named Button/link (or compose one through `asChild`) when activation is intended.
+
+Default circular sizing is `small` = `2rem`, `normal` = `2.5rem`, `large` = `3rem`; images cover the circle and fallback is centred. The `--bezny-control-avatar-*` tokens cover each size, corresponding rem font sizes/line heights, font family, weight, neutral background, text, border, and radius. Structural avatar purposes reference logical sizing/typography/colours; round radius maps to the absolute foundational `50%` primitive. Styles inherit and rebind light/dark theme aliases without literal colour overrides.

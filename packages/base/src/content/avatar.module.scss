@@ -1,0 +1,44 @@
+@use "./avatar-appearance" as appearance;
+.avatar {
+  @include appearance.declarations;
+  box-sizing: border-box;
+  display: inline-flex;
+  flex-shrink: 0;
+  vertical-align: middle;
+  overflow: hidden;
+  width: appearance.token("size-normal");
+  height: appearance.token("size-normal");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size-normal");
+  line-height: appearance.token("line-height-normal");
+  font-weight: appearance.token("font-weight");
+  &[data-size="small"] {
+    width: appearance.token("size-small");
+    height: appearance.token("size-small");
+    font-size: appearance.token("font-size-small");
+    line-height: appearance.token("line-height-small");
+  }
+  &[data-size="large"] {
+    width: appearance.token("size-large");
+    height: appearance.token("size-large");
+    font-size: appearance.token("font-size-large");
+    line-height: appearance.token("line-height-large");
+  }
+}
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+}

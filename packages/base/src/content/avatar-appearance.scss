@@ -1,0 +1,36 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/structural";
+$-definitions: ();
+@each $name
+    in (
+      background,
+      text,
+      border,
+      border-width,
+      radius,
+      size-small,
+      size-normal,
+      size-large,
+      font-family,
+      font-weight,
+      font-size-small,
+      font-size-normal,
+      font-size-large,
+      line-height-small,
+      line-height-normal,
+      line-height-large
+    )
+{
+  $-definitions: map.set(
+    $-definitions,
+    $name,
+    structural.token("avatar-#{$name}")
+  );
+}
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-avatar");
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-avatar");
+}
