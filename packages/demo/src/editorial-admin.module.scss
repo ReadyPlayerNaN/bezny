@@ -10,7 +10,8 @@
 .form,
 .selectionBar,
 .statusBar,
-.actionMenu {
+.actionMenu,
+.avatarTrigger {
   @include appearance.declarations;
 }
 
@@ -72,8 +73,13 @@
   align-items: center;
   flex-wrap: nowrap;
   gap: appearance.token("gap");
-  // Keep Languages physically left of Command in both reading directions.
-  direction: ltr;
+}
+
+.avatarTrigger {
+  padding: 0;
+  inline-size: appearance.token("avatar-trigger-size");
+  block-size: appearance.token("avatar-trigger-size");
+  border-radius: appearance.token("avatar-trigger-radius");
 }
 
 .page,

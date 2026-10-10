@@ -20,11 +20,15 @@ import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
+import { EditorialAccountMenu } from "./editorial-account-menu.js";
+import {
+  EditorialLogin,
+  editorialUserAtom,
+} from "./editorial-authentication.js";
 import {
   EditorialCommandPalette,
   EditorialDeleteDialog,
 } from "./editorial-dialogs.js";
-import { EditorialLanguageMenu } from "./editorial-language-menu.js";
 import { AdminCommandButton } from "./editorial-pages.js";
 import { noticeAtom } from "./editorial-records.js";
 
@@ -54,19 +58,8 @@ export const editorialComponents = {
   PageHeader: EditorialPageHeader,
 } satisfies AdminBuildingBlockOverrides;
 
-export const EditorialShell = () => {
+const EditorialWorkspace = () => {
   const { t, i18n } = useTranslation("editorial");
-  const language = i18n.resolvedLanguage ?? "en";
-  useEffect(() => {
-    const previousLanguage = document.documentElement.lang;
-    const previousDirection = document.documentElement.dir;
-    document.documentElement.lang = language;
-    document.documentElement.dir = i18n.dir(language);
-    return () => {
-      document.documentElement.lang = previousLanguage;
-      document.documentElement.dir = previousDirection;
-    };
-  }, [i18n, language]);
   const commands = useAdminEntityCommands();
   const context = useAdminEntityContext();
   let contextLabel = t("noEntity", {
@@ -105,8 +98,8 @@ export const EditorialShell = () => {
           <div className={styles.header}>
             <strong>{t("shell")}</strong>
             <div className={styles.headerTools}>
-              <EditorialLanguageMenu />
               <EditorialCommandPalette />
+              <EditorialAccountMenu />
             </div>
           </div>
         }
@@ -139,5 +132,28 @@ export const EditorialShell = () => {
       </AdminLayout>
       <EditorialDeleteDialog />
     </>
+  );
+};
+
+export const EditorialShell = () => {
+  const { i18n } = useTranslation("editorial");
+  const language = i18n.resolvedLanguage ?? "en";
+  useEffect(() => {
+    const previousLanguage = document.documentElement.lang;
+    const previousDirection = document.documentElement.dir;
+    document.documentElement.lang = language;
+    document.documentElement.dir = i18n.dir(language);
+    return () => {
+      document.documentElement.lang = previousLanguage;
+      document.documentElement.dir = previousDirection;
+    };
+  }, [i18n, language]);
+  const user = useAtomValue(editorialUserAtom);
+  return user ? (
+    <EditorialWorkspace />
+  ) : (
+    <div lang={language} dir={i18n.dir(language)}>
+      <EditorialLogin />
+    </div>
   );
 };

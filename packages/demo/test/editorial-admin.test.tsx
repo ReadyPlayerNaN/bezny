@@ -15,6 +15,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createDemoApplication, DemoApp } from "../src/demo-application.js";
 import type { DemoApplication } from "../src/demo-application.js";
+import {
+  demoEditorialUser,
+  editorialUserAtom,
+} from "../src/editorial-authentication.js";
 
 const applications: DemoApplication[] = [];
 
@@ -25,6 +29,7 @@ const selectedArticleIdsAtom = atom(
 const renderDemo = async (pathname = "/articles") => {
   const history = createMemoryHistory({ initialEntries: [pathname] });
   const application = createDemoApplication(history);
+  application.store.set(editorialUserAtom, { ...demoEditorialUser });
   applications.push(application);
   render(<DemoApp application={application} />);
   await screen.findByRole("heading", { level: 1 });
@@ -98,25 +103,19 @@ describe("editorial admin", () => {
     expect(context.textContent).toBe("Context: Articles");
   });
 
-  it("uses icon-only header tools with languages before the command palette and keyboard dropdown focus", async () => {
+  it("moves language selection into the avatar menu and preserves keyboard focus", async () => {
     const { user } = await renderDemo();
-    const language = screen.getByRole("button", { name: "UI language" });
-    const palette = screen.getByRole("button", { name: "Command palette" });
-    expect([language.textContent, palette.textContent]).toStrictEqual(["", ""]);
-    expect(
-      language.parentElement?.querySelectorAll(
-        'svg[role="graphics-symbol"][aria-hidden="true"]'
-      )
-    ).toHaveLength(2);
-    expect(language.nextElementSibling).toBe(palette);
-    language.focus();
+    const account = screen.getByRole("button", { name: "Account menu" });
+    expect(screen.queryByRole("button", { name: "UI language" })).toBeNull();
+    expect(account.textContent).toBe("DE");
+    account.focus();
     await user.keyboard("{ArrowDown}");
     const current = await screen.findByRole("menuitemradio", {
       name: "Change language to English",
     });
     expect(current.getAttribute("aria-checked")).toBe("true");
     await user.keyboard("{Escape}");
-    await waitFor(() => expect(document.activeElement).toBe(language));
+    await waitFor(() => expect(document.activeElement).toBe(account));
   });
 
   it("limits page navigation to lists while retaining creation in page headers and the palette", async () => {

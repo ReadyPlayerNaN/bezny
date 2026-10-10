@@ -11,6 +11,10 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { createDemoApplication, DemoApp } from "../src/demo-application.js";
 import type { DemoApplication } from "../src/demo-application.js";
+import {
+  demoEditorialUser,
+  editorialUserAtom,
+} from "../src/editorial-authentication.js";
 import { readEditorialContent } from "../src/editorial-content.js";
 
 const applications: DemoApplication[] = [];
@@ -19,6 +23,7 @@ const renderLocalizedDemo = async (locale: string, path = "/articles") => {
     createMemoryHistory({ initialEntries: [path] }),
     locale
   );
+  application.store.set(editorialUserAtom, { ...demoEditorialUser });
   applications.push(application);
   const result = render(<DemoApp application={application} />);
   const user = userEvent.setup();
@@ -102,7 +107,7 @@ describe("editorial localization", () => {
     );
     await screen.findByRole("heading", { name: "Vítejte v Bezny" });
     expect(screen.getByRole("button", { name: "Paleta příkazů" })).toBeTruthy();
-    await user.click(screen.getByRole("button", { name: "Jazyk rozhraní" }));
+    await user.click(screen.getByRole("button", { name: "Nabídka účtu" }));
     await user.click(
       await screen.findByRole("menuitemradio", {
         name: "Změnit jazyk na العربية",
@@ -160,7 +165,7 @@ describe("editorial localization", () => {
       .find((item) => item.id === "1");
     expect(record?.content?.cs?.title).toBe("Nový název");
     expect(record?.content?.en?.title).toBe("Welcome to Bezny");
-    await user.click(screen.getByRole("button", { name: "UI language" }));
+    await user.click(screen.getByRole("button", { name: "Account menu" }));
     await user.click(
       await screen.findByRole("menuitemradio", {
         name: "Change language to Čeština",

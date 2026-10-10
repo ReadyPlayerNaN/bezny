@@ -1,53 +1,34 @@
 import { useAdminEntityCommands } from "@bezny/admin/commands";
-import { IconButton } from "@bezny/base";
 import {
-  Root,
-  Trigger,
-  Portal,
-  Content,
-  RadioGroup,
-  RadioItem,
-} from "@radix-ui/react-dropdown-menu";
-import { Languages } from "lucide-react";
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+} from "@bezny/base";
 import { useTranslation } from "react-i18next";
 
-import styles from "./editorial-admin.module.scss";
-
-/** Ordinary language selection executes the same commands as the palette. */
-export const EditorialLanguageMenu = () => {
+/** Language selection inside the account menu executes the palette's commands. */
+export const EditorialLanguageOptions = () => {
   const { t, i18n } = useTranslation("editorial");
   const { languageCommands } = useAdminEntityCommands();
   return (
-    <Root>
-      <Trigger asChild>
-        <IconButton
-          variant="secondary"
-          icon={Languages}
-          aria-label={t("language")}
-        />
-      </Trigger>
-      <Portal>
-        <Content
-          className={styles.actionMenu}
-          align="end"
-          aria-label={t("language")}
-        >
-          <RadioGroup value={i18n.resolvedLanguage ?? i18n.language}>
-            {languageCommands.map((command) => (
-              <RadioItem
-                key={command.id}
-                value={command.id.slice("language.".length)}
-                className={styles.actionMenuItem}
-                onSelect={async () => {
-                  await command.execute();
-                }}
-              >
-                {command.label}
-              </RadioItem>
-            ))}
-          </RadioGroup>
-        </Content>
-      </Portal>
-    </Root>
+    <>
+      <DropdownMenuLabel>{t("language")}</DropdownMenuLabel>
+      <DropdownMenuRadioGroup
+        aria-label={t("language")}
+        value={i18n.resolvedLanguage ?? i18n.language}
+      >
+        {languageCommands.map((command) => (
+          <DropdownMenuRadioItem
+            key={command.id}
+            value={command.id.slice("language.".length)}
+            onSelect={async () => {
+              await command.execute();
+            }}
+          >
+            {command.label}
+          </DropdownMenuRadioItem>
+        ))}
+      </DropdownMenuRadioGroup>
+    </>
   );
 };

@@ -9,7 +9,16 @@ pnpm install
 pnpm --filter @bezny/demo dev
 ```
 
-The dev script builds base/admin first, then starts Vite (normally `http://localhost:5173`). `/` opens the first registered entity, Articles. Pages is a second independent entity with the same UI/data shape. Rebuild the library packages after editing their source; demo edits update through Vite.
+The dev script builds base/admin first, then starts Vite (normally `http://localhost:5173`). The application starts on the login screen; after signing in, `/` opens the first registered entity, Articles. Pages is a second independent entity with the same UI/data shape. Rebuild the library packages after editing their source; demo edits update through Vite.
+
+## Login and account demo
+
+- **Email/password:** `editor@example.com` / `bezny-demo`. Incorrect credentials show a retryable error; required fields and email format use RHF validation.
+- **Social login:** choose **Continue with Google** or **Continue with GitHub** to simulate that provider's user. No OAuth popup, network request, or real provider account is involved.
+- The main header's **avatar menu** shows the current name/email, **Edit account**, language radio options, and **Log out**. Edit account updates the display name and email in an RHF form; Save updates avatar initials, and Cancel/Escape discards edits. Profile edits do not change the fixed demo login credentials.
+- Deep-link URLs are retained through sign-in. Logout hides the admin screens, clears selection/notices/deletion requests, and returns to an empty login form. In-memory editorial records remain until reload.
+
+Authentication is deliberately simulated, not a security boundary: there is no server-side authentication or authorization. Do not enter real credentials. Passwords are never put in the session atom or browser storage. The demo user/profile is application-scoped, kept only in memory, and reset on logout, disposal, or reload. Login and account labels support English, Czech, and Arabic/RTL.
 
 ## One registration drives routes and commands
 
@@ -32,7 +41,7 @@ Every listed entity record has its title rendered as a TanStack Router detail hy
 
 Collection create buttons sit beside the page heading, at the right in LTR, with descriptions below. Detail pages use the same header action slot for one localized **Actions** dropdown containing list, edit, and delete commands. The dropdown closes before executing a command so navigation and confirmation dialogs can take focus; cancelling deletion restores focus to the Actions trigger.
 
-The application banner stays on one line with a `3rem` maximum height; the language and command-palette tools remain accessible when the title is truncated on narrow screens. Context appears in a fixed bottom status bar with `0.5rem` text, `0.75rem` line height, and `1.25rem` height. Page padding reserves its space, and the floating selection controls sit above it. Geometry and typography use the four-layer `shell-*` token chain, exposed through `--bezny-control-editorial-demo-<header-height|status-height|status-font-size|status-line-height>`.
+The application banner stays on one line with a `3rem` maximum height; the avatar and command-palette tools remain accessible when the title is truncated on narrow screens. Context appears in a fixed bottom status bar with `0.5rem` text, `0.75rem` line height, and `1.25rem` height. Page padding reserves its space, and the floating selection controls sit above it. Geometry and typography use the four-layer `shell-*` token chain, exposed through `--bezny-control-editorial-demo-<header-height|status-height|status-font-size|status-line-height>`. The round avatar trigger consumes `--bezny-control-editorial-demo-avatar-trigger-size` and `--bezny-control-editorial-demo-avatar-trigger-radius`, backed by structural icon-button size and avatar radius.
 
 The status bar displays context from `useAdminEntityContext`: collection, decoded entity record ID, selected IDs, or unavailable target. Jotai selection is entity-scoped, so article `1` and page `1` cannot be confused. Leaving the collection or switching entities clears selection, including browser history navigation.
 
@@ -52,7 +61,7 @@ For built `dist/` hosting, serve `index.html` for application deep links.
 
 ## Languages and localized content
 
-The UI uses i18next/react-i18next with English, Czech, and Arabic resources. The header uses an icon-only Lucide Command button for the palette and a Languages icon dropdown immediately to its left (both use Bezny's Icon wrapper and localized accessible labels). The language menu uses Radix radio items to indicate the current locale and preserves keyboard navigation/Escape focus return. Header language controls and palette language commands share execution; Arabic switches the application and Radix primitives to RTL. Entity/action labels, filters, pagination, palette prompts, forms, validation, confirmations, and reactive notices are localized. Counts are locale-formatted; IDs and routes remain stable.
+The UI uses i18next/react-i18next with English, Czech, and Arabic resources. The header uses an icon-only Lucide Command button for the palette and a user avatar button with a localized accessible label. Language selection lives inside the avatar dropdown, using Bezny's Radix-backed radio items to indicate the current locale and preserve keyboard navigation/Escape focus return. Account-menu language controls and palette language commands share execution; Arabic switches the application and Radix primitives to RTL. Entity/action labels, filters, pagination, palette prompts, forms, validation, confirmations, and reactive notices are localized. Counts are locale-formatted; IDs and routes remain stable.
 
 Record content is separate from UI resources. The first article has English/Czech/Arabic content; other seed records demonstrate English fallback. The RHF content-language selector (also in the palette) edits one locale independently of UI language and preserves other locales. New records retain their source language; missing content falls back to English or that source language through i18next. Title/body editing and publication toggling are actual registered form commands. Content resources are ephemeral per-record instances, not a growing global translation registry.
 
@@ -65,7 +74,11 @@ Record content is separate from UI resources. The first article has English/Czec
 - `src/editorial-translations.ts`: UI resource bundles; no record data.
 - `src/editorial-pages.tsx`: entity-independent list/detail/form screens and real page callbacks.
 - `src/editorial-dialogs.tsx`: palette presentation and entity-aware delete confirmation.
-- `src/editorial-layout.tsx`: presentation replacements, registered navigation, matched context.
+- `src/editorial-layout.tsx`: login/workspace presentation, registered navigation, matched context.
+- `src/editorial-authentication.tsx`: simulated login callbacks and application-scoped user atom.
+- `src/editorial-account-menu.tsx`: avatar dropdown and profile editor.
+- `src/editorial-account-translations.ts`: localized login/account messages.
+- `src/editorial-language-menu.tsx`: shared language commands as account-menu radio options.
 - `src/editorial-appearance.scss`, `src/editorial-admin.module.scss`: scoped presentation using internal workspace Sass token accessors.
 
 ## Checks
