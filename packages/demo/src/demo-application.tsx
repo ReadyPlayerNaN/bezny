@@ -2,6 +2,7 @@ import {
   AdminApplicationProvider,
   createAdminApplication,
 } from "@bezny/admin/application";
+import { createAdminI18n } from "@bezny/admin/i18n";
 import type { RouterHistory } from "@tanstack/react-router";
 import { useEffect } from "react";
 
@@ -13,18 +14,27 @@ import {
   deletionRequestAtom,
   noticeAtom,
 } from "./editorial-records.js";
+import { editorialTranslations } from "./editorial-translations.js";
 
-export const createDemoApplication = (history?: RouterHistory) => {
+export const createDemoApplication = (
+  history?: RouterHistory,
+  locale = "en"
+) => {
+  const i18n = createAdminI18n({
+    lng: locale,
+    resources: structuredClone(editorialTranslations),
+  });
   const repository = createEditorialRepository();
   const application = createAdminApplication({
     NotFound: MissingEntityPage,
     Root: EditorialShell,
-    entities: createEditorialEntities(repository),
+    entities: createEditorialEntities(repository, i18n),
+    i18n,
     ...(history ? { history } : {}),
   });
   const clearPresentation = () => {
     application.store.set(deletionRequestAtom, null);
-    application.store.set(noticeAtom, "");
+    application.store.set(noticeAtom, null);
   };
   application.session.onDispose(clearPresentation);
   return { ...application, repository };
@@ -34,7 +44,7 @@ export const DemoApp = ({ application }: { application: DemoApplication }) => {
   useEffect(
     () => () => {
       application.store.set(deletionRequestAtom, null);
-      application.store.set(noticeAtom, "");
+      application.store.set(noticeAtom, null);
     },
     [application]
   );

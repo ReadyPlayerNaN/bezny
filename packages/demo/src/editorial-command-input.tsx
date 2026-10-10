@@ -7,10 +7,50 @@ import {
   SelectContent,
   SelectItem,
   TextField,
+  TextareaField,
   Submit,
 } from "@bezny/base";
 import { Controller, FormProvider, useForm } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
+const CommandTextField = ({
+  input,
+}: {
+  input: NonNullable<AdminCommand["input"]>;
+}) => {
+  const { t } = useTranslation("editorial");
+  if (input.type === "textarea") {
+    return (
+      <TextareaField<{ value: string }>
+        name="value"
+        label={input.label}
+        maxLength={input.maxLength}
+      />
+    );
+  }
+  return (
+    <TextField<{ value: string }>
+      name="value"
+      label={input.label}
+      type={input.type ?? "text"}
+      min={input.min}
+      max={input.max}
+      maxLength={input.maxLength}
+      rules={
+        input.type === "number"
+          ? {
+              required: t("numberRequired"),
+              validate: (value: string) =>
+                (Number.isSafeInteger(Number(value)) &&
+                  Number(value) >= (input.min ?? 1) &&
+                  Number(value) <= (input.max ?? Number.MAX_SAFE_INTEGER)) ||
+                t("pageInvalid"),
+            }
+          : {}
+      }
+    />
+  );
+};
 export const EditorialCommandInput = ({
   command,
   apply,
@@ -21,6 +61,7 @@ export const EditorialCommandInput = ({
   cancel: () => void;
 }) => {
   const { input } = command;
+  const { t } = useTranslation("editorial");
   const form = useForm<{ value: string }>({
     defaultValues: { value: input?.value ?? "" },
   });
@@ -29,7 +70,10 @@ export const EditorialCommandInput = ({
   }
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(({ value }) => apply(value))}>
+      <form
+        noValidate
+        onSubmit={form.handleSubmit(({ value }) => apply(value))}
+      >
         {input.options ? (
           <Controller
             name="value"
@@ -53,7 +97,7 @@ export const EditorialCommandInput = ({
                 </SelectTrigger>
                 <SelectContent>
                   {input.allowEmpty && (
-                    <SelectItem value="empty">All</SelectItem>
+                    <SelectItem value="empty">{t("all")}</SelectItem>
                   )}
                   {input.options?.map((option) => (
                     <SelectItem
@@ -68,31 +112,11 @@ export const EditorialCommandInput = ({
             )}
           />
         ) : (
-          <TextField<{ value: string }>
-            name="value"
-            label={input.label}
-            type={input.type ?? "text"}
-            min={input.min}
-            max={input.max}
-            maxLength={input.maxLength}
-            rules={
-              input.type === "number"
-                ? {
-                    required: "Enter a number.",
-                    validate: (value: string) =>
-                      (Number.isSafeInteger(Number(value)) &&
-                        Number(value) >= (input.min ?? 1) &&
-                        Number(value) <=
-                          (input.max ?? Number.MAX_SAFE_INTEGER)) ||
-                      "Enter a valid page number.",
-                  }
-                : {}
-            }
-          />
+          <CommandTextField input={input} />
         )}
-        <Submit>Apply command</Submit>
+        <Submit>{t("applyCommand")}</Submit>
         <Button variant="secondary" onClick={cancel}>
-          Back to commands
+          {t("backCommands")}
         </Button>
       </form>
     </FormProvider>

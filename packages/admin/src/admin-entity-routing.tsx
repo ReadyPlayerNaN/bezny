@@ -1,3 +1,4 @@
+import { DirectionProvider } from "@radix-ui/react-direction";
 import {
   createBrowserHistory,
   createRootRoute,
@@ -6,9 +7,11 @@ import {
   redirect,
 } from "@tanstack/react-router";
 import type { RouterHistory } from "@tanstack/react-router";
+import type { i18n } from "i18next";
 import { createStore } from "jotai";
+import type { ReactNode, FunctionComponent } from "react";
 import { useEffect } from "react";
-import type { FunctionComponent } from "react";
+import { I18nextProvider, useTranslation } from "react-i18next";
 
 import type { AdminBuildingBlockOverrides } from "./admin-building-blocks.js";
 import type { AdminEntityDefinition } from "./admin-data-adapter.js";
@@ -30,6 +33,7 @@ import {
   adminEntityPaths,
   adminEntityViewForRoute,
 } from "./admin-entity-paths.js";
+import { createAdminI18n } from "./admin-i18n.js";
 import { AdminProvider } from "./admin-provider.js";
 
 const AdminDataBoundary = ({ Root }: { Root: FunctionComponent }) => {
@@ -42,20 +46,21 @@ const AdminDataBoundary = ({ Root }: { Root: FunctionComponent }) => {
 };
 
 const EntityScreen = () => {
-  const { entity, view, kind, data } = useAdminEntityContext();
+  const { entity, view, kind } = useAdminEntityContext();
   const { refresh } = useAdminEntityCommands();
+  const { t } = useTranslation("beznyAdmin");
   const { NotFound } = useAdminEntityPresentation();
   const Screen = entity && view ? entity.screens[view] : undefined;
   if (Screen && view === "list" && kind !== "unavailable") {
     return <Screen />;
   }
   if (kind === "loading") {
-    return <output aria-label="Loading records">Loading records…</output>;
+    return <output aria-label={t("loading")}>{t("loading")}</output>;
   }
   if (kind === "error") {
     return (
       <>
-        <p role="alert">{data?.error ?? "Application unavailable."}</p>
+        <p role="alert">{t("error")}</p>
         {refresh && (
           <button
             type="button"
@@ -82,6 +87,7 @@ export interface AdminApplicationOptions {
   NotFound: FunctionComponent;
   history?: RouterHistory;
   store?: AdminStore;
+  i18n?: i18n;
 }
 
 export const createAdminApplication = ({
@@ -91,6 +97,7 @@ export const createAdminApplication = ({
   history = createBrowserHistory(),
   store = createStore(),
   cache,
+  i18n: translations = createAdminI18n(),
 }: AdminApplicationOptions) => {
   const registry = createAdminEntityRegistry(entities);
   const session = createAdminDataSession(registry, store, cache);
@@ -143,6 +150,7 @@ export const createAdminApplication = ({
   return {
     NotFound,
     dispose: session.dispose,
+    i18n: translations,
     registry,
     router,
     session,
@@ -151,6 +159,18 @@ export const createAdminApplication = ({
 };
 export type AdminApplication = ReturnType<typeof createAdminApplication>;
 
+const AdminLanguageBoundary = ({ children }: { children: ReactNode }) => {
+  const { i18n } = useTranslation();
+  const language = i18n.resolvedLanguage ?? i18n.language ?? "en";
+  const direction = i18n.dir(language);
+  return (
+    <DirectionProvider dir={direction}>
+      <div lang={language} dir={direction}>
+        {children}
+      </div>
+    </DirectionProvider>
+  );
+};
 export const AdminApplicationProvider = ({
   application,
   components,
@@ -178,16 +198,20 @@ export const AdminApplicationProvider = ({
     };
   }, [application]);
   return (
-    <AdminEntityRegistryProvider
-      registry={application.registry}
-      session={application.session}
-      NotFound={application.NotFound}
-    >
-      <AdminProvider
-        router={application.router}
-        store={application.store}
-        {...(components ? { components } : {})}
-      />
-    </AdminEntityRegistryProvider>
+    <I18nextProvider i18n={application.i18n}>
+      <AdminLanguageBoundary>
+        <AdminEntityRegistryProvider
+          registry={application.registry}
+          session={application.session}
+          NotFound={application.NotFound}
+        >
+          <AdminProvider
+            router={application.router}
+            store={application.store}
+            {...(components ? { components } : {})}
+          />
+        </AdminEntityRegistryProvider>
+      </AdminLanguageBoundary>
+    </I18nextProvider>
   );
 };

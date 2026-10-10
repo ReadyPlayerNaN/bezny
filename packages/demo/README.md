@@ -46,11 +46,19 @@ The mock backend is deliberately **in memory and bounded**: three articles and o
 
 For built `dist/` hosting, serve `index.html` for application deep links.
 
+## Languages and localized content
+
+The UI uses i18next/react-i18next with English, Czech, and Arabic resources. Header language controls and palette language commands share execution; Arabic switches the application and Radix primitives to RTL. Entity/action labels, filters, pagination, palette prompts, forms, validation, confirmations, and reactive notices are localized. Counts are locale-formatted; IDs and routes remain stable.
+
+Record content is separate from UI resources. The first article has English/Czech/Arabic content; other seed records demonstrate English fallback. The RHF content-language selector (also in the palette) edits one locale independently of UI language and preserves other locales. New records retain their source language; missing content falls back to English or that source language through i18next. Title/body editing and publication toggling are actual registered form commands. Content resources are ephemeral per-record instances, not a growing global translation registry.
+
 ## Source map
 
 - `src/demo-application.tsx`: creates/mounts the shared admin application; no per-entity routes.
 - `src/editorial-entities.ts`: typed entity/adapter/action registrations; no palette entries.
 - `src/editorial-records.ts`: bounded mock backend, typed adapters, DTO validation, and data-source descriptors.
+- `src/editorial-content.ts`: localized-content contracts and standard i18next fallback.
+- `src/editorial-translations.ts`: UI resource bundles; no record data.
 - `src/editorial-pages.tsx`: entity-independent list/detail/form screens and real page callbacks.
 - `src/editorial-dialogs.tsx`: palette presentation and entity-aware delete confirmation.
 - `src/editorial-layout.tsx`: presentation replacements, registered navigation, matched context.

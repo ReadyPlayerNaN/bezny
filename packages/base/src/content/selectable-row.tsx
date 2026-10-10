@@ -32,6 +32,9 @@ export type SelectableRowMenuItem = {
 );
 export interface SelectableRowProps {
   selected: boolean;
+  groupLabel?: string | undefined;
+  menuLabel?: string | undefined;
+  actionErrorLabel?: string | undefined;
   selectLabel: string;
   onSelect: () => void;
   onContextMenuOpen?: () => void;
@@ -50,6 +53,9 @@ export interface SelectableRowProps {
 }
 export const SelectableRow = ({
   selected,
+  groupLabel,
+  menuLabel,
+  actionErrorLabel = "Action failed. Please retry.",
   selectLabel,
   onSelect,
   onContextMenuOpen,
@@ -158,7 +164,9 @@ export const SelectableRow = ({
         {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Group delegates surface selection; actual actions remain native controls. */}
         <fieldset
           className={styles.row}
-          aria-label={selectionId ? `Item ${selectionId}` : "Item"}
+          aria-label={
+            groupLabel ?? (selectionId ? `Item ${selectionId}` : "Item")
+          }
           data-selection-id={selectionId}
           data-selectable={selectable}
           data-select-disabled={selectDisabled}
@@ -213,12 +221,13 @@ export const SelectableRow = ({
       </ContextMenuTrigger>
       {menuItems.length > 0 ? (
         <ContextMenuContent
+          aria-label={menuLabel}
           {...(menuContainer ? { container: menuContainer } : {})}
         >
           {menuSummary ? (
             <ContextMenuLabel>{menuSummary}</ContextMenuLabel>
           ) : null}
-          {failed ? <div role="alert">Action failed. Please retry.</div> : null}
+          {failed ? <div role="alert">{actionErrorLabel}</div> : null}
           {renderActions(menuItems)}
         </ContextMenuContent>
       ) : null}

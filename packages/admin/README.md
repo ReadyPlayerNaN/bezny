@@ -19,6 +19,7 @@ This private workspace package builds ESM JavaScript and TypeScript declarations
 | `@bezny/admin/adapters` | Typed `defineAdminEntity`, LCRUD adapter/configuration contracts |
 | `@bezny/admin/data` | Bounded data-session contracts, cache policy, and diagnostics |
 | `@bezny/admin/list` | Shared filter/pagination controls and parameterized commands |
+| `@bezny/admin/i18n` | App-scoped i18next setup and default English/Czech/Arabic resources |
 
 `AdminProvider` places a Jotai provider around TanStack's `RouterProvider`, so route components can use atoms and Bezny controls together. It accepts:
 
@@ -161,7 +162,7 @@ Use [registered entity applications](ENTITIES.md) when building an entity-orient
 
 ## Runnable application example
 
-[`@bezny/demo`](../demo/README.md) registers Articles and Pages using the shared entity application API. It supplies customized presentation, a bounded adapter-backed mock repository, RHF forms, and deletion confirmation; generic routes, entity context, bounded data/cache lifetimes, selection, and the command catalog come from `@bezny/admin`. Run `pnpm --filter @bezny/demo dev` from the repository root.
+[`@bezny/demo`](../demo/README.md) registers Articles and Pages using the shared entity application API. It supplies customized presentation, a bounded adapter-backed mock repository, RHF forms, and deletion confirmation; generic routes, entity context, bounded data/cache lifetimes, selection, localization/direction integration, and the command catalog come from `@bezny/admin`. Run `pnpm --filter @bezny/demo dev` from the repository root.
 
 ## Required direction for future development
 

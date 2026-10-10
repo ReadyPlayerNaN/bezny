@@ -24,6 +24,7 @@ import {
 } from "@bezny/admin/context";
 import { createAdminDataSession } from "@bezny/admin/data";
 import { createAdminEntityRegistry } from "@bezny/admin/entities";
+import { createAdminI18n } from "@bezny/admin/i18n";
 import { AdminLayout } from "@bezny/admin/layout";
 import { useAdminListControls } from "@bezny/admin/list";
 import { AdminPage } from "@bezny/admin/page";
@@ -43,6 +44,7 @@ for (const component of [
   createAdminEntityRegistry,
   defineAdminEntity,
   createAdminDataSession,
+  createAdminI18n,
   useAdminListControls,
   useAdminEntityCommands,
   useAdminEntityNavigate,

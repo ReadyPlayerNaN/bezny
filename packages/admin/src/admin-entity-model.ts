@@ -26,7 +26,7 @@ export interface AdminCommand {
     label: string;
     value: string;
     allowEmpty?: boolean;
-    type?: "text" | "number";
+    type?: "text" | "number" | "textarea";
     min?: number;
     max?: number;
     maxLength?: number;

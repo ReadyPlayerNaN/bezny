@@ -13,6 +13,8 @@ export interface ValueFilterProps {
   onChange: (value: string | null) => void;
   placeholder?: string;
   maxLength?: number | undefined;
+  applyLabel?: string;
+  clearLabel?: string;
   inputType?: "text" | "datetime-local";
   summarize?: (label: string, value: string | null) => string;
   autoOpen?: boolean;
@@ -25,6 +27,8 @@ const ValueFilterEditor = ({
   placeholder = "Filter value",
   inputType = "text",
   maxLength,
+  applyLabel = "Apply",
+  clearLabel = "Clear",
   close,
 }: ValueFilterProps & { close: () => void }) => {
   const [draft, setDraft] = useState(value ?? "");
@@ -62,9 +66,9 @@ const ValueFilterEditor = ({
             close();
           }}
         >
-          Clear
+          {clearLabel}
         </Button>
-        <Button onClick={handleApply}>Apply</Button>
+        <Button onClick={handleApply}>{applyLabel}</Button>
       </div>
     </>
   );

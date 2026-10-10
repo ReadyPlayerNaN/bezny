@@ -2,6 +2,7 @@ import { useParams, useRouterState } from "@tanstack/react-router";
 import { atom, useAtomValue } from "jotai";
 import { createContext, useContext, useMemo } from "react";
 import type { FunctionComponent, ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 import type { AdminListQuery } from "./admin-data-adapter.js";
 import {
@@ -33,7 +34,10 @@ export const useAdminDataSession = (): AdminDataSession => {
   return session;
 };
 const emptyRecordsAtom = atom<readonly AdminRecordReference[]>([]);
-const DefaultEntityUnavailable = () => <p>Entity unavailable.</p>;
+const DefaultEntityUnavailable = () => {
+  const { t } = useTranslation("beznyAdmin");
+  return <p>{t("unavailable")}</p>;
+};
 const NotFoundContext = createContext<{ NotFound: FunctionComponent }>({
   NotFound: DefaultEntityUnavailable,
 });
@@ -63,7 +67,44 @@ export const AdminEntityRegistryProvider = ({
 };
 
 export const useAdminEntityRegistry = (): AdminEntityRegistry => {
-  const registry = useContext(RegistryContext);
+  const original = useContext(RegistryContext);
+  const { t } = useTranslation("beznyAdmin");
+  const registry = useMemo(() => {
+    if (!original) {
+      return null;
+    }
+    const entities = original.entities.map((entity) => ({
+      ...entity,
+      label: t(entity.labelKey ?? entity.label, { defaultValue: entity.label }),
+      singularLabel: t(entity.singularLabelKey ?? entity.singularLabel, {
+        defaultValue: entity.singularLabel,
+      }),
+      ...(entity.filters
+        ? {
+            filters: entity.filters.map((filter) => ({
+              ...filter,
+              label: t(filter.labelKey ?? filter.label, {
+                defaultValue: filter.label,
+              }),
+              ...(filter.options
+                ? {
+                    options: filter.options.map((option) => ({
+                      ...option,
+                      label: t(option.labelKey ?? option.label, {
+                        defaultValue: option.label,
+                      }),
+                    })),
+                  }
+                : {}),
+            })),
+          }
+        : {}),
+    }));
+    return {
+      entities,
+      get: (key: string) => entities.find((entity) => entity.key === key),
+    };
+  }, [original, t]);
   if (!registry) {
     throw new Error("Entity building blocks require AdminApplicationProvider.");
   }
@@ -163,7 +204,11 @@ export const useAdminEntityContext = () => {
   const session = useAdminDataSession();
   const data = useAtomValue(session.snapshotAtom);
   const queries = useAtomValue(adminListQueriesAtom);
-  const query = queryForEntity(entity, queries);
+  const { i18n } = useTranslation("beznyAdmin");
+  const query = {
+    ...queryForEntity(entity, queries),
+    locale: i18n.resolvedLanguage ?? i18n.language ?? "en",
+  };
   const request =
     entity && view
       ? { entity: entity.key, view, ...(recordId ? { recordId } : {}), query }

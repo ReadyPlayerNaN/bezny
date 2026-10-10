@@ -2,7 +2,10 @@ import {
   useAdminEntityCommands,
   useAdminEntityNavigate,
 } from "@bezny/admin/commands";
-import { useAdminDataSession } from "@bezny/admin/context";
+import {
+  useAdminDataSession,
+  useAdminEntityRegistry,
+} from "@bezny/admin/context";
 import { adminSelectionAtom } from "@bezny/admin/entities";
 import type { AdminCommand } from "@bezny/admin/entities";
 import {
@@ -23,6 +26,7 @@ import {
 } from "@bezny/base";
 import { useAtom, useStore } from "jotai";
 import { useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 import { EditorialCommandInput } from "./editorial-command-input.js";
 import {
@@ -34,6 +38,7 @@ import {
 import styles from "./editorial-admin.module.scss";
 
 export const EditorialCommandPalette = () => {
+  const { t, i18n } = useTranslation("editorial");
   const { paletteCommands } = useAdminEntityCommands();
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
@@ -54,10 +59,11 @@ export const EditorialCommandPalette = () => {
     >
       <DialogTrigger asChild>
         <Button ref={trigger} id="command-palette-trigger" variant="secondary">
-          Command palette
+          {t("palette")}
         </Button>
       </DialogTrigger>
       <DialogContent
+        dir={i18n.dir()}
         onCloseAutoFocus={async (event) => {
           const command = pendingCommand.current;
           pendingCommand.current = null;
@@ -69,11 +75,8 @@ export const EditorialCommandPalette = () => {
           }
         }}
       >
-        <DialogTitle>Command palette</DialogTitle>
-        <DialogDescription>
-          Search registered entity routes and actions for the current context.
-          Tab to a command and press Enter.
-        </DialogDescription>
+        <DialogTitle>{t("palette")}</DialogTitle>
+        <DialogDescription>{t("paletteDescription")}</DialogDescription>
         {editing ? (
           <EditorialCommandInput
             key={editing.id}
@@ -90,11 +93,11 @@ export const EditorialCommandPalette = () => {
         ) : (
           <>
             <TextInput
-              aria-label="Search commands"
+              aria-label={t("searchCommands")}
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
-            <ul className={styles.commands} aria-label="Available commands">
+            <ul className={styles.commands} aria-label={t("commands")}>
               {matching.map((command) => (
                 <li key={command.id}>
                   <Button
@@ -114,11 +117,11 @@ export const EditorialCommandPalette = () => {
                 </li>
               ))}
             </ul>
-            {matching.length === 0 && <output>No matching commands.</output>}
+            {matching.length === 0 && <output>{t("noCommands")}</output>}
           </>
         )}
         <DialogClose asChild>
-          <Button variant="secondary">Close palette</Button>
+          <Button variant="secondary">{t("closePalette")}</Button>
         </DialogClose>
       </DialogContent>
     </Dialog>
@@ -126,11 +129,12 @@ export const EditorialCommandPalette = () => {
 };
 
 export const EditorialDeleteDialog = () => {
+  const { t, i18n } = useTranslation("editorial");
+  const registry = useAdminEntityRegistry();
   const [request, setRequest] = useAtom(deletionRequestAtom);
   const [firstResource] = editorialResources;
   const resource =
-    editorialResources.find((item) => item.key === request?.entity) ??
-    firstResource;
+    registry.get(request?.entity ?? firstResource?.key ?? "") ?? firstResource;
   if (!resource) {
     throw new Error("No editorial resource registered.");
   }
@@ -157,16 +161,15 @@ export const EditorialDeleteDialog = () => {
             }
           : current
       );
-      store.set(
-        noticeAtom,
-        `${labels.length} ${labels.length === 1 ? resource.singularLabel.toLocaleLowerCase() : resource.label.toLocaleLowerCase()} deleted.`
-      );
+      store.set(noticeAtom, {
+        count: labels.length,
+        entity: request.entity,
+        key: "deleted",
+      });
       setRequest(null);
       await navigate({ entity: request.entity, view: "list" });
-    } catch (error) {
-      setFailure(
-        error instanceof Error ? error.message : "Unable to delete records."
-      );
+    } catch {
+      setFailure(t("deleteError"));
     }
     setBusy(false);
   };
@@ -182,6 +185,7 @@ export const EditorialDeleteDialog = () => {
     >
       {request && (
         <AlertDialogContent
+          dir={i18n.dir()}
           onEscapeKeyDown={(event) => {
             if (busy) {
               event.preventDefault();
@@ -196,16 +200,16 @@ export const EditorialDeleteDialog = () => {
           }}
         >
           <AlertDialogTitle>
-            Delete {resource.label.toLocaleLowerCase()}?
+            {t("deleteTitle", { entity: resource.label.toLocaleLowerCase() })}
           </AlertDialogTitle>
           <AlertDialogDescription>
-            This permanently deletes {labels.join(", ")}. This cannot be undone.
+            {t("deleteDescription", { records: labels.join(", ") })}
           </AlertDialogDescription>
           {failure && <p role="alert">{failure}</p>}
           <div className={styles.actions}>
             <AlertDialogCancel asChild>
               <Button variant="secondary" disabled={busy}>
-                Cancel deletion
+                {t("cancelDeletion")}
               </Button>
             </AlertDialogCancel>
             <AlertDialogAction asChild>
@@ -217,7 +221,7 @@ export const EditorialDeleteDialog = () => {
                   await confirm();
                 }}
               >
-                Confirm deletion
+                {t("confirmDeletion")}
               </Button>
             </AlertDialogAction>
           </div>

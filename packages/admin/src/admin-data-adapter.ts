@@ -14,6 +14,7 @@ export interface AdminListQuery {
 }
 export interface AdminAdapterRequest {
   signal: AbortSignal;
+  locale?: string;
 }
 export interface AdminListResult<TRecord> {
   items: readonly TRecord[];
@@ -66,12 +67,15 @@ export interface AdminEntityAdapter {
 export interface AdminFilterDefinition {
   key: string;
   label: string;
-  options?: readonly { value: string; label: string }[];
+  labelKey?: string;
+  options?: readonly { value: string; label: string; labelKey?: string }[];
 }
 export interface AdminEntityDefinition {
   key: string;
   label: string;
   singularLabel: string;
+  labelKey?: string;
+  singularLabelKey?: string;
   adapter: AdminEntityAdapter;
   screens: {
     list: ComponentType;

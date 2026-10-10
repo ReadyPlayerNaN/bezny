@@ -44,6 +44,10 @@
       "types": "./dist/admin-data-adapter.d.ts",
       "import": "./dist/admin-data-adapter.js"
     },
+    "./i18n": {
+      "types": "./dist/admin-i18n.d.ts",
+      "default": "./dist/admin-i18n.js"
+    },
     "./list": {
       "types": "./dist/admin-list-controls.d.ts",
       "default": "./dist/admin-list-controls.js"
@@ -60,8 +64,11 @@
   },
   "dependencies": {
     "@bezny/base": "workspace:*",
+    "@radix-ui/react-direction": "^1.1.5",
     "@tanstack/react-router": "1.170.41",
-    "jotai": "3.0.1"
+    "i18next": "^26.4.2",
+    "jotai": "3.0.1",
+    "react-i18next": "^17.0.16"
   },
   "devDependencies": {
     "@bezny/typescript-config": "workspace:*",

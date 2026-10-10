@@ -1,6 +1,8 @@
 import { useNavigate, useRouter } from "@tanstack/react-router";
+import type { TFunction } from "i18next";
 import { atom, useAtomValue, useSetAtom, useStore } from "jotai";
 import { useCallback, useEffect, useId, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   useAdminEntityContext,
@@ -23,6 +25,7 @@ import {
   adminEntityPaths,
   adminEntityViewForRoute,
 } from "./admin-entity-paths.js";
+import { adminLanguages } from "./admin-i18n.js";
 import { useAdminListControls } from "./admin-list-controls.js";
 
 export const useAdminEntityNavigate = (): AdminEntityNavigate => {
@@ -56,14 +59,15 @@ export const useAdminEntityNavigate = (): AdminEntityNavigate => {
 const routeCommand = (
   entity: AdminEntity,
   view: "list" | "create",
-  navigate: AdminEntityNavigate
+  navigate: AdminEntityNavigate,
+  t: TFunction
 ): AdminCommand => ({
   execute: () => navigate({ entity: entity.key, view }),
   id: `${entity.key}.${view}`,
   label:
     view === "list"
-      ? `List ${entity.label.toLocaleLowerCase()}`
-      : `Create ${entity.singularLabel.toLocaleLowerCase()}`,
+      ? t("list", { entity: entity.label.toLocaleLowerCase() })
+      : t("create", { entity: entity.singularLabel.toLocaleLowerCase() }),
   location: { entity: entity.key, view },
 });
 
@@ -127,6 +131,19 @@ export const useAdminEntityCommands = () => {
   );
   // Subscribe to reactive action permissions without conditionally calling hooks.
   useAtomValue(enabledSnapshot);
+  const { t, i18n } = useTranslation("beznyAdmin");
+  const languages = Array.isArray(i18n.options.supportedLngs)
+    ? i18n.options.supportedLngs.filter((language) => language !== "cimode")
+    : [...adminLanguages];
+  const languageCommands = languages.map<AdminCommand>((language) => ({
+    execute: async () => {
+      await i18n.changeLanguage(language);
+    },
+    id: `language.${language}`,
+    label: t("language", {
+      language: t(`languages.${language}`, { defaultValue: language }),
+    }),
+  }));
   const listControls = useAdminListControls();
   const context = useAdminEntityContext();
   const session = useAdminDataSession();
@@ -138,10 +155,7 @@ export const useAdminEntityCommands = () => {
       ? {
           execute: session.refresh,
           id: `${context.entity.key}.refresh`,
-          label:
-            context.kind === "error"
-              ? "Retry loading records"
-              : "Refresh records",
+          label: context.kind === "error" ? t("retry") : t("refresh"),
         }
       : null;
   const navigate = useAdminEntityNavigate();
@@ -150,18 +164,18 @@ export const useAdminEntityCommands = () => {
   const setSelection = useSetAtom(adminSelectionAtom);
   const registeredPageCommands = useAtomValue(adminPageCommandsAtom);
   const navigationCommands = registry.entities.flatMap((entity) => [
-    routeCommand(entity, "list", navigate),
+    routeCommand(entity, "list", navigate, t),
     ...(entity.screens.create
-      ? [routeCommand(entity, "create", navigate)]
+      ? [routeCommand(entity, "create", navigate, t)]
       : []),
   ]);
   const entity = context.entity ?? registry.entities[0];
   if (!entity) {
     throw new Error("No registered admin entity.");
   }
-  const list = routeCommand(entity, "list", navigate);
+  const list = routeCommand(entity, "list", navigate, t);
   const create = entity.screens.create
-    ? routeCommand(entity, "create", navigate)
+    ? routeCommand(entity, "create", navigate, t)
     : null;
   const customCommands = (
     target: "record" | "selection",
@@ -211,7 +225,9 @@ export const useAdminEntityCommands = () => {
         routeCommands.push({
           execute: () => navigate(location),
           id: `${entity.key}.record.${recordId}.${view}`,
-          label: `${view === "detail" ? "View" : "Edit"} ${record.label}`,
+          label: t(view === "detail" ? "view" : "edit", {
+            record: record.label,
+          }),
           location,
         });
       }
@@ -244,7 +260,9 @@ export const useAdminEntityCommands = () => {
         });
       },
       id: `${entity.key}.selection.${recordId}.select`,
-      label: `${selected ? "Deselect" : "Select"} ${record?.label ?? recordId}`,
+      label: t(selected ? "deselect" : "select", {
+        record: record?.label ?? recordId,
+      }),
     };
   };
   const selectedIds = new Set(context.selectedIds);
@@ -261,7 +279,7 @@ export const useAdminEntityCommands = () => {
                 current?.entity === entity.key ? null : current
               ),
             id: `${entity.key}.selection.clear`,
-            label: "Clear selection",
+            label: t("clearSelection"),
           },
         ]
       : [];
@@ -279,11 +297,13 @@ export const useAdminEntityCommands = () => {
     create,
     forRecord,
     forSelection,
+    languageCommands,
     list,
     navigationCommands,
     pageCommands,
     paletteCommands: [
       ...navigationCommands,
+      ...languageCommands,
       ...recordCommands,
       ...selectionCommands,
       ...(context.view === "list"
@@ -309,18 +329,34 @@ export const useAdminPageCommands = (
   const setRegistration = useSetAtom(adminPageCommandsAtom);
   const store = useStore();
   useEffect(() => {
-    const guarded: readonly AdminCommand[] = commands.map((command) => ({
+    let guarded: readonly AdminCommand[] = [];
+    const isActive = (): boolean => {
+      const current = store.get(adminPageCommandsAtom);
+      return (
+        current?.owner === owner &&
+        current.scope === scope &&
+        current.commands === guarded
+      );
+    };
+    guarded = commands.map((command) => ({
       ...command,
       execute: () => {
-        const current = store.get(adminPageCommandsAtom);
-        if (
-          current?.owner === owner &&
-          current.scope === scope &&
-          current.commands === guarded
-        ) {
+        if (isActive()) {
           return command.execute();
         }
       },
+      ...(command.input
+        ? {
+            input: {
+              ...command.input,
+              execute: (value: string) => {
+                if (isActive()) {
+                  return command.input?.execute(value);
+                }
+              },
+            },
+          }
+        : {}),
     }));
     setRegistration({ commands: guarded, owner, scope });
     return () => {

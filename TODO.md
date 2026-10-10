@@ -13,10 +13,12 @@
   - Separate entity definitions, adapter/data lifecycle, action execution, and presentation responsibilities; split modules or packages further where needed.
   - Migrate the demo to demonstrate the public abstractions rather than entity-specific infrastructure.
   - Verified: 43 admin tests and 23 demo tests, workspace build/typecheck/tests, Ultracite, and production Chromium LCRUD/palette smoke; tests cover repeated navigation/mount-disposal, LRU/TTL/byte bounds, non-JSON rejection, mutation invalidation, permissions, callback ownership, and disposal failures.
-- [ ] Make the admin UI multilingual using an established i18n library—not a custom translation mechanism.
+- [x] Make the admin UI multilingual using an established i18n library—not a custom translation mechanism.
+  - Implemented: app-scoped i18next/react-i18next instances, namespace-backed entity/action/catalog/filter/form/validation/confirmation/notice translations, shared locale commands, locale-keyed adapter requests/cache, Radix direction provider, and English/Czech/Arabic demo UI. Localized record content uses separate bounded per-record resources and an independent RHF content-language selector; saving preserves other locales.
   - Integrate localization into entity labels, action labels, command-palette content, forms, validation feedback, and other entity UI.
   - Distinguish UI translations from multilingual entity content and define adapter/form support for localized content.
   - Support locale switching, fallback behavior, locale-aware formatting, and text direction; test multiple locales.
+  - Verified: 46 admin tests, 36 demo tests, 99 base tests, workspace build/typecheck/tests, Ultracite, public-export smoke, and production Chromium. Locale tests cover UI/content fallback, literal content interpolation, resource isolation, independent content updates, localized RHF errors/focus, reactive notices, numeric formatting, palette/native locale switching, RTL menu direction, arrow navigation, and Escape/focus restoration.
 - [x] Use `EntityRow` with context menus for entity list rows instead of custom row implementations.
   - Reuse the shared entity action catalog for row context menus, detail actions, and the command palette.
   - Preserve row-target versus selection-target semantics and destructive-action confirmation.

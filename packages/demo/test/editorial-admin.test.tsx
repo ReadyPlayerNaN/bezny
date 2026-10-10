@@ -263,8 +263,10 @@ describe("editorial admin", () => {
         .find((article) => article.id === "4")
     ).toStrictEqual({
       body: "A new publication.",
+      content: { en: { body: "A new publication.", title: "New article" } },
       id: "4",
       published: true,
+      sourceLocale: "en",
       title: "New article",
     });
     expect(

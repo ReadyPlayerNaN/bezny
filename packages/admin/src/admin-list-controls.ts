@@ -1,5 +1,6 @@
 import { useStore } from "jotai";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 import type { AdminListQuery } from "./admin-data-adapter.js";
 import { adminDataRequestKey } from "./admin-data-session.js";
@@ -21,6 +22,7 @@ const queryIdentity = (query: AdminListQuery) =>
 
 /** Query controls and parameterized palette commands share one validated execution path. */
 export const useAdminListControls = () => {
+  const { t } = useTranslation("beznyAdmin");
   const context = useAdminEntityContext();
   const session = useAdminDataSession();
   const store = useStore();
@@ -107,7 +109,7 @@ export const useAdminListControls = () => {
             ...(filter.options ? { options: filter.options } : {}),
             value,
           },
-          label: `Filter by ${filter.label}`,
+          label: t("filter", { label: filter.label }),
         };
       })
     : [];
@@ -117,14 +119,14 @@ export const useAdminListControls = () => {
       paginationCommands.push({
         execute: () => setPage(String(query.page - 1)),
         id: `${entity.key}.page.previous`,
-        label: "Previous page",
+        label: t("previous"),
       });
     }
     if (pageCount !== null && query.page < pageCount) {
       paginationCommands.push({
         execute: () => setPage(String(query.page + 1)),
         id: `${entity.key}.page.next`,
-        label: "Next page",
+        label: t("next"),
       });
     }
     paginationCommands.push({
@@ -132,13 +134,13 @@ export const useAdminListControls = () => {
       id: `${entity.key}.page.go`,
       input: {
         execute: setPage,
-        label: "Page number",
+        label: t("pageNumber"),
         ...(pageCount === null ? {} : { max: pageCount }),
         min: 1,
         type: "number",
         value: String(query.page),
       },
-      label: "Go to page",
+      label: t("go"),
     });
     const sizes = [...new Set([entity.pageSize ?? 25, 10, 25, 50, 100])].filter(
       (size) => size <= session.policy.maxPageSize
@@ -154,14 +156,14 @@ export const useAdminListControls = () => {
           }
           update({ ...query, page: 1, pageSize });
         },
-        label: "Records per page",
+        label: t("recordsPerPage"),
         options: sizes.map((size) => ({
           label: String(size),
           value: String(size),
         })),
         value: String(query.pageSize),
       },
-      label: "Change page size",
+      label: t("pageSize"),
     });
   }
   const clear: AdminCommand | null =
@@ -169,7 +171,7 @@ export const useAdminListControls = () => {
       ? {
           execute: () => update({ ...query, filters: {}, page: 1 }),
           id: `${entity.key}.filters.clear`,
-          label: "Clear filters",
+          label: t("clearFilters"),
         }
       : null;
   return { clear, filterCommands, pageCount, paginationCommands, query, total };

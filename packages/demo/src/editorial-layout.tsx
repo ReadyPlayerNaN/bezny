@@ -10,10 +10,15 @@ import type {
   AdminPageHeaderProps,
 } from "@bezny/admin/building-blocks";
 import { useAdminEntityCommands } from "@bezny/admin/commands";
-import { useAdminEntityContext } from "@bezny/admin/context";
+import {
+  useAdminEntityContext,
+  useAdminEntityRegistry,
+} from "@bezny/admin/context";
 import { AdminLayout } from "@bezny/admin/layout";
 import { Outlet } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
+import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 import {
   EditorialCommandPalette,
@@ -49,27 +54,64 @@ export const editorialComponents = {
 } satisfies AdminBuildingBlockOverrides;
 
 export const EditorialShell = () => {
+  const { t, i18n } = useTranslation("editorial");
+  const language = i18n.resolvedLanguage ?? "en";
+  useEffect(() => {
+    const previousLanguage = document.documentElement.lang;
+    const previousDirection = document.documentElement.dir;
+    document.documentElement.lang = language;
+    document.documentElement.dir = i18n.dir(language);
+    return () => {
+      document.documentElement.lang = previousLanguage;
+      document.documentElement.dir = previousDirection;
+    };
+  }, [i18n, language]);
   const commands = useAdminEntityCommands();
   const context = useAdminEntityContext();
-  let contextLabel = `No available ${context.entity?.singularLabel.toLocaleLowerCase() ?? "entity"}`;
+  let contextLabel = t("noEntity", {
+    entity:
+      context.entity?.singularLabel.toLocaleLowerCase() ??
+      i18n.t("beznyAdmin:entity"),
+  });
   if (context.kind === "collection") {
     contextLabel = context.entity?.label ?? "";
   } else if (context.kind === "entity") {
     contextLabel = `${context.entity?.singularLabel} ${context.recordId}`;
   } else if (context.kind === "selection") {
-    contextLabel = `Selected ${context.entity?.label.toLocaleLowerCase()}: ${context.selectedIds.join(", ")}`;
+    contextLabel = t("selected", {
+      entity: context.entity?.label.toLocaleLowerCase(),
+      ids: context.selectedIds.join(", "),
+    });
   }
   const notice = useAtomValue(noticeAtom);
+  const registry = useAdminEntityRegistry();
+  const noticeEntity = notice ? registry.get(notice.entity) : undefined;
+  const noticeEntityLabel =
+    notice?.count === 1 ? noticeEntity?.singularLabel : noticeEntity?.label;
+  const noticeText = notice
+    ? t(notice.key, {
+        count: notice.count,
+        entity:
+          notice.key === "deleted"
+            ? noticeEntityLabel?.toLocaleLowerCase()
+            : noticeEntityLabel,
+      })
+    : "";
   return (
     <>
       <AdminLayout
         header={
           <div className={styles.header}>
-            <strong>Bezny editorial</strong>
-            <output aria-label="Current context">
-              Context: {contextLabel}
+            <strong>{t("shell")}</strong>
+            <output aria-label={t("currentContext")}>
+              {t("context", { label: contextLabel })}
             </output>
             <EditorialCommandPalette />
+            <fieldset aria-label={t("language")}>
+              {commands.languageCommands.map((command) => (
+                <AdminCommandButton key={command.id} command={command} />
+              ))}
+            </fieldset>
           </div>
         }
         navigation={
@@ -79,10 +121,10 @@ export const EditorialShell = () => {
             ))}
           </div>
         }
-        navigationLabel="Editorial navigation"
-        footer="Demo workspace · Changes are kept in memory and reset on reload."
+        navigationLabel={t("navigation")}
+        footer={t("footer")}
       >
-        <output aria-label="Notifications">{notice}</output>
+        <output aria-label={t("notifications")}>{noticeText}</output>
         <Outlet />
       </AdminLayout>
       <EditorialDeleteDialog />

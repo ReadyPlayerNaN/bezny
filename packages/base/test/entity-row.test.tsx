@@ -56,6 +56,31 @@ describe("Entity rows", () => {
     expect(handleChange).toHaveBeenCalledOnce();
   });
 
+  it("accepts localized group and context-menu labels", async () => {
+    const user = userEvent.setup();
+    render(
+      <EntityRowList
+        rows={[
+          {
+            actions: [
+              { key: "edit", label: "Upravit", onSelect: vi.fn<() => void>() },
+            ],
+            id: "1",
+            title: "Záznam",
+          },
+        ]}
+        groupLabel={(row) => `Položka ${row.id}`}
+        menuLabel={(row) => `Akce pro ${row.title}`}
+      />
+    );
+    const row = screen.getByRole("group", { name: "Položka 1" });
+    row.focus();
+    await user.keyboard("{Shift>}{F10}{/Shift}");
+    await expect(
+      screen.findByRole("menu", { name: "Akce pro Záznam" })
+    ).resolves.toBeTruthy();
+  });
+
   it("keeps read-only rows out of tab order while actionable rows remain keyboard accessible", async () => {
     const user = userEvent.setup();
     render(

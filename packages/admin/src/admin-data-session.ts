@@ -122,12 +122,18 @@ const loadAdapterData = async (
 ) => {
   if (request.view === "list") {
     return await abortable(
-      entity.adapter.list(request.query, { signal }),
+      entity.adapter.list(request.query, {
+        locale: request.query.locale,
+        signal,
+      }),
       signal
     );
   }
   const record = await abortable(
-    entity.adapter.get(request.recordId ?? "", { signal }),
+    entity.adapter.get(request.recordId ?? "", {
+      locale: request.query.locale,
+      signal,
+    }),
     signal
   );
   return { items: record ? [record] : [], total: record ? 1 : 0 };

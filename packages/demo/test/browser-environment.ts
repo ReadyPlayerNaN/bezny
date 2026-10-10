@@ -1,5 +1,7 @@
 import { vi } from "vitest";
 
+window.scrollTo = vi.fn();
+
 // jsdom lacks pointer capture and scrolling used by Radix Select.
 Element.prototype.hasPointerCapture = () => false;
 Element.prototype.setPointerCapture = () => {

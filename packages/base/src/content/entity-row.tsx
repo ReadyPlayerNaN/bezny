@@ -85,6 +85,9 @@ export interface EntityRowListProps {
   selectable?: boolean;
   selectionMenu?: boolean;
   selectLabel?: (row: EntityRowData, selected: boolean) => string;
+  groupLabel?: (row: EntityRowData) => string;
+  menuLabel?: (row: EntityRowData) => string;
+  actionErrorLabel?: string;
   menuSummary?: (count: number) => ReactNode;
   variant?: EntityRowVariant;
   onActionError?: (error: unknown) => void;
@@ -100,6 +103,9 @@ export const EntityRowList = ({
   selectable: selectableOverride,
   selectionMenu = true,
   selectLabel,
+  groupLabel,
+  menuLabel,
+  actionErrorLabel,
   menuSummary,
 }: EntityRowListProps) => {
   const [storedIds, setStoredIds] = useState<string[]>([]);
@@ -144,6 +150,9 @@ export const EntityRowList = ({
           <SelectableRow
             key={row.id}
             selectionId={row.id}
+            groupLabel={groupLabel?.(row)}
+            menuLabel={menuLabel?.(row)}
+            actionErrorLabel={actionErrorLabel}
             selected={selected}
             selectable={selectable}
             selectLabel={

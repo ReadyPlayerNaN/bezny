@@ -1,6 +1,7 @@
 import { defineAdminEntity } from "@bezny/admin/adapters";
 import type { AdminEntityDefinition } from "@bezny/admin/adapters";
 import type { AdminActionScope } from "@bezny/admin/entities";
+import type { i18n } from "i18next";
 
 import {
   EditorialCreatePage,
@@ -46,7 +47,8 @@ const requestDeletion = (scope: AdminActionScope) => {
 
 /** Register a resource once. No entity-specific route or palette entries. */
 export const createEditorialEntities = (
-  repository: EditorialRepository
+  repository: EditorialRepository,
+  translations: i18n
 ): AdminEntityDefinition[] =>
   editorialResources.map((resource) =>
     defineAdminEntity({
@@ -55,7 +57,10 @@ export const createEditorialEntities = (
           destructive: true,
           execute: requestDeletion,
           id: "delete",
-          label: (scope) => `Delete ${scope.records[0]?.label ?? "record"}`,
+          label: (scope) =>
+            translations.t("editorial:delete", {
+              record: scope.records[0]?.label ?? scope.entity.singularLabel,
+            }),
           target: "record",
         },
         {
@@ -63,24 +68,33 @@ export const createEditorialEntities = (
           execute: requestDeletion,
           id: "delete-selected",
           label: (scope) =>
-            `Delete selected ${scope.entity.label.toLocaleLowerCase()}`,
+            translations.t("editorial:deleteSelection", {
+              count: scope.ids.length,
+              entity: scope.entity.label.toLocaleLowerCase(),
+            }),
           target: "selection",
         },
       ],
       adapter: repository.adapter(resource.key),
       filters: [
-        { key: "search", label: "Search" },
+        { key: "search", label: "Search", labelKey: "editorial:search" },
         {
           key: "status",
           label: "Status",
+          labelKey: "editorial:status",
           options: [
-            { label: "Draft", value: "draft" },
-            { label: "Published", value: "published" },
+            { label: "Draft", labelKey: "editorial:draft", value: "draft" },
+            {
+              label: "Published",
+              labelKey: "editorial:published",
+              value: "published",
+            },
           ],
         },
       ],
       key: resource.key,
       label: resource.label,
+      labelKey: `editorial:entities.${resource.key}.plural`,
       pageSize: 3,
       parseValues: parseEditorialValues,
       reference: (record) => ({ id: record.id, label: record.title }),
@@ -91,5 +105,6 @@ export const createEditorialEntities = (
         update: EditorialUpdatePage,
       },
       singularLabel: resource.singularLabel,
+      singularLabelKey: `editorial:entities.${resource.key}.singular`,
     })
   );
