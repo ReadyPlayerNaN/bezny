@@ -9,16 +9,28 @@ pnpm install
 pnpm --filter @bezny/demo dev
 ```
 
-The dev script builds base/admin first, then starts Vite (normally `http://localhost:5173`). The application starts on the login screen; after signing in, `/` opens the first registered entity, Articles. Pages is a second independent entity with the same UI/data shape. Rebuild the library packages after editing their source; demo edits update through Vite.
+The dev script builds base/admin first, then starts Vite (normally `http://localhost:5173`) with the demo authentication backend. Without a valid session, the application starts on the login screen; after signing in, `/` opens the first registered entity, Articles. Pages is a second independent entity with the same UI/data shape. Rebuild the library packages after editing their source; demo edits update through Vite.
 
 ## Login and account demo
 
 - **Email/password:** `editor@example.com` / `bezny-demo`. Incorrect credentials show a retryable error; required fields and email format use RHF validation.
-- **Social login:** choose **Continue with Google** or **Continue with GitHub** to simulate that provider's user. No OAuth popup, network request, or real provider account is involved.
+- **Social login:** choose **Continue with Google** or **Continue with GitHub** to simulate that provider's user. The demo backend issues a session for a simulated identity; no OAuth popup or real provider account is involved.
 - The main header's **avatar menu** shows the current name/email, **Edit account**, language radio options, and **Log out**. Edit account updates the display name and email in an RHF form; Save updates avatar initials, and Cancel/Escape discards edits. Profile edits do not change the fixed demo login credentials.
 - Deep-link URLs are retained through sign-in. Logout hides the admin screens, clears selection/notices/deletion requests, and returns to an empty login form. In-memory editorial records remain until reload.
 
-Authentication is deliberately simulated, not a security boundary: there is no server-side authentication or authorization. Do not enter real credentials. Passwords are never put in the session atom or browser storage. The demo user/profile is application-scoped, kept only in memory, and reset on logout, disposal, or reload. Login and account labels support English, Czech, and Arabic/RTL.
+The browser stores only a backend-issued opaque bearer token in `sessionStorage` (`bezny.demo.session-token.v1`), not a user profile or password. Refresh reads this token, validates it with the backend, and restores the current profile before rendering admin screens. Account edits are saved to the backend session, so they survive refresh. Logout revokes the token on the backend and removes it from browser storage. Disposal/HMR clears in-memory state without revoking the session. Invalid/expired tokens return to login; network failures keep the token and offer a retry. Closing the tab ends the browser session.
+
+The backend runs in both Vite development and `vite preview`. It keeps at most 200 sessions in memory, with an eight-hour lifetime; restarting the server invalidates them. Endpoints:
+
+| Request | Purpose |
+| --- | --- |
+| `POST /api/session/email` | Verify demo email/password and return `{ token, user }` |
+| `POST /api/session/social` | Simulate Google/GitHub sign-in and return `{ token, user }` |
+| `GET /api/session` | Validate `Authorization: Bearer <token>` and return `{ user }` |
+| `PATCH /api/session` | Save name/email for the authenticated session |
+| `DELETE /api/session` | Revoke the authenticated session |
+
+This remains a demo, not production security: credentials and social identities are deliberately simulated, and the editorial data repository has no server-side authorization. Do not enter real credentials. A production host must supply its own authentication/OAuth backend and protect every data endpoint. Login/account labels support English, Czech, and Arabic/RTL.
 
 ## One registration drives routes and commands
 
@@ -57,7 +69,7 @@ Data adapters, complete record data, forms, and confirmation presentation are de
 
 The mock backend is deliberately **in memory and bounded**: three articles and one page are seeded, at most 200 records are retained with bounded field lengths, edits persist across routes, and reload resets everything. Jotai does not hold entire datasets: the admin session owns one active page/detail and an entry/byte/TTL-bounded cache, aborts stale requests, and clears data/timers/subscriptions on unmount. Permanent application disposal clears the mock repository too; Vite HMR unmounts and disposes the old application. Collection controls demonstrate search/status filters and pagination; the palette offers the same filters, previous/next, arbitrary page navigation, and page-size changes. Filters/page sizes reset pagination and selection consistently. There is no production backend, authentication, permissions service, or unsaved-change blocker. This demo proves shared entity infrastructure; it does not pretend to be a production content system.
 
-For built `dist/` hosting, serve `index.html` for application deep links.
+For local built-demo hosting, run `pnpm --filter @bezny/demo exec vite preview` to include the authentication backend. Static-only `dist/` hosting also needs a backend implementing `/api/session` and its login endpoints; serve `index.html` for application deep links.
 
 ## Languages and localized content
 
@@ -75,7 +87,11 @@ Record content is separate from UI resources. The first article has English/Czec
 - `src/editorial-pages.tsx`: entity-independent list/detail/form screens and real page callbacks.
 - `src/editorial-dialogs.tsx`: palette presentation and entity-aware delete confirmation.
 - `src/editorial-layout.tsx`: login/workspace presentation, registered navigation, matched context.
-- `src/editorial-authentication.tsx`: simulated login callbacks and application-scoped user atom.
+- `src/editorial-authentication.tsx`: login screen callbacks to the authentication service.
+- `src/editorial-auth-contract.ts`: session/profile DTOs and fixed demo identity.
+- `src/editorial-auth-state.ts`: application-scoped user and restoration state.
+- `src/editorial-auth-session.ts`: bearer-token persistence, restoration, profile updates, and logout.
+- `server/editorial-auth-backend.ts`, `server/editorial-auth-plugin.ts`: demo token issuance/validation/revocation, installed in Vite development and preview.
 - `src/editorial-account-menu.tsx`: avatar dropdown and profile editor.
 - `src/editorial-account-translations.ts`: localized login/account messages.
 - `src/editorial-language-menu.tsx`: shared language commands as account-menu radio options.

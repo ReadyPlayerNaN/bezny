@@ -15,6 +15,7 @@ import {
   useAdminEntityRegistry,
 } from "@bezny/admin/context";
 import { AdminLayout } from "@bezny/admin/layout";
+import { Button } from "@bezny/base";
 import { Outlet } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
@@ -22,9 +23,11 @@ import { useTranslation } from "react-i18next";
 
 import { EditorialAccountMenu } from "./editorial-account-menu.js";
 import {
-  EditorialLogin,
+  editorialAuthenticationAtom,
+  editorialSessionStatusAtom,
   editorialUserAtom,
-} from "./editorial-authentication.js";
+} from "./editorial-auth-state.js";
+import { EditorialLogin } from "./editorial-authentication.js";
 import {
   EditorialCommandPalette,
   EditorialDeleteDialog,
@@ -136,7 +139,7 @@ const EditorialWorkspace = () => {
 };
 
 export const EditorialShell = () => {
-  const { i18n } = useTranslation("editorial");
+  const { i18n, t } = useTranslation("authentication");
   const language = i18n.resolvedLanguage ?? "en";
   useEffect(() => {
     const previousLanguage = document.documentElement.lang;
@@ -149,6 +152,26 @@ export const EditorialShell = () => {
     };
   }, [i18n, language]);
   const user = useAtomValue(editorialUserAtom);
+  const sessionStatus = useAtomValue(editorialSessionStatusAtom);
+  const authentication = useAtomValue(editorialAuthenticationAtom);
+  if (sessionStatus !== "ready") {
+    return (
+      <main lang={language} dir={i18n.dir(language)}>
+        <p role={sessionStatus === "error" ? "alert" : "status"}>
+          {t(sessionStatus === "error" ? "sessionError" : "sessionLoading")}
+        </p>
+        {sessionStatus === "error" ? (
+          <Button
+            onClick={async () => {
+              await authentication?.restore();
+            }}
+          >
+            {t("retrySession")}
+          </Button>
+        ) : null}
+      </main>
+    );
+  }
   return user ? (
     <EditorialWorkspace />
   ) : (

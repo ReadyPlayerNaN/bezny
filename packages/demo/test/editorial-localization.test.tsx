@@ -11,10 +11,6 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import { createDemoApplication, DemoApp } from "../src/demo-application.js";
 import type { DemoApplication } from "../src/demo-application.js";
-import {
-  demoEditorialUser,
-  editorialUserAtom,
-} from "../src/editorial-authentication.js";
 import { readEditorialContent } from "../src/editorial-content.js";
 
 const applications: DemoApplication[] = [];
@@ -23,7 +19,11 @@ const renderLocalizedDemo = async (locale: string, path = "/articles") => {
     createMemoryHistory({ initialEntries: [path] }),
     locale
   );
-  application.store.set(editorialUserAtom, { ...demoEditorialUser });
+  await application.authenticationReady;
+  await application.authentication.signIn({
+    email: "editor@example.com",
+    password: "bezny-demo",
+  });
   applications.push(application);
   const result = render(<DemoApp application={application} />);
   const user = userEvent.setup();

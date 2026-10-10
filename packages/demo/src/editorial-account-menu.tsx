@@ -17,13 +17,16 @@ import {
   TextField,
   EmailField,
 } from "@bezny/base";
-import { useAtom, useSetAtom } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
-import { editorialUserAtom } from "./editorial-authentication.js";
-import type { EditorialUser } from "./editorial-authentication.js";
+import type { EditorialUser } from "./editorial-auth-contract.js";
+import {
+  editorialUserAtom,
+  editorialAuthenticationAtom,
+} from "./editorial-auth-state.js";
 import { EditorialLanguageOptions } from "./editorial-language-menu.js";
 import { deletionRequestAtom, noticeAtom } from "./editorial-records.js";
 
@@ -36,7 +39,7 @@ const AccountForm = ({
   onSave,
 }: {
   user: EditorialUser;
-  onSave: (values: AccountValues) => void;
+  onSave: (values: AccountValues) => Promise<void>;
 }) => {
   const { t } = useTranslation("authentication");
   const form = useForm<AccountValues>({
@@ -46,7 +49,13 @@ const AccountForm = ({
     <form
       className={styles.form}
       noValidate
-      onSubmit={form.handleSubmit(onSave)}
+      onSubmit={form.handleSubmit(async (values) => {
+        try {
+          await onSave(values);
+        } catch {
+          form.setError("root", { message: t("accountError") });
+        }
+      })}
     >
       <TextField<AccountValues>
         control={form.control}
@@ -67,8 +76,13 @@ const AccountForm = ({
           required: t("emailRequired"),
         }}
       />
+      {form.formState.errors.root ? (
+        <p role="alert">{form.formState.errors.root.message}</p>
+      ) : null}
       <div className={styles.actions}>
-        <Submit>{t("saveAccount")}</Submit>
+        <Submit loading={form.formState.isSubmitting}>
+          {t("saveAccount")}
+        </Submit>
         <DialogClose asChild>
           <Button variant="secondary">{t("cancel")}</Button>
         </DialogClose>
@@ -79,13 +93,16 @@ const AccountForm = ({
 
 export const EditorialAccountMenu = () => {
   const { t, i18n } = useTranslation("authentication");
-  const [user, setUser] = useAtom(editorialUserAtom);
+  const user = useAtomValue(editorialUserAtom);
+  const authentication = useAtomValue(editorialAuthenticationAtom);
   const setSelection = useSetAtom(adminSelectionAtom);
   const setDeletion = useSetAtom(deletionRequestAtom);
   const setNotice = useSetAtom(noticeAtom);
   const [editing, setEditing] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
-  if (!user) {
+  if (!user || !authentication) {
     return null;
   }
   const initials = user.name
@@ -131,17 +148,26 @@ export const EditorialAccountMenu = () => {
           <EditorialLanguageOptions />
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            onSelect={() => {
-              setSelection(null);
-              setDeletion(null);
-              setNotice(null);
-              setUser(null);
+            disabled={loggingOut}
+            onSelect={async () => {
+              setLogoutError(false);
+              setLoggingOut(true);
+              try {
+                await authentication.logout();
+                setSelection(null);
+                setDeletion(null);
+                setNotice(null);
+              } catch {
+                setLogoutError(true);
+              }
+              setLoggingOut(false);
             }}
           >
             {t("logout")}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      {logoutError ? <span role="alert">{t("logoutError")}</span> : null}
       <DialogContent
         onCloseAutoFocus={(event) => {
           event.preventDefault();
@@ -152,9 +178,8 @@ export const EditorialAccountMenu = () => {
         <DialogDescription>{t("accountDescription")}</DialogDescription>
         <AccountForm
           user={user}
-          onSave={(values) => {
-            setUser({
-              ...user,
+          onSave={async (values) => {
+            await authentication.updateAccount({
               email: values.email.trim(),
               name: values.name.trim(),
             });

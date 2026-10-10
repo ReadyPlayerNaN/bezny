@@ -15,10 +15,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createDemoApplication, DemoApp } from "../src/demo-application.js";
 import type { DemoApplication } from "../src/demo-application.js";
-import {
-  demoEditorialUser,
-  editorialUserAtom,
-} from "../src/editorial-authentication.js";
 
 const applications: DemoApplication[] = [];
 
@@ -29,7 +25,11 @@ const selectedArticleIdsAtom = atom(
 const renderDemo = async (pathname = "/articles") => {
   const history = createMemoryHistory({ initialEntries: [pathname] });
   const application = createDemoApplication(history);
-  application.store.set(editorialUserAtom, { ...demoEditorialUser });
+  await application.authenticationReady;
+  await application.authentication.signIn({
+    email: "editor@example.com",
+    password: "bezny-demo",
+  });
   applications.push(application);
   render(<DemoApp application={application} />);
   await screen.findByRole("heading", { level: 1 });

@@ -7,7 +7,8 @@ import type { RouterHistory } from "@tanstack/react-router";
 import { useEffect } from "react";
 
 import { editorialAccountTranslations } from "./editorial-account-translations.js";
-import { editorialUserAtom } from "./editorial-authentication.js";
+import { createEditorialAuthentication } from "./editorial-auth-session.js";
+import { editorialAuthenticationAtom } from "./editorial-auth-state.js";
 import { createEditorialEntities } from "./editorial-entities.js";
 import { editorialComponents, EditorialShell } from "./editorial-layout.js";
 import { MissingEntityPage } from "./editorial-pages.js";
@@ -43,10 +44,11 @@ export const createDemoApplication = (
     application.store.set(noticeAtom, null);
   };
   application.session.onDispose(clearPresentation);
-  application.session.onDispose(() => {
-    application.store.set(editorialUserAtom, null);
-  });
-  return { ...application, repository };
+  const authentication = createEditorialAuthentication(application.store);
+  application.store.set(editorialAuthenticationAtom, authentication);
+  const authenticationReady = authentication.restore();
+  application.session.onDispose(authentication.dispose);
+  return { ...application, authentication, authenticationReady, repository };
 };
 export type DemoApplication = ReturnType<typeof createDemoApplication>;
 export const DemoApp = ({ application }: { application: DemoApplication }) => {
