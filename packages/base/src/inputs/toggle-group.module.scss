@@ -1,0 +1,35 @@
+@use "./toggle-group-appearance" as appearance;
+.group {
+  @include appearance.declarations;
+  display: inline-flex;
+  gap: appearance.token("gap");
+  &[data-orientation="vertical"] {
+    flex-direction: column;
+  }
+}
+.item {
+  min-height: appearance.token("height");
+  padding-inline: appearance.token("padding");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  &:hover {
+    background: appearance.token("hover");
+  }
+  &[data-state="on"] {
+    background: appearance.token("accent");
+    color: appearance.token("on-accent");
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: appearance.token("focus-ring");
+  }
+  &[data-disabled] {
+    opacity: appearance.token("opacity-disabled");
+    cursor: not-allowed;
+  }
+}

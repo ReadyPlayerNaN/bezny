@@ -1,0 +1,36 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/surfaces";
+$-definitions: ();
+@each $name
+    in (
+      background,
+      text,
+      border,
+      border-width,
+      radius,
+      hover,
+      accent,
+      on-accent,
+      font-family,
+      font-size,
+      line-height,
+      padding,
+      gap,
+      height,
+      focus-ring,
+      opacity-disabled
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+@function token($name) {
+  @return css-properties.reference(
+    $-definitions,
+    $name,
+    "control-toggle-group"
+  );
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-toggle-group");
+}

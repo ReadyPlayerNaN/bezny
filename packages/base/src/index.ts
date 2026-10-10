@@ -37,6 +37,12 @@ export {
   type SelectProps,
   type SelectContentProps,
 } from "./inputs/select.js";
+export {
+  ToggleGroup,
+  ToggleGroupItem,
+  type ToggleGroupProps,
+  type ToggleGroupItemProps,
+} from "./inputs/toggle-group.js";
 export { TextInput, type TextInputProps } from "./inputs/text-input.js";
 export { ToggleInput, type ToggleInputProps } from "./inputs/toggle-input.js";
 export {
