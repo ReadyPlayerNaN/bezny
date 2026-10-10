@@ -57,6 +57,7 @@ $-definitions: (
   "control-spinner-size": foundational.size(16),
   "control-spinner-border-width": foundational.size(2),
   "color-brand": foundational.token("color-product-normal"),
+  "color-brand-text": -mixed-color("color-product-normal", "mix-weight-70"),
   "color-brand-hover": -mixed-color("color-product-normal", "mix-weight-90"),
   "color-brand-active": -mixed-color("color-product-normal", "mix-weight-80"),
   "color-neutral": foundational.token("color-cloud-normal"),
@@ -65,7 +66,7 @@ $-definitions: (
   "color-danger": foundational.token("color-red-normal"),
   "color-danger-hover": -mixed-color("color-red-normal", "mix-weight-90"),
   "color-danger-active": -mixed-color("color-red-normal", "mix-weight-80"),
-  "color-danger-text": foundational.token("color-red-normal"),
+  "color-danger-text": -mixed-color("color-red-normal", "mix-weight-80"),
   "color-border": foundational.token("color-slate-normal"),
   "color-page": foundational.token("color-white"),
   "color-on-accent": foundational.token("color-white"),
@@ -114,6 +115,9 @@ $-definitions: (
 );
 
 $-dark-colors: (
+  "color-brand-text": foundational.token("color-product-light"),
+  "badge-critical-background":
+    foundational.token("color-badge-critical-dark-soft"),
   "badge-critical-text": foundational.token("color-red-light"),
   "badge-info-text": foundational.token("color-badge-info-light"),
   "badge-info-background": foundational.token("color-badge-info-dark-soft"),

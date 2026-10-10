@@ -27,6 +27,7 @@ $-definitions: ();
 $-definitions: map.merge(
   $-definitions,
   (
+    "accent": surfaces.token("accent-text"),
     "title-font-size": surfaces.token("row-title-font-size"),
     "title-line-height": surfaces.token("row-title-line-height"),
   )

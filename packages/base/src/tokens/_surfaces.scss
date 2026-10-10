@@ -11,6 +11,7 @@ $-definitions: (
   "surface-radius": logical.token("control-radius"),
   "surface-hover": logical.token("color-neutral-hover"),
   "surface-accent": logical.token("color-brand"),
+  "surface-accent-text": logical.token("color-brand-text"),
   "surface-on-accent": logical.token("color-on-accent"),
   "surface-danger": logical.token("color-danger-text"),
   "surface-font-family": logical.token("font-family-body"),

@@ -50,7 +50,7 @@ Compose `AlertDialog`, `AlertDialogTrigger`, `AlertDialogContent`, `AlertDialogT
 
 ## Badge
 
-Ported from aipocapso's `controls/badge`. `<Badge type="success">Ready</Badge>` retains neutral/info/success/warning/critical tones, uppercase pill typography, and ordinary span props/React 19 refs. Labels remain ordinary content, not live announcements. Info/success/critical light text colours are darkened from the source palette so all five default tones meet WCAG AA for small text over their translucent backgrounds on the default surface. Custom palette/surface overrides must be contrast-checked again. Status palettes map through logical light/dark aliases rather than independent OS media queries. Token prefix: `--bezny-control-badge-*`.
+Ported from aipocapso's `controls/badge`. `<Badge type="success">Ready</Badge>` retains neutral/info/success/warning/critical tones, uppercase pill typography, and ordinary span props/React 19 refs. Labels remain ordinary content, not live announcements. Info/success/critical light text colours are darkened from the source palette so all five default tones meet WCAG AA for small text over their opaque soft backgrounds, including on highlighted rows. Custom palette/surface overrides must be contrast-checked again. See [contrast verification](CONTRAST.md) for interaction-state coverage. Status palettes map through logical light/dark aliases rather than independent OS media queries. Token prefix: `--bezny-control-badge-*`.
 
 ## Cards
 

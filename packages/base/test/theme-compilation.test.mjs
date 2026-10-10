@@ -46,7 +46,9 @@ for (const mode of ["light", "dark"]) {
     );
     assert.equal(
       declarations.get("--bezny-logical-color-danger-text"),
-      `var(--bezny-foundation-color-red-${mode === "dark" ? "light" : "normal"})`
+      mode === "dark"
+        ? "var(--bezny-foundation-color-red-light)"
+        : "color-mix(in srgb, var(--bezny-foundation-color-red-normal) var(--bezny-foundation-mix-weight-80), var(--bezny-foundation-color-black))"
     );
     assert.ok(!css.includes(":root"));
   });
