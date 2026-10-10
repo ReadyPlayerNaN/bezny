@@ -4,17 +4,19 @@ import {
   useAdminPageCommands,
 } from "@bezny/admin/commands";
 import { useAdminEntityContext } from "@bezny/admin/context";
+import { adminSelectionAtom } from "@bezny/admin/entities";
 import type { AdminCommand } from "@bezny/admin/entities";
 import { AdminPage } from "@bezny/admin/page";
 import {
   Badge,
   Button,
   CheckboxField,
-  CheckboxInput,
+  EntityRowList,
   Submit,
   TextField,
   TextareaField,
 } from "@bezny/base";
+import type { EntityRowData } from "@bezny/base";
 import { useAtomValue, useStore } from "jotai";
 import { useCallback, useMemo } from "react";
 import { FormProvider, useForm } from "react-hook-form";
@@ -48,7 +50,7 @@ export const EditorialListPage = () => {
   const resource = useEditorialResource();
   const records = useAtomValue(resource.records);
   const { selectedIds } = useAdminEntityContext();
-  const selected = new Set(selectedIds);
+  const store = useStore();
   const commands = useAdminEntityCommands();
   return (
     <AdminPage
@@ -69,53 +71,43 @@ export const EditorialListPage = () => {
           {resource.singularLabel.toLocaleLowerCase()}.
         </p>
       ) : (
-        <div className={styles.tableContainer}>
-          <table className={styles.table}>
-            <caption>{resource.label} in this workspace</caption>
-            <thead>
-              <tr>
-                <th scope="col">Select</th>
-                <th scope="col">Title</th>
-                <th scope="col">Status</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {records.map((record) => {
-                const select = commands.forSelection(record.id);
-                return (
-                  <tr key={record.id}>
-                    <td>
-                      <CheckboxInput
-                        aria-label={select.label}
-                        checked={selected.has(record.id)}
-                        onCheckedChange={async () => {
-                          await select.execute();
-                        }}
-                      />
-                    </td>
-                    <th scope="row">{record.title}</th>
-                    <td>
-                      <Badge type={record.published ? "success" : "neutral"}>
-                        {record.published ? "Published" : "Draft"}
-                      </Badge>
-                    </td>
-                    <td>
-                      <div className={styles.actions}>
-                        {commands.forRecord(record.id).map((command) => (
-                          <AdminCommandButton
-                            key={command.id}
-                            command={command}
-                          />
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+        <section aria-label={`${resource.label} in this workspace`}>
+          <EntityRowList
+            selectedIds={selectedIds}
+            onSelectedIdsChange={(ids) =>
+              store.set(adminSelectionAtom, { entity: resource.key, ids })
+            }
+            selectable
+            selectionMenu={false}
+            selectLabel={(row) => commands.forSelection(row.id).label}
+            rows={records.map<EntityRowData>((record) => {
+              const actions = commands.forRecord(record.id);
+              return {
+                actions: actions.map((command) => ({
+                  bulkable: false,
+                  key: command.id,
+                  label: command.label,
+                  onSelect: command.execute,
+                  tone: command.destructive ? "critical" : "secondary",
+                })),
+                badge: (
+                  <Badge type={record.published ? "success" : "neutral"}>
+                    {record.published ? "Published" : "Draft"}
+                  </Badge>
+                ),
+                id: record.id,
+                title: record.title,
+                trailing: (
+                  <div className={styles.actions}>
+                    {actions.map((command) => (
+                      <AdminCommandButton key={command.id} command={command} />
+                    ))}
+                  </div>
+                ),
+              };
+            })}
+          />
+        </section>
       )}
     </AdminPage>
   );

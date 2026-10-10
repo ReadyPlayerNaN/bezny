@@ -21,6 +21,41 @@ import type { EntityRowData } from "../src/index.js";
 describe("Entity rows", () => {
   afterEach(cleanup);
 
+  it("supports application-controlled selection and row-only menus", async () => {
+    const user = userEvent.setup();
+    const handleChange = vi.fn<(ids: string[]) => void>();
+    const handleAction = vi.fn<() => void>();
+    const rows = ["a", "b"].map((id) => ({
+      actions: [
+        { key: "archive", label: `Archive ${id}`, onSelect: handleAction },
+      ],
+      id,
+      title: id,
+    }));
+    render(
+      <EntityRowList
+        rows={rows}
+        selectedIds={["b"]}
+        onSelectedIdsChange={handleChange}
+        selectable
+        selectionMenu={false}
+      />
+    );
+    await user.click(screen.getByRole("checkbox", { name: "Select a" }));
+    expect(handleChange).toHaveBeenCalledExactlyOnceWith(["b", "a"]);
+    expect(
+      screen
+        .getByRole("checkbox", { name: "Deselect b" })
+        .getAttribute("aria-checked")
+    ).toBe("true");
+    fireEvent.contextMenu(screen.getByRole("group", { name: "Item b" }));
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Archive b" })
+    );
+    expect(handleAction).toHaveBeenCalledOnce();
+    expect(handleChange).toHaveBeenCalledOnce();
+  });
+
   it("keeps read-only rows out of tab order while actionable rows remain keyboard accessible", async () => {
     const user = userEvent.setup();
     render(

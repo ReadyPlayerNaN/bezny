@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { ReactNode } from "react";
+import type { Dispatch, ReactNode, SetStateAction } from "react";
 
 import type { ContextMenuContentProps } from "../controls/context-menu.js";
 import { Badge } from "./badge.js";
@@ -80,6 +80,12 @@ const EntityRowContent = ({
 );
 export interface EntityRowListProps {
   rows: readonly EntityRowData[];
+  selectedIds?: readonly string[];
+  onSelectedIdsChange?: (ids: string[]) => void;
+  selectable?: boolean;
+  selectionMenu?: boolean;
+  selectLabel?: (row: EntityRowData, selected: boolean) => string;
+  menuSummary?: (count: number) => ReactNode;
   variant?: EntityRowVariant;
   onActionError?: (error: unknown) => void;
   menuContainer?: ContextMenuContentProps["container"];
@@ -89,29 +95,46 @@ export const EntityRowList = ({
   variant = "default",
   onActionError,
   menuContainer,
+  selectedIds: controlledIds,
+  onSelectedIdsChange,
+  selectable: selectableOverride,
+  selectionMenu = true,
+  selectLabel,
+  menuSummary,
 }: EntityRowListProps) => {
   const [storedIds, setStoredIds] = useState<string[]>([]);
   const eligibleIds = new Set<string>();
   for (const row of rows) {
-    if (hasSharedActions(row.actions)) {
+    if (selectableOverride ?? hasSharedActions(row.actions)) {
       eligibleIds.add(row.id);
     }
   }
-  const selectedIds = storedIds.filter((id) => eligibleIds.has(id));
-  if (storedIds.length !== selectedIds.length) {
+  const selectedIds = (controlledIds ?? storedIds).filter((id) =>
+    eligibleIds.has(id)
+  );
+  if (controlledIds === undefined && storedIds.length !== selectedIds.length) {
     setStoredIds(selectedIds);
   }
+  const updateSelection: Dispatch<SetStateAction<string[]>> = (next) => {
+    if (controlledIds === undefined) {
+      setStoredIds(next);
+    } else {
+      return onSelectedIdsChange?.(
+        typeof next === "function" ? next([...controlledIds]) : next
+      );
+    }
+  };
   const selectedSet = new Set(selectedIds);
   const selectedRows = rows.filter((row) => selectedSet.has(row.id));
-  const selectionDrag = useRowSelectionDrag(selectedIds, setStoredIds);
+  const selectionDrag = useRowSelectionDrag(selectedIds, updateSelection);
   return (
     <div className={styles.list} {...selectionDrag}>
       {rows.map((row) => {
         const selectable = eligibleIds.has(row.id);
         const selected = selectedSet.has(row.id);
-        const contexts = selected ? selectedRows : [row];
+        const contexts = selected && selectionMenu ? selectedRows : [row];
         const handleSelect = () =>
-          setStoredIds((current) => {
+          updateSelection((current) => {
             const currentSet = new Set(current);
             return currentSet.has(row.id)
               ? current.filter((id) => id !== row.id)
@@ -123,18 +146,26 @@ export const EntityRowList = ({
             selectionId={row.id}
             selected={selected}
             selectable={selectable}
-            selectLabel={`${selected ? "Deselect" : "Select"} ${typeof row.title === "string" ? row.title : row.id}`}
+            selectLabel={
+              selectLabel?.(row, selected) ??
+              `${selected ? "Deselect" : "Select"} ${typeof row.title === "string" ? row.title : row.id}`
+            }
             onSelect={handleSelect}
             onSurfaceClick={() => {
               if (selectedIds.length > 0) {
                 handleSelect();
               }
             }}
-            menuItems={combineEntityRowActions(contexts, () =>
-              setStoredIds([])
-            )}
+            menuItems={combineEntityRowActions(contexts, () => {
+              if (selectionMenu) {
+                updateSelection([]);
+              }
+            })}
             menuSummary={
-              contexts.length > 1 ? `${contexts.length} selected` : null
+              contexts.length > 1
+                ? (menuSummary?.(contexts.length) ??
+                  `${contexts.length} selected`)
+                : null
             }
             variant={variant}
             icon={row.icon}

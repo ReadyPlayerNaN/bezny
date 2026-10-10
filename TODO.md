@@ -14,9 +14,10 @@
   - Integrate localization into entity labels, action labels, command-palette content, forms, validation feedback, and other entity UI.
   - Distinguish UI translations from multilingual entity content and define adapter/form support for localized content.
   - Support locale switching, fallback behavior, locale-aware formatting, and text direction; test multiple locales.
-- [ ] Use `EntityRow` with context menus for entity list rows instead of custom row implementations.
+- [x] Use `EntityRow` with context menus for entity list rows instead of custom row implementations.
   - Reuse the shared entity action catalog for row context menus, detail actions, and the command palette.
   - Preserve row-target versus selection-target semantics and destructive-action confirmation.
   - Use Radix for context-menu interaction and verify keyboard access, focus behavior, and accessible semantics.
+  - Implemented: demo lists use `EntityRowList` (the shared row implementation), controlled Jotai selection, row-scoped context menus, and the same commands as detail pages and the palette. Verified with 8 base row tests and 19 demo tests, including Shift+F10, Escape/focus restoration, and confirmation targeting despite another selected row.
 - [ ] Implement entity-list filters, integrated with entity configuration, data adapters, and the command palette.
 - [ ] Implement entity-list pagination, integrated with data adapters and the command palette, with consistent behavior when filters change.

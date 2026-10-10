@@ -3,6 +3,7 @@ import { createMemoryHistory } from "@tanstack/react-router";
 import {
   act,
   cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -62,7 +63,7 @@ describe("editorial admin", () => {
     const { application, main } = await renderDemo("/");
     expect(application.router.state.location.pathname).toBe("/articles");
     expect(
-      main.getByRole("table", { name: "Articles in this workspace" })
+      main.getByRole("region", { name: "Articles in this workspace" })
     ).toBeDefined();
     expect(
       screen.getByRole("navigation", { name: "Editorial navigation" })
@@ -72,6 +73,38 @@ describe("editorial admin", () => {
     ).toBe("Context: Articles");
     expect(screen.getByRole("main").parentElement?.className).toContain(
       "application"
+    );
+  });
+
+  it("uses shared EntityRow menus without changing a row action's target to the selection", async () => {
+    const { user, main, application } = await renderDemo();
+    await user.click(
+      main.getByRole("checkbox", { name: "Select Planning the next release" })
+    );
+    const row = main.getByRole("group", { name: "Item 1" });
+    row.focus();
+    await user.keyboard("{Shift>}{F10}{/Shift}");
+    await screen.findByRole("menu");
+    expect(
+      screen.queryByRole("menuitem", {
+        name: "Delete Planning the next release",
+      })
+    ).toBeNull();
+    await user.keyboard("{Escape}");
+    expect(document.activeElement).toBe(row);
+    fireEvent.contextMenu(row);
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete Welcome to Bezny" })
+    );
+    const dialog = within(await screen.findByRole("alertdialog"));
+    expect(
+      dialog.getByText(/This permanently deletes Welcome to Bezny/u)
+    ).toBeDefined();
+    await user.click(dialog.getByRole("button", { name: "Confirm deletion" }));
+    await waitFor(() =>
+      expect(
+        application.store.get(articlesAtom).map((record) => record.id)
+      ).toStrictEqual(["2", "3"])
     );
   });
 
@@ -228,7 +261,9 @@ describe("editorial admin", () => {
 
   it("offers row and collection actions in the searchable palette and executes selection commands", async () => {
     const { user, main } = await renderDemo();
-    const labels = within(main.getByRole("table"))
+    const labels = within(
+      main.getByRole("region", { name: "Articles in this workspace" })
+    )
       .getAllByRole("button")
       .map((button) => button.textContent);
     const palette = await openPalette(user);
