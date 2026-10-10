@@ -150,7 +150,11 @@ export const SelectableRow = ({
         }
       }}
     >
-      <ContextMenuTrigger asChild disabled={menuItems.length === 0}>
+      <ContextMenuTrigger
+        asChild
+        disabled={menuItems.length === 0}
+        tabIndex={selectable || menuItems.length > 0 ? 0 : -1}
+      >
         {/* oxlint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- Group delegates surface selection; actual actions remain native controls. */}
         <fieldset
           className={styles.row}

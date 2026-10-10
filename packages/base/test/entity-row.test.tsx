@@ -21,6 +21,32 @@ import type { EntityRowData } from "../src/index.js";
 describe("Entity rows", () => {
   afterEach(cleanup);
 
+  it("keeps read-only rows out of tab order while actionable rows remain keyboard accessible", async () => {
+    const user = userEvent.setup();
+    render(
+      <EntityRowList
+        rows={[
+          { id: "readonly", title: "Read only" },
+          {
+            actions: [
+              {
+                key: "archive",
+                label: "Archive",
+                onSelect: vi.fn<() => void>(),
+              },
+            ],
+            id: "action",
+            title: "Action",
+          },
+        ]}
+      />
+    );
+    await user.tab();
+    expect(document.activeElement).toBe(
+      screen.getByRole("group", { name: "Item action" })
+    );
+  });
+
   it("gives standalone rows local context menus and a caller-owned portal boundary", async () => {
     const user = userEvent.setup();
     const container = document.createElement("div");
