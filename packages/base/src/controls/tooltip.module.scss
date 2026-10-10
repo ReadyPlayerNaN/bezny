@@ -1,0 +1,22 @@
+@use "./tooltip-appearance" as appearance;
+.content {
+  @include appearance.declarations;
+  z-index: appearance.token("z-index");
+  max-width: min(
+    appearance.token("width"),
+    var(--radix-tooltip-content-available-width)
+  );
+  padding: appearance.token("padding-small");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  box-shadow: appearance.token("shadow");
+  overflow-wrap: anywhere;
+}
+.arrow {
+  fill: appearance.token("background");
+}

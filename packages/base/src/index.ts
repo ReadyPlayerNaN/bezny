@@ -84,4 +84,11 @@ export {
   type RadioFieldOption,
 } from "./fields/radio-field.js";
 export { ToggleField, type ToggleFieldProps } from "./fields/toggle-field.js";
+export {
+  Tooltip,
+  TooltipProvider,
+  TooltipTrigger,
+  TooltipContent,
+  type TooltipContentProps,
+} from "./controls/tooltip.js";
 export type { FieldBindingProps } from "./fields/use-field-binding.js";
