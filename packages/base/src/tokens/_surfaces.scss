@@ -17,6 +17,8 @@ $-definitions: (
   "surface-font-size": logical.token("field-font-size"),
   "surface-line-height": logical.token("field-line-height"),
   "surface-font-weight": logical.token("font-weight-bold"),
+  "surface-title-font-size": logical.font-size("xl"),
+  "surface-title-line-height": logical.line-height("xl"),
   "surface-padding": logical.token("spacing-normal"),
   "surface-padding-small": logical.token("spacing-small"),
   "surface-gap": logical.token("spacing-small"),

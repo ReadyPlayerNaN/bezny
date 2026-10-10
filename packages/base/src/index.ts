@@ -109,4 +109,13 @@ export {
   type ContextMenuContentProps,
   type ContextMenuItemProps,
 } from "./controls/context-menu.js";
+export {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+  type DialogContentProps,
+} from "./controls/dialog.js";
 export type { FieldBindingProps } from "./fields/use-field-binding.js";

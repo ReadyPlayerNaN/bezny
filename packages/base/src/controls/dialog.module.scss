@@ -1,0 +1,47 @@
+@use "./dialog-appearance" as appearance;
+.overlay {
+  @include appearance.declarations;
+  position: fixed;
+  inset: 0;
+  z-index: appearance.token("z-index");
+  background: appearance.token("overlay");
+}
+.content {
+  @include appearance.declarations;
+  box-sizing: border-box;
+  position: fixed;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  transform: translate(-50%, -50%);
+  &:dir(rtl) {
+    transform: translate(50%, -50%);
+  }
+  z-index: appearance.token("z-index");
+  width: min(
+    appearance.token("dialog-width"),
+    calc(100vw - appearance.token("padding") * 2)
+  );
+  max-height: calc(100dvh - appearance.token("padding") * 2);
+  overflow-y: auto;
+  display: grid;
+  gap: appearance.token("gap");
+  padding: appearance.token("padding-large");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  box-shadow: appearance.token("shadow");
+}
+.title {
+  margin: 0;
+  font-size: appearance.token("title-font-size");
+  line-height: appearance.token("title-line-height");
+  font-weight: appearance.token("font-weight");
+}
+.description {
+  margin: 0;
+  color: appearance.token("muted");
+}
