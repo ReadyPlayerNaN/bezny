@@ -24,6 +24,13 @@ $-definitions: ();
 {
   $-definitions: map.set($-definitions, $name, surfaces.token($name));
 }
+$-definitions: map.merge(
+  $-definitions,
+  (
+    "title-font-size": surfaces.token("row-title-font-size"),
+    "title-line-height": surfaces.token("row-title-line-height"),
+  )
+);
 @function token($name) {
   @return css-properties.reference($-definitions, $name, "control-entity-row");
 }

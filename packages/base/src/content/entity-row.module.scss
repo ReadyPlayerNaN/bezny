@@ -60,10 +60,22 @@
   margin: 0;
   font-family: appearance.token("font-family");
 }
-.header > .title {
+.title[data-variant] {
+  min-width: 0;
+  font-size: appearance.token("title-font-size");
+  line-height: appearance.token("title-line-height");
+  font-weight: appearance.token("font-weight");
+}
+.title[data-variant="small"] {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: appearance.token("font-size");
   line-height: appearance.token("line-height");
-  font-weight: appearance.token("font-weight");
+}
+.row[data-variant="small"] .header,
+.row[data-variant="small"] .trailing {
+  flex-wrap: nowrap;
 }
 .title a,
 .version {
