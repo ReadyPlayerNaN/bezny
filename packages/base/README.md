@@ -80,9 +80,11 @@ Button palette and sizing are represented through all four layers. Normal button
 
 ## Inputs and fields
 
-**Inputs** are reusable RHF-unbound controls: `TextInput`, `TextareaInput`, `CheckboxInput`, `RadioGroupInput`, and `RadioInput`. They work without a form provider and accept native/Radix control props and React 19 refs. Checkbox and radio behavior comes from Radix; text entry uses native HTML controls.
+**Inputs** are reusable RHF-unbound controls: `TextInput`, `TextareaInput`, `CheckboxInput`, `RadioGroupInput`, `RadioInput`, and `ToggleInput`. They work without a form provider and accept native/Radix control props and React 19 refs. Checkbox, radio, and toggle behavior comes from Radix; text entry uses native HTML controls.
 
 `TextInput` adapts the source `InputField`'s control/prefix behavior without its label or feedback. It retains `minValue`/`maxValue` aliases and supports native `type` values. `TextareaInput` defaults to three rows. `CheckboxInput` supports controlled/uncontrolled and indeterminate states; `RadioInput` is used inside `RadioGroupInput` for roving focus, selection, and form values.
+
+`ToggleInput` is an on/off switch built on Radix Switch, not a pressed-state button or tri-state checkbox. It accepts boolean `checked`/`defaultChecked` and `onCheckedChange`, forwards a React 19 button ref, and preserves native form `name`/`value`, `disabled`, and `required` semantics. Give it an accessible name through a native label, `aria-label`, or `aria-labelledby`. Space and Enter toggle it without submitting the form. Thumb positioning respects RTL, and animations respect reduced motion.
 
 `FieldLabel` and `FieldFeedback` are reusable presentation components. A label uses `htmlFor`; for a radio group's accessible name, use `asComponent="span"` with an `id` and reference it through `aria-labelledby`. Required markers are decorative. Feedback supports `help`/`helpId` and `error`/`errorId`, with errors announced as alerts.
 
@@ -96,7 +98,7 @@ Button palette and sizing are represented through all four layers. Normal button
 
 All input and field presentation styles use scoped SCSS modules and the same four-layer token system. The source's typography is converted to `rem`.
 
-**Fields** are RHF-ready compositions: `TextField`, `EmailField`, `CheckboxField`, `RadioField`, and `TextareaField`. They include `FieldLabel` and `FieldFeedback`, bind through `useController`, and accept a typed `name`, optional `control`, `rules`, `defaultValue`, `disabled`, and normal input presentation props. They work under a `FormProvider` or with explicit `control`.
+**Fields** are RHF-ready compositions: `TextField`, `EmailField`, `CheckboxField`, `RadioField`, `TextareaField`, and `ToggleField`. They include `FieldLabel` and `FieldFeedback`, bind through `useController`, and accept a typed `name`, optional `control`, `rules`, `defaultValue`, `disabled`, and normal input presentation props. They work under a `FormProvider` or with explicit `control`.
 
 ```tsx
 import {
@@ -106,6 +108,7 @@ import {
   Submit,
   TextareaField,
   TextField,
+  ToggleField,
 } from "@bezny/base";
 import { FormProvider, useForm } from "react-hook-form";
 
@@ -117,6 +120,7 @@ export function ProfileEditor() {
       accepted: false,
       plan: "basic",
       notes: "",
+      notifications: false,
     },
   });
   return (
@@ -142,6 +146,11 @@ export function ProfileEditor() {
           ]}
         />
         <TextareaField name="notes" label="Notes" />
+        <ToggleField
+          name="notifications"
+          label="Notifications"
+          help="Receive updates"
+        />
         <Submit>Save</Submit>
       </form>
     </FormProvider>
@@ -151,7 +160,7 @@ export function ProfileEditor() {
 
 `saveProfile` is application-owned. Supply default values to RHF and use a resolver or `rules` for validation. `EmailField` sets native `type="email"`; it does not impose an email regex or schema. With `noValidate`, RHF owns error presentation rather than browser validation bubbles. Required rules also drive required markers and native required semantics.
 
-Fields preserve externally supplied `aria-describedby` IDs and append generated help/error IDs. They set `aria-invalid` on invalid controls, announce error messages, and connect RHF focus refs to actual inputs/buttons. `RadioField` accepts string-valued `options` with labels and optional `disabled` flags; values must be unique. It labels the group and focuses the selected enabled option, or the first enabled option, on validation errors. `CheckboxField` binds boolean form values; use unbound `CheckboxInput` for tri-state controls.
+Fields preserve externally supplied `aria-describedby` IDs and append generated help/error IDs. They set `aria-invalid` on invalid controls, announce error messages, and connect RHF focus refs to actual inputs/buttons. `RadioField` accepts string-valued `options` with labels and optional `disabled` flags; values must be unique. It labels the group and focuses the selected enabled option, or the first enabled option, on validation errors. `CheckboxField` and `ToggleField` bind boolean form values; use unbound `CheckboxInput` for tri-state controls. `ToggleField` supports RHF reset, disabled values, validation feedback, blur/touched tracking, and error focus just like other fields. A `required` rule means the switch must be on; omit that rule when both on and off are valid.
 
 Install `react-hook-form` in the consuming application when importing its APIs. The library keeps RHF, React, Radix, and Lucide external in the Vite build, so form components use the same provider runtime as their consumers.
 
@@ -165,7 +174,10 @@ Styles use locally scoped SCSS module classes and the project's four-layer [SCSS
 - `src/tokens/_structural.scss` — heading purposes referencing logical scales.
 - `src/content/heading-typography.scss` and `src/content/heading.module.scss` — heading control aliases and their usage.
 - `src/controls/button-appearance.scss` and `src/controls/button.module.scss` — button control aliases, states, variants, and sizes.
+- `src/inputs/toggle-appearance.scss` and `src/inputs/toggle-input.module.scss` — scoped switch control tokens and track/thumb states.
 - `src/tokens.scss` — shared `:root` defaults, included by the heading SCSS module.
+
+Toggle tokens use `--bezny-control-toggle-*`, bound on the switch root and inherited by its thumb. Default `width`, `height`, `thumb-size`, and `inset` are `2.5rem`, `1.5rem`, `1.25rem`, and `0.125rem`. Theme `background`, `checked-background`, `thumb-background`, `focus-ring`, `border-error`, `opacity-disabled`, and `duration-interaction` through the same adjacent-layer token chain. Component-scoped overrides affect only that switch; shared foundational/logical overrides belong on `:root`.
 
 | Heading level | Font size | Line height | Icon size |
 | ------------- | --------- | ----------- | --------- |

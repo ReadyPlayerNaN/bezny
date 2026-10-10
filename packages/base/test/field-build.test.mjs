@@ -12,17 +12,27 @@ import {
   TextareaField,
   TextField,
   TextInput,
+  ToggleField,
+  ToggleInput,
 } from "@bezny/base";
 import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { FormProvider, useForm } from "react-hook-form";
 
 const BoundFieldSnapshot = () => {
-  const form = useForm({ defaultValues: { name: "Ada" } });
+  const form = useForm({ defaultValues: { name: "Ada", notifications: true } });
   return createElement(
     FormProvider,
     form,
-    createElement(TextField, { label: "Name", name: "name" })
+    createElement(
+      "div",
+      null,
+      createElement(TextField, { label: "Name", name: "name" }),
+      createElement(ToggleField, {
+        label: "Notifications",
+        name: "notifications",
+      })
+    )
   );
 };
 
@@ -36,6 +46,8 @@ test("built package exports all requested field and input components", () => {
     CheckboxField,
     RadioField,
     TextareaField,
+    ToggleField,
+    ToggleInput,
   ]) {
     assert.equal(typeof component, "function");
   }
@@ -45,6 +57,7 @@ test("built fields use the consumer's RHF provider context", () => {
   const html = renderToStaticMarkup(createElement(BoundFieldSnapshot));
   assert.ok(html.includes('value="Ada"'));
   assert.ok(html.includes('name="name"'));
+  assert.match(html, /role="switch"[^>]+aria-checked="true"/u);
 });
 
 test("RHF remains an external dependency in the built module", () => {
@@ -53,4 +66,5 @@ test("RHF remains an external dependency in the built module", () => {
     "utf-8"
   );
   assert.ok(javascript.includes('from "react-hook-form"'));
+  assert.ok(javascript.includes('from "@radix-ui/react-switch"'));
 });

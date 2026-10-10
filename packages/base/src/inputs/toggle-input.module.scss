@@ -1,0 +1,61 @@
+@use "./toggle-appearance";
+
+.toggle {
+  @include toggle-appearance.declarations;
+  position: relative;
+  display: inline-flex;
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  width: toggle-appearance.$width;
+  height: toggle-appearance.$height;
+  padding: 0;
+  border: 0;
+  border-radius: toggle-appearance.$radius;
+  background: toggle-appearance.$background;
+  cursor: pointer;
+  transition: background-color toggle-appearance.$duration-interaction ease;
+
+  &[data-state="checked"] {
+    background: toggle-appearance.$checked-background;
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: toggle-appearance.$focus-ring;
+  }
+  &[aria-invalid="true"] {
+    outline: toggle-appearance.$border-width solid
+      toggle-appearance.$border-error;
+    outline-offset: toggle-appearance.$inset;
+  }
+  &[data-disabled] {
+    opacity: toggle-appearance.$opacity-disabled;
+    cursor: not-allowed;
+  }
+}
+
+.thumb {
+  position: absolute;
+  display: block;
+  inset-block-start: 50%;
+  inset-inline-start: toggle-appearance.$inset;
+  width: toggle-appearance.$thumb-size;
+  height: toggle-appearance.$thumb-size;
+  border-radius: toggle-appearance.$radius;
+  background: toggle-appearance.$thumb-background;
+  transform: translateY(-50%);
+  pointer-events: none;
+  transition: inset-inline-start toggle-appearance.$duration-interaction ease;
+
+  &[data-state="checked"] {
+    inset-inline-start: calc(
+      100% - toggle-appearance.$inset - toggle-appearance.$thumb-size
+    );
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toggle,
+  .thumb {
+    transition: none;
+  }
+}

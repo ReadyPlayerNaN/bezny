@@ -26,6 +26,7 @@ export {
 } from "./controls/button.js";
 
 export { TextInput, type TextInputProps } from "./inputs/text-input.js";
+export { ToggleInput, type ToggleInputProps } from "./inputs/toggle-input.js";
 export {
   TextareaInput,
   type TextareaInputProps,
@@ -64,4 +65,5 @@ export {
   type RadioFieldProps,
   type RadioFieldOption,
 } from "./fields/radio-field.js";
+export { ToggleField, type ToggleFieldProps } from "./fields/toggle-field.js";
 export type { FieldBindingProps } from "./fields/use-field-binding.js";

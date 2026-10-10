@@ -1,0 +1,82 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/structural";
+
+$-definitions: ();
+@each $property
+    in (
+      width,
+      height,
+      thumb-size,
+      inset,
+      radius,
+      background,
+      checked-background,
+      thumb-background,
+      border-width,
+      border-error,
+      focus-ring,
+      opacity-disabled,
+      duration-interaction
+    )
+{
+  $-definitions: map.set(
+    $-definitions,
+    $property,
+    structural.token("toggle-#{$property}")
+  );
+}
+
+$width: css-properties.reference($-definitions, "width", "control-toggle");
+$height: css-properties.reference($-definitions, "height", "control-toggle");
+$thumb-size: css-properties.reference(
+  $-definitions,
+  "thumb-size",
+  "control-toggle"
+);
+$inset: css-properties.reference($-definitions, "inset", "control-toggle");
+$radius: css-properties.reference($-definitions, "radius", "control-toggle");
+$background: css-properties.reference(
+  $-definitions,
+  "background",
+  "control-toggle"
+);
+$checked-background: css-properties.reference(
+  $-definitions,
+  "checked-background",
+  "control-toggle"
+);
+$thumb-background: css-properties.reference(
+  $-definitions,
+  "thumb-background",
+  "control-toggle"
+);
+$border-width: css-properties.reference(
+  $-definitions,
+  "border-width",
+  "control-toggle"
+);
+$border-error: css-properties.reference(
+  $-definitions,
+  "border-error",
+  "control-toggle"
+);
+$focus-ring: css-properties.reference(
+  $-definitions,
+  "focus-ring",
+  "control-toggle"
+);
+$opacity-disabled: css-properties.reference(
+  $-definitions,
+  "opacity-disabled",
+  "control-toggle"
+);
+$duration-interaction: css-properties.reference(
+  $-definitions,
+  "duration-interaction",
+  "control-toggle"
+);
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-toggle");
+}

@@ -9,6 +9,7 @@ import {
   HeadingLevelProvider,
   Main,
   Section,
+  ToggleInput,
   useHeadingLevel,
 } from "@bezny/base";
 import { createElement } from "react";
@@ -136,6 +137,44 @@ test("every CSS variable reference in the built stylesheet has a declaration", (
       `Missing declaration for ${groups.name}`
     );
   }
+});
+
+test("built toggles bind scoped geometry and colour tokens through all four layers", () => {
+  const html = renderToStaticMarkup(
+    createElement(ToggleInput, { "aria-label": "Notifications" })
+  );
+  const [toggleClass] = html.match(classPattern).groups.classes.split(" ");
+  const tokens = {
+    ...rootTokens,
+    ...Object.fromEntries(tokenEntries(rules.get(toggleClass))),
+  };
+  for (const [property, expected] of Object.entries({
+    height: "1.5rem",
+    inset: ".125rem",
+    "thumb-size": "1.25rem",
+    width: "2.5rem",
+  })) {
+    assert.equal(
+      resolveToken(`--bezny-control-toggle-${property}`, tokens),
+      expected
+    );
+  }
+  assert.equal(
+    resolveToken("--bezny-control-toggle-checked-background", tokens),
+    "#007eb0"
+  );
+  assert.equal(
+    resolveToken("--bezny-control-toggle-checked-background", {
+      ...tokens,
+      "--bezny-foundation-color-product-normal": "#8b5cf6",
+    }),
+    "#8b5cf6"
+  );
+  assert.ok(
+    css.includes("inset-inline-start:"),
+    "thumb placement supports RTL"
+  );
+  assert.ok(css.includes("prefers-reduced-motion"));
 });
 
 test("built heading styles resolve all six levels through the rem token chain", () => {
