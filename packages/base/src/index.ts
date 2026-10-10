@@ -128,4 +128,5 @@ export {
   AlertDialogCancel,
   type AlertDialogContentProps,
 } from "./controls/alert-dialog.js";
+export { Badge, type BadgeProps, type BadgeType } from "./content/badge.js";
 export type { FieldBindingProps } from "./fields/use-field-binding.js";

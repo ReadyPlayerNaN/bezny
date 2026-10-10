@@ -1,0 +1,23 @@
+@use "./badge-appearance" as appearance;
+.badge {
+  @include appearance.declarations;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: appearance.token("height");
+  padding-inline: appearance.token("padding");
+  border-radius: appearance.token("radius");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  font-weight: appearance.token("font-weight");
+  letter-spacing: appearance.token("letter-spacing");
+  text-transform: uppercase;
+  white-space: nowrap;
+  @each $variant in (neutral, info, success, warning, critical) {
+    &[data-type="#{$variant}"] {
+      background: appearance.token("#{$variant}-background");
+      color: appearance.token("#{$variant}-text");
+    }
+  }
+}

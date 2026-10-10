@@ -87,6 +87,14 @@ $-definitions: (
   "color-text-normal": foundational.token("color-ink-normal"),
   "color-surface": foundational.token("color-white"),
   "color-surface-disabled": foundational.token("color-cloud-light"),
+  "badge-info-text": foundational.token("color-badge-info"),
+  "badge-info-background": foundational.token("color-badge-info-soft"),
+  "badge-success-text": foundational.token("color-badge-success"),
+  "badge-success-background": foundational.token("color-badge-success-soft"),
+  "badge-warning-text": foundational.token("color-badge-warning"),
+  "badge-warning-background": foundational.token("color-badge-warning-soft"),
+  "badge-critical-background": foundational.token("color-badge-critical-soft"),
+  "badge-letter-spacing": foundational.token("letter-spacing-badge"),
   "panel-width": foundational.size(256),
   "dialog-width": foundational.size(512),
   "panel-shadow": foundational.token("shadow-panel"),
@@ -99,6 +107,14 @@ $-definitions: (
 );
 
 $-dark-colors: (
+  "badge-info-text": foundational.token("color-badge-info-light"),
+  "badge-info-background": foundational.token("color-badge-info-dark-soft"),
+  "badge-success-text": foundational.token("color-badge-success-light"),
+  "badge-success-background":
+    foundational.token("color-badge-success-dark-soft"),
+  "badge-warning-text": foundational.token("color-badge-warning-light"),
+  "badge-warning-background":
+    foundational.token("color-badge-warning-dark-soft"),
   "color-neutral": foundational.token("color-ink-soft"),
   "color-neutral-hover":
     -mixed-color("color-ink-soft", "mix-weight-90", "color-white"),

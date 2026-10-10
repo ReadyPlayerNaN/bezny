@@ -1,0 +1,38 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/structural";
+$-definitions: ();
+@each $name
+    in (
+      neutral-background,
+      neutral-text,
+      info-background,
+      info-text,
+      success-background,
+      success-text,
+      warning-background,
+      warning-text,
+      critical-background,
+      critical-text,
+      font-size,
+      line-height,
+      height,
+      padding,
+      radius,
+      letter-spacing,
+      font-family,
+      font-weight
+    )
+{
+  $-definitions: map.set(
+    $-definitions,
+    $name,
+    structural.token("badge-#{$name}")
+  );
+}
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-badge");
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-badge");
+}
