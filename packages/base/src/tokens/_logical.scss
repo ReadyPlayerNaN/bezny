@@ -94,6 +94,7 @@ $-definitions: (
   "badge-warning-text": foundational.token("color-badge-warning"),
   "badge-warning-background": foundational.token("color-badge-warning-soft"),
   "badge-critical-background": foundational.token("color-badge-critical-soft"),
+  "badge-critical-text": foundational.token("color-badge-critical"),
   "badge-letter-spacing": foundational.token("letter-spacing-badge"),
   "panel-width": foundational.size(256),
   "dialog-width": foundational.size(512),
@@ -107,6 +108,7 @@ $-definitions: (
 );
 
 $-dark-colors: (
+  "badge-critical-text": foundational.token("color-red-light"),
   "badge-info-text": foundational.token("color-badge-info-light"),
   "badge-info-background": foundational.token("color-badge-info-dark-soft"),
   "badge-success-text": foundational.token("color-badge-success-light"),
