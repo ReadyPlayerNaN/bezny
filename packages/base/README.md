@@ -94,6 +94,10 @@ import { Plane } from "lucide-react";
 
 Geometry follows the four-layer token chain: `--bezny-control-button-icon-button-<size|icon-size|radius>` consumes `--bezny-structural-icon-button-<size|icon-size|radius>`. The size/radius resolve through logical normal control height; the icon size uses the logical small icon scale.
 
+### Filter buttons
+
+`FilterBadge` and filter picker triggers use pill-shaped corners with a full-height `2.5rem` radius and compact `0.5rem` inline padding (half the normal button padding). Filter panels retain their existing radius and padding. The scoped `--bezny-control-filter-button-<radius|padding>` aliases reference `--bezny-structural-filter-button-<radius|padding>`, which use logical normal control height and small spacing respectively.
+
 ## Inputs and fields
 
 **Inputs** are reusable RHF-unbound controls: `TextInput`, `TextareaInput`, `CheckboxInput`, `RadioGroupInput`, `RadioInput`, and `ToggleInput`. They work without a form provider and accept native/Radix control props and React 19 refs. Checkbox, radio, and toggle behavior comes from Radix; text entry uses native HTML controls.

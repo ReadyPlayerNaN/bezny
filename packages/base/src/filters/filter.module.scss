@@ -5,13 +5,15 @@
   @include appearance.declarations;
 }
 .badge {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   gap: appearance.token("gap");
   min-height: appearance.token("height");
-  padding-inline: appearance.token("padding");
+  padding-block: 0;
+  padding-inline: appearance.token("button-padding");
   border: appearance.token("border-width") solid appearance.token("border");
-  border-radius: appearance.token("radius");
+  border-radius: appearance.token("button-radius");
   background: appearance.token("background");
   color: appearance.token("text");
   font-family: appearance.token("font-family");

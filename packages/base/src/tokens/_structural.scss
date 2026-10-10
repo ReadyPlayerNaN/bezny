@@ -16,6 +16,8 @@ $-definitions: (
   "icon-button-size": logical.token("control-height-normal"),
   "icon-button-icon-size": logical.icon-size("sm"),
   "icon-button-radius": logical.token("control-height-normal"),
+  "filter-button-radius": logical.token("control-height-normal"),
+  "filter-button-padding": logical.token("spacing-small"),
   "button-border-width": logical.token("control-border-width"),
   "button-spinner-size": logical.token("control-spinner-size"),
   "button-spinner-border-width": logical.token("control-spinner-border-width"),
