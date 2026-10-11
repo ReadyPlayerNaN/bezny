@@ -61,11 +61,15 @@ List/detail pages are available by default. Default create/update pages require 
 
 Field keys are unique flat names, not dotted RHF paths. Supported types are `text` (default), `textarea`, `number`, `checkbox`, and `select`. Fields accept labels/`labelKey`, help text, required state, maximum text length, numeric bounds, and choice options. Select options must have unique non-empty values; the default form owns its empty placeholder.
 
-For flat records, editable values are read from matching record properties. Missing values fall back to `form.defaultValues`, then `false` for checkboxes or an empty string otherwise. Only registered fields enter the form. Numeric fields submit numbers when non-empty; optional empty numeric values remain empty strings for `parseValues` to interpret.
+For flat records, editable values are read from matching record properties. Missing values fall back to `form.defaultValues` (a value object or callback evaluated when opening the form), then `false` for checkboxes or an empty string otherwise. Only registered fields enter the form. Numeric fields submit numbers when non-empty; optional empty numeric values remain empty strings for `parseValues` to interpret.
 
 For nested or domain-specific payloads, supply `form.readValues(data: unknown)` to validate/project the adapter payload into flat scalar form values. `parseValues` validates/transforms submitted form values into typed mutation values; it remains the domain validation boundary. Adapter failures or parser failures preserve the form and show an error.
 
 Optional `columns: [{ key, label, labelKey?, render(data: unknown) }]` provide list metadata and detail values. These callbacks should validate payloads with the application's domain schema. Without columns, the detail page uses the registered form fields. The row title always comes from `reference(record).label`.
+
+Each registered field also produces a palette command: text/number/choice inputs edit its value and checkbox commands toggle it. The same RHF values, validation, and refs are used by both presentations. Select option `labelKey` values are translated just like field labels.
+
+For dependent fields, register `field.deriveValues(values, record)` to return a partial value object, synchronously or asynchronously. For example, changing a content-locale field can load/project the matching title and body. Both ordinary controls and palette edits use this callback. Pending derivation disables form submission; failed derivation shows a recoverable error. Results only update registered fields that have not been changed since the request began, and stale source-field values are ignored.
 
 ## Overrides and shared behavior
 

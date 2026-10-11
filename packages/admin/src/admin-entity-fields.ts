@@ -12,11 +12,16 @@ export interface AdminEntityField {
   max?: number;
   maxLength?: number;
   help?: string;
-  options?: readonly { value: string; label: string }[];
+  options?: readonly { value: string; label: string; labelKey?: string }[];
+  /** Derive dependent values when this field changes, e.g. a content locale. */
+  deriveValues?: (
+    values: AdminFormValues,
+    record: unknown
+  ) => Partial<AdminFormValues> | Promise<Partial<AdminFormValues>>;
 }
 export interface AdminEntityForm {
   fields: readonly AdminEntityField[];
-  defaultValues?: AdminFormValues;
+  defaultValues?: AdminFormValues | (() => AdminFormValues);
   /** Project a complete adapter payload into the registered editable fields. */
   readValues?: (data: unknown) => AdminFormValues;
 }
@@ -25,6 +30,10 @@ export const readAdminFormValues = (
   form: AdminEntityForm,
   data?: unknown
 ): AdminFormValues => {
+  const defaults =
+    typeof form.defaultValues === "function"
+      ? form.defaultValues()
+      : form.defaultValues;
   const projected =
     data !== undefined && form.readValues ? form.readValues(data) : data;
   return Object.fromEntries(
@@ -34,8 +43,7 @@ export const readAdminFormValues = (
           ? Reflect.get(projected, field.key)
           : undefined;
       const fallback =
-        form.defaultValues?.[field.key] ??
-        (field.type === "checkbox" ? false : "");
+        defaults?.[field.key] ?? (field.type === "checkbox" ? false : "");
       return [
         field.key,
         typeof value === "string" ||

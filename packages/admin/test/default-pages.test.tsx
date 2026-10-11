@@ -15,6 +15,7 @@ import type {
   AdminDataAdapter,
   AdminListResult,
 } from "../src/admin-data-adapter.js";
+import type { AdminEntityField } from "../src/admin-entity-fields.js";
 import {
   adminSelectionAtom,
   adminPageCommandsAtom,
@@ -69,7 +70,8 @@ const parseValues = (values: unknown): Values => {
 };
 const fixture = (
   path = "/articles",
-  overrides: Partial<AdminDataAdapter<Article, Values>> = {}
+  overrides: Partial<AdminDataAdapter<Article, Values>> = {},
+  deriveValues?: AdminEntityField["deriveValues"]
 ) => {
   let records: Article[] = [
     {
@@ -151,6 +153,7 @@ const fixture = (
         { key: "published", label: "Published", type: "checkbox" },
         { key: "priority", label: "Priority", max: 5, min: 1, type: "number" },
         {
+          ...(deriveValues ? { deriveValues } : {}),
           key: "status",
           label: "Status",
           options: [
@@ -443,6 +446,33 @@ describe("registration-driven default pages", () => {
         .getByRole("button", { name: "Delete" })
         .hasAttribute("disabled")
     ).toBeFalsy();
+  });
+
+  it("derives dependent form values and field palette commands from registration", async () => {
+    const derive = vi.fn<NonNullable<AdminEntityField["deriveValues"]>>(
+      (values) =>
+        Promise.resolve({
+          body: `Body ${values.status}`,
+          title: `Title ${values.status}`,
+        })
+    );
+    const { app } = fixture("/articles/1/edit", {}, derive);
+    await mount(app);
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("combobox", { name: "Status" }));
+    await user.click(await screen.findByRole("option", { name: "Live" }));
+    await expect(screen.findByDisplayValue("Title live")).resolves.toBeTruthy();
+    const command = app.store
+      .get(adminPageCommandsAtom)
+      ?.commands.find((item) => item.id === "articles.field.status");
+    expect(command?.input?.value).toBe("live");
+    await act(async () => {
+      await command?.input?.execute("draft");
+    });
+    await expect(
+      screen.findByDisplayValue("Title draft")
+    ).resolves.toBeTruthy();
+    expect(derive).toHaveBeenCalledTimes(2);
   });
 
   it("preserves registered deletion overrides without duplicate commands", () => {

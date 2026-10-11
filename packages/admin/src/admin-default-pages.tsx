@@ -1,8 +1,8 @@
 import { Button, EntityRowList, TextField, Submit } from "@bezny/base";
 import { Link } from "@tanstack/react-router";
 import { useStore } from "jotai";
-import { useMemo, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import { useCallback, useMemo, useState } from "react";
+import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import {
@@ -14,10 +14,14 @@ import {
   useAdminEntityContext,
   useAdminDataSession,
 } from "./admin-entity-context.js";
-import type { AdminFormValues } from "./admin-entity-fields.js";
+import type {
+  AdminFormValues,
+  AdminEntityField,
+} from "./admin-entity-fields.js";
 import { readAdminFormValues } from "./admin-entity-fields.js";
 import { adminSelectionAtom } from "./admin-entity-model.js";
 import type { AdminCommand } from "./admin-entity-model.js";
+import { createAdminFormFieldCommands } from "./admin-form-field-commands.js";
 import { useAdminListControls } from "./admin-list-controls.js";
 import { AdminPage } from "./admin-page.js";
 import { AdminRegisteredField } from "./admin-registered-field.js";
@@ -264,10 +268,44 @@ const DefaultEntityForm = () => {
       ? readAdminFormValues(configured, record?.data)
       : {},
   });
+  const watchedValues = useWatch({ control: form.control });
+  const [deriving, setDeriving] = useState(0);
+  const deriveValues = useCallback(
+    async (field: AdminEntityField) => {
+      if (!field.deriveValues) {
+        return;
+      }
+      const previous = form.getValues();
+      setDeriving((count) => count + 1);
+      try {
+        const patch = await field.deriveValues(previous, record?.data);
+        if (form.getValues(field.key) === previous[field.key]) {
+          for (const [key, value] of Object.entries(patch)) {
+            if (
+              value !== undefined &&
+              configured?.fields.some(
+                (configuredField) => configuredField.key === key
+              ) &&
+              form.getValues(key) === previous[key]
+            ) {
+              form.setValue(key, value, {
+                shouldDirty: true,
+                shouldValidate: true,
+              });
+            }
+          }
+        }
+      } catch {
+        form.setError("root", { message: t("error") });
+      }
+      setDeriving((count) => count - 1);
+    },
+    [configured, form, record, t]
+  );
   const [saving, setSaving] = useState(false);
   const save = useMemo(
     () => async (values: AdminFormValues) => {
-      if (!entity || saving) {
+      if (!entity || saving || deriving > 0) {
         return;
       }
       setSaving(true);
@@ -300,7 +338,7 @@ const DefaultEntityForm = () => {
       }
       setSaving(false);
     },
-    [entity, form, navigate, recordId, saving, session, t, view]
+    [deriving, entity, form, navigate, recordId, saving, session, t, view]
   );
   const pageCommands = useMemo<AdminCommand[]>(
     () =>
@@ -318,9 +356,17 @@ const DefaultEntityForm = () => {
               id: `${entity.key}.cancel`,
               label: t("defaults.cancel", { defaultValue: "Cancel" }),
             },
+            ...createAdminFormFieldCommands({
+              deriveValues,
+              entityKey: entity.key,
+              fields: configured?.fields ?? [],
+              form,
+              translate: t,
+              values: watchedValues,
+            }),
           ]
         : [],
-    [entity, form, navigate, save, t]
+    [configured, deriveValues, entity, form, navigate, save, t, watchedValues]
   );
   useAdminPageCommands(pageCommands);
   if (!entity || !configured) {
@@ -336,17 +382,22 @@ const DefaultEntityForm = () => {
       <FormProvider {...form}>
         <form noValidate onSubmit={form.handleSubmit(save)}>
           <fieldset
-            disabled={form.formState.isSubmitting}
+            disabled={form.formState.isSubmitting || deriving > 0}
             aria-label={entity.singularLabel}
           >
             {configured.fields.map((field) => (
-              <AdminRegisteredField key={field.key} field={field} />
+              <AdminRegisteredField
+                key={field.key}
+                field={field}
+                onValueChange={() => deriveValues(field)}
+              />
             ))}
           </fieldset>
           {form.formState.errors.root && (
             <p role="alert">{form.formState.errors.root.message}</p>
           )}
-          <Submit disabled={form.formState.isSubmitting}>
+          {deriving > 0 && <AdminDefaultLoadingPage />}
+          <Submit disabled={form.formState.isSubmitting || deriving > 0}>
             {t("defaults.save", { defaultValue: "Save" })}
           </Submit>
           {pageCommands[1] && <CommandButton command={pageCommands[1]} />}

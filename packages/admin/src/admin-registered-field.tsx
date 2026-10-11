@@ -19,14 +19,17 @@ import type { AdminEntityField } from "./admin-entity-fields.js";
 export const AdminRegisteredField = ({
   field,
   disabled = false,
+  onValueChange,
 }: {
   field: AdminEntityField;
   disabled?: boolean;
+  onValueChange?: () => void | Promise<void>;
 }) => {
   const { t } = useTranslation("beznyAdmin");
   const id = useId();
   const label = t(field.labelKey ?? field.label, { defaultValue: field.label });
   const rules = {
+    ...(onValueChange ? { onChange: onValueChange } : {}),
     required: field.required
       ? t("defaults.required", { defaultValue: "This field is required." })
       : false,
@@ -97,7 +100,9 @@ export const AdminRegisteredField = ({
                     key={option.value}
                     value={option.value ? `value:${option.value}` : "empty"}
                   >
-                    {option.label}
+                    {t(option.labelKey ?? option.label, {
+                      defaultValue: option.label,
+                    })}
                   </SelectItem>
                 ))}
               </SelectContent>
