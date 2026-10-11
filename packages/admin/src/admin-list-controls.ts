@@ -10,6 +10,8 @@ import {
 import type { AdminCommand } from "./admin-entity-model.js";
 import { adminListQueriesAtom } from "./admin-list-state.js";
 
+export { AdminSelectionBar } from "./admin-selection-bar.js";
+
 const queryIdentity = (query: AdminListQuery) =>
   JSON.stringify([
     query.page,

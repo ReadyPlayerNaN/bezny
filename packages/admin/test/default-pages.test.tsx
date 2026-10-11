@@ -383,8 +383,12 @@ describe("registration-driven default pages", () => {
     await user.click(
       await screen.findByRole("checkbox", { name: "Select First" })
     );
-    const trigger = screen.getByRole("button", { name: "Delete selected (1)" });
-    await user.click(trigger);
+    const trigger = screen.getByRole("button", { name: "Selection actions" });
+    trigger.focus();
+    await user.keyboard("{Enter}");
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete selected (1)" })
+    );
     const dialog = await screen.findByRole("alertdialog");
     expect(document.activeElement).toBe(
       within(dialog).getByRole("button", { name: "Cancel" })
@@ -403,8 +407,9 @@ describe("registration-driven default pages", () => {
     await user.click(
       await screen.findByRole("checkbox", { name: "Select First" })
     );
+    await user.click(screen.getByRole("button", { name: "Selection actions" }));
     await user.click(
-      screen.getByRole("button", { name: "Delete selected (1)" })
+      await screen.findByRole("menuitem", { name: "Delete selected (1)" })
     );
     await user.click(
       within(await screen.findByRole("alertdialog")).getByRole("button", {
@@ -503,8 +508,9 @@ describe("registration-driven default pages", () => {
     await user.click(
       await screen.findByRole("checkbox", { name: "Select First" })
     );
+    await user.click(screen.getByRole("button", { name: "Selection actions" }));
     await user.click(
-      screen.getByRole("button", { name: "Delete selected (1)" })
+      await screen.findByRole("menuitem", { name: "Delete selected (1)" })
     );
     const dialog = await screen.findByRole("alertdialog");
     await user.click(within(dialog).getByRole("button", { name: "Delete" }));

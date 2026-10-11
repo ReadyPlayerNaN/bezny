@@ -32,6 +32,28 @@ describe("admin collection styling", () => {
     expect(css).toMatch(/\.filters,[\s\S]*?flex-wrap: wrap;/u);
   });
 
+  it("restores a compact fixed bottom-center selection bar with complete control references", async () => {
+    const { css } = compile(path.resolve("src/admin-selection.module.scss"));
+    const base = await readFile(
+      path.resolve("../base/dist/style.css"),
+      "utf-8"
+    );
+    const declarations = new Set(
+      [...`${base}\n${css}`.matchAll(declarationPattern)].map(
+        (match) => match.groups?.token
+      )
+    );
+    expect(
+      [...css.matchAll(referencePattern)].every((match) =>
+        declarations.has(match.groups?.token)
+      )
+    ).toBeTruthy();
+    expect(css).toMatch(/position: fixed;/u);
+    expect(css).toMatch(/left: 50%;/u);
+    expect(css).toMatch(/transform: translateX\(-50%\);/u);
+    expect(css).not.toMatch(/width: 100%;/u);
+  });
+
   it("keeps accessor imports pure and rejects unknown control keys", () => {
     const options = { loadPaths: [path.resolve("src")] };
     expect(

@@ -29,6 +29,7 @@ import { createAdminFormFieldCommands } from "./admin-form-field-commands.js";
 import { AdminPage } from "./admin-page.js";
 import { AdminRegisteredField } from "./admin-registered-field.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
+import { AdminSelectionBar } from "./admin-selection-bar.js";
 
 export const AdminDefaultLoadingPage = () => {
   const { t } = useTranslation("beznyAdmin");
@@ -92,9 +93,7 @@ export const AdminDefaultListPage = () => {
         <output aria-label={t("loading")}>{t("loading")}</output>
       )}
       {kind === "error" && <p role="alert">{t("error")}</p>}
-      {commands.selectionCommands.map((command) => (
-        <CommandButton key={command.id} command={command} />
-      ))}
+      <AdminSelectionBar />
       {data?.status === "ready" &&
         (data.items.length === 0 ? (
           <p>{t("defaults.empty", { defaultValue: "No records found." })}</p>

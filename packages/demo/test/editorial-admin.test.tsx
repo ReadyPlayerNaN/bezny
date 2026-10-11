@@ -243,14 +243,17 @@ describe("registration-driven editorial admin", () => {
     expect(application.store.get(adminSelectionAtom)).toBeNull();
   });
 
-  it("provides default bulk controls and restores their focus after cancellation", async () => {
+  it("provides a shared floating selection menu and restores its focus after cancellation", async () => {
     const { user, main, application } = await renderDemo();
     expect(main.queryByRole("button", { name: /Delete selected/u })).toBeNull();
     await user.click(
       main.getByRole("checkbox", { name: "Select Welcome to Bezny" })
     );
-    const trigger = main.getByRole("button", { name: "Delete selected (1)" });
+    const trigger = main.getByRole("button", { name: "Selection actions" });
     await user.click(trigger);
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete selected (1)" })
+    );
     await user.keyboard("{Escape}");
     await waitFor(() => expect(document.activeElement).toBe(trigger));
     expect(application.store.get(adminSelectionAtom)?.ids).toStrictEqual(["1"]);

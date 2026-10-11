@@ -83,9 +83,12 @@ describe("editorial localization", () => {
     await user.click(
       screen.getByRole("checkbox", { name: "تحديد مرحبًا ببيزني" })
     );
-    const trigger = screen.getByRole("button", { name: "حذف المحدد (1)" });
+    const trigger = screen.getByRole("button", { name: "إجراءات التحديد" });
     trigger.focus();
     await user.keyboard("{Enter}");
+    await user.click(
+      await screen.findByRole("menuitem", { name: "حذف المحدد (1)" })
+    );
     const dialog = await screen.findByRole("alertdialog");
     expect(dialog.getAttribute("dir")).toBe("rtl");
     await user.keyboard("{Escape}");

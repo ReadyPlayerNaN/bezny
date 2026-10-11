@@ -26,6 +26,9 @@ const defaultPageTranslations = {
     required: "هذا الحقل مطلوب.",
     save: "حفظ",
     saveError: "تعذر الحفظ. تحقق من القيم وحاول مرة أخرى.",
+    selectionActions: "إجراءات التحديد",
+    selectionBar: "السجلات المحددة",
+    selectionCount: "المحدد: {{formattedCount}}",
   },
   cs: {
     actions: "Akce pro {{record}}",
@@ -52,6 +55,9 @@ const defaultPageTranslations = {
     required: "Toto pole je povinné.",
     save: "Uložit",
     saveError: "Nepodařilo se uložit. Zkontrolujte hodnoty a zkuste to znovu.",
+    selectionActions: "Akce výběru",
+    selectionBar: "Vybrané záznamy",
+    selectionCount: "Vybráno: {{formattedCount}}",
   },
   en: {
     actions: "Actions for {{record}}",
@@ -78,6 +84,9 @@ const defaultPageTranslations = {
     required: "This field is required.",
     save: "Save",
     saveError: "Could not save. Check the values and try again.",
+    selectionActions: "Selection actions",
+    selectionBar: "Selected records",
+    selectionCount: "Selected: {{formattedCount}}",
   },
 };
 /** Add defaults without replacing application translations or chrome resources. */

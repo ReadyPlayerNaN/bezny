@@ -1,0 +1,29 @@
+@use "admin-selection-appearance" as appearance;
+
+.selectionBar {
+  @include appearance.declarations;
+  margin: 0;
+  min-inline-size: 0;
+  position: fixed;
+  inset-block-end: calc(#{appearance.token("bottom-offset")} + #{appearance.token("padding")});
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: appearance.token("z-index");
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: appearance.token("gap");
+  max-inline-size: calc(100% - 2 * #{appearance.token("padding")});
+  padding: appearance.token("gap");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  box-shadow: appearance.token("shadow");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  > span {
+    white-space: nowrap;
+  }
+}

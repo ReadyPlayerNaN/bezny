@@ -50,7 +50,7 @@ Pass the definition to `createAdminApplication({ entities: [articles], Root, Not
 
 ## What the registration generates
 
-- **List:** selectable `EntityRowList`, record links and View/Edit/Delete menus, bulk commands, registered filters, clear filters, pagination/page-size commands, refresh/retry, loading/error/empty states.
+- **List:** selectable `EntityRowList`, record links and View/Edit/Delete menus, a compact fixed bottom-center `AdminSelectionBar` with a localized selected count, an icon-triggered bulk action menu and clear-selection icon, registered filters, clear filters, pagination/page-size commands, refresh/retry, loading/error/empty states. Selection actions reuse the row/palette catalog; Radix manages menu focus/dismissal, and cancelled confirmation returns focus to the menu trigger. `AdminSelectionBar` is also exported from `@bezny/admin/list` for custom lists. Its `--bezny-control-admin-selection-*` tokens style the bar; override `bottom-offset` on the bar to accommodate a custom fixed footer.
 - **Detail:** record title, registered columns or field values, collection navigation, edit and record actions.
 - **Create/update:** RHF forms using shared Bezny fields, registered defaults and validation, accessible labels/errors and invalid-field focus, Save/Cancel commands shared with the command palette, submission state, recoverable mutation errors. Save opens the saved record's detail page.
 - **Delete:** record and bulk commands when `adapter.remove` exists, a shared Radix-backed confirmation dialog, cancellation without clearing selection, retryable failures, successful invalidation/refresh and collection navigation.

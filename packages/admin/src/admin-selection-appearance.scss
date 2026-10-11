@@ -1,0 +1,27 @@
+@use "../../base/src/tokens/css-properties";
+@use "../../base/src/tokens/surfaces";
+@use "../../base/src/tokens/structural";
+
+$-definitions: (
+  "bottom-offset": structural.token("shell-status-height"),
+  "gap": surfaces.token("gap"),
+  "padding": surfaces.token("padding"),
+  "border": surfaces.token("border"),
+  "border-width": surfaces.token("border-width"),
+  "radius": surfaces.token("radius"),
+  "background": surfaces.token("background"),
+  "text": surfaces.token("text"),
+  "shadow": surfaces.token("shadow"),
+  "z-index": surfaces.token("z-index"),
+  "font-family": surfaces.token("font-family"),
+  "font-size": surfaces.token("font-size"),
+  "line-height": surfaces.token("line-height"),
+);
+
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-admin-selection");
+}
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-admin-selection");
+}
