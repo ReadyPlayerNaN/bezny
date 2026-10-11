@@ -1,3 +1,4 @@
+@use "sass:map";
 @use "css-properties";
 
 $-definitions: (
@@ -20,6 +21,8 @@ $-definitions: (
   "size-256": 16rem,
   "size-320": 20rem,
   "size-512": 32rem,
+  "viewport-width-compact": 40rem,
+  "viewport-width-wide": 64rem,
   "radius-round": 50%,
   "shadow-panel": 0 0.25rem 1rem rgb(0 0 0 / 20%),
   "color-overlay": rgb(0 0 0 / 55%),
@@ -70,6 +73,16 @@ $-definitions: (
   "duration-interaction": 120ms,
   "duration-spinner": 700ms,
 );
+
+// Media queries cannot resolve CSS custom properties. Keep their compile-time
+// values in the same validated definition map as the emitted runtime tokens.
+@function viewport-width($name) {
+  $key: "viewport-width-#{$name}";
+  @if not map.has-key($-definitions, $key) {
+    @error "Unknown foundational viewport: #{$name}";
+  }
+  @return map.get($-definitions, $key);
+}
 
 @function token($token-name) {
   @return css-properties.reference($-definitions, $token-name, "foundation");

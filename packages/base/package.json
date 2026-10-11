@@ -3,7 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "files": [
-    "dist"
+    "dist",
+    "src/tokens/_viewports.scss",
+    "src/tokens/_logical.scss",
+    "src/tokens/_foundational.scss",
+    "src/tokens/_css-properties.scss"
   ],
   "type": "module",
   "sideEffects": [
@@ -14,7 +18,10 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     },
-    "./style.css": "./dist/style.css"
+    "./style.css": "./dist/style.css",
+    "./viewports": {
+      "sass": "./src/tokens/_viewports.scss"
+    }
   },
   "scripts": {
     "build": "vite build && tsc -p tsconfig.build.json",

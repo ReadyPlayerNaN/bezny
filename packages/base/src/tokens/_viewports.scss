@@ -1,0 +1,38 @@
+@use "sass:map";
+@use "css-properties";
+@use "logical";
+
+$-definitions: (
+  "viewport-compact-min-width": logical.token("viewport-compact-min-width"),
+  "viewport-wide-min-width": logical.token("viewport-wide-min-width"),
+);
+
+@function minimum-width($name) {
+  @if not map.has-key($-definitions, "viewport-#{$name}-min-width") {
+    @error "Unknown structural viewport: #{$name}";
+  }
+  @return logical.viewport-minimum-width($name);
+}
+
+@function token($name) {
+  @return css-properties.reference(
+    $-definitions,
+    "viewport-#{$name}-min-width",
+    "structural"
+  );
+}
+
+// Tiny: below compact. Compact: compact up to wide. Wide: wide and above.
+@mixin at-least($name) {
+  @media (width >= minimum-width($name)) {
+    @content;
+  }
+}
+@mixin below($name) {
+  @media (width < minimum-width($name)) {
+    @content;
+  }
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "structural");
+}

@@ -304,6 +304,28 @@ These Sass modules are currently internal source modules, not published package 
 
 Other structural heading tokens follow `--bezny-structural-heading-<1–6>-<font-size|line-height|icon-size>`. Shared family and weight tokens are `--bezny-structural-heading-font-family` and `--bezny-structural-heading-font-weight`. Controls use `--bezny-control-heading-<font-size|line-height|icon-size|font-family|font-weight>`. Root aliases resolve where declared: descendant foundational or logical overrides do not automatically recompute the shared structural aliases. The old `--primitive-*`, `--semantic-color-text-strong`, and `--heading-icon-size` names have been replaced by this token chain.
 
+## Viewports
+
+Viewport variants are CSS-only: **tiny** below `40rem`, **compact** from `40rem` to below `64rem`, and **wide** from `64rem`. Widths use the browser's initial font size in media queries; no root font size is forced.
+
+The public Sass entry is `@bezny/base/viewports` (use Sass's `NodePackageImporter`):
+
+```scss
+@use "pkg:@bezny/base/viewports";
+@include viewports.at-least(wide) {
+  .sidebar {
+    display: block;
+  }
+}
+@include viewports.below(compact) {
+  .drawer {
+    width: 100%;
+  }
+}
+```
+
+Imports are pure. `minimum-width(compact|wide)` supplies validated compile-time query lengths. `token(compact|wide)` supplies structural CSS references for component control aliases. Runtime tokens follow `--bezny-foundation-viewport-width-*` → `--bezny-logical-viewport-*-min-width` → `--bezny-structural-viewport-*-min-width` → component control aliases. CSS custom properties cannot appear in media query conditions: changing them at runtime does **not** change compiled breakpoints. Change foundational viewport definitions and rebuild the stylesheet to change the framework's breakpoints; Sass queries and emitted metadata use that same source of truth. No resize listeners or `matchMedia` are needed. Other source Sass modules remain private implementation details.
+
 ## Development
 
 ```sh

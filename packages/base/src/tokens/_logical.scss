@@ -2,6 +2,13 @@
 @use "css-properties";
 @use "foundational";
 
+@function viewport-minimum-width($name) {
+  @if not map.has-key($-definitions, "viewport-#{$name}-min-width") {
+    @error "Unknown logical viewport: #{$name}";
+  }
+  @return foundational.viewport-width($name);
+}
+
 @function -mixed-color($base-color, $base-weight, $mix-color: "color-black") {
   @return color-mix(
     in srgb,
@@ -11,6 +18,8 @@
 }
 
 $-definitions: (
+  "viewport-compact-min-width": foundational.token("viewport-width-compact"),
+  "viewport-wide-min-width": foundational.token("viewport-width-wide"),
   "font-size-xs": foundational.size(14),
   "font-size-sm": foundational.size(16),
   "font-size-md": foundational.size(18),
