@@ -1,4 +1,4 @@
-/* oxlint-disable vitest/no-import-node-test, vitest/prefer-importing-vitest-globals, vitest/prefer-each -- Verify responsive CSS in actual Chromium, not jsdom. */
+/* oxlint-disable vitest/no-import-node-test, vitest/prefer-importing-vitest-globals, vitest/prefer-each -- Test native HTML and responsive CSS in actual Chromium. */
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
@@ -15,13 +15,6 @@ const css = readFileSync(
   new URL(import.meta.resolve("@bezny/base/style.css")),
   "utf-8"
 );
-const drawerClass = css.match(/\.(?<name>_drawer_[\w]+)\[role=dialog\]/u)
-  ?.groups?.name;
-assert.ok(drawerClass);
-const contentClass = css.match(
-  /\.(?<name>_content_[\w]+)[^{]*\{transform:translate\(50%,-50%\)\}/u
-)?.groups?.name;
-assert.ok(contentClass);
 const markup = renderToStaticMarkup(
   createElement(
     Shell,
@@ -33,82 +26,149 @@ const markup = renderToStaticMarkup(
         createElement(
           "li",
           null,
-          createElement(
-            "a",
-            { "aria-current": "page", href: "/articles" },
-            "Articles"
-          )
+          createElement("a", { href: "/articles" }, "Articles")
         )
       ),
     },
     "Page"
   )
 );
-const sample = () => {
+const exercise = () => {
   const root = document.querySelector("[data-navigation]");
   const nav = root.querySelector("nav");
-  const button = root.querySelector("button");
-  const drawer = document.querySelector("[role=dialog]");
-  const box = drawer.getBoundingClientRect();
-  return {
-    columns: getComputedStyle(root).gridTemplateColumns,
-    drawerHeight: box.height,
-    drawerStart: drawer.dir === "rtl" ? innerWidth - box.right : box.left,
-    drawerWidth: box.width,
+  const main = root.querySelector("main");
+  const trigger = root.querySelector('button[popovertargetaction="toggle"]');
+  const sample = () => ({
+    display: getComputedStyle(nav).display,
+    headerTop: root.querySelector("header").getBoundingClientRect().top,
     height: innerHeight,
-    mainStart: root.querySelector("main").getBoundingClientRect().left,
-    menu: getComputedStyle(button.parentElement).display,
-    nav: getComputedStyle(nav).display,
+    mainLeft: main.getBoundingClientRect().left,
+    mainWidth: main.getBoundingClientRect().width,
+    navHeight: nav.getBoundingClientRect().height,
+    navLeft: nav.getBoundingClientRect().left,
+    navTop: nav.getBoundingClientRect().top,
     navWidth: nav.getBoundingClientRect().width,
+    open: nav.matches(":popover-open"),
+    trigger: getComputedStyle(trigger).display,
     viewport: innerWidth,
+  });
+  const closed = sample();
+  trigger.click();
+  sample();
+  const entering = root.getAnimations({ subtree: true });
+  for (const animation of entering) {
+    animation.pause();
+    animation.currentTime = 100;
+  }
+  const halfway = sample();
+  for (const animation of entering) {
+    animation.finish();
+  }
+  const opened = sample();
+  root.querySelector('button[popovertargetaction="hide"]').click();
+  sample();
+  const exiting = root.getAnimations({ subtree: true });
+  for (const animation of exiting) {
+    animation.pause();
+    animation.currentTime = 60;
+  }
+  const closing = sample();
+  for (const animation of exiting) {
+    animation.finish();
+  }
+  const returned = sample();
+  return {
+    closed,
+    closing,
+    halfway,
+    mainCount: root.querySelectorAll("main").length,
+    navigationCount: root.querySelectorAll("nav").length,
+    opened,
+    returned,
   };
 };
 for (const width of [639, 640, 1023, 1024, 1280]) {
   for (const direction of ["ltr", "rtl"]) {
-    test(`shell CSS selects the ${width}px ${direction} variant without viewport JavaScript`, () => {
-      const directory = mkdtempSync(path.join(tmpdir(), "bezny-shell-"));
-      try {
-        const fixture = path.join(directory, "shell.html");
-        writeFileSync(
-          fixture,
-          `<!doctype html><html dir="${direction}"><head><style>${css} html,body{margin:0;overflow:hidden} [role=dialog]{animation:none!important}</style></head><body>${markup}<div role="dialog" class="${contentClass} ${drawerClass}" dir="${direction}">Navigation</div><pre id="results"></pre><script>document.getElementById('results').textContent=JSON.stringify((${sample.toString()})());</script></body></html>`
-        );
-        const browser = spawnSync(
-          process.env.CHROMIUM_PATH ?? "chromium",
-          [
-            "--headless",
-            "--no-sandbox",
-            "--disable-gpu",
-            "--no-first-run",
-            `--user-data-dir=${path.join(directory, "profile")}`,
-            `--window-size=${width},900`,
-            "--dump-dom",
-            pathToFileURL(fixture).href,
-          ],
-          { encoding: "utf-8", maxBuffer: 2 * 1024 * 1024, timeout: 30_000 }
-        );
-        assert.ifError(browser.error);
-        assert.equal(browser.status, 0, browser.stderr);
-        const match = browser.stdout.match(
-          /<pre id="results">(?<data>[^<]+)<\/pre>/u
-        );
-        assert.ok(match, browser.stdout);
-        const result = JSON.parse(match.groups.data);
-        assert.equal(result.viewport, width);
-        assert.equal(result.nav, width >= 1024 ? "block" : "none");
-        assert.equal(result.menu, width >= 1024 ? "none" : "flex");
-        assert.equal(result.drawerWidth, width < 640 ? width : 256);
-        assert.equal(result.drawerHeight, result.height);
-        assert.equal(result.drawerStart, 0);
-        if (width >= 1024) {
-          assert.equal(result.navWidth, 256);
-          if (direction === "ltr") {
-            assert.equal(result.mainStart, 256);
+    for (const reduced of [false, true]) {
+      test(`single native navigation at ${width}px ${direction}, reduced motion ${reduced}`, () => {
+        const directory = mkdtempSync(path.join(tmpdir(), "bezny-shell-"));
+        try {
+          const fixture = path.join(directory, "shell.html");
+          writeFileSync(
+            fixture,
+            `<!doctype html><html dir="${direction}"><head><style>${css} html,body{margin:0;overflow:hidden}</style></head><body>${markup}<pre id="results"></pre><script>document.getElementById('results').textContent=JSON.stringify((${exercise.toString()})());</script></body></html>`
+          );
+          const browser = spawnSync(
+            process.env.CHROMIUM_PATH ?? "chromium",
+            [
+              "--headless",
+              "--no-sandbox",
+              "--disable-gpu",
+              "--no-first-run",
+              ...(reduced ? ["--force-prefers-reduced-motion"] : []),
+              `--user-data-dir=${path.join(directory, "profile")}`,
+              `--window-size=${width},900`,
+              "--virtual-time-budget=1000",
+              "--dump-dom",
+              pathToFileURL(fixture).href,
+            ],
+            { encoding: "utf-8", maxBuffer: 2 * 1024 * 1024, timeout: 30_000 }
+          );
+          assert.ifError(browser.error);
+          assert.equal(browser.status, 0, browser.stderr);
+          const match = browser.stdout.match(
+            /<pre id="results">(?<data>[^<]+)<\/pre>/u
+          );
+          assert.ok(match, browser.stdout);
+          const {
+            closed,
+            halfway,
+            opened,
+            closing,
+            returned,
+            navigationCount,
+            mainCount,
+          } = JSON.parse(match.groups.data);
+          assert.equal(navigationCount, 1);
+          assert.equal(mainCount, 1);
+          assert.equal(closed.viewport, width);
+          assert.equal(closed.display, width >= 1024 ? "block" : "none");
+          assert.equal(closed.trigger, width >= 1024 ? "none" : "flex");
+          assert.equal(opened.open, true);
+          assert.equal(returned.open, false);
+          assert.equal(opened.headerTop, 0);
+          assert.equal(opened.navWidth, width < 640 ? width : 256);
+          assert.equal(opened.navTop, width < 640 ? 0 : 48);
+          if (width < 640) {
+            assert.equal(opened.navHeight, opened.height);
           }
+          if (width >= 640 && width < 1024) {
+            assert.equal(closed.mainWidth, width);
+            assert.equal(opened.mainWidth, width);
+            assert.equal(closed.mainLeft, 0);
+            assert.equal(opened.mainLeft, direction === "ltr" ? 256 : -256);
+            assert.equal(returned.mainLeft, 0);
+            assert.equal(returned.display, "none");
+            if (!reduced) {
+              assert.ok(
+                Math.abs(halfway.mainLeft) > 0 &&
+                  Math.abs(halfway.mainLeft) < 256
+              );
+              assert.ok(
+                Math.abs(closing.mainLeft) > 0 &&
+                  Math.abs(closing.mainLeft) < 256
+              );
+            }
+          }
+          if (width >= 1024) {
+            assert.equal(opened.mainLeft, direction === "ltr" ? 256 : 0);
+            assert.equal(returned.display, "block");
+            assert.equal(opened.mainWidth, width - 256);
+          }
+        } finally {
+          rmSync(directory, { force: true, recursive: true });
         }
-      } finally {
-        rmSync(directory, { force: true, recursive: true });
-      }
-    });
+      });
+    }
   }
 }

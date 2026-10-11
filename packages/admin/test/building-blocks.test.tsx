@@ -18,6 +18,12 @@ import type {
 import { AdminLayout } from "../src/admin-layout.js";
 import { AdminPage } from "../src/admin-page.js";
 
+// CSS modules are mocked: expose the native navigation as on desktop.
+// Browser tests in base verify the real responsive stylesheet and controls.
+const desktopStyle = document.createElement("style");
+desktopStyle.textContent = "nav[popover] { display: block !important; }";
+document.head.append(desktopStyle);
+
 const BrandedLayout = (props: AdminLayoutProps) => (
   <DefaultAdminLayout {...props} data-brand="bezny" />
 );
@@ -74,7 +80,9 @@ describe("admin building blocks", () => {
         </AdminPage>
       </AdminLayout>
     );
-    expect(screen.getByRole("banner").textContent).toBe("Example admin");
+    expect(
+      within(screen.getByRole("banner")).getByText("Example admin")
+    ).toBeDefined();
     expect(
       screen.getByRole("navigation", { name: "Administration" })
     ).toBeDefined();

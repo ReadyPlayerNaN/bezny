@@ -126,20 +126,16 @@ describe("editorial admin", () => {
     await waitFor(() => expect(document.activeElement).toBe(account));
   });
 
-  it("opens entity navigation from the navbar and closes it after routed link activation", async () => {
+  it("renders one registry-derived navigation with native controls and routed links", async () => {
     const { user, main, application } = await renderDemo();
-    await user.click(screen.getByRole("button", { name: "Open entities" }));
-    const dialog = within(
-      await screen.findByRole("dialog", { name: "Entities" })
-    );
-    expect(
-      dialog.getAllByRole("link").map((link) => link.textContent)
-    ).toStrictEqual(["Articles", "Pages"]);
-    await user.click(dialog.getByRole("link", { name: "Pages" }));
+    const nav = screen.getByRole("navigation", { name: "Entities" });
+    const trigger = screen.getByRole("button", { name: /Open entities/u });
+    expect(trigger.getAttribute("popovertarget")).toBe(nav.id);
+    expect(screen.getAllByRole("navigation")).toHaveLength(1);
+    await user.click(within(nav).getByRole("link", { name: "Pages" }));
     await waitFor(() =>
       expect(application.router.state.location.pathname).toBe("/pages")
     );
-    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
     expect(
       main.getByRole("heading", { level: 1, name: "Pages" })
     ).toBeDefined();

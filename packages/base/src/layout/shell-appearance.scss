@@ -10,6 +10,10 @@ $-definitions: (
   "close-size": structural.token("icon-button-size"),
   "close-icon-size": structural.token("icon-button-icon-size"),
   "close-radius": structural.token("icon-button-radius"),
+  "duration-enter": structural.token("dialog-duration-enter"),
+  "duration-exit": structural.token("dialog-duration-exit"),
+  "easing-enter": structural.token("dialog-easing-enter"),
+  "easing-exit": structural.token("dialog-easing-exit"),
   "viewport-compact-min-width": viewports.token(compact),
   "viewport-wide-min-width": viewports.token(wide),
 );

@@ -1,8 +1,7 @@
 @use "./shell-appearance" as appearance;
 
 .shell,
-.navigation,
-.drawer {
+.navigation {
   @include appearance.declarations;
 }
 .shell {
@@ -12,6 +11,7 @@
   grid-template-columns: minmax(0, 1fr);
   grid-template-rows: auto 1fr auto;
   min-height: 100dvh;
+  overflow-x: clip;
   color: appearance.token("text");
   > header {
     grid-area: header;
@@ -31,6 +31,19 @@
     grid-area: footer;
     padding: appearance.token("padding");
   }
+  &:has(> .navigation:popover-open) {
+    > header,
+    > main,
+    > footer {
+      interactivity: inert;
+    }
+    .openLabel {
+      display: none;
+    }
+    .closeLabel {
+      display: block;
+    }
+  }
 }
 .toolbar {
   display: flex;
@@ -44,20 +57,70 @@
   min-width: 0;
   height: 100%;
 }
-.menuTrigger {
-  display: flex;
+.menuTrigger,
+.closeButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-}
-.navigation {
-  display: none;
-  grid-area: navigation;
+  box-sizing: border-box;
+  padding: 0;
+  width: appearance.token("close-size");
+  height: appearance.token("close-size");
+  border-radius: appearance.token("close-radius");
+  border: appearance.token("border-width") solid appearance.token("border");
   background: appearance.token("background");
-  padding: appearance.token("padding");
-  border-inline-end: appearance.token("border-width") solid
-    appearance.token("border");
+  color: appearance.token("text");
+  cursor: pointer;
+  svg {
+    width: appearance.token("close-icon-size");
+    height: appearance.token("close-icon-size");
+  }
+  &:hover {
+    background: appearance.token("hover");
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: appearance.token("focus-ring");
+  }
 }
-.navigation,
-.drawerNavigation {
+.openLabel,
+.closeLabel {
+  position: absolute;
+  width: appearance.token("border-width");
+  height: appearance.token("border-width");
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+.closeLabel {
+  display: none;
+}
+.navigation[popover] {
+  box-sizing: border-box;
+  display: none;
+  position: fixed;
+  inset: 0;
+  margin: 0;
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow-y: auto;
+  padding: appearance.token("padding");
+  border: 0;
+  background: appearance.token("background");
+  color: appearance.token("text");
+  opacity: 0;
+  transition:
+    opacity appearance.token("duration-exit") appearance.token("easing-exit"),
+    display appearance.token("duration-exit") allow-discrete,
+    overlay appearance.token("duration-exit") allow-discrete;
+  &:popover-open {
+    display: block;
+    opacity: 1;
+    transition-duration: appearance.token("duration-enter");
+  }
   ul {
     display: grid;
     gap: appearance.token("gap");
@@ -89,54 +152,87 @@
     }
   }
 }
-.drawer[role="dialog"] {
-  box-sizing: border-box;
-  inset-block: 0;
-  inset-inline-start: 0;
-  inset-inline-end: auto;
-  transform: none;
-  &:dir(rtl) {
-    transform: none;
-  }
-  width: 100%;
-  height: 100dvh;
-  max-height: 100dvh;
-  border-radius: 0;
-  padding: appearance.token("padding");
-  display: flex;
-  flex-direction: column;
-  gap: appearance.token("gap");
-}
-.drawerHeader {
+.navigationHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: appearance.token("gap");
-}
-.drawerTitle {
+  margin-block-end: appearance.token("padding");
+  font-family: appearance.token("font-family");
   font-size: appearance.token("font-size");
   line-height: appearance.token("line-height");
 }
-.closeButton {
-  flex-shrink: 0;
-  padding: 0;
-  width: appearance.token("close-size");
-  min-width: appearance.token("close-size");
-  height: appearance.token("close-size");
-  min-height: appearance.token("close-size");
-  border-radius: appearance.token("close-radius");
-  svg {
-    width: appearance.token("close-icon-size");
-    height: appearance.token("close-icon-size");
+@starting-style {
+  .navigation[popover]:popover-open {
+    opacity: 0;
   }
 }
-.drawerNavigation {
-  overflow-y: auto;
-  flex: 1;
-}
 @include appearance.at-least(compact) {
-  .drawer[role="dialog"] {
-    width: min(appearance.token("sidebar-width"), 100vw);
+  .navigation[popover] {
+    inset-block-start: appearance.token("header-height");
+    inset-inline-start: 0;
+    inset-inline-end: auto;
+    width: appearance.token("sidebar-width");
+    height: calc(100dvh - appearance.token("header-height"));
+    max-height: calc(100dvh - appearance.token("header-height"));
+    border-inline-end: appearance.token("border-width") solid
+      appearance.token("border");
+    opacity: 1;
+    translate: -100% 0;
+    transition:
+      translate appearance.token("duration-exit")
+        appearance.token("easing-exit"),
+      display appearance.token("duration-exit") allow-discrete,
+      overlay appearance.token("duration-exit") allow-discrete;
+    &:popover-open {
+      translate: 0;
+      transition-duration: appearance.token("duration-enter");
+    }
+  }
+  .shell[dir="rtl"] > .navigation[popover],
+  :root[dir="rtl"] .shell:not([dir="ltr"]) > .navigation[popover] {
+    translate: 100% 0;
+    &:popover-open {
+      translate: 0;
+    }
+  }
+  @starting-style {
+    .navigation[popover]:popover-open {
+      opacity: 1;
+      translate: -100% 0;
+    }
+    .shell[dir="rtl"] > .navigation[popover]:popover-open,
+    :root[dir="rtl"]
+      .shell:not([dir="ltr"])
+      > .navigation[popover]:popover-open {
+      translate: 100% 0;
+    }
+  }
+  .navigationHeader {
+    display: none;
+  }
+  .shell > main {
+    translate: 0;
+    transition: translate appearance.token("duration-exit")
+      appearance.token("easing-exit");
+  }
+  .shell:has(> .navigation:popover-open) {
+    > header,
+    > main,
+    > footer {
+      interactivity: auto;
+    }
+    > main {
+      translate: appearance.token("sidebar-width") 0;
+      transition-duration: appearance.token("duration-enter");
+      transition-timing-function: appearance.token("easing-enter");
+    }
+  }
+  .shell[dir="rtl"]:has(> .navigation:popover-open) > main,
+  :root[dir="rtl"]
+    .shell:not([dir="ltr"]):has(> .navigation:popover-open)
+    > main {
+    translate: calc(-1 * appearance.token("sidebar-width")) 0;
   }
 }
 @include appearance.at-least(wide) {
@@ -144,15 +240,47 @@
     grid-template-areas: "header header" "navigation main" "footer footer";
     grid-template-columns: appearance.token("sidebar-width") minmax(0, 1fr);
   }
-  .navigation {
+  .shell > .navigation[popover],
+  .shell > .navigation[popover]:popover-open,
+  .shell[dir="rtl"] > .navigation[popover],
+  :root[dir="rtl"] .shell:not([dir="ltr"]) > .navigation[popover] {
     display: block;
+    grid-area: navigation;
     position: sticky;
     inset-block-start: 0;
-    max-height: calc(100dvh - appearance.token("header-height"));
-    overflow-y: auto;
-    box-sizing: border-box;
+    height: auto;
+    width: appearance.token("sidebar-width");
+    opacity: 1;
+    translate: 0;
+    transition: none;
+  }
+  // An already-open native popover remains in the top layer after resizing.
+  // Keep its single navigation tree aligned with the reserved desktop column.
+  .shell > .navigation[popover]:popover-open,
+  .shell[dir="rtl"] > .navigation[popover]:popover-open,
+  :root[dir="rtl"] .shell:not([dir="ltr"]) > .navigation[popover]:popover-open {
+    position: fixed;
+    inset-block-start: appearance.token("header-height");
+    height: calc(100dvh - appearance.token("header-height"));
   }
   .menuTrigger {
     display: none;
+  }
+  .shell > main,
+  .shell:has(> .navigation:popover-open) > main,
+  .shell[dir="rtl"]:has(> .navigation:popover-open) > main,
+  :root[dir="rtl"]
+    .shell:not([dir="ltr"]):has(> .navigation:popover-open)
+    > main {
+    translate: 0;
+    transition: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .shell > .navigation[popover],
+  .shell > .navigation[popover]:popover-open,
+  .shell > main,
+  .shell:has(> .navigation:popover-open) > main {
+    transition: none;
   }
 }

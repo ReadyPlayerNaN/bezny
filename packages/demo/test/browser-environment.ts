@@ -4,6 +4,12 @@ beforeEach(() => {
   window.sessionStorage.clear();
 });
 
+// CSS modules are mocked: expose the native shell navigation as on desktop.
+// Native Popover behavior and responsive CSS are verified in base Chromium tests.
+const desktopStyle = document.createElement("style");
+desktopStyle.textContent = "nav[popover] { display: block !important; }";
+document.head.append(desktopStyle);
+
 window.scrollTo = vi.fn();
 
 // jsdom lacks pointer capture and scrolling used by Radix Select.
