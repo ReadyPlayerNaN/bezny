@@ -26,3 +26,25 @@
 .pageNavigation {
   flex-wrap: wrap;
 }
+.pageLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-block-size: appearance.token("height");
+  min-inline-size: appearance.token("height");
+  padding-inline: appearance.token("gap");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  text-decoration: none;
+  &:hover,
+  &[aria-current="page"] {
+    background: appearance.token("hover");
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: appearance.token("focus-ring");
+  }
+}

@@ -9,6 +9,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@bezny/base";
+import { Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -16,6 +17,8 @@ import { useTranslation } from "react-i18next";
 import { useAdminEntityContext } from "./admin-entity-context.js";
 import type { AdminCommand } from "./admin-entity-model.js";
 import { useAdminListControls } from "./admin-list-controls.js";
+import { adminListSearch } from "./admin-list-search.js";
+import { useAdminRouteBindings } from "./admin-route-bindings.js";
 
 import styles from "./admin-collection.module.scss";
 
@@ -112,6 +115,7 @@ export const AdminCollectionPagination = () => {
   const { paginationCommands, query, pageCount, total } =
     useAdminListControls();
   const { entity } = useAdminEntityContext();
+  const bindings = useAdminRouteBindings();
   const { t, i18n } = useTranslation("beznyAdmin");
   const { execute, failed } = useCollectionExecution();
   const pageSizeId = useId();
@@ -129,9 +133,6 @@ export const AdminCollectionPagination = () => {
   );
   const next = paginationCommands.find(
     (command) => command.id === `${entity?.key}.page.next`
-  );
-  const go = paginationCommands.find(
-    (command) => command.id === `${entity?.key}.page.go`
   );
   const size = paginationCommands.find(
     (command) => command.id === `${entity?.key}.page.size`
@@ -163,19 +164,21 @@ export const AdminCollectionPagination = () => {
             {index > 0 && page > (pages[index - 1] ?? 0) + 1 && (
               <span aria-hidden="true">… </span>
             )}
-            <Button
-              variant="secondary"
+            <Link
+              to={bindings.list.path}
+              params={{ entity: entity?.key ?? "" }}
+              search={(current: Record<string, unknown>) =>
+                adminListSearch({ ...query, page }, entity ?? {}, current)
+              }
+              resetScroll={false}
+              preload={false}
+              className={styles.pageLink}
               aria-current={page === query.page ? "page" : undefined}
               aria-label={t("defaults.page", { page: formatter.format(page) })}
-              disabled={!go || page === query.page || pageCount === null}
-              onClick={() => {
-                if (go) {
-                  void execute(go, String(page));
-                }
-              }}
+              disabled={pageCount === null}
             >
               {formatter.format(page)}
-            </Button>
+            </Link>
           </span>
         ))}
         <IconButton

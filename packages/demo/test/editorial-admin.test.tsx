@@ -269,6 +269,9 @@ describe("registration-driven editorial admin", () => {
         main.queryByRole("heading", { name: "Welcome to Bezny" })
       ).toBeNull()
     );
+    expect(application.router.state.location.search.filters).toStrictEqual({
+      search: "Planning",
+    });
     await runCommand(user, "Filter by Search");
     const input = within(screen.getByRole("dialog")).getByRole("textbox", {
       name: "Search",
@@ -280,6 +283,9 @@ describe("registration-driven editorial admin", () => {
     expect(application.store.get(application.session.snapshotAtom).total).toBe(
       1
     );
+    expect(application.router.state.location.search.filters).toStrictEqual({
+      search: "Welcome",
+    });
   });
 
   it("configures choice filters and page size through shared palette commands", async () => {
@@ -297,6 +303,9 @@ describe("registration-driven editorial admin", () => {
         application.store.get(application.session.snapshotAtom).total
       ).toBe(1)
     );
+    expect(application.router.state.location.search.filters).toStrictEqual({
+      status: "draft",
+    });
     await runCommand(user, "Change page size");
     await user.click(
       within(screen.getByRole("dialog")).getByRole("combobox", {
@@ -310,6 +319,7 @@ describe("registration-driven editorial admin", () => {
         application.store.get(application.session.snapshotAtom).query.pageSize
       ).toBe(10)
     );
+    expect(application.router.state.location.search.pageSize).toBe(10);
   });
 
   it("paginates, resets selection on filtering, and clamps after later-page deletion", async () => {
@@ -326,6 +336,7 @@ describe("registration-driven editorial admin", () => {
     );
     await runCommand(user, "Next page");
     await main.findByRole("heading", { name: "Fourth article" });
+    expect(application.router.state.location.search.page).toBe(2);
     expect(application.store.get(adminSelectionAtom)).toBeNull();
     fireEvent.contextMenu(main.getByRole("group", { name: "Item 4" }));
     await user.click(
@@ -340,6 +351,7 @@ describe("registration-driven editorial admin", () => {
     expect(
       application.store.get(application.session.snapshotAtom).query.page
     ).toBe(1);
+    expect(application.router.state.location.search.page).toBeUndefined();
     await applySearch(user, "Planning");
     await waitFor(() =>
       expect(

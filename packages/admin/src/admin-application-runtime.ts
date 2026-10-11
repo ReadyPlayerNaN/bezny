@@ -22,6 +22,7 @@ import type {
   AdminStore,
 } from "./admin-entity-model.js";
 import { createAdminI18n } from "./admin-i18n.js";
+import { adminListSearch, readAdminListSearch } from "./admin-list-search.js";
 import { adminListQueriesAtom } from "./admin-list-state.js";
 import {
   adminRouteLocation,
@@ -76,12 +77,34 @@ export const createAdminRuntime = ({
   }
   let location: AdminEntityLocation | null = null;
   let destination: AdminEntityLocation | null = null;
+  let destinationHref: string | null = null;
   let navigation = 0;
   let pending: Promise<void> = Promise.resolve();
   let activeKey: string | null = null;
   let router: AnyRouter | null = null;
   let disconnect: (() => void) | null = null;
   let paused = false;
+  let listSearch: unknown = {};
+  const hydrateListQuery = (
+    next: AdminEntityLocation | null,
+    routeLocation?: { search: unknown }
+  ) => {
+    const entity = next ? registry.get(next.entity) : undefined;
+    if (next?.view !== "list" || !entity) {
+      return;
+    }
+    listSearch = routeLocation?.search ?? router?.state.location.search;
+    const query = readAdminListSearch(
+      listSearch,
+      entity,
+      session.policy.maxPageSize,
+      translations.resolvedLanguage ?? translations.language ?? "en"
+    );
+    store.set(adminListQueriesAtom, (queries) => ({
+      ...queries,
+      [entity.key]: query,
+    }));
+  };
   const activate = () => {
     const entity = location ? registry.get(location.entity) : undefined;
     const queries = store.get(adminListQueriesAtom);
@@ -129,10 +152,20 @@ export const createAdminRuntime = ({
     );
     const entityKey = snapshot.entity;
     if (entityKey && snapshot.query.page > last) {
-      store.set(adminListQueriesAtom, (queries) => ({
-        ...queries,
-        [entityKey]: { ...snapshot.query, page: last },
-      }));
+      const entity = registry.get(entityKey);
+      if (entity && router) {
+        void router.navigate({
+          params: { entity: entityKey },
+          replace: true,
+          resetScroll: false,
+          search: adminListSearch(
+            { ...snapshot.query, page: last },
+            entity,
+            listSearch
+          ),
+          to: bindings.list.path,
+        });
+      }
     }
   };
   const languageChanged = () => {
@@ -146,6 +179,7 @@ export const createAdminRuntime = ({
     const subscriptions = [
       currentRouter.subscribe("onBeforeLoad", (event) => {
         navigation += 1;
+        destinationHref = event.toLocation.href;
         destination = adminRouteLocation(
           bindings,
           currentRouter.matchRoutes(event.toLocation).at(-1)
@@ -158,9 +192,6 @@ export const createAdminRuntime = ({
           store.set(adminPageCommandsAtom, null);
           void select(null);
         }
-      }),
-      store.sub(adminListQueriesAtom, () => {
-        void activate();
       }),
       store.sub(session.snapshotAtom, clampPage),
     ];
@@ -187,6 +218,8 @@ export const createAdminRuntime = ({
     disconnect?.();
     location = null;
     destination = null;
+    destinationHref = null;
+    listSearch = {};
     navigation += 1;
     activeKey = null;
     session.pause();
@@ -201,7 +234,7 @@ export const createAdminRuntime = ({
       if (session.diagnostics().disposed) {
         throw new Error("The admin application has been disposed.");
       }
-      for (const binding of Object.values(bindings)) {
+      for (const [view, binding] of Object.entries(bindings)) {
         const route = host.routesById[binding.id];
         if (!route || route.fullPath !== binding.path) {
           throw new Error(
@@ -210,7 +243,28 @@ export const createAdminRuntime = ({
         }
         // Route-loader caching is not the entity cache. In particular, a
         // speculative preload must not suppress activation on real navigation.
-        route.update({ preloadStaleTime: 0, shouldReload: true, staleTime: 0 });
+        const hostLoaderDeps = route.options.loaderDeps;
+        route.update({
+          preloadStaleTime: 0,
+          shouldReload: true,
+          staleTime: 0,
+          ...(view === "list"
+            ? {
+                loaderDeps: ({
+                  search,
+                }: {
+                  search: Record<string, unknown>;
+                }) => ({
+                  ...hostLoaderDeps?.({ search }),
+                  beznyCollectionQuery: {
+                    filters: search.filters,
+                    page: search.page,
+                    pageSize: search.pageSize,
+                  },
+                }),
+              }
+            : {}),
+        });
       }
       router = host;
       connect();
@@ -226,10 +280,12 @@ export const createAdminRuntime = ({
         params,
         preload,
         abortController,
+        location: routeLocation,
       }: {
         params: { entity?: string; recordId?: string };
         preload: boolean;
         abortController?: AbortController;
+        location?: { search: unknown; href?: string };
       }) => {
         if (
           preload ||
@@ -242,12 +298,16 @@ export const createAdminRuntime = ({
           params,
           routeId: bindings[view].id,
         });
+        if (routeLocation?.href && routeLocation.href !== destinationHref) {
+          return;
+        }
         if (JSON.stringify(next) !== JSON.stringify(destination)) {
           return;
         }
         if (JSON.stringify(next) !== JSON.stringify(location)) {
           store.set(adminPageCommandsAtom, null);
         }
+        hydrateListQuery(next, routeLocation);
         const generation = navigation;
         const cancel = () => {
           if (generation === navigation) {
@@ -258,9 +318,7 @@ export const createAdminRuntime = ({
           once: true,
         });
         try {
-          await (JSON.stringify(next) === JSON.stringify(location)
-            ? pending
-            : select(next));
+          await select(next);
           // A response can clamp a now-empty last page and start another read.
           // Do not finish the loader until the current navigation has settled.
           let observed: Promise<void>;

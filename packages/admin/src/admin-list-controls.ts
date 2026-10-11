@@ -1,3 +1,4 @@
+import { useRouter } from "@tanstack/react-router";
 import { useStore } from "jotai";
 import { useTranslation } from "react-i18next";
 
@@ -8,7 +9,11 @@ import {
   useAdminEntityContext,
 } from "./admin-entity-context.js";
 import type { AdminCommand } from "./admin-entity-model.js";
+import { adminListSearch } from "./admin-list-search.js";
 import { adminListQueriesAtom } from "./admin-list-state.js";
+import { useAdminRouteBindings } from "./admin-route-bindings.js";
+
+export { adminListSearch, readAdminListSearch } from "./admin-list-search.js";
 
 export { AdminSelectionBar } from "./admin-selection-bar.js";
 
@@ -27,6 +32,8 @@ export const useAdminListControls = () => {
   const context = useAdminEntityContext();
   const session = useAdminDataSession();
   const store = useStore();
+  const router = useRouter();
+  const bindings = useAdminRouteBindings();
   const { entity, query } = context;
   const active = entity !== null && context.view === "list";
   const total = context.data?.status === "ready" ? context.data.total : null;
@@ -52,10 +59,12 @@ export const useAdminListControls = () => {
     ) {
       return;
     }
-    store.set(adminListQueriesAtom, (queries) => ({
-      ...queries,
-      [entity.key]: next,
-    }));
+    return router.navigate({
+      params: { entity: entity.key },
+      resetScroll: false,
+      search: adminListSearch(next, entity, router.state.location.search),
+      to: bindings.list.path,
+    });
   };
   const setPage = (value: string) => {
     const page = Number(value);
@@ -66,7 +75,7 @@ export const useAdminListControls = () => {
     ) {
       throw new Error("Invalid page number.");
     }
-    update({ ...query, page });
+    return update({ ...query, page });
   };
   const filterCommands: AdminCommand[] = active
     ? (entity.filters ?? []).map((filter) => {
@@ -89,7 +98,7 @@ export const useAdminListControls = () => {
           if (normalized) {
             filters[filter.key] = normalized;
           }
-          update({ ...query, filters, page: 1 });
+          return update({ ...query, filters, page: 1 });
         };
         return {
           execute: () => execute(value),
@@ -135,9 +144,9 @@ export const useAdminListControls = () => {
       },
       label: t("go"),
     });
-    const sizes = [...new Set([entity.pageSize ?? 25, 10, 25, 50, 100])].filter(
-      (size) => size <= session.policy.maxPageSize
-    );
+    const sizes = [
+      ...new Set([entity.pageSize ?? 25, query.pageSize, 10, 25, 50, 100]),
+    ].filter((size) => size <= session.policy.maxPageSize);
     paginationCommands.push({
       execute: () => update({ ...query, page: 1 }),
       id: `${entity.key}.page.size`,
@@ -147,7 +156,7 @@ export const useAdminListControls = () => {
           if (!sizes.includes(pageSize)) {
             throw new Error("Invalid page size.");
           }
-          update({ ...query, page: 1, pageSize });
+          return update({ ...query, page: 1, pageSize });
         },
         label: t("recordsPerPage"),
         options: sizes.map((size) => ({

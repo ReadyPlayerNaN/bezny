@@ -283,7 +283,7 @@ describe("registration-driven default pages", () => {
       Node.DOCUMENT_POSITION_FOLLOWING
     );
     expect(paging.querySelector("form")).toBeNull();
-    await user.click(within(paging).getByRole("button", { name: "Page 2" }));
+    await user.click(within(paging).getByRole("link", { name: "Page 2" }));
     await expect(screen.findByText("Second")).resolves.toBeTruthy();
     await user.click(
       within(paging).getByRole("combobox", { name: "Records per page" })
@@ -297,7 +297,7 @@ describe("registration-driven default pages", () => {
     );
     expect(
       within(paging)
-        .getByRole("button", { name: "Page 1" })
+        .getByRole("link", { name: "Page 1" })
         .getAttribute("aria-current")
     ).toBe("page");
   });

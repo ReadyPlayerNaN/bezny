@@ -61,7 +61,7 @@ List/detail pages are available by default. Default create/update pages require 
 
 The default list uses the existing `ValueFilter` search/value chips and `ChoiceFilter` option chips above the rows. It does not recreate filter editors with inline forms.
 
-A single pagination navigation appears **below** the rows (including empty/loading states): locale-formatted page/total summary, Previous/Next, a bounded numbered-page window with first/last anchors, and one inline records-per-page selector. There are no page-number/page-size forms. The same validated commands remain available as parameterized inputs in the palette.
+A single pagination navigation appears **below** the rows (including empty/loading states): locale-formatted page/total summary, Previous/Next icon buttons, a bounded numbered-page window of TanStack hyperlinks with first/last anchors, and one inline records-per-page selector. There are no page-number/page-size forms. Page, page size, search, and filters live in URL search parameters, synchronized into Jotai by admitted loaders. Copying a numbered-page link preserves the full listing query; Back/Forward and reload restore it. Ordinary controls and parameterized palette inputs navigate through the same validated contract. See [shareable listing URLs](ENTITIES.md#shareable-listing-urls).
 
 `AdminCollectionFilters` and `AdminCollectionPagination` are exported from `@bezny/admin/list` for custom list compositions. Their responsive flex layout uses `--bezny-control-admin-collection-*` aliases for structural surface gap, padding, border, text, and typography. Override shared structural aliases on their declaration scope; component control aliases can be overridden on the filters/pagination boundary after loading `@bezny/admin/style.css`.
 
@@ -83,7 +83,7 @@ For dependent fields, register `field.deriveValues(values, record)` to return a 
 
 Use `screens: { list?, detail?, create?, update? }` to replace individual pages. `AdminDefaultListPage`, `AdminDefaultDetailPage`, `AdminDefaultFormPage`, `AdminDefaultLoadingPage`, and `AdminDefaultUnavailablePage` are also exported from `@bezny/admin/application` for custom compositions inside the active entity route.
 
-The built-in router displays `AdminDefaultLoadingPage` while an initial/navigation loader is pending. For host-owned file routes, use it as the route's `pendingComponent` (or provide a custom pending page); the host owns pending timing. List query/refresh loading states are handled by the default list itself.
+The built-in router displays `AdminDefaultLoadingPage` while an initial/navigation loader is pending. For host-owned file routes, use it as the route's `pendingComponent` (or provide a custom pending page); the host owns pending timing. In-place refresh loading states are handled by the default list itself; URL-driven query changes also participate in the router's loader/pending timing.
 
 Custom entity actions remain available in the default pages and palette. Register a record action with ID `delete` or a selection action with ID `delete-selected` to replace that default deletion command, including its permission/confirmation behavior. This avoids duplicate actions and preserves existing application-owned deletion workflows. Custom destructive actions must request their own confirmation.
 

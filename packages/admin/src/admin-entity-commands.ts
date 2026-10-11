@@ -4,6 +4,7 @@ import { atom, useAtomValue, useSetAtom, useStore } from "jotai";
 import { useCallback, useEffect, useId, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import { defaultAdminListQuery } from "./admin-data-session.js";
 import {
   useAdminEntityContext,
   useAdminEntityRegistry,
@@ -23,6 +24,8 @@ import type {
 } from "./admin-entity-model.js";
 import { adminLanguages } from "./admin-i18n.js";
 import { useAdminListControls } from "./admin-list-controls.js";
+import { adminListSearch } from "./admin-list-search.js";
+import { adminListQueriesAtom } from "./admin-list-state.js";
 import {
   adminRouteLocation,
   useAdminRouteBindings,
@@ -31,6 +34,8 @@ import {
 export const useAdminEntityNavigate = (): AdminEntityNavigate => {
   const navigate = useNavigate();
   const bindings = useAdminRouteBindings();
+  const store = useStore();
+  const registry = useAdminEntityRegistry();
   return useCallback(
     async (location) => {
       if ("recordId" in location) {
@@ -47,13 +52,29 @@ export const useAdminEntityNavigate = (): AdminEntityNavigate => {
           to: bindings[location.view].path,
         });
       } else {
+        const entity = registry.get(location.entity);
+        const queries = store.get(adminListQueriesAtom);
+        const query = Object.hasOwn(queries, location.entity)
+          ? queries[location.entity]
+          : undefined;
         await navigate({
           params: { entity: location.entity },
           to: bindings[location.view].path,
+          ...(location.view === "list" && entity
+            ? {
+                search: adminListSearch(
+                  query ?? {
+                    ...defaultAdminListQuery,
+                    pageSize: entity.pageSize ?? 25,
+                  },
+                  entity
+                ),
+              }
+            : {}),
         });
       }
     },
-    [navigate, bindings]
+    [navigate, bindings, registry, store]
   );
 };
 
