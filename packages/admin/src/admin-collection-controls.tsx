@@ -1,5 +1,6 @@
 import {
   Button,
+  IconButton,
   ChoiceFilter,
   ValueFilter,
   Select,
@@ -8,6 +9,7 @@ import {
   SelectContent,
   SelectItem,
 } from "@bezny/base";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useId, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -114,6 +116,7 @@ export const AdminCollectionPagination = () => {
   const { execute, failed } = useCollectionExecution();
   const pageSizeId = useId();
   const language = i18n.resolvedLanguage ?? i18n.language;
+  const isRtl = i18n.dir(language) === "rtl";
   const formatter = useMemo(
     () =>
       new Intl.NumberFormat(language, {
@@ -144,17 +147,17 @@ export const AdminCollectionPagination = () => {
         })}
       </output>
       <div className={styles.pageNavigation}>
-        <Button
+        <IconButton
           variant="secondary"
+          icon={isRtl ? ChevronRight : ChevronLeft}
+          aria-label={t("previous")}
           disabled={!previous}
           onClick={() => {
             if (previous) {
               void execute(previous);
             }
           }}
-        >
-          {t("previous")}
-        </Button>
+        />
         {pages.map((page, index) => (
           <span key={page}>
             {index > 0 && page > (pages[index - 1] ?? 0) + 1 && (
@@ -175,17 +178,17 @@ export const AdminCollectionPagination = () => {
             </Button>
           </span>
         ))}
-        <Button
+        <IconButton
           variant="secondary"
+          icon={isRtl ? ChevronLeft : ChevronRight}
+          aria-label={t("next")}
           disabled={!next}
           onClick={() => {
             if (next) {
               void execute(next);
             }
           }}
-        >
-          {t("next")}
-        </Button>
+        />
       </div>
       {size?.input?.options && (
         <div className={styles.pageSize}>

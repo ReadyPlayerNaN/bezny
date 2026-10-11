@@ -247,6 +247,32 @@ describe("registration-driven default pages", () => {
     );
   });
 
+  it("uses labeled icon buttons for previous and next with keyboard navigation and boundary states", async () => {
+    const { app } = fixture();
+    await mount(app);
+    const user = userEvent.setup();
+    const previous = screen.getByRole("button", { name: "Previous page" });
+    const next = screen.getByRole("button", { name: "Next page" });
+    expect(
+      [previous, next].map((button) => ({
+        disabled: button.hasAttribute("disabled"),
+        icon: button.querySelector("svg") !== null,
+        text: button.textContent,
+      }))
+    ).toStrictEqual([
+      { disabled: true, icon: true, text: "" },
+      { disabled: false, icon: true, text: "" },
+    ]);
+    next.focus();
+    await user.keyboard("{Enter}");
+    await expect(screen.findByText("Second")).resolves.toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Next page" }).hasAttribute("disabled")
+    ).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Previous page" }));
+    await expect(screen.findByText("First")).resolves.toBeTruthy();
+  });
+
   it("places one integrated pagination control below the list with page buttons and page size", async () => {
     const { app, adapter } = fixture();
     await mount(app);
