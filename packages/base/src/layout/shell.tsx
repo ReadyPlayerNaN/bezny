@@ -1,4 +1,4 @@
-import { Menu, X } from "lucide-react";
+import { PanelLeft, X } from "lucide-react";
 import { useRef, useState } from "react";
 import type { ComponentPropsWithRef, MouseEvent, ReactNode } from "react";
 
@@ -99,7 +99,7 @@ export const Shell = ({
                   <DialogTrigger asChild>
                     <IconButton
                       ref={menuRef}
-                      icon={Menu}
+                      icon={PanelLeft}
                       aria-label={openNavigationLabel}
                       variant="secondary"
                     />
