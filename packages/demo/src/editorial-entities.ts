@@ -1,81 +1,51 @@
 import { defineAdminEntity } from "@bezny/admin/adapters";
 import type { AdminEntityDefinition } from "@bezny/admin/adapters";
-import type { AdminActionScope } from "@bezny/admin/entities";
 import type { i18n } from "i18next";
 
 import {
-  EditorialCreatePage,
-  EditorialDetailPage,
-  EditorialListPage,
-  EditorialUpdatePage,
-} from "./editorial-pages.js";
+  editorialContentLocales,
+  isEditorialContentLocale,
+  readEditorialContent,
+} from "./editorial-content.js";
 import type { EditorialRepository } from "./editorial-records.js";
 import {
-  deletionRequestAtom,
   editorialResources,
+  editorialTextLimits,
+  parseEditorialRecord,
   parseEditorialValues,
 } from "./editorial-records.js";
 
-const deletionFocusTarget = (scope: AdminActionScope): HTMLElement | null => {
-  const active = document.activeElement;
-  if (!(active instanceof HTMLElement)) {
-    return null;
-  }
-  if (active.closest('[role="menu"]')) {
-    for (const row of document.querySelectorAll<HTMLElement>(
-      "[data-admin-entity] [data-selection-id]"
-    )) {
-      if (
-        row.dataset.selectionId === scope.ids[0] &&
-        row.closest<HTMLElement>("[data-admin-entity]")?.dataset.adminEntity ===
-          scope.entity.key
-      ) {
-        return row;
-      }
-    }
-  }
-  return active;
-};
-const requestDeletion = (scope: AdminActionScope) => {
-  scope.store.set(deletionRequestAtom, {
-    entity: scope.entity.key,
-    ids: scope.ids,
-    labels: scope.records.map((record) => record.label),
-    returnFocus: deletionFocusTarget(scope),
-  });
-};
-
-/** Register a resource once. No entity-specific route or palette entries. */
+/** All CRUD pages, fields, commands and confirmation UI come from registration. */
 export const createEditorialEntities = (
   repository: EditorialRepository,
   translations: i18n
-): AdminEntityDefinition[] =>
-  editorialResources.map((resource) =>
+): AdminEntityDefinition[] => {
+  const contentLocale = () =>
+    isEditorialContentLocale(translations.resolvedLanguage)
+      ? translations.resolvedLanguage
+      : "en";
+  return editorialResources.map((resource) =>
     defineAdminEntity({
-      actions: [
+      adapter: repository.adapter(resource.key),
+      columns: [
         {
-          destructive: true,
-          execute: requestDeletion,
-          id: "delete",
-          label: (scope) =>
-            translations.t("editorial:delete", {
-              record: scope.records[0]?.label ?? scope.entity.singularLabel,
-            }),
-          target: "record",
+          key: "body",
+          label: "Body",
+          labelKey: "editorial:body",
+          render: (data) => parseEditorialRecord(data).body,
         },
         {
-          destructive: true,
-          execute: requestDeletion,
-          id: "delete-selected",
-          label: (scope) =>
-            translations.t("editorial:deleteSelection", {
-              count: scope.ids.length,
-              entity: scope.entity.label.toLocaleLowerCase(),
-            }),
-          target: "selection",
+          key: "published",
+          label: "Status",
+          labelKey: "editorial:status",
+          render: (data) =>
+            translations.t(
+              parseEditorialRecord(data).published
+                ? "editorial:published"
+                : "editorial:draft"
+            ),
         },
       ],
-      adapter: repository.adapter(resource.key),
       filters: [
         { key: "search", label: "Search", labelKey: "editorial:search" },
         {
@@ -92,19 +62,78 @@ export const createEditorialEntities = (
           ],
         },
       ],
+      form: {
+        defaultValues: () => ({
+          body: "",
+          contentLocale: contentLocale(),
+          published: false,
+          title: "",
+        }),
+        fields: [
+          {
+            deriveValues: async (values, data) => {
+              if (
+                data === undefined ||
+                !isEditorialContentLocale(values.contentLocale)
+              ) {
+                return {};
+              }
+              return await readEditorialContent(
+                parseEditorialRecord(data),
+                values.contentLocale
+              );
+            },
+            key: "contentLocale",
+            label: "Content language",
+            labelKey: "editorial:contentLanguage",
+            options: editorialContentLocales.map((locale) => ({
+              label: locale,
+              labelKey: `beznyAdmin:languages.${locale}`,
+              value: locale,
+            })),
+            required: true,
+            type: "select",
+          },
+          {
+            key: "title",
+            label: "Title",
+            labelKey: "editorial:title",
+            maxLength: editorialTextLimits.title,
+            required: true,
+          },
+          {
+            key: "body",
+            label: "Body",
+            labelKey: "editorial:body",
+            maxLength: editorialTextLimits.body,
+            required: true,
+            type: "textarea",
+          },
+          {
+            key: "published",
+            label: "Published",
+            labelKey: "editorial:published",
+            type: "checkbox",
+          },
+        ],
+        readValues: (data) => {
+          const record = parseEditorialRecord(data);
+          return {
+            body: record.body,
+            contentLocale: contentLocale(),
+            published: record.published,
+            title: record.title,
+          };
+        },
+      },
       key: resource.key,
       label: resource.label,
       labelKey: `editorial:entities.${resource.key}.plural`,
       pageSize: 3,
       parseValues: parseEditorialValues,
       reference: (record) => ({ id: record.id, label: record.title }),
-      screens: {
-        create: EditorialCreatePage,
-        detail: EditorialDetailPage,
-        list: EditorialListPage,
-        update: EditorialUpdatePage,
-      },
       singularLabel: resource.singularLabel,
       singularLabelKey: `editorial:entities.${resource.key}.singular`,
     })
   );
+};

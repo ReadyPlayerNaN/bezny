@@ -11,7 +11,7 @@ This private workspace package builds ESM JavaScript and TypeScript declarations
 | `@bezny/admin` | `AdminProvider`, `AdminProviderProps` |
 | `@bezny/admin/layout` | `AdminLayout` |
 | `@bezny/admin/header` | `AdminHeader`, `AdminCommandPalette`, `AdminAccountMenu`, `AdminLanguageMenuItems`, their props, and `adminCommandPaletteTriggerId` |
-| `@bezny/admin/style.css` | Package-owned header, palette, and account-form styles |
+| `@bezny/admin/style.css` | Package-owned header, palette, account-form, and collection-control styles |
 | `@bezny/admin/toasts` | `useAdminToasts`, `AdminToastProvider`, message/options/API types |
 | `@bezny/admin/page` | `AdminPage` |
 | `@bezny/admin/building-blocks` | `AdminBuildingBlocksProvider`, `useAdminBuildingBlocks`, default implementations, and their prop/override types |
@@ -231,7 +231,7 @@ Define replacements at module scope. Changing the override object alone does not
 
 ## Registered entity applications
 
-Use [registered entity applications](ENTITIES.md) when building an entity-oriented admin. Typed entity/adapter definitions and an application-owned bounded data session drive the generic `/$entity`, `/$entity/create`, `/$entity/$recordId`, and `/$entity/$recordId/edit` routes and the shared command catalog. Context comes from route matches, not pathname parsing. Form screens register real callbacks for the palette rather than hardcoding form IDs. The low-level provider above remains useful when owning a different route tree.
+Use [registered entity applications](ENTITIES.md) when building an entity-oriented admin. Typed entity/adapter definitions and an application-owned bounded data session drive the generic `/$entity`, `/$entity/create`, `/$entity/$recordId`, and `/$entity/$recordId/edit` routes and the shared command catalog. Context comes from route matches, not pathname parsing. Default CRUD pages derive fields, filters, columns, and commands from registration; custom screens remain optional per-view overrides. Shared filter chips sit above the list and one integrated pagination navigation sits below it. See [default pages](DEFAULT-PAGES.md) for configuration. Form screens register real callbacks for the palette rather than hardcoding form IDs. The low-level provider above remains useful when owning a different route tree.
 
 ## File-based routing
 
@@ -241,7 +241,7 @@ Both routing modes run the admin behavior suite and the complete demo test journ
 
 ## Runnable application example
 
-[`@bezny/demo`](../demo/README.md) registers Articles and Pages using the shared entity application API. It supplies customized presentation, a bounded adapter-backed mock repository, RHF forms, and deletion confirmation; generic routes, entity context, bounded data/cache lifetimes, selection, localization/direction integration, and the command catalog come from `@bezny/admin`. Run `pnpm --filter @bezny/demo dev` from the repository root.
+[`@bezny/demo`](../demo/README.md) registers Articles and Pages using the shared entity application API. It supplies shell branding, authentication bindings, a bounded adapter-backed mock repository, and domain field/filter/column registrations. CRUD pages, RHF forms, shared filter chips, below-list pagination, deletion confirmation, generic routes, entity context, bounded data/cache lifetimes, selection, localization/direction integration, and the command catalog come from `@bezny/admin`; no custom entity pages remain in the demo. Run `pnpm --filter @bezny/demo dev` from the repository root.
 
 ## Required direction for future development
 

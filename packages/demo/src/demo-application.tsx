@@ -4,6 +4,7 @@ import {
 } from "@bezny/admin/application";
 import { createAdminI18n } from "@bezny/admin/i18n";
 import type { RouterHistory } from "@tanstack/react-router";
+import { createStore } from "jotai";
 import { useEffect } from "react";
 
 import { editorialAccountTranslations } from "./editorial-account-translations.js";
@@ -11,12 +12,7 @@ import { createEditorialAuthentication } from "./editorial-auth-session.js";
 import { editorialAuthenticationAtom } from "./editorial-auth-state.js";
 import { createEditorialEntities } from "./editorial-entities.js";
 import { editorialComponents, EditorialShell } from "./editorial-layout.js";
-import { MissingEntityPage } from "./editorial-pages.js";
-import {
-  createEditorialRepository,
-  deletionRequestAtom,
-  noticeAtom,
-} from "./editorial-records.js";
+import { createEditorialRepository, noticeAtom } from "./editorial-records.js";
 import { editorialTranslations } from "./editorial-translations.js";
 
 export const createDemoApplication = (
@@ -31,16 +27,18 @@ export const createDemoApplication = (
       en: { ...editorialTranslations.en, ...editorialAccountTranslations.en },
     }),
   });
-  const repository = createEditorialRepository();
+  const store = createStore();
+  const repository = createEditorialRepository((notice) =>
+    store.set(noticeAtom, notice)
+  );
   const application = createAdminApplication({
-    NotFound: MissingEntityPage,
     Root: EditorialShell,
     entities: createEditorialEntities(repository, i18n),
     i18n,
+    store,
     ...(history ? { history } : {}),
   });
   const clearPresentation = () => {
-    application.store.set(deletionRequestAtom, null);
     application.store.set(noticeAtom, null);
   };
   application.session.onDispose(clearPresentation);
@@ -54,7 +52,6 @@ export type DemoApplication = ReturnType<typeof createDemoApplication>;
 export const DemoApp = ({ application }: { application: DemoApplication }) => {
   useEffect(
     () => () => {
-      application.store.set(deletionRequestAtom, null);
       application.store.set(noticeAtom, null);
     },
     [application]

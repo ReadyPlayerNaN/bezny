@@ -26,7 +26,6 @@ import {
   editorialUserAtom,
 } from "./editorial-auth-state.js";
 import { EditorialLogin } from "./editorial-authentication.js";
-import { EditorialDeleteDialog } from "./editorial-dialogs.js";
 import { noticeAtom } from "./editorial-records.js";
 
 import styles from "./editorial-admin.module.scss";
@@ -88,48 +87,42 @@ const EditorialWorkspace = () => {
       })
     : "";
   return (
-    <>
-      <AdminLayout
-        header={
-          <AdminHeader title={t("shell")} tools={<EditorialAccountMenu />} />
-        }
-        navigation={
-          <ul>
-            {registry.entities.map((entity) => (
-              <li key={entity.key}>
-                <Link
-                  to="/$entity"
-                  params={{ entity: entity.key }}
-                  activeProps={{ "aria-current": "page" }}
-                >
-                  {entity.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        }
-        navigationLabel={t("navigation")}
-        openNavigationLabel={t("openNavigation")}
-        closeNavigationLabel={t("closeNavigation")}
-        footer={
-          <>
-            {t("footer")}
-            <output
-              className={styles.statusBar}
-              aria-label={t("currentContext")}
-            >
-              <span title={t("context", { label: contextLabel })}>
-                {t("context", { label: contextLabel })}
-              </span>
-            </output>
-          </>
-        }
-      >
-        <output aria-label={t("notifications")}>{noticeText}</output>
-        <Outlet />
-      </AdminLayout>
-      <EditorialDeleteDialog />
-    </>
+    <AdminLayout
+      header={
+        <AdminHeader title={t("shell")} tools={<EditorialAccountMenu />} />
+      }
+      navigation={
+        <ul>
+          {registry.entities.map((entity) => (
+            <li key={entity.key}>
+              <Link
+                to="/$entity"
+                params={{ entity: entity.key }}
+                activeProps={{ "aria-current": "page" }}
+              >
+                {entity.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      }
+      navigationLabel={t("navigation")}
+      openNavigationLabel={t("openNavigation")}
+      closeNavigationLabel={t("closeNavigation")}
+      footer={
+        <>
+          {t("footer")}
+          <output className={styles.statusBar} aria-label={t("currentContext")}>
+            <span title={t("context", { label: contextLabel })}>
+              {t("context", { label: contextLabel })}
+            </span>
+          </output>
+        </>
+      }
+    >
+      <output aria-label={t("notifications")}>{noticeText}</output>
+      <Outlet />
+    </AdminLayout>
   );
 };
 

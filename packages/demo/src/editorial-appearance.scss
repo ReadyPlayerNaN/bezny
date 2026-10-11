@@ -15,22 +15,13 @@ $-definitions: (
       background,
       text,
       muted,
-      accent,
       border,
       border-width,
       padding,
-      padding-small,
       padding-large,
       gap,
-      radius,
-      focus-ring,
       font-family,
-      font-size,
-      line-height,
-      shadow,
-      z-index,
-      hover,
-      danger
+      z-index
     )
 {
   $-definitions: map.set($-definitions, $name, surfaces.token($name));

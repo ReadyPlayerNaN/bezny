@@ -9,7 +9,12 @@ import {
   fileRouteBindings,
 } from "../../admin/test/file-route-application.js";
 
-export { AdminApplicationProvider } from "../../admin/dist/admin-entity-routing.js";
+export {
+  AdminApplicationProvider,
+  AdminDefaultListPage,
+  AdminDefaultDetailPage,
+  AdminDefaultFormPage,
+} from "../../admin/dist/admin-entity-routing.js";
 
 /** Run the unchanged demo acceptance journeys through genuine file routes. */
 export const createAdminApplication = (

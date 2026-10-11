@@ -68,7 +68,7 @@ describe("editorial demo tokens", () => {
     expect(css).not.toMatch(/\.headerTools/u);
   });
 
-  it("caps the banner, fixes the status bar, and reserves space for bottom controls", () => {
+  it("caps the banner and reserves bottom space without retaining custom CRUD styles", () => {
     const { css } = compile(path.resolve("src/editorial-admin.module.scss"));
     expect(css).toMatch(
       /\.application > header \{[^}]*max-height: var\(--bezny-control-editorial-demo-header-height\);[^}]*padding-block: 0;/u
@@ -79,9 +79,7 @@ describe("editorial demo tokens", () => {
     expect(css).toMatch(
       /\.application \{[^}]*padding-block-end: var\(--bezny-control-editorial-demo-status-height\);/u
     );
-    expect(css).toContain(
-      "inset-block-end: calc(var(--bezny-control-editorial-demo-status-height) + var(--bezny-control-editorial-demo-padding))"
-    );
+    expect(css).not.toMatch(/\.(?:selectionBar|actionMenu|recordBody|form)\b/u);
   });
 
   it("keeps reference imports pure and rejects misspelled control keys", () => {

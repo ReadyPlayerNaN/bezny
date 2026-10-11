@@ -122,7 +122,9 @@ export const parseEditorialValues = (value: unknown): EditorialValues => {
 };
 
 /** Bounded, application-owned mock backend. Production adapters belong to a remote/persistent backend. */
-export const createEditorialRepository = () => {
+export const createEditorialRepository = (
+  notify?: (notice: EditorialNotice) => void
+) => {
   const datasets = new Map<string, Map<string, EditorialRecord>>([
     [
       "articles",
@@ -205,6 +207,7 @@ export const createEditorialRepository = () => {
       };
       dataset(key).set(record.id, record);
       nextIds.set(key, nextId + 1);
+      notify?.({ count: 1, entity: key, key: "created" });
       return record;
     },
     dispose,
@@ -236,6 +239,7 @@ export const createEditorialRepository = () => {
       for (const id of ids) {
         dataset(key).delete(id);
       }
+      notify?.({ count: ids.length, entity: key, key: "deleted" });
     },
     update: async (id, values, { signal }) => {
       await Promise.resolve();
@@ -266,6 +270,7 @@ export const createEditorialRepository = () => {
           : {}),
       };
       dataset(key).set(id, record);
+      notify?.({ count: 1, entity: key, key: "updated" });
       return record;
     },
   });
@@ -290,10 +295,3 @@ export interface EditorialNotice {
   count: number;
 }
 export const noticeAtom = atom<EditorialNotice | null>(null);
-export interface DeletionRequest {
-  entity: string;
-  ids: readonly string[];
-  labels: readonly string[];
-  returnFocus: HTMLElement | null;
-}
-export const deletionRequestAtom = atom<DeletionRequest | null>(null);

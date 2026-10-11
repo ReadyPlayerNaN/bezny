@@ -72,7 +72,7 @@ pnpm test
 pnpm --filter @bezny/demo dev
 ```
 
-This builds `@bezny/base` and `@bezny/admin`, then starts the Vite demo server. Open the local URL printed in the terminal and sign in with `editor@example.com` / `bezny-demo`, or simulate Google/GitHub login. The header avatar menu provides profile editing, language selection, and logout. Authentication is simulated entirely in the browser; a mock session token preserves sign-in across refresh until logout, expiry, or closing the tab. No authentication server is involved. Manage registered Articles and Pages through generic entity routes, customized admin pages, selection context, and one shared navigation/command catalog ([demo details](packages/demo/README.md)). Changes are kept in memory and reset on reload.
+This builds `@bezny/base` and `@bezny/admin`, then starts the Vite demo server. Open the local URL printed in the terminal and sign in with `editor@example.com` / `bezny-demo`, or simulate Google/GitHub login. The header avatar menu provides profile editing, language selection, and logout. Authentication is simulated entirely in the browser; a mock session token preserves sign-in across refresh until logout, expiry, or closing the tab. No authentication server is involved. Manage registered Articles and Pages through generic entity routes, registration-derived default CRUD pages, selection context, and one shared navigation/command catalog ([demo details](packages/demo/README.md)). Changes are kept in memory and reset on reload.
 
 ## Structure
 

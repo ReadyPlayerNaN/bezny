@@ -7,7 +7,7 @@ import {
   editorialUserAtom,
   editorialAuthenticationAtom,
 } from "./editorial-auth-state.js";
-import { deletionRequestAtom, noticeAtom } from "./editorial-records.js";
+import { noticeAtom } from "./editorial-records.js";
 
 /** Demo authentication bindings only; all account UI belongs to admin. */
 export const EditorialAccountMenu = () => {
@@ -15,7 +15,6 @@ export const EditorialAccountMenu = () => {
   const user = useAtomValue(editorialUserAtom);
   const authentication = useAtomValue(editorialAuthenticationAtom);
   const setSelection = useSetAtom(adminSelectionAtom);
-  const setDeletion = useSetAtom(deletionRequestAtom);
   const setNotice = useSetAtom(noticeAtom);
   if (!user || !authentication) {
     return null;
@@ -30,7 +29,6 @@ export const EditorialAccountMenu = () => {
       onLogout={async () => {
         await authentication.logout();
         setSelection(null);
-        setDeletion(null);
         setNotice(null);
       }}
     >

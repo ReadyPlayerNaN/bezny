@@ -77,21 +77,17 @@ describe("editorial localization", () => {
     }
   );
 
-  it("localizes the floating selection count and inherits RTL dropdown direction", async () => {
+  it("localizes default selection commands and inherits RTL confirmation direction", async () => {
     const { user } = await renderLocalizedDemo("ar");
     await screen.findByRole("heading", { name: "مرحبًا ببيزني" });
     await user.click(
       screen.getByRole("checkbox", { name: "تحديد مرحبًا ببيزني" })
     );
-    const bar = screen.getByRole("group", { name: "العناصر المحددة" });
-    expect(bar.textContent).toBe("١ محدد");
-    const trigger = within(bar).getByRole("button", {
-      name: "إجراءات التحديد",
-    });
+    const trigger = screen.getByRole("button", { name: "حذف المحدد (1)" });
     trigger.focus();
-    await user.keyboard("{ArrowDown}");
-    const menu = await screen.findByRole("menu");
-    expect(menu.getAttribute("dir")).toBe("rtl");
+    await user.keyboard("{Enter}");
+    const dialog = await screen.findByRole("alertdialog");
+    expect(dialog.getAttribute("dir")).toBe("rtl");
     await user.keyboard("{Escape}");
     await waitFor(() => expect(document.activeElement).toBe(trigger));
   });
@@ -114,9 +110,11 @@ describe("editorial localization", () => {
       })
     );
     await screen.findByRole("heading", { name: "مرحبًا ببيزني" });
-    expect(screen.getByLabelText("ترقيم الصفحات").textContent).toBe(
-      "الصفحة ١ من ١ · ٣ سجلًا"
-    );
+    expect(
+      within(
+        screen.getByRole("navigation", { name: "ترقيم الصفحات" })
+      ).getByRole("status").textContent
+    ).toBe("الصفحة ١ من ١ · ٣ سجلًا");
   });
 
   it("localizes RHF validation, submission, and focus refs", async () => {
@@ -124,8 +122,10 @@ describe("editorial localization", () => {
       "cs",
       "/articles/create"
     );
-    await user.click(screen.getByRole("button", { name: "Uložit: článek" }));
-    await expect(screen.findByText("Zadejte název.")).resolves.toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Uložit" }));
+    await expect(
+      screen.findAllByText("Toto pole je povinné.")
+    ).resolves.toHaveLength(2);
     const title = screen.getByRole("textbox", { name: "Název" });
     expect(document.activeElement).toBe(title);
     await user.type(title, "Nový článek");
@@ -133,7 +133,7 @@ describe("editorial localization", () => {
       screen.getByRole("textbox", { name: "Obsah" }),
       "Český obsah"
     );
-    await user.click(screen.getByRole("button", { name: "Uložit: článek" }));
+    await user.click(screen.getByRole("button", { name: "Uložit" }));
     await screen.findByRole("heading", { name: "Nový článek" });
     expect(
       application.repository
@@ -158,7 +158,7 @@ describe("editorial localization", () => {
     );
     await user.clear(title);
     await user.type(title, "Nový název");
-    await user.click(screen.getByRole("button", { name: "Save article" }));
+    await user.click(screen.getByRole("button", { name: "Save" }));
     await screen.findByRole("heading", { name: "Welcome to Bezny" });
     const record = application.repository
       .inspect("articles")
