@@ -11,6 +11,10 @@ pnpm --filter @bezny/demo dev
 
 The dev script builds base/admin first, then starts Vite (normally `http://localhost:5173`). Authentication is simulated entirely in the browser. Without a valid session, the application starts on the login screen; after signing in, `/` opens the first registered entity, Articles. Pages is a second independent entity with the same UI/data shape. Rebuild the library packages after editing their source; demo edits update through Vite.
 
+## Framework header and tools
+
+The header title/tool arrangement, command palette/input editor, avatar/account dropdown/profile form, and language-menu UI are supplied by `@bezny/admin/header`, with styles from `@bezny/admin/style.css`. The demo uses `AdminHeader`; its account wrapper only binds the mock session, persistence callbacks and logout cleanup. No palette or account UI implementation remains in the demo. Applications can reuse these components with their own title, user data, services and registered command catalog.
+
 ## Login and account demo
 
 - **Email/password:** `editor@example.com` / `bezny-demo`. Incorrect credentials show a retryable error; required fields and email format use RHF validation.
@@ -51,7 +55,7 @@ Create/edit screens use RHF and Bezny fields. They register Save/Cancel with `us
 
 Open **Command palette** with its header button or **Ctrl/Cmd+K** (also toggles it closed). Type to search; **↑/↓** move between commands with wraparound, **Home/End** jump to the first/last, and **Enter** executes the highlighted command without leaving search. **Escape** closes it and restores focus. Parameterized commands focus their RHF field; Back returns to the focused search. Destructive commands still open confirmation after the palette closes. The shortcut does not open another modal over an existing dialog.
 
-`cmdk` owns search ranking, listbox selection, and command keyboard navigation; Bezny's Radix Dialog owns modal focus, dismissal, portals, and naming. Flat compact rows replace the button grid, and the introductory paragraph is removed. The search stays at a fixed viewport-relative position while results change. The list scrolls within `min(50dvh, 20rem)`, with the four-layer `--bezny-control-editorial-demo-palette-list-max-height` → `--bezny-structural-command-list-max-height` → `--bezny-logical-command-list-max-height` → `--bezny-foundation-size-320` chain. Override the structural alias at `:root` or a theme boundary after loading base CSS, or override the demo control alias directly on the command list.
+`cmdk` owns search ranking, listbox selection, and command keyboard navigation; Bezny's Radix Dialog owns modal focus, dismissal, portals, and naming. Flat compact rows replace the button grid, and the introductory paragraph is removed. The search stays at a fixed viewport-relative position while results change. The list scrolls within `min(50dvh, 20rem)`, with the four-layer `--bezny-control-admin-chrome-palette-list-max-height` → `--bezny-structural-command-list-max-height` → `--bezny-logical-command-list-max-height` → `--bezny-foundation-size-320` chain. Override the structural alias at `:root` or a theme boundary after loading base CSS, or override the admin chrome control alias directly on the command list.
 
 ## Presentation and data boundaries
 
@@ -77,15 +81,15 @@ Record content is separate from UI resources. The first article has English/Czec
 - `src/editorial-content.ts`: localized-content contracts and standard i18next fallback.
 - `src/editorial-translations.ts`: UI resource bundles; no record data.
 - `src/editorial-pages.tsx`: entity-independent list/detail/form screens and real page callbacks.
-- `src/editorial-dialogs.tsx`: palette presentation and entity-aware delete confirmation.
+- `src/editorial-dialogs.tsx`: editorial entity-aware delete confirmation; the palette is package-owned.
 - `src/editorial-layout.tsx`: login/workspace presentation, registered navigation, matched context.
 - `src/editorial-authentication.tsx`: login screen callbacks to the authentication service.
 - `src/editorial-auth-contract.ts`: session/profile DTOs and fixed demo identity.
 - `src/editorial-auth-state.ts`: application-scoped user and restoration state.
 - `src/editorial-auth-session.ts`: browser-only token/session simulation, persistence, restoration, profile updates, and logout.
-- `src/editorial-account-menu.tsx`: avatar dropdown and profile editor.
+- `src/editorial-account-menu.tsx`: mock-authentication/account callback bindings for `AdminAccountMenu`.
 - `src/editorial-account-translations.ts`: localized login/account messages.
-- `src/editorial-language-menu.tsx`: shared language commands as account-menu radio options.
+- `@bezny/admin/header`: shared header, palette, account editor and `AdminLanguageMenuItems`.
 - `src/editorial-appearance.scss`, `src/editorial-admin.module.scss`: scoped presentation using internal workspace Sass token accessors.
 
 ## Checks

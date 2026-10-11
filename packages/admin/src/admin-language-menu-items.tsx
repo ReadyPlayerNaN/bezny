@@ -1,4 +1,3 @@
-import { useAdminEntityCommands } from "@bezny/admin/commands";
 import {
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
@@ -6,9 +5,11 @@ import {
 } from "@bezny/base";
 import { useTranslation } from "react-i18next";
 
+import { useAdminEntityCommands } from "./admin-entity-commands.js";
+
 /** Language selection inside the account menu executes the palette's commands. */
-export const EditorialLanguageOptions = () => {
-  const { t, i18n } = useTranslation("editorial");
+export const AdminLanguageMenuItems = () => {
+  const { t, i18n } = useTranslation("beznyAdmin", { keyPrefix: "chrome" });
   const { languageCommands } = useAdminEntityCommands();
   return (
     <>

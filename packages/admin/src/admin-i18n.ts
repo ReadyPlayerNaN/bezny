@@ -1,10 +1,13 @@
 import { createInstance } from "i18next";
 import type { i18n, InitOptions } from "i18next";
 
+import { adminChromeTranslations } from "./admin-chrome-translations.js";
+
 export const adminLanguages = ["en", "cs", "ar"] as const;
 export const adminTranslations = {
   ar: {
     beznyAdmin: {
+      chrome: adminChromeTranslations.ar,
       clearFilters: "مسح عوامل التصفية",
       clearSelection: "مسح التحديد",
       create: "إنشاء {{entity}}",
@@ -37,6 +40,7 @@ export const adminTranslations = {
   },
   cs: {
     beznyAdmin: {
+      chrome: adminChromeTranslations.cs,
       clearFilters: "Zrušit filtry",
       clearSelection: "Zrušit výběr",
       create: "Vytvořit: {{entity}}",
@@ -69,6 +73,7 @@ export const adminTranslations = {
   },
   en: {
     beznyAdmin: {
+      chrome: adminChromeTranslations.en,
       clearFilters: "Clear filters",
       clearSelection: "Clear selection",
       create: "Create {{entity}}",

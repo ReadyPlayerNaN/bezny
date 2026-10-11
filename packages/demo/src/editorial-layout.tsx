@@ -13,6 +13,7 @@ import {
   useAdminEntityContext,
   useAdminEntityRegistry,
 } from "@bezny/admin/context";
+import { AdminHeader } from "@bezny/admin/header";
 import { AdminLayout } from "@bezny/admin/layout";
 import { Link, Outlet } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
@@ -25,10 +26,7 @@ import {
   editorialUserAtom,
 } from "./editorial-auth-state.js";
 import { EditorialLogin } from "./editorial-authentication.js";
-import {
-  EditorialCommandPalette,
-  EditorialDeleteDialog,
-} from "./editorial-dialogs.js";
+import { EditorialDeleteDialog } from "./editorial-dialogs.js";
 import { noticeAtom } from "./editorial-records.js";
 
 import styles from "./editorial-admin.module.scss";
@@ -93,13 +91,7 @@ const EditorialWorkspace = () => {
     <>
       <AdminLayout
         header={
-          <div className={styles.header}>
-            <strong>{t("shell")}</strong>
-            <div className={styles.headerTools}>
-              <EditorialCommandPalette />
-              <EditorialAccountMenu />
-            </div>
-          </div>
+          <AdminHeader title={t("shell")} tools={<EditorialAccountMenu />} />
         }
         navigation={
           <ul>

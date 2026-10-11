@@ -4,6 +4,7 @@ import { createRoot } from "react-dom/client";
 import { createDemoApplication, DemoApp } from "./demo-application.js";
 
 import "@bezny/base/style.css";
+import "@bezny/admin/style.css";
 
 const root = document.querySelector("#root");
 

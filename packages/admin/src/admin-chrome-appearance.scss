@@ -1,0 +1,47 @@
+@use "sass:map";
+@use "../../base/src/tokens/css-properties";
+@use "../../base/src/tokens/surfaces";
+@use "../../base/src/tokens/structural";
+
+// Package-owned chrome aliases consume structural purposes only.
+$-definitions: (
+  "palette-list-max-height": structural.token("command-list-max-height"),
+  "header-height": structural.token("shell-header-height"),
+);
+@each $name
+    in (
+      background,
+      text,
+      muted,
+      accent,
+      border,
+      border-width,
+      padding,
+      padding-small,
+      padding-large,
+      gap,
+      radius,
+      focus-ring,
+      font-family,
+      font-size,
+      line-height,
+      shadow,
+      z-index,
+      hover,
+      danger
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+
+@function token($name) {
+  @return css-properties.reference(
+    $-definitions,
+    $name,
+    "control-admin-chrome"
+  );
+}
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-admin-chrome");
+}

@@ -1,4 +1,3 @@
-import type { AdminCommand } from "@bezny/admin/entities";
 import {
   Button,
   Select,
@@ -13,12 +12,14 @@ import {
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import type { AdminCommand } from "./admin-entity-model.js";
+
 const CommandTextField = ({
   input,
 }: {
   input: NonNullable<AdminCommand["input"]>;
 }) => {
-  const { t } = useTranslation("editorial");
+  const { t } = useTranslation("beznyAdmin", { keyPrefix: "chrome" });
   if (input.type === "textarea") {
     return (
       <TextareaField<{ value: string }>
@@ -46,14 +47,14 @@ const CommandTextField = ({
                 (Number.isSafeInteger(Number(value)) &&
                   Number(value) >= (input.min ?? 1) &&
                   Number(value) <= (input.max ?? Number.MAX_SAFE_INTEGER)) ||
-                t("pageInvalid"),
+                t("numberInvalid"),
             }
           : {}
       }
     />
   );
 };
-export const EditorialCommandInput = ({
+export const AdminCommandInput = ({
   command,
   apply,
   cancel,
@@ -63,7 +64,7 @@ export const EditorialCommandInput = ({
   cancel: () => void;
 }) => {
   const { input } = command;
-  const { t } = useTranslation("editorial");
+  const { t } = useTranslation("beznyAdmin", { keyPrefix: "chrome" });
   const form = useForm<{ value: string }>({
     defaultValues: { value: input?.value ?? "" },
   });

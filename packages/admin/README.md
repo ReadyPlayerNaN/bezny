@@ -10,6 +10,8 @@ This private workspace package builds ESM JavaScript and TypeScript declarations
 | --- | --- |
 | `@bezny/admin` | `AdminProvider`, `AdminProviderProps` |
 | `@bezny/admin/layout` | `AdminLayout` |
+| `@bezny/admin/header` | `AdminHeader`, `AdminCommandPalette`, `AdminAccountMenu`, `AdminLanguageMenuItems`, their props, and `adminCommandPaletteTriggerId` |
+| `@bezny/admin/style.css` | Package-owned header, palette, and account-form styles |
 | `@bezny/admin/toasts` | `useAdminToasts`, `AdminToastProvider`, message/options/API types |
 | `@bezny/admin/page` | `AdminPage` |
 | `@bezny/admin/building-blocks` | `AdminBuildingBlocksProvider`, `useAdminBuildingBlocks`, default implementations, and their prop/override types |
@@ -60,7 +62,45 @@ export function App() {
 }
 ```
 
-Import the base stylesheet once at the application entrypoint. Admin adds no stylesheet and does not duplicate or re-export base components. Its layout/page defaults are semantic compositions without a visual theme. The default page header uses a flex row with the heading first and actions at the inline end (right in LTR), with the description below. Keep collection create buttons and detail action menus in the `actions` slot for consistent placement. Use root `className`/`style` props or replace a block to implement your application design.
+Import `@bezny/base/style.css` and `@bezny/admin/style.css` once at the application entrypoint. Admin owns composed header/palette/account styling without duplicating or re-exporting base primitives. Its default layout uses the responsive base Shell. The default page header uses a flex row with the heading first and actions at the inline end (right in LTR), with the description below. Keep collection create buttons and detail action menus in the `actions` slot for consistent placement. Use root `className`/`style` props or replace a block to implement your application design.
+
+## Header, command palette and account menu
+
+These are framework components, not demo UI. Import them from `@bezny/admin/header` and put `AdminHeader` in the layout's `header` slot:
+
+```tsx
+import { AdminHeader, AdminLanguageMenuItems } from "@bezny/admin/header";
+import type { AdminAccountMenuProps } from "@bezny/admin/header";
+import { AdminLayout } from "@bezny/admin/layout";
+import { Outlet } from "@tanstack/react-router";
+
+import "@bezny/base/style.css";
+import "@bezny/admin/style.css";
+
+export function Workspace({ account }: { account: AdminAccountMenuProps }) {
+  return (
+    <AdminLayout
+      header={
+        <AdminHeader
+          title="My workspace"
+          account={{ ...account, children: <AdminLanguageMenuItems /> }}
+        />
+      }
+    >
+      <Outlet />
+    </AdminLayout>
+  );
+}
+```
+
+- `AdminHeader` owns the compact, non-wrapping title/tool arrangement and title truncation. Its default command palette consumes the registered entity/page/selection/language catalog. Pass `commandPalette={false}` to omit it, a palette props object to configure it, and `tools` for additional host tools. Root props/classes/refs are forwarded.
+- `AdminCommandPalette` owns cmdk search/ranking/keyboard selection, Ctrl/Cmd+K, Radix modal focus/dismissal, parameter editors bound to RHF, and deferred execution after dismissal. Supply `commands` for a standalone catalog without an entity provider; otherwise mount under the admin application/router providers. `shortcut={false}` disables the global shortcut, `triggerId` changes its target ID, and `container` selects a themed portal. Active confirmation/account dialogs block shortcut opening.
+- `AdminAccountMenu` accepts `user: { name, email, avatarUrl? }`, optional async `onSave` and `onLogout` callbacks, optional description, extra menu children, and portal container. It owns initials/photo fallback, dropdown composition, edit dialog, RHF validation, pending state, failure announcements, retry, and focus restoration. Omitting a callback omits its action. Initials preserve the shared IconButton appearance; image avatars use the base Avatar primitive.
+- `AdminLanguageMenuItems` renders account-menu language choices from the same registered commands as the palette. Use it under the application/router providers. Additional host-specific account actions remain composable menu children.
+
+Authentication, authorization, account persistence, logout/session cleanup, application title and user data remain host-owned. The demo supplies only those bindings, its simulation-specific description and editorial content. No simulated-authentication logic is shipped as framework policy.
+
+English, Czech and Arabic UI text lives in the package's `beznyAdmin.chrome` namespace; consumers can override the resource bundle through their app-scoped i18next setup. Styles consume `--bezny-control-admin-chrome-*` aliases of structural tokens, including header height, palette result height, typography, surfaces and focus states. Build output includes ESM entry points, declarations and `style.css`; React, base primitives, RHF, cmdk and state/router dependencies are not bundled copies.
 
 ## Toast notifications
 

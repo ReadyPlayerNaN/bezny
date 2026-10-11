@@ -61,24 +61,11 @@ describe("editorial demo tokens", () => {
     );
   });
 
-  it("caps compact command results with an adjacent four-layer token chain", () => {
-    const { css } = compileString(
-      '@use "../../base/src/tokens"; @use "editorial-admin.module";',
-      sassOptions
-    );
-    expect(css).toContain("--bezny-foundation-size-320: 20rem");
-    expect(css).toContain(
-      "--bezny-logical-command-list-max-height: var(--bezny-foundation-size-320)"
-    );
-    expect(css).toContain(
-      "--bezny-structural-command-list-max-height: var(--bezny-logical-command-list-max-height)"
-    );
-    expect(css).toContain(
-      "--bezny-control-editorial-demo-palette-list-max-height: var(--bezny-structural-command-list-max-height)"
-    );
-    expect(css).toContain(
-      "max-height: min(50dvh, var(--bezny-control-editorial-demo-palette-list-max-height))"
-    );
+  it("does not retain package-owned header or palette styles in the demo", () => {
+    const { css } = compile(path.resolve("src/editorial-admin.module.scss"));
+    expect(css).not.toContain("palette-list-max-height");
+    expect(css).not.toMatch(/\.palette/u);
+    expect(css).not.toMatch(/\.headerTools/u);
   });
 
   it("caps the banner, fixes the status bar, and reserves space for bottom controls", () => {
@@ -86,7 +73,6 @@ describe("editorial demo tokens", () => {
     expect(css).toMatch(
       /\.application > header \{[^}]*max-height: var\(--bezny-control-editorial-demo-header-height\);[^}]*padding-block: 0;/u
     );
-    expect(css).toMatch(/\.header \{[^}]*flex-wrap: nowrap;/u);
     expect(css).toMatch(
       /\.statusBar \{[^}]*position: fixed;[^}]*inset-block-end: 0;[^}]*font-size: var\(--bezny-control-editorial-demo-status-font-size\);/u
     );
