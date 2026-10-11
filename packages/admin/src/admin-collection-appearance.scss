@@ -1,0 +1,21 @@
+@use "../../base/src/tokens/css-properties";
+@use "../../base/src/tokens/surfaces";
+
+$-definitions: (
+  "gap": surfaces.token("gap"),
+  "padding": surfaces.token("padding"),
+  "border": surfaces.token("border"),
+  "border-width": surfaces.token("border-width"),
+  "text": surfaces.token("text"),
+  "font-family": surfaces.token("font-family"),
+  "font-size": surfaces.token("font-size"),
+  "line-height": surfaces.token("line-height"),
+);
+
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-admin-collection");
+}
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-admin-collection");
+}

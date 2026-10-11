@@ -1,10 +1,14 @@
-import { Button, EntityRowList, TextField, Submit } from "@bezny/base";
+import { Button, EntityRowList, Submit } from "@bezny/base";
 import { Link } from "@tanstack/react-router";
 import { useStore } from "jotai";
 import { useCallback, useMemo, useState } from "react";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import {
+  AdminCollectionFilters,
+  AdminCollectionPagination,
+} from "./admin-collection-controls.js";
 import {
   useAdminEntityCommands,
   useAdminEntityNavigate,
@@ -22,7 +26,6 @@ import { readAdminFormValues } from "./admin-entity-fields.js";
 import { adminSelectionAtom } from "./admin-entity-model.js";
 import type { AdminCommand } from "./admin-entity-model.js";
 import { createAdminFormFieldCommands } from "./admin-form-field-commands.js";
-import { useAdminListControls } from "./admin-list-controls.js";
 import { AdminPage } from "./admin-page.js";
 import { AdminRegisteredField } from "./admin-registered-field.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
@@ -65,74 +68,6 @@ export const AdminDefaultUnavailablePage = () => {
   );
 };
 
-const ListInput = ({ command }: { command: AdminCommand }) => {
-  const { input } = command;
-  const { t } = useTranslation("beznyAdmin");
-  const form = useForm<{ value: string }>({
-    values: { value: input?.value ?? "" },
-  });
-  if (!input) {
-    return null;
-  }
-  return (
-    <FormProvider {...form}>
-      <form
-        noValidate
-        onSubmit={form.handleSubmit(async ({ value }) => {
-          try {
-            await input.execute(value);
-          } catch {
-            form.setError("value", { message: t("error") });
-          }
-        })}
-      >
-        {input.options ? (
-          <AdminRegisteredField
-            field={{
-              key: "value",
-              label: input.label,
-              options: [
-                {
-                  label: t("defaults.all", { defaultValue: "All" }),
-                  value: "",
-                },
-                ...input.options,
-              ],
-              type: "select",
-            }}
-          />
-        ) : (
-          <TextField
-            name="value"
-            label={input.label}
-            type={input.type === "number" ? "number" : "text"}
-            min={input.min}
-            max={input.max}
-            maxLength={input.maxLength}
-          />
-        )}
-        <Submit>{t("defaults.apply", { defaultValue: "Apply" })}</Submit>
-      </form>
-    </FormProvider>
-  );
-};
-const DefaultListControls = () => {
-  const controls = useAdminListControls();
-  const { t } = useTranslation("beznyAdmin");
-  return (
-    <section aria-label={t("defaults.controls")}>
-      {[...controls.filterCommands, ...controls.paginationCommands].map(
-        (command) =>
-          command.input ? (
-            <ListInput key={command.id} command={command} />
-          ) : (
-            <CommandButton key={command.id} command={command} />
-          )
-      )}
-      {controls.clear && <CommandButton command={controls.clear} />}
-    </section>
-  );
-};
 export const AdminDefaultListPage = () => {
   const { entity, data, kind, selectedIds } = useAdminEntityContext();
   const bindings = useAdminRouteBindings();
@@ -152,7 +87,7 @@ export const AdminDefaultListPage = () => {
         </>
       }
     >
-      <DefaultListControls />
+      <AdminCollectionFilters />
       {kind === "loading" && (
         <output aria-label={t("loading")}>{t("loading")}</output>
       )}
@@ -219,6 +154,7 @@ export const AdminDefaultListPage = () => {
             }))}
           />
         ))}
+      <AdminCollectionPagination />
     </AdminPage>
   );
 };

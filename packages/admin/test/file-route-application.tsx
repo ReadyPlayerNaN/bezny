@@ -22,7 +22,7 @@ export const attachFileRoutes = (
 ) =>
   admin.attach(
     createRouter({
-      context: { NotFound, Root, Screen, admin },
+      context: { NotFound: NotFound ?? admin.NotFound, Root, Screen, admin },
       routeTree,
       ...(history ? { history } : {}),
     })

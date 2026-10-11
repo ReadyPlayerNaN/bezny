@@ -237,17 +237,60 @@ describe("registration-driven default pages", () => {
     const user = userEvent.setup();
     await user.click(screen.getByRole("button", { name: "Next page" }));
     await expect(screen.findByText("Second")).resolves.toBeTruthy();
-    const search = screen.getByRole("textbox", { name: "Search" });
-    await user.type(search, "Missing");
-    const searchForm = search.closest("form");
-    if (!searchForm) {
-      throw new Error("Missing search form");
-    }
-    await user.click(within(searchForm).getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Search: All" }));
+    await user.type(screen.getByRole("textbox", { name: "Search" }), "Missing");
+    await user.click(screen.getByRole("button", { name: "Apply" }));
     await expect(screen.findByText("No records found.")).resolves.toBeTruthy();
     expect(adapter.list).toHaveBeenLastCalledWith(
       expect.objectContaining({ filters: { search: "Missing" }, page: 1 }),
       expect.anything()
+    );
+  });
+
+  it("places one integrated pagination control below the list with page buttons and page size", async () => {
+    const { app, adapter } = fixture();
+    await mount(app);
+    const user = userEvent.setup();
+    const row = screen.getByRole("group", { name: "Item 1" });
+    const paging = screen.getByRole("navigation", { name: "Pagination" });
+    expect(row.compareDocumentPosition(paging)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    );
+    expect(paging.querySelector("form")).toBeNull();
+    await user.click(within(paging).getByRole("button", { name: "Page 2" }));
+    await expect(screen.findByText("Second")).resolves.toBeTruthy();
+    await user.click(
+      within(paging).getByRole("combobox", { name: "Records per page" })
+    );
+    await user.click(await screen.findByRole("option", { name: "10" }));
+    await waitFor(() =>
+      expect(adapter.list).toHaveBeenLastCalledWith(
+        expect.objectContaining({ page: 1, pageSize: 10 }),
+        expect.anything()
+      )
+    );
+    expect(
+      within(paging)
+        .getByRole("button", { name: "Page 1" })
+        .getAttribute("aria-current")
+    ).toBe("page");
+  });
+
+  it("uses the shared choice filter's keyboard behavior and restores trigger focus", async () => {
+    const { app } = fixture();
+    await mount(app);
+    const user = userEvent.setup();
+    const trigger = screen.getByRole("button", { name: "Publication: All" });
+    await user.click(trigger);
+    screen.getByRole("radio", { name: "All" }).focus();
+    await user.keyboard("{ArrowDown>}");
+    await expect(
+      screen.findByRole("button", { name: "Publication: Draft" })
+    ).resolves.toBeTruthy();
+    await user.keyboard("{/ArrowDown}");
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(app.store.get(app.session.snapshotAtom).query.filters).toStrictEqual(
+      { status: "draft" }
     );
   });
 
@@ -355,7 +398,7 @@ describe("registration-driven default pages", () => {
     const { app } = fixture("/articles", { list });
     await mount(app);
     await expect(screen.findByRole("alert")).resolves.toBeTruthy();
-    expect(screen.getByRole("textbox", { name: "Search" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Search: All" })).toBeTruthy();
     await userEvent
       .setup()
       .click(screen.getByRole("button", { name: "Retry loading records" }));
@@ -390,7 +433,7 @@ describe("registration-driven default pages", () => {
     await expect(
       screen.findByLabelText("Loading records…")
     ).resolves.toBeTruthy();
-    expect(screen.getByRole("textbox", { name: "Search" })).toBeTruthy();
+    expect(screen.getByRole("button", { name: "Search: All" })).toBeTruthy();
     await act(async () => {
       gate.resolve({ items: [], total: 0 });
       await gate.promise;

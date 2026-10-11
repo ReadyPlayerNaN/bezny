@@ -57,6 +57,14 @@ Pass the definition to `createAdminApplication({ entities: [articles], Root, Not
 
 List/detail pages are available by default. Default create/update pages require `form` metadata and the matching adapter operation. Unsupported operations are not advertised. Custom create/update screens still require their adapter operation, but may provide their own forms instead of `form` metadata.
 
+## Collection controls
+
+The default list uses the existing `ValueFilter` search/value chips and `ChoiceFilter` option chips above the rows. It does not recreate filter editors with inline forms.
+
+A single pagination navigation appears **below** the rows (including empty/loading states): locale-formatted page/total summary, Previous/Next, a bounded numbered-page window with first/last anchors, and one inline records-per-page selector. There are no page-number/page-size forms. The same validated commands remain available as parameterized inputs in the palette.
+
+`AdminCollectionFilters` and `AdminCollectionPagination` are exported from `@bezny/admin/list` for custom list compositions. Their responsive flex layout uses `--bezny-control-admin-collection-*` aliases for structural surface gap, padding, border, text, and typography. Override shared structural aliases on their declaration scope; component control aliases can be overridden on the filters/pagination boundary after loading `@bezny/admin/style.css`.
+
 ## Fields and display
 
 Field keys are unique flat names, not dotted RHF paths. Supported types are `text` (default), `textarea`, `number`, `checkbox`, and `select`. Fields accept labels/`labelKey`, help text, required state, maximum text length, numeric bounds, and choice options. Select options must have unique non-empty values; the default form owns its empty placeholder.

@@ -1,0 +1,28 @@
+@use "admin-collection-appearance" as appearance;
+
+.filters,
+.pagination {
+  @include appearance.declarations;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: appearance.token("gap");
+}
+.pagination {
+  justify-content: space-between;
+  padding-block-start: appearance.token("padding");
+  border-block-start: appearance.token("border-width") solid appearance.token("border");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+}
+.pageNavigation,
+.pageSize {
+  display: flex;
+  align-items: center;
+  gap: appearance.token("gap");
+}
+.pageNavigation {
+  flex-wrap: wrap;
+}
