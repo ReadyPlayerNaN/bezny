@@ -1,0 +1,80 @@
+# Registration-driven CRUD pages
+
+Register an adapter and field metadata, not a set of screen components. `@bezny/admin` provides list, detail, create, and update pages. `screens` is an optional **per-view override**; overriding the list does not replace the default forms.
+
+```tsx
+import { defineAdminEntity } from "@bezny/admin/adapters";
+
+const articles = defineAdminEntity({
+  key: "articles",
+  label: "Articles",
+  singularLabel: "Article",
+  adapter: articleAdapter,
+  reference: (article) => ({ id: article.id, label: article.title }),
+  parseValues: parseArticleValues,
+  pageSize: 25,
+  filters: [
+    { key: "search", label: "Search" },
+    {
+      key: "status",
+      label: "Status",
+      options: [
+        { value: "draft", label: "Draft" },
+        { value: "published", label: "Published" },
+      ],
+    },
+  ],
+  form: {
+    defaultValues: { status: "draft", published: false },
+    fields: [
+      { key: "title", label: "Title", required: true, maxLength: 160 },
+      { key: "body", label: "Body", type: "textarea" },
+      { key: "published", label: "Published", type: "checkbox" },
+      {
+        key: "status",
+        label: "Status",
+        type: "select",
+        options: [
+          { value: "draft", label: "Draft" },
+          { value: "published", label: "Published" },
+        ],
+      },
+    ],
+  },
+  // Optional: replace only the detail page.
+  // screens: { detail: ArticlePreview },
+});
+```
+
+Pass the definition to `createAdminApplication({ entities: [articles], Root, NotFound })`, or to `createAdminRuntime` when the host owns file routes. See [entity applications](ENTITIES.md) for adapters, routing, lifecycle, and authorization.
+
+## What the registration generates
+
+- **List:** selectable `EntityRowList`, record links and View/Edit/Delete menus, bulk commands, registered filters, clear filters, pagination/page-size commands, refresh/retry, loading/error/empty states.
+- **Detail:** record title, registered columns or field values, collection navigation, edit and record actions.
+- **Create/update:** RHF forms using shared Bezny fields, registered defaults and validation, accessible labels/errors and invalid-field focus, Save/Cancel commands shared with the command palette, submission state, recoverable mutation errors. Save opens the saved record's detail page.
+- **Delete:** record and bulk commands when `adapter.remove` exists, a shared Radix-backed confirmation dialog, cancellation without clearing selection, retryable failures, successful invalidation/refresh and collection navigation.
+
+List/detail pages are available by default. Default create/update pages require `form` metadata and the matching adapter operation. Unsupported operations are not advertised. Custom create/update screens still require their adapter operation, but may provide their own forms instead of `form` metadata.
+
+## Fields and display
+
+Field keys are unique flat names, not dotted RHF paths. Supported types are `text` (default), `textarea`, `number`, `checkbox`, and `select`. Fields accept labels/`labelKey`, help text, required state, maximum text length, numeric bounds, and choice options. Select options must have unique non-empty values; the default form owns its empty placeholder.
+
+For flat records, editable values are read from matching record properties. Missing values fall back to `form.defaultValues`, then `false` for checkboxes or an empty string otherwise. Only registered fields enter the form. Numeric fields submit numbers when non-empty; optional empty numeric values remain empty strings for `parseValues` to interpret.
+
+For nested or domain-specific payloads, supply `form.readValues(data: unknown)` to validate/project the adapter payload into flat scalar form values. `parseValues` validates/transforms submitted form values into typed mutation values; it remains the domain validation boundary. Adapter failures or parser failures preserve the form and show an error.
+
+Optional `columns: [{ key, label, labelKey?, render(data: unknown) }]` provide list metadata and detail values. These callbacks should validate payloads with the application's domain schema. Without columns, the detail page uses the registered form fields. The row title always comes from `reference(record).label`.
+
+## Overrides and shared behavior
+
+Use `screens: { list?, detail?, create?, update? }` to replace individual pages. `AdminDefaultListPage`, `AdminDefaultDetailPage`, `AdminDefaultFormPage`, and `AdminDefaultLoadingPage` are also exported from `@bezny/admin/application` for custom compositions inside the active entity route.
+
+The built-in router displays `AdminDefaultLoadingPage` while an initial/navigation loader is pending. For host-owned file routes, use it as the route's `pendingComponent` (or provide a custom pending page); the host owns pending timing. List query/refresh loading states are handled by the default list itself.
+
+Custom entity actions remain available in the default pages and palette. Register a record action with ID `delete` or a selection action with ID `delete-selected` to replace that default deletion command, including its permission/confirmation behavior. This avoids duplicate actions and preserves existing application-owned deletion workflows. Custom destructive actions must request their own confirmation.
+
+Default UI strings use the `beznyAdmin.defaults` translation keys with English, Czech, and Arabic defaults. Application translations are not overwritten. Field/column `labelKey` values use ordinary i18next keys, including namespace-qualified keys.
+
+All mutations go through the existing bounded data session; the pages do not create another data store or command catalog. Backend authorization is mandatory even when a command is absent or disabled.

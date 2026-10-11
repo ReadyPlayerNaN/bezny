@@ -2,6 +2,10 @@
 
 One entity configuration drives screens, generic URLs, route context, and commands. Entity definitions describe a resource; **they do not own permanent collection data atoms**.
 
+## Default pages
+
+Entity registrations can derive all CRUD pages from adapter capabilities, field metadata, filters, and actions. `screens` is optional and overrides individual views. See [registration-driven default pages](DEFAULT-PAGES.md) for a no-custom-screens example, field configuration, and default deletion behavior.
+
 ## Typed adapters and entity definitions
 
 ```tsx
@@ -70,7 +74,7 @@ export const App = () => <AdminApplicationProvider application={application} />;
 
 Honor cancellation signals and validate backend responses in your adapter. `defineAdminEntity` preserves record/value generics, validates references and list bounds, wraps complete records in `{ id, label, data }` envelopes, and parses unknown form values before passing typed values to mutations. The application independently limits cached payload size. Payloads must be plain JSON-compatible data, not class instances, DOM nodes, cycles, or subscriptions. The cache validates graph depth/node count, creates detached canonical copies, and freezes them so accidental backend/client mutation cannot bypass its bounds.
 
-`list` is a required screen; `create`, `detail`, and `update` are optional capabilities. Create/update screens require corresponding adapter operations. Omitted screens mean omitted route commands, not pretend operations. Entity keys are unique lowercase slugs; record IDs are non-empty, unique within each returned page, and cannot be `create` (case-insensitively reserved for the create route). Get/update adapters must return the requested ID. Invalid async data becomes a recoverable loading error rather than retained invalid state.
+List and detail screens default to the package-owned pages. Default create/update screens require registered `form` metadata and corresponding adapter operations; custom create/update screens require their operations but may own their forms. `screens` optionally overrides each view. Missing adapter capabilities mean omitted operation commands, not pretend operations. Entity keys are unique lowercase slugs; record IDs are non-empty, unique within each returned page, and cannot be `create` (case-insensitively reserved for the create route). Get/update adapters must return the requested ID. Invalid async data becomes a recoverable loading error rather than retained invalid state.
 
 ## Route contract
 
@@ -137,7 +141,7 @@ Query and language changes activate the current request via Jotai/i18next subscr
 
 ## Data ownership and lifecycle
 
-`useAdminDataSession()` exposes `create`, `update`, `remove`, `refresh`, and `invalidate`, plus the active `snapshotAtom` and diagnostic counters. Backend changes invalidate the entity's cached pages/details and refresh the active request. Screens own RHF forms and schemas; they do not duplicate mutation/cache logic. Parse `context.data.items[n].data` with your domain schema when reading complete record payloads.
+`useAdminDataSession()` exposes `create`, `update`, `remove`, `refresh`, and `invalidate`, plus the active `snapshotAtom` and diagnostic counters. Backend changes invalidate the entity's cached pages/details and refresh the active request. Default screens derive RHF forms from registration metadata; custom screens can own RHF forms and schemas. Neither duplicates mutation/cache logic. Parse `context.data.items[n].data` with your domain schema when reading complete record payloads.
 
 Jotai holds a single active page/detail snapshot and small UI state (selection, commands, queries). Runtime reference atoms hold only the active bounded page's `{ id, label }` values; they start empty and are explicitly cleared. The cache is application-owned, bounded by entry count **and serialized bytes**, and expires inactive entries automatically. One active page may remain visible after its cache entry expires; its own payload also respects the byte budget. Thus retained data is bounded by the cache budget plus one active snapshot, not the number of previously visited records.
 

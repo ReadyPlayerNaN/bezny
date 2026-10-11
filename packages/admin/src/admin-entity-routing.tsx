@@ -17,6 +17,8 @@ import type { AdminRuntime } from "./admin-application-runtime.js";
 import type { AdminBuildingBlockOverrides } from "./admin-building-blocks.js";
 import type { AdminEntityDefinition } from "./admin-data-adapter.js";
 import type { AdminCachePolicy } from "./admin-data-session.js";
+import { AdminDefaultLoadingPage } from "./admin-default-pages.js";
+import { AdminDeleteDialog } from "./admin-delete-dialog.js";
 import { useAdminEntityCommands } from "./admin-entity-commands.js";
 import {
   AdminEntityRegistryProvider,
@@ -30,7 +32,7 @@ import type { AdminProviderProps } from "./admin-provider.js";
 import { AdminRouteBindingsContext } from "./admin-route-bindings.js";
 import type { AdminToastOptions } from "./admin-toasts.js";
 
-export const AdminEntityScreen = () => {
+const EntityScreenContent = () => {
   const { entity, view, kind } = useAdminEntityContext();
   const { refresh } = useAdminEntityCommands();
   const { t } = useTranslation("beznyAdmin");
@@ -64,6 +66,23 @@ export const AdminEntityScreen = () => {
   }
   return <Screen />;
 };
+
+export const AdminEntityScreen = () => {
+  const { scope } = useAdminEntityContext();
+  return (
+    <>
+      <EntityScreenContent />
+      <AdminDeleteDialog key={scope} />
+    </>
+  );
+};
+
+export {
+  AdminDefaultListPage,
+  AdminDefaultDetailPage,
+  AdminDefaultFormPage,
+  AdminDefaultLoadingPage,
+} from "./admin-default-pages.js";
 
 export interface AdminApplicationOptions {
   entities: readonly AdminEntityDefinition[];
@@ -115,6 +134,9 @@ export const createAdminApplication = ({
       getParentRoute: () => root,
       loader: runtime.loader(view),
       path: adminEntityPaths[view],
+      pendingComponent: AdminDefaultLoadingPage,
+      pendingMinMs: 0,
+      pendingMs: 0,
     });
   const unavailable = createRoute({
     component: AdminEntityScreen,

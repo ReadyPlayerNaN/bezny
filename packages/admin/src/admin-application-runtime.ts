@@ -10,6 +10,7 @@ import {
   defaultAdminListQuery,
 } from "./admin-data-session.js";
 import type { AdminCachePolicy } from "./admin-data-session.js";
+import { registerAdminDefaultTranslations } from "./admin-default-translations.js";
 import {
   adminPageCommandsAtom,
   createAdminEntityRegistry,
@@ -45,6 +46,7 @@ export const createAdminRuntime = ({
   i18n: translations = createAdminI18n(),
   routes = defaultAdminRouteBindings,
 }: AdminRuntimeOptions) => {
+  registerAdminDefaultTranslations(translations);
   const registry = createAdminEntityRegistry(entities);
   const session = createAdminDataSession(registry, store, cache);
   const bindings = Object.freeze(

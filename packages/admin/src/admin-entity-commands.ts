@@ -199,6 +199,7 @@ export const useAdminEntityCommands = () => {
       records,
       session,
       store,
+      translate: t,
       view: context.view,
     };
     return (entity.actions ?? []).flatMap((action) =>

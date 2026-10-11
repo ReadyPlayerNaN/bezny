@@ -1,9 +1,20 @@
 import type { ComponentType } from "react";
 
 import type {
+  AdminEntityForm,
+  AdminEntityColumn,
+} from "./admin-entity-fields.js";
+import type {
   AdminEntityAction,
   AdminRecordReference,
 } from "./admin-entity-model.js";
+
+export type {
+  AdminEntityField,
+  AdminEntityForm,
+  AdminEntityColumn,
+  AdminFormValues,
+} from "./admin-entity-fields.js";
 
 export type AdminFilterValues = Readonly<Record<string, string>>;
 export interface AdminListQuery {
@@ -77,8 +88,10 @@ export interface AdminEntityDefinition {
   labelKey?: string;
   singularLabelKey?: string;
   adapter: AdminEntityAdapter;
-  screens: {
-    list: ComponentType;
+  form?: AdminEntityForm;
+  columns?: readonly AdminEntityColumn[];
+  screens?: {
+    list?: ComponentType;
     create?: ComponentType;
     detail?: ComponentType;
     update?: ComponentType;
@@ -177,12 +190,12 @@ export const defineAdminEntity = <TRecord, TValues>(
     ...(remove ? { remove } : {}),
     ...(dispose ? { dispose } : {}),
   };
-  if (definition.screens.create && !normalized.create) {
+  if (definition.screens?.create && !normalized.create) {
     throw new Error(
       `Create screen requires a create adapter: ${definition.key}`
     );
   }
-  if (definition.screens.update && !normalized.update) {
+  if (definition.screens?.update && !normalized.update) {
     throw new Error(
       `Update screen requires an update adapter: ${definition.key}`
     );

@@ -1,8 +1,10 @@
+import type { TFunction } from "i18next";
 import { atom } from "jotai";
 import type { Atom, PrimitiveAtom, createStore } from "jotai";
 
 import type { AdminEntityDefinition } from "./admin-data-adapter.js";
 import type { AdminDataSession } from "./admin-data-session.js";
+import { resolveAdminEntityDefinition } from "./admin-default-registration.js";
 
 export type AdminEntityView = "list" | "create" | "detail" | "update";
 export interface AdminRecordReference {
@@ -44,6 +46,7 @@ export interface AdminActionScope {
   store: AdminStore;
   session: AdminDataSession;
   navigate: AdminEntityNavigate;
+  translate?: TFunction;
 }
 export interface AdminEntityAction {
   id: string;
@@ -55,7 +58,8 @@ export interface AdminEntityAction {
   isAvailable?: (scope: AdminActionScope) => boolean;
 }
 /** Runtime metadata; references are only the active bounded page/detail, never an entire dataset. */
-export interface AdminEntity extends AdminEntityDefinition {
+export interface AdminEntity extends Omit<AdminEntityDefinition, "screens"> {
+  screens: ReturnType<typeof resolveAdminEntityDefinition>["screens"];
   records: PrimitiveAtom<readonly AdminRecordReference[]>;
 }
 export interface AdminEntityRegistry {
@@ -96,7 +100,8 @@ export const createAdminEntityRegistry = (
     throw new Error("An admin application requires at least one entity.");
   }
   const byKey = new Map<string, AdminEntity>();
-  for (const entity of entities) {
+  for (const definition of entities) {
+    const entity = resolveAdminEntityDefinition(definition);
     if (!entityKeyPattern.test(entity.key)) {
       throw new Error(`Invalid admin entity key: ${entity.key}`);
     }
