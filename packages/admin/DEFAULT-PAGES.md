@@ -1,6 +1,6 @@
 # Registration-driven CRUD pages
 
-Register an adapter and field metadata, not a set of screen components. `@bezny/admin` provides list, detail, create, and update pages. `screens` is an optional **per-view override**; overriding the list does not replace the default forms.
+Register an adapter and field metadata, not a set of screen components. `@bezny/admin` provides list, detail, create, update, loading, and unavailable pages. The application/runtime `NotFound` component is also an optional override. `screens` is an optional **per-view override**; overriding the list does not replace the default forms.
 
 ```tsx
 import { defineAdminEntity } from "@bezny/admin/adapters";
@@ -73,7 +73,7 @@ For dependent fields, register `field.deriveValues(values, record)` to return a 
 
 ## Overrides and shared behavior
 
-Use `screens: { list?, detail?, create?, update? }` to replace individual pages. `AdminDefaultListPage`, `AdminDefaultDetailPage`, `AdminDefaultFormPage`, and `AdminDefaultLoadingPage` are also exported from `@bezny/admin/application` for custom compositions inside the active entity route.
+Use `screens: { list?, detail?, create?, update? }` to replace individual pages. `AdminDefaultListPage`, `AdminDefaultDetailPage`, `AdminDefaultFormPage`, `AdminDefaultLoadingPage`, and `AdminDefaultUnavailablePage` are also exported from `@bezny/admin/application` for custom compositions inside the active entity route.
 
 The built-in router displays `AdminDefaultLoadingPage` while an initial/navigation loader is pending. For host-owned file routes, use it as the route's `pendingComponent` (or provide a custom pending page); the host owns pending timing. List query/refresh loading states are handled by the default list itself.
 

@@ -475,6 +475,22 @@ describe("registration-driven default pages", () => {
     expect(derive).toHaveBeenCalledTimes(2);
   });
 
+  it("uses the package unavailable page without a custom NotFound component", async () => {
+    const { app, entity } = fixture();
+    app.dispose();
+    const defaults = createAdminApplication({
+      Root,
+      entities: [entity],
+      history: createMemoryHistory({ initialEntries: ["/articles/missing"] }),
+    });
+    applications.push(defaults);
+    await mount(defaults);
+    await expect(
+      screen.findByRole("heading", { name: "Entity unavailable." })
+    ).resolves.toBeTruthy();
+    expect(screen.getByRole("button", { name: "List articles" })).toBeTruthy();
+  });
+
   it("preserves registered deletion overrides without duplicate commands", () => {
     const { entity } = fixture();
     const execute = vi.fn<() => void>();

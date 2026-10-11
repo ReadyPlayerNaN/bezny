@@ -10,6 +10,7 @@ import {
   defaultAdminListQuery,
 } from "./admin-data-session.js";
 import type { AdminCachePolicy } from "./admin-data-session.js";
+import { AdminDefaultUnavailablePage } from "./admin-default-pages.js";
 import { registerAdminDefaultTranslations } from "./admin-default-translations.js";
 import {
   adminPageCommandsAtom,
@@ -30,7 +31,7 @@ import type { AdminRouteBindings } from "./admin-route-bindings.js";
 
 export interface AdminRuntimeOptions {
   entities: readonly AdminEntityDefinition[];
-  NotFound: FunctionComponent;
+  NotFound?: FunctionComponent;
   cache?: Partial<AdminCachePolicy>;
   store?: AdminStore;
   i18n?: i18n;
@@ -40,7 +41,7 @@ export interface AdminRuntimeOptions {
 /** One data/command authority, independent of how the host creates its routes. */
 export const createAdminRuntime = ({
   entities,
-  NotFound,
+  NotFound = AdminDefaultUnavailablePage,
   cache,
   store = createStore(),
   i18n: translations = createAdminI18n(),

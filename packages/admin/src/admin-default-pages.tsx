@@ -54,6 +54,17 @@ const CommandButton = ({ command }: { command: AdminCommand }) => {
     </>
   );
 };
+export const AdminDefaultUnavailablePage = () => {
+  const { list } = useAdminEntityCommands();
+  const { t } = useTranslation("beznyAdmin");
+  return (
+    <AdminPage
+      heading={t("unavailable")}
+      actions={<CommandButton command={list} />}
+    />
+  );
+};
+
 const ListInput = ({ command }: { command: AdminCommand }) => {
   const { input } = command;
   const { t } = useTranslation("beznyAdmin");
@@ -158,6 +169,14 @@ export const AdminDefaultListPage = () => {
             selectedIds={selectedIds}
             onSelectedIdsChange={(ids) =>
               store.set(adminSelectionAtom, { entity: entity.key, ids })
+            }
+            groupLabel={(row) => t("defaults.item", { id: row.id })}
+            menuLabel={(row) =>
+              t("defaults.actions", {
+                record:
+                  data.items.find((item) => item.id === row.id)?.label ??
+                  row.id,
+              })
             }
             selectLabel={(row) => commands.forSelection(row.id).label}
             selectionActions={commands.selectionCommands.map((command) => ({

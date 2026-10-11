@@ -17,7 +17,10 @@ import type { AdminRuntime } from "./admin-application-runtime.js";
 import type { AdminBuildingBlockOverrides } from "./admin-building-blocks.js";
 import type { AdminEntityDefinition } from "./admin-data-adapter.js";
 import type { AdminCachePolicy } from "./admin-data-session.js";
-import { AdminDefaultLoadingPage } from "./admin-default-pages.js";
+import {
+  AdminDefaultLoadingPage,
+  AdminDefaultUnavailablePage,
+} from "./admin-default-pages.js";
 import { AdminDeleteDialog } from "./admin-delete-dialog.js";
 import { useAdminEntityCommands } from "./admin-entity-commands.js";
 import {
@@ -82,13 +85,14 @@ export {
   AdminDefaultDetailPage,
   AdminDefaultFormPage,
   AdminDefaultLoadingPage,
+  AdminDefaultUnavailablePage,
 } from "./admin-default-pages.js";
 
 export interface AdminApplicationOptions {
   entities: readonly AdminEntityDefinition[];
   cache?: Partial<AdminCachePolicy>;
   Root: FunctionComponent;
-  NotFound: FunctionComponent;
+  NotFound?: FunctionComponent;
   history?: RouterHistory;
   store?: AdminStore;
   i18n?: i18n;
@@ -97,7 +101,7 @@ export interface AdminApplicationOptions {
 export const createAdminApplication = ({
   entities,
   Root,
-  NotFound,
+  NotFound = AdminDefaultUnavailablePage,
   history = createBrowserHistory(),
   store,
   cache,

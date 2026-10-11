@@ -2,6 +2,7 @@ import type { i18n } from "i18next";
 
 const defaultPageTranslations = {
   ar: {
+    actions: "إجراءات {{record}}",
     all: "الكل",
     apply: "تطبيق",
     cancel: "إلغاء",
@@ -14,11 +15,13 @@ const defaultPageTranslations = {
     deleteSelection: "حذف المحدد ({{count}})",
     deleteTitle: "حذف السجلات؟",
     empty: "لم يتم العثور على سجلات.",
+    item: "العنصر {{id}}",
     required: "هذا الحقل مطلوب.",
     save: "حفظ",
     saveError: "تعذر الحفظ. تحقق من القيم وحاول مرة أخرى.",
   },
   cs: {
+    actions: "Akce pro {{record}}",
     all: "Vše",
     apply: "Použít",
     cancel: "Zrušit",
@@ -31,11 +34,13 @@ const defaultPageTranslations = {
     deleteSelection: "Smazat vybrané ({{count}})",
     deleteTitle: "Smazat záznamy?",
     empty: "Žádné záznamy nebyly nalezeny.",
+    item: "Položka {{id}}",
     required: "Toto pole je povinné.",
     save: "Uložit",
     saveError: "Nepodařilo se uložit. Zkontrolujte hodnoty a zkuste to znovu.",
   },
   en: {
+    actions: "Actions for {{record}}",
     all: "All",
     apply: "Apply",
     cancel: "Cancel",
@@ -48,6 +53,7 @@ const defaultPageTranslations = {
     deleteSelection: "Delete selected ({{count}})",
     deleteTitle: "Delete records?",
     empty: "No records found.",
+    item: "Item {{id}}",
     required: "This field is required.",
     save: "Save",
     saveError: "Could not save. Check the values and try again.",
