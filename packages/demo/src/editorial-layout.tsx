@@ -9,13 +9,12 @@ import type {
   AdminPageProps,
   AdminPageHeaderProps,
 } from "@bezny/admin/building-blocks";
-import { useAdminEntityCommands } from "@bezny/admin/commands";
 import {
   useAdminEntityContext,
   useAdminEntityRegistry,
 } from "@bezny/admin/context";
 import { AdminLayout } from "@bezny/admin/layout";
-import { Outlet } from "@tanstack/react-router";
+import { Link, Outlet } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
@@ -30,7 +29,6 @@ import {
   EditorialCommandPalette,
   EditorialDeleteDialog,
 } from "./editorial-dialogs.js";
-import { AdminCommandButton } from "./editorial-pages.js";
 import { noticeAtom } from "./editorial-records.js";
 
 import styles from "./editorial-admin.module.scss";
@@ -61,7 +59,6 @@ export const editorialComponents = {
 
 const EditorialWorkspace = () => {
   const { t, i18n } = useTranslation("editorial");
-  const commands = useAdminEntityCommands();
   const context = useAdminEntityContext();
   let contextLabel = t("noEntity", {
     entity:
@@ -105,15 +102,23 @@ const EditorialWorkspace = () => {
           </div>
         }
         navigation={
-          <div className={styles.actions}>
-            {commands.navigationCommands.map((command) =>
-              command.id.endsWith(".list") ? (
-                <AdminCommandButton key={command.id} command={command} />
-              ) : null
-            )}
-          </div>
+          <ul>
+            {registry.entities.map((entity) => (
+              <li key={entity.key}>
+                <Link
+                  to="/$entity"
+                  params={{ entity: entity.key }}
+                  activeProps={{ "aria-current": "page" }}
+                >
+                  {entity.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         }
         navigationLabel={t("navigation")}
+        openNavigationLabel={t("openNavigation")}
+        closeNavigationLabel={t("closeNavigation")}
         footer={
           <>
             {t("footer")}

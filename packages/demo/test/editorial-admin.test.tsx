@@ -76,9 +76,7 @@ describe("editorial admin", () => {
     expect(
       main.getByRole("region", { name: "Articles in this workspace" })
     ).toBeDefined();
-    expect(
-      screen.getByRole("navigation", { name: "Editorial navigation" })
-    ).toBeDefined();
+    expect(screen.getByRole("navigation", { name: "Entities" })).toBeDefined();
     expect(
       screen.getByRole("status", { name: "Current context" }).textContent
     ).toBe("Context: Articles");
@@ -128,14 +126,33 @@ describe("editorial admin", () => {
     await waitFor(() => expect(document.activeElement).toBe(account));
   });
 
+  it("opens entity navigation from the navbar and closes it after routed link activation", async () => {
+    const { user, main, application } = await renderDemo();
+    await user.click(screen.getByRole("button", { name: "Open entities" }));
+    const dialog = within(
+      await screen.findByRole("dialog", { name: "Entities" })
+    );
+    expect(
+      dialog.getAllByRole("link").map((link) => link.textContent)
+    ).toStrictEqual(["Articles", "Pages"]);
+    await user.click(dialog.getByRole("link", { name: "Pages" }));
+    await waitFor(() =>
+      expect(application.router.state.location.pathname).toBe("/pages")
+    );
+    await waitFor(() => expect(screen.queryByRole("dialog")).toBeNull());
+    expect(
+      main.getByRole("heading", { level: 1, name: "Pages" })
+    ).toBeDefined();
+  });
+
   it("limits page navigation to lists while retaining creation in page headers and the palette", async () => {
     const { user, main } = await renderDemo();
     const navigation = within(
-      screen.getByRole("navigation", { name: "Editorial navigation" })
+      screen.getByRole("navigation", { name: "Entities" })
     );
     expect(
-      navigation.getAllByRole("button").map((button) => button.textContent)
-    ).toStrictEqual(["List articles", "List pages"]);
+      navigation.getAllByRole("link").map((link) => link.textContent)
+    ).toStrictEqual(["Articles", "Pages"]);
     expect(main.getByRole("button", { name: "Create article" })).toBeDefined();
     const palette = await openPalette(user);
     expect(

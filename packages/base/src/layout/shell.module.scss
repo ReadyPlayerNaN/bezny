@@ -1,0 +1,158 @@
+@use "./shell-appearance" as appearance;
+
+.shell,
+.navigation,
+.drawer {
+  @include appearance.declarations;
+}
+.shell {
+  box-sizing: border-box;
+  display: grid;
+  grid-template-areas: "header" "main" "footer";
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto 1fr auto;
+  min-height: 100dvh;
+  color: appearance.token("text");
+  > header {
+    grid-area: header;
+    height: appearance.token("header-height");
+    box-sizing: border-box;
+    padding-inline: appearance.token("padding");
+    background: appearance.token("background");
+    border-block-end: appearance.token("border-width") solid
+      appearance.token("border");
+  }
+  > main {
+    grid-area: main;
+    min-width: 0;
+    padding: appearance.token("padding");
+  }
+  > footer {
+    grid-area: footer;
+    padding: appearance.token("padding");
+  }
+}
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: appearance.token("gap");
+  height: 100%;
+  min-width: 0;
+}
+.headerContent {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+.menuTrigger {
+  display: flex;
+  flex-shrink: 0;
+}
+.navigation {
+  display: none;
+  grid-area: navigation;
+  background: appearance.token("background");
+  padding: appearance.token("padding");
+  border-inline-end: appearance.token("border-width") solid
+    appearance.token("border");
+}
+.navigation,
+.drawerNavigation {
+  ul {
+    display: grid;
+    gap: appearance.token("gap");
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  a {
+    display: block;
+    padding: appearance.token("padding-small") appearance.token("padding");
+    border-radius: appearance.token("radius");
+    color: appearance.token("text");
+    text-decoration: none;
+    font-family: appearance.token("font-family");
+    font-size: appearance.token("font-size");
+    line-height: appearance.token("line-height");
+    overflow-wrap: anywhere;
+    &:hover,
+    &[aria-current="page"] {
+      background: appearance.token("hover");
+    }
+    &[aria-current="page"] {
+      color: appearance.token("accent-text");
+      font-weight: appearance.token("font-weight");
+    }
+    &:focus-visible {
+      outline: none;
+      box-shadow: appearance.token("focus-ring");
+    }
+  }
+}
+.drawer[role="dialog"] {
+  box-sizing: border-box;
+  inset-block: 0;
+  inset-inline-start: 0;
+  inset-inline-end: auto;
+  transform: none;
+  &:dir(rtl) {
+    transform: none;
+  }
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  border-radius: 0;
+  padding: appearance.token("padding");
+  display: flex;
+  flex-direction: column;
+  gap: appearance.token("gap");
+}
+.drawerHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: appearance.token("gap");
+}
+.drawerTitle {
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+}
+.closeButton {
+  flex-shrink: 0;
+  padding: 0;
+  width: appearance.token("close-size");
+  min-width: appearance.token("close-size");
+  height: appearance.token("close-size");
+  min-height: appearance.token("close-size");
+  border-radius: appearance.token("close-radius");
+  svg {
+    width: appearance.token("close-icon-size");
+    height: appearance.token("close-icon-size");
+  }
+}
+.drawerNavigation {
+  overflow-y: auto;
+  flex: 1;
+}
+@include appearance.at-least(compact) {
+  .drawer[role="dialog"] {
+    width: min(appearance.token("sidebar-width"), 100vw);
+  }
+}
+@include appearance.at-least(wide) {
+  .shell[data-navigation="true"] {
+    grid-template-areas: "header header" "navigation main" "footer footer";
+    grid-template-columns: appearance.token("sidebar-width") minmax(0, 1fr);
+  }
+  .navigation {
+    display: block;
+    position: sticky;
+    inset-block-start: 0;
+    max-height: calc(100dvh - appearance.token("header-height"));
+    overflow-y: auto;
+    box-sizing: border-box;
+  }
+  .menuTrigger {
+    display: none;
+  }
+}

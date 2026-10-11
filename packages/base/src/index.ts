@@ -233,6 +233,8 @@ export {
 } from "./filters/choice-filter.js";
 export { TagFilter, type TagFilterProps } from "./filters/tag-filter.js";
 export type { FieldBindingProps } from "./fields/use-field-binding.js";
+export { Shell, type ShellProps } from "./layout/shell.js";
+
 export {
   LoginScreen,
   type LoginScreenProps,

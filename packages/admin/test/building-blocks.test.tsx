@@ -152,9 +152,9 @@ describe("admin building blocks", () => {
       </AdminLayout>
     );
     expect({
-      className: layoutRef.current?.className,
+      hasClass: layoutRef.current?.classList.contains("application"),
       owner: layoutRef.current?.dataset.owner,
-    }).toStrictEqual({ className: "application", owner: "example" });
+    }).toStrictEqual({ hasClass: true, owner: "example" });
     expect(screen.getByRole("navigation", { name: "Primary" })).toBeDefined();
     expect(pageRef.current).toBe(
       screen.getByRole("region", { name: "Editorial" })

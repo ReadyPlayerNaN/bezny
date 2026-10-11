@@ -1,13 +1,9 @@
-import { Heading, Main } from "@bezny/base";
+import { Heading, Shell } from "@bezny/base";
+import type { ShellProps } from "@bezny/base";
 import { createContext, useContext, useId, useMemo } from "react";
 import type { ComponentPropsWithRef, ComponentType, ReactNode } from "react";
 
-export type AdminLayoutProps = ComponentPropsWithRef<"div"> & {
-  header?: ReactNode;
-  navigation?: ReactNode;
-  navigationLabel?: string;
-  footer?: ReactNode;
-};
+export type AdminLayoutProps = ShellProps;
 
 export interface AdminPageHeaderProps {
   heading: ReactNode;
@@ -32,24 +28,11 @@ const AdminBuildingBlocksContext = createContext<AdminBuildingBlocks | null>(
   null
 );
 
-/** Semantic, unstyled shell. Supply navigation links rather than a second nav. */
+/** Responsive framework shell. Supply entity links, not a second nav landmark. */
 export const DefaultAdminLayout = ({
-  header,
-  navigation,
   navigationLabel = "Administration",
-  footer,
-  children,
-  ...rootProps
-}: AdminLayoutProps) => (
-  <div {...rootProps}>
-    {header !== null && header !== undefined && <header>{header}</header>}
-    {navigation !== null && navigation !== undefined && (
-      <nav aria-label={navigationLabel}>{navigation}</nav>
-    )}
-    <Main>{children}</Main>
-    {footer !== null && footer !== undefined && <footer>{footer}</footer>}
-  </div>
-);
+  ...props
+}: AdminLayoutProps) => <Shell {...props} navigationLabel={navigationLabel} />;
 
 export const DefaultAdminPageHeader = ({
   heading,

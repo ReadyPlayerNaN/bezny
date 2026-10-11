@@ -2,6 +2,18 @@
 
 Import components from `@bezny/base` and styles from `@bezny/base/style.css`. All component styles consume validated control aliases of structural tokens. Shared surface purposes live in `src/tokens/_surfaces.scss`, referencing only logical tokens. Geometry/typography use `rem`; themes use semantic colours.
 
+## Shell
+
+`Shell` is the reusable responsive application shell; `DefaultAdminLayout` composes it. Supply `header`, `navigation` (a list of links, not another `<nav>`), route `children`, and optional `footer`. `navigationLabel`, `openNavigationLabel` and `closeNavigationLabel` are localizable; `navigationContainer` supports a themed portal. Root HTML props/classes/refs are forwarded. No navigation means no menu or drawer.
+
+- **Wide (`>=64rem`)**: persistent inline-start sidebar (`16rem` by default), main content beside it, full-width navbar/footer.
+- **Compact (`40rem`–`<64rem`)**: sidebar hidden by default; navbar Menu opens a modal side drawer.
+- **Tiny (`<40rem`)**: the same drawer fills the viewport.
+
+SCSS alone chooses these variants through the token-backed viewport API. There are no viewport hooks, resize listeners or JavaScript media queries. Radix owns opening/closing, focus trap/return, Escape, outside dismissal, overlay and animation lifecycle. Normal link activation closes the drawer; Ctrl/Cmd/Shift-click and new-tab links remain native. RTL mirrors the inline-start sidebar. If an open drawer is resized to wide, it stays a visible, dismissible modal until closed; CSS never hides a live focus trap. The persistent sidebar then remains available; closing returns focus to its active/first entity link if CSS has hidden the menu trigger. Navigation is rendered in both locations (the modal only mounts when opened), so supply stateless link markup without shared fixed DOM IDs or input state.
+
+Control aliases use `--bezny-control-shell-*`: header-height, sidebar-width, viewport-compact-min-width, viewport-wide-min-width, surface colours, padding, typography and focus-ring. Viewport CSS tokens are metadata; media queries use the same foundational values at Sass compile time. See [viewports](README.md#viewports). Explicit browser regression: `node --test packages/base/test/shell.browser.mjs` after building, covering breakpoint boundaries, LTR and RTL.
+
 ## Select
 
 ```tsx

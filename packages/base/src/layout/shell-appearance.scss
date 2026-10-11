@@ -1,0 +1,51 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/surfaces";
+@use "../tokens/structural";
+@use "../tokens/viewports";
+
+$-definitions: (
+  "header-height": structural.token("shell-header-height"),
+  "sidebar-width": surfaces.token("width"),
+  "close-size": structural.token("icon-button-size"),
+  "close-icon-size": structural.token("icon-button-icon-size"),
+  "close-radius": structural.token("icon-button-radius"),
+  "viewport-compact-min-width": viewports.token(compact),
+  "viewport-wide-min-width": viewports.token(wide),
+);
+@each $name
+    in (
+      background,
+      text,
+      muted,
+      border,
+      border-width,
+      radius,
+      padding,
+      padding-small,
+      gap,
+      hover,
+      accent-text,
+      font-family,
+      font-size,
+      line-height,
+      font-weight,
+      focus-ring
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-shell");
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-shell");
+}
+@mixin at-least($name) {
+  @if not map.has-key($-definitions, "viewport-#{$name}-min-width") {
+    @error "Unknown shell viewport: #{$name}";
+  }
+  @include viewports.at-least($name) {
+    @content;
+  }
+}
