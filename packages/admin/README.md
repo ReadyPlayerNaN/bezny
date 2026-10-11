@@ -13,7 +13,9 @@ This private workspace package builds ESM JavaScript and TypeScript declarations
 | `@bezny/admin/page` | `AdminPage` |
 | `@bezny/admin/building-blocks` | `AdminBuildingBlocksProvider`, `useAdminBuildingBlocks`, default implementations, and their prop/override types |
 | `@bezny/admin/entities` | Entity/action/command contracts, registry validation, entity-scoped selection |
-| `@bezny/admin/application` | `createAdminApplication`, `AdminApplicationProvider` |
+| `@bezny/admin/application` | `createAdminApplication`, `AdminApplicationProvider`, `AdminEntityScreen` |
+| `@bezny/admin/runtime` | `createAdminRuntime`, runtime/options types |
+| `@bezny/admin/routes` | Route binding types and matched-route resolution |
 | `@bezny/admin/context` | Matched entity context and registry hooks |
 | `@bezny/admin/commands` | Shared entity/navigation commands, domain navigation, active-screen command registration |
 | `@bezny/admin/adapters` | Typed `defineAdminEntity`, LCRUD adapter/configuration contracts |
@@ -159,6 +161,12 @@ Define replacements at module scope. Changing the override object alone does not
 ## Registered entity applications
 
 Use [registered entity applications](ENTITIES.md) when building an entity-oriented admin. Typed entity/adapter definitions and an application-owned bounded data session drive the generic `/$entity`, `/$entity/create`, `/$entity/$recordId`, and `/$entity/$recordId/edit` routes and the shared command catalog. Context comes from route matches, not pathname parsing. Form screens register real callbacks for the palette rather than hardcoding form IDs. The low-level provider above remains useful when owning a different route tree.
+
+## File-based routing
+
+Use `createAdminRuntime` when your application owns a TanStack file-based routetree. It owns the **same** registry, commands, selection, bounded data session, Jotai store and i18n instance used by `createAdminApplication`; it does not create another router. See [file-route integration](ENTITIES.md#file-based-route-integration) for loader, route-ID, navigation and lifecycle wiring. The existing programmatic factory remains supported and now also activates data through route loaders.
+
+Both routing modes run the admin behavior suite and the complete demo test journeys, including LCRUD, forms, palette/UI actions, selection, pagination, localization/RTL, authentication presentation and custom building blocks.
 
 ## Runnable application example
 

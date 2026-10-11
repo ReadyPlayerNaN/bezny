@@ -32,6 +32,14 @@
       "types": "./dist/admin-entity-routing.d.ts",
       "import": "./dist/admin-entity-routing.js"
     },
+    "./runtime": {
+      "types": "./dist/admin-application-runtime.d.ts",
+      "import": "./dist/admin-application-runtime.js"
+    },
+    "./routes": {
+      "types": "./dist/admin-route-bindings.d.ts",
+      "import": "./dist/admin-route-bindings.js"
+    },
     "./context": {
       "types": "./dist/admin-entity-context.d.ts",
       "import": "./dist/admin-entity-context.js"
@@ -59,8 +67,8 @@
   },
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run && node test/build-smoke.mjs"
+    "typecheck": "tsr generate && tsc --noEmit",
+    "test": "tsr generate && vitest run && node test/build-smoke.mjs"
   },
   "dependencies": {
     "@bezny/base": "workspace:*",
@@ -72,6 +80,7 @@
   },
   "devDependencies": {
     "@bezny/typescript-config": "workspace:*",
+    "@tanstack/router-cli": "1.167.38",
     "@testing-library/react": "16.3.3",
     "@testing-library/user-event": "^14.6.7",
     "@types/node": "^24.0.0",

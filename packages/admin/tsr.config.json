@@ -1,0 +1,5 @@
+{
+  "routesDirectory": "./test/file-routes",
+  "generatedRouteTree": "./test/file-route-tree.gen.ts",
+  "quoteStyle": "double"
+}

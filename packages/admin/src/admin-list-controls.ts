@@ -1,5 +1,4 @@
 import { useStore } from "jotai";
-import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { AdminListQuery } from "./admin-data-adapter.js";
@@ -67,14 +66,6 @@ export const useAdminListControls = () => {
     }
     update({ ...query, page });
   };
-  useEffect(() => {
-    if (active && entity && pageCount !== null && query.page > pageCount) {
-      store.set(adminListQueriesAtom, (queries) => ({
-        ...queries,
-        [entity.key]: { ...query, page: pageCount },
-      }));
-    }
-  }, [active, entity, pageCount, query, store]);
   const filterCommands: AdminCommand[] = active
     ? (entity.filters ?? []).map((filter) => {
         const value = Object.hasOwn(query.filters, filter.key)

@@ -21,15 +21,16 @@ import type {
   AdminEntityNavigate,
   AdminRecordReference,
 } from "./admin-entity-model.js";
-import {
-  adminEntityPaths,
-  adminEntityViewForRoute,
-} from "./admin-entity-paths.js";
 import { adminLanguages } from "./admin-i18n.js";
 import { useAdminListControls } from "./admin-list-controls.js";
+import {
+  adminRouteLocation,
+  useAdminRouteBindings,
+} from "./admin-route-bindings.js";
 
 export const useAdminEntityNavigate = (): AdminEntityNavigate => {
   const navigate = useNavigate();
+  const bindings = useAdminRouteBindings();
   return useCallback(
     async (location) => {
       if ("recordId" in location) {
@@ -43,16 +44,16 @@ export const useAdminEntityNavigate = (): AdminEntityNavigate => {
         }
         await navigate({
           params: { entity: location.entity, recordId: location.recordId },
-          to: adminEntityPaths[location.view],
+          to: bindings[location.view].path,
         });
       } else {
         await navigate({
           params: { entity: location.entity },
-          to: adminEntityPaths[location.view],
+          to: bindings[location.view].path,
         });
       }
     },
-    [navigate]
+    [navigate, bindings]
   );
 };
 
@@ -161,6 +162,7 @@ export const useAdminEntityCommands = () => {
   const navigate = useAdminEntityNavigate();
   const store = useStore();
   const router = useRouter();
+  const bindings = useAdminRouteBindings();
   const setSelection = useSetAtom(adminSelectionAtom);
   const registeredPageCommands = useAtomValue(adminPageCommandsAtom);
   const navigationCommands = registry.entities.flatMap((entity) => [
@@ -239,11 +241,11 @@ export const useAdminEntityCommands = () => {
     const selected = context.selectedIds.includes(recordId);
     return {
       execute: () => {
-        const match = router.state.matches.at(-1);
-        if (
-          adminEntityViewForRoute(match?.routeId) !== "list" ||
-          match?.params.entity !== entity.key
-        ) {
+        const location = adminRouteLocation(
+          bindings,
+          router.state.matches.at(-1)
+        );
+        if (location?.view !== "list" || location.entity !== entity.key) {
           return;
         }
         if (!store.get(entity.records).some((item) => item.id === recordId)) {

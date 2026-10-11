@@ -4,6 +4,7 @@ import { AdminProvider } from "@bezny/admin";
 import { defineAdminEntity } from "@bezny/admin/adapters";
 import {
   AdminApplicationProvider,
+  AdminEntityScreen,
   createAdminApplication,
 } from "@bezny/admin/application";
 import {
@@ -28,6 +29,8 @@ import { createAdminI18n } from "@bezny/admin/i18n";
 import { AdminLayout } from "@bezny/admin/layout";
 import { useAdminListControls } from "@bezny/admin/list";
 import { AdminPage } from "@bezny/admin/page";
+import { adminRouteLocation } from "@bezny/admin/routes";
+import { createAdminRuntime } from "@bezny/admin/runtime";
 
 // Verify the public export without Vitest's module resolution or transforms.
 for (const component of [
@@ -41,6 +44,9 @@ for (const component of [
   useAdminBuildingBlocks,
   AdminApplicationProvider,
   createAdminApplication,
+  createAdminRuntime,
+  AdminEntityScreen,
+  adminRouteLocation,
   createAdminEntityRegistry,
   defineAdminEntity,
   createAdminDataSession,

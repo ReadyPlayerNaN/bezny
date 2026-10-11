@@ -7,7 +7,8 @@
     "dev": "pnpm --filter @bezny/base build && pnpm --filter @bezny/admin build && vite",
     "build": "vite build",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run && pnpm test:file-routes",
+    "test:file-routes": "vitest run --config vite.file-routes.config.ts"
   },
   "dependencies": {
     "@bezny/admin": "workspace:*",

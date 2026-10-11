@@ -6,46 +6,29 @@ import {
   createRouter,
   redirect,
 } from "@tanstack/react-router";
-import type { RouterHistory } from "@tanstack/react-router";
+import type { AnyRouter, RouterHistory } from "@tanstack/react-router";
 import type { i18n } from "i18next";
-import { createStore } from "jotai";
 import type { ReactNode, FunctionComponent } from "react";
 import { useEffect } from "react";
 import { I18nextProvider, useTranslation } from "react-i18next";
 
+import { createAdminRuntime } from "./admin-application-runtime.js";
+import type { AdminRuntime } from "./admin-application-runtime.js";
 import type { AdminBuildingBlockOverrides } from "./admin-building-blocks.js";
 import type { AdminEntityDefinition } from "./admin-data-adapter.js";
-import { createAdminDataSession } from "./admin-data-session.js";
 import type { AdminCachePolicy } from "./admin-data-session.js";
 import { useAdminEntityCommands } from "./admin-entity-commands.js";
 import {
   AdminEntityRegistryProvider,
   useAdminEntityContext,
   useAdminEntityPresentation,
-  useAdminDataSession,
 } from "./admin-entity-context.js";
-import {
-  adminSelectionAtom,
-  createAdminEntityRegistry,
-} from "./admin-entity-model.js";
 import type { AdminStore, AdminEntityView } from "./admin-entity-model.js";
-import {
-  adminEntityPaths,
-  adminEntityViewForRoute,
-} from "./admin-entity-paths.js";
-import { createAdminI18n } from "./admin-i18n.js";
+import { adminEntityPaths } from "./admin-entity-paths.js";
 import { AdminProvider } from "./admin-provider.js";
+import { AdminRouteBindingsContext } from "./admin-route-bindings.js";
 
-const AdminDataBoundary = ({ Root }: { Root: FunctionComponent }) => {
-  const { request } = useAdminEntityContext();
-  const session = useAdminDataSession();
-  useEffect(() => {
-    void session.activate(request);
-  }, [request, session]);
-  return <Root />;
-};
-
-const EntityScreen = () => {
+export const AdminEntityScreen = () => {
   const { entity, view, kind } = useAdminEntityContext();
   const { refresh } = useAdminEntityCommands();
   const { t } = useTranslation("beznyAdmin");
@@ -95,26 +78,23 @@ export const createAdminApplication = ({
   Root,
   NotFound,
   history = createBrowserHistory(),
-  store = createStore(),
+  store,
   cache,
-  i18n: translations = createAdminI18n(),
+  i18n: translations,
 }: AdminApplicationOptions) => {
-  const registry = createAdminEntityRegistry(entities);
-  const session = createAdminDataSession(registry, store, cache);
-  if (
-    registry.entities.some(
-      (entity) => (entity.pageSize ?? 25) > session.policy.maxPageSize
-    )
-  ) {
-    throw new Error("Entity page size exceeds application maximum.");
-  }
-  const ApplicationRoot = () => <AdminDataBoundary Root={Root} />;
-  const [firstEntity] = registry.entities;
+  const runtime = createAdminRuntime({
+    NotFound,
+    entities,
+    ...(store ? { store } : {}),
+    ...(cache ? { cache } : {}),
+    ...(translations ? { i18n: translations } : {}),
+  });
+  const [firstEntity] = runtime.registry.entities;
   if (!firstEntity) {
     throw new Error("An admin application requires an entity.");
   }
   const root = createRootRoute({
-    component: ApplicationRoot,
+    component: Root,
     notFoundComponent: NotFound,
   });
   const index = createRoute({
@@ -129,12 +109,13 @@ export const createAdminApplication = ({
   });
   const routeFor = (view: AdminEntityView) =>
     createRoute({
-      component: EntityScreen,
+      component: AdminEntityScreen,
       getParentRoute: () => root,
+      loader: runtime.loader(view),
       path: adminEntityPaths[view],
     });
   const unavailable = createRoute({
-    component: EntityScreen,
+    component: AdminEntityScreen,
     getParentRoute: () => root,
     path: "$",
   });
@@ -147,15 +128,7 @@ export const createAdminApplication = ({
     routeFor("update"),
   ]);
   const router = createRouter({ history, routeTree });
-  return {
-    NotFound,
-    dispose: session.dispose,
-    i18n: translations,
-    registry,
-    router,
-    session,
-    store,
-  };
+  return runtime.attach(router);
 };
 export type AdminApplication = ReturnType<typeof createAdminApplication>;
 
@@ -175,27 +148,12 @@ export const AdminApplicationProvider = ({
   application,
   components,
 }: {
-  application: AdminApplication;
+  application: AdminRuntime & { router: AnyRouter };
   components?: AdminBuildingBlockOverrides;
 }) => {
   useEffect(() => {
-    const unsubscribe = application.router.subscribe("onResolved", () => {
-      const match = application.router.state.matches.at(-1);
-      const selection = application.store.get(adminSelectionAtom);
-      if (
-        selection &&
-        (adminEntityViewForRoute(match?.routeId) !== "list" ||
-          match?.params.entity !== selection.entity)
-      ) {
-        application.store.set(adminSelectionAtom, null);
-      }
-    });
-    const unregister = application.session.onDispose(unsubscribe);
-    return () => {
-      unregister();
-      unsubscribe();
-      application.session.pause();
-    };
+    application.connect();
+    return application.pause;
   }, [application]);
   return (
     <I18nextProvider i18n={application.i18n}>
@@ -205,11 +163,13 @@ export const AdminApplicationProvider = ({
           session={application.session}
           NotFound={application.NotFound}
         >
-          <AdminProvider
-            router={application.router}
-            store={application.store}
-            {...(components ? { components } : {})}
-          />
+          <AdminRouteBindingsContext.Provider value={application.routes}>
+            <AdminProvider
+              router={application.router}
+              store={application.store}
+              {...(components ? { components } : {})}
+            />
+          </AdminRouteBindingsContext.Provider>
         </AdminEntityRegistryProvider>
       </AdminLanguageBoundary>
     </I18nextProvider>

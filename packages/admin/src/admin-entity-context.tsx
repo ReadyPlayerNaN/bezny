@@ -1,4 +1,4 @@
-import { useParams, useRouterState } from "@tanstack/react-router";
+import { useRouterState } from "@tanstack/react-router";
 import { atom, useAtomValue } from "jotai";
 import { createContext, useContext, useMemo } from "react";
 import type { FunctionComponent, ReactNode } from "react";
@@ -21,8 +21,11 @@ import type {
   AdminRecordReference,
   AdminSelection,
 } from "./admin-entity-model.js";
-import { adminEntityViewForRoute } from "./admin-entity-paths.js";
 import { adminListQueriesAtom } from "./admin-list-state.js";
+import {
+  adminRouteLocation,
+  useAdminRouteBindings,
+} from "./admin-route-bindings.js";
 
 const RegistryContext = createContext<AdminEntityRegistry | null>(null);
 const DataSessionContext = createContext<AdminDataSession | null>(null);
@@ -187,16 +190,14 @@ const entityContextScope = (
 /** Entity context comes from the matched route, never from parsing a URL. */
 export const useAdminEntityContext = () => {
   const registry = useAdminEntityRegistry();
-  const params = useParams({ shouldThrow: false, strict: false });
-  const routeId = useRouterState({
-    select: (state): string | undefined => state.matches.at(-1)?.routeId,
-  });
-  const entityKey =
-    typeof params?.entity === "string" ? params.entity : undefined;
+  const bindings = useAdminRouteBindings();
+  const match = useRouterState({ select: (state) => state.matches.at(-1) });
+  const location = adminRouteLocation(bindings, match);
+  const entityKey = location?.entity;
   const recordId =
-    typeof params?.recordId === "string" ? params.recordId : null;
+    location && "recordId" in location ? location.recordId : null;
   const entity = entityKey ? (registry.get(entityKey) ?? null) : null;
-  const view = adminEntityViewForRoute(routeId);
+  const view = location?.view ?? null;
   const records = useAtomValue(entity?.records ?? emptyRecordsAtom);
   const selection = useAtomValue(adminSelectionAtom);
   const existingIds = new Set(records.map((record) => record.id));
