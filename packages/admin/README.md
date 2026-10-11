@@ -10,6 +10,7 @@ This private workspace package builds ESM JavaScript and TypeScript declarations
 | --- | --- |
 | `@bezny/admin` | `AdminProvider`, `AdminProviderProps` |
 | `@bezny/admin/layout` | `AdminLayout` |
+| `@bezny/admin/toasts` | `useAdminToasts`, `AdminToastProvider`, message/options/API types |
 | `@bezny/admin/page` | `AdminPage` |
 | `@bezny/admin/building-blocks` | `AdminBuildingBlocksProvider`, `useAdminBuildingBlocks`, default implementations, and their prop/override types |
 | `@bezny/admin/entities` | Entity/action/command contracts, registry validation, entity-scoped selection |
@@ -27,6 +28,7 @@ This private workspace package builds ESM JavaScript and TypeScript declarations
 
 - `router`: an application-created TanStack router. Configure routes, history, loaders, router context, and other options when creating this router; the admin package does not create or register a global router.
 - `store` (optional): a Jotai store created with `createStore`. Without it, each mounted admin root owns an isolated store that survives rerenders and navigation. Remounting resets that implicit store. Supply a store when loaders or other non-React code need access to the same state.
+- `toasts` (optional): toast duration, swipe direction, viewport hotkey, and accessible/localized labels. A shared base toast provider and viewport are included automatically.
 - `components` (optional): typed replacements for `Layout`, `Page`, and `PageHeader`. Partial overrides inherit the surrounding configuration or built-in defaults. All route components see the configured blocks.
 
 Applications own their data fetching and persistence. React and React DOM 19 are peer dependencies. Jotai and TanStack Router are runtime dependencies, not bundled copies or re-exported APIs; import their APIs directly when defining atoms and routes. Declare those direct dependencies in consuming packages as well.
@@ -59,6 +61,35 @@ export function App() {
 ```
 
 Import the base stylesheet once at the application entrypoint. Admin adds no stylesheet and does not duplicate or re-export base components. Its layout/page defaults are semantic compositions without a visual theme. The default page header uses a flex row with the heading first and actions at the inline end (right in LTR), with the description below. Keep collection create buttons and detail action menus in the `actions` slot for consistent placement. Use root `className`/`style` props or replace a block to implement your application design.
+
+## Toast notifications
+
+Both `AdminProvider` and `AdminApplicationProvider` include an app-scoped notification host that survives route navigation. Publish messages from route components or shared action callbacks with `useAdminToasts`:
+
+```tsx
+import { useAdminToasts } from "@bezny/admin/toasts";
+
+function SaveArticle() {
+  const { publish } = useAdminToasts();
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        await saveArticle(); // Application-owned persistence and error handling.
+        publish({ title: "Saved", description: "Your article was saved." });
+      }}
+    >
+      Save
+    </button>
+  );
+}
+```
+
+`publish({ description, title?, duration?, type? })` returns a unique string ID. `dismiss(id)` removes that notification; `clear()` removes all. Duplicate messages remain separate. Radix controls timeouts, hover/focus/window-blur pausing, swipe dismissal and keyboard behavior; dismissed messages leave the queue. Defaults are 5000ms and foreground announcements; use `type: "background"` for background tasks. Message text is caller-owned, including translations and success/error policy. The package does not emit automatic messages for every command or expose a global singleton.
+
+Configure `<AdminProvider toasts={{ duration: 8000, dismissLabel: "Close", viewportLabel: "Notifications ({hotkey})" }} router={router} />`. Options also include `label`, `swipeDirection` and `hotkey`. Tell keyboard users that F8 focuses notifications, or document your custom shortcut. `AdminApplicationProvider` translates announcement, viewport and dismiss labels through the app's i18n instance (English/Czech/Arabic defaults), updates them on language changes, and preserves RTL/theme inheritance; explicit `toasts` labels override these defaults. Low-level `AdminProvider` defaults to English and accepts localized labels directly.
+
+Each mounted root owns its own queue, even when roots share a Jotai store. Rerenders and navigation retain messages; unmounting discards them. The hook throws outside a notification provider. For standalone screens, wrap them in `<AdminToastProvider options={...}>`; do not add another host to ordinary admin routes. Import `@bezny/base/style.css` once. The viewport renders under the provider's DOM/theme boundary; place that boundary above the provider rather than only inside a route layout. No admin-specific styles or Radix dependencies are added. Use base toast parts directly when composing optional actions, or `AlertDialog` for responses that must not be ignored.
 
 ## Composition and customization
 

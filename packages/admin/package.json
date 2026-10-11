@@ -12,6 +12,10 @@
       "types": "./dist/admin-provider.d.ts",
       "import": "./dist/admin-provider.js"
     },
+    "./toasts": {
+      "types": "./dist/admin-toasts.d.ts",
+      "import": "./dist/admin-toasts.js"
+    },
     "./layout": {
       "types": "./dist/admin-layout.d.ts",
       "import": "./dist/admin-layout.js"

@@ -31,10 +31,13 @@ import { useAdminListControls } from "@bezny/admin/list";
 import { AdminPage } from "@bezny/admin/page";
 import { adminRouteLocation } from "@bezny/admin/routes";
 import { createAdminRuntime } from "@bezny/admin/runtime";
+import { AdminToastProvider, useAdminToasts } from "@bezny/admin/toasts";
 
 // Verify the public export without Vitest's module resolution or transforms.
 for (const component of [
   AdminProvider,
+  AdminToastProvider,
+  useAdminToasts,
   AdminLayout,
   AdminPage,
   AdminBuildingBlocksProvider,

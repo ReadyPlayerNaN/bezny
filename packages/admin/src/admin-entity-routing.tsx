@@ -26,7 +26,9 @@ import {
 import type { AdminStore, AdminEntityView } from "./admin-entity-model.js";
 import { adminEntityPaths } from "./admin-entity-paths.js";
 import { AdminProvider } from "./admin-provider.js";
+import type { AdminProviderProps } from "./admin-provider.js";
 import { AdminRouteBindingsContext } from "./admin-route-bindings.js";
+import type { AdminToastOptions } from "./admin-toasts.js";
 
 export const AdminEntityScreen = () => {
   const { entity, view, kind } = useAdminEntityContext();
@@ -144,12 +146,32 @@ const AdminLanguageBoundary = ({ children }: { children: ReactNode }) => {
     </DirectionProvider>
   );
 };
+const LocalizedAdminProvider = ({
+  toasts,
+  ...props
+}: AdminProviderProps<AnyRouter>) => {
+  const { t } = useTranslation("beznyAdmin");
+  return (
+    <AdminProvider
+      {...props}
+      toasts={{
+        dismissLabel: t("notifications.dismiss"),
+        label: t("notifications.label"),
+        viewportLabel: t("notifications.viewport"),
+        ...toasts,
+      }}
+    />
+  );
+};
+
 export const AdminApplicationProvider = ({
   application,
   components,
+  toasts,
 }: {
   application: AdminRuntime & { router: AnyRouter };
   components?: AdminBuildingBlockOverrides;
+  toasts?: AdminToastOptions;
 }) => {
   useEffect(() => {
     application.connect();
@@ -164,9 +186,10 @@ export const AdminApplicationProvider = ({
           NotFound={application.NotFound}
         >
           <AdminRouteBindingsContext.Provider value={application.routes}>
-            <AdminProvider
+            <LocalizedAdminProvider
               router={application.router}
               store={application.store}
+              toasts={toasts}
               {...(components ? { components } : {})}
             />
           </AdminRouteBindingsContext.Provider>
