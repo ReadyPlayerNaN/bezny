@@ -38,6 +38,43 @@ Portalled content inherits its actual DOM container's theme, not React context. 
 
 Use `type="multiple"` with string-array values for independent pressed buttons. Radix owns roving focus, RTL/orientation, disabled items, and controlled state. Single groups may deselect to the empty string; control value changes to enforce an always-selected policy. These buttons are not boolean switches or native form inputs; use Controller for RHF integration. Token prefix: `--bezny-control-toggle-group-*`.
 
+## Toast
+
+```tsx
+import {
+  ToastProvider,
+  Toast,
+  ToastTitle,
+  ToastDescription,
+  ToastAction,
+  ToastClose,
+  ToastViewport,
+} from "@bezny/base";
+
+<ToastProvider duration={5000}>
+  <Toast open={savedNotificationOpen} onOpenChange={setSavedNotificationOpen}>
+    <ToastTitle>Changes saved</ToastTitle>
+    <ToastDescription>Your article is ready.</ToastDescription>
+    <ToastAction
+      altText="Open the article from the Articles list"
+      onClick={openArticle}
+    >
+      View article
+    </ToastAction>
+    <ToastClose>Dismiss</ToastClose>
+  </Toast>
+  <ToastViewport />
+</ToastProvider>;
+```
+
+Application state and callbacks in this example are caller-owned. Wrap the application with one provider and render one viewport inside its theme boundary. The viewport is fixed at the bottom inline-end, constrained to the screen, and scrolls when notifications overflow. Radix portals toast roots into that viewport; there is no implicit body portal or toast queue/service.
+
+`Toast` supports `open`/`onOpenChange`, `defaultOpen` (true by default), per-toast `duration`, `forceMount`, and Radix pause/resume, Escape, and swipe events. Radix owns automatic dismissal, hover/focus/window-blur pausing, keyboard navigation, live announcements, and swipe dismissal. All styled parts preserve refs, classes, native props, and `asChild` composition. Custom children must forward props/ref. Force-mounted closed content remains caller-managed.
+
+Use `type="foreground"` for user-triggered messages and `type="background"` for background updates. Actions must be safe to ignore and require meaningful `altText` describing a permanent alternative way to perform the action; use `AlertDialog` when a response is required. Label icon-only close buttons with `aria-label`. Tell users that **F8** focuses notifications (or set a discoverable custom `hotkey`/`label` on the viewport); Tab navigates actions, Enter/Space activates buttons, and Escape dismisses a focused toast. Provider `label` and viewport `label` can be localized.
+
+Control aliases use `--bezny-control-toast-*`, declared on roots and the viewport and inherited by their parts: background, text, muted, border, border-width, radius, hover, font-family, font-size, line-height, font-weight, padding, padding-small, gap, width, shadow, z-index, focus-ring, and opacity-disabled. Each references its matching `--bezny-structural-surface-*` purpose. Override shared structural aliases on `:root` or an explicit theme boundary; use component-scoped control overrides for individual notifications. Swipe positioning uses Radix's runtime movement variables, not design tokens.
+
 ## Tooltip
 
 `<TooltipProvider><Tooltip><TooltipTrigger asChild><Button>Details</Button></TooltipTrigger><TooltipContent>Additional information</TooltipContent></Tooltip></TooltipProvider>`

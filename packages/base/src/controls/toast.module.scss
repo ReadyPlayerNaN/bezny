@@ -1,0 +1,90 @@
+@use "./toast-appearance" as appearance;
+
+.viewport {
+  @include appearance.declarations;
+  position: fixed;
+  inset-block-end: 0;
+  inset-inline-end: 0;
+  z-index: appearance.token("z-index");
+  display: flex;
+  flex-direction: column;
+  gap: appearance.token("gap");
+  box-sizing: border-box;
+  width: appearance.token("width");
+  max-width: 100%;
+  max-height: 100dvh;
+  margin: 0;
+  padding: appearance.token("padding");
+  overflow-y: auto;
+  list-style: none;
+
+  &:focus-visible {
+    outline: appearance.token("focus-ring");
+  }
+}
+
+.root {
+  @include appearance.declarations;
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: appearance.token("gap");
+  box-sizing: border-box;
+  padding: appearance.token("padding");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  box-shadow: appearance.token("shadow");
+  overflow-wrap: anywhere;
+
+  &:focus-visible {
+    outline: appearance.token("focus-ring");
+  }
+
+  &[data-swipe="move"] {
+    transform: translate(
+      var(--radix-toast-swipe-move-x),
+      var(--radix-toast-swipe-move-y)
+    );
+  }
+
+  &[data-swipe="cancel"] {
+    transform: translate(0, 0);
+  }
+}
+
+.title {
+  font-weight: appearance.token("font-weight");
+}
+
+.description {
+  color: appearance.token("muted");
+}
+
+.button {
+  align-self: flex-start;
+  padding: appearance.token("padding-small");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font: inherit;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: appearance.token("hover");
+  }
+
+  &:focus-visible {
+    outline: appearance.token("focus-ring");
+  }
+
+  &:disabled {
+    opacity: appearance.token("opacity-disabled");
+    cursor: not-allowed;
+  }
+}
