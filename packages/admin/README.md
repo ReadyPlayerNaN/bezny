@@ -282,7 +282,7 @@ This **admin UI context** is distinct from TanStack Router's dependency-injectio
 
 ### 4. Entity action entrypoints
 
-Entity actions are accessible from **both entity list rows and the entity detail page**, and also through the palette. These surfaces share action identity, permission checks, availability rules, target resolution, and execution logic. Updates navigate to the update page; deletion opens the same confirmation flow. Collection/create and selection/bulk actions use their respective contexts rather than pretending to be single-entity actions.
+Entity actions are accessible from **both entity list rows and the entity detail page**, and also through the palette. The default detail page groups its list navigation and available record actions in an **Actions** dropdown beside the heading, with an end-aligned popover menu. These surfaces share action identity, permission checks, availability rules, target resolution, and execution logic. Updates navigate to the update page; deletion opens the same confirmation flow. Collection/create and selection/bulk actions use their respective contexts rather than pretending to be single-entity actions.
 
 ### Implementation and acceptance expectations
 

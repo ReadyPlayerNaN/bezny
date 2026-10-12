@@ -16,6 +16,7 @@ import type {
   AdminListResult,
 } from "../src/admin-data-adapter.js";
 import type { AdminEntityField } from "../src/admin-entity-fields.js";
+import type { AdminEntityAction } from "../src/admin-entity-model.js";
 import {
   adminSelectionAtom,
   adminPageCommandsAtom,
@@ -71,7 +72,8 @@ const parseValues = (values: unknown): Values => {
 const fixture = (
   path = "/articles",
   overrides: Partial<AdminDataAdapter<Article, Values>> = {},
-  deriveValues?: AdminEntityField["deriveValues"]
+  deriveValues?: AdminEntityField["deriveValues"],
+  actions?: readonly AdminEntityAction[]
 ) => {
   let records: Article[] = [
     {
@@ -133,6 +135,7 @@ const fixture = (
     ...overrides,
   };
   const entity = defineAdminEntity({
+    ...(actions ? { actions } : {}),
     adapter,
     columns: [
       { key: "body", label: "Body", render: (data) => parseValues(data).body },
@@ -247,6 +250,128 @@ describe("registration-driven default pages", () => {
     ).toStrictEqual(["Body:", "First body", "Status:", "draft"]);
     expect(row.querySelector("dl")?.className).toContain("recordSummary");
     expect(within(row).getByRole("link", { name: "First" })).toBeTruthy();
+  });
+
+  it("collapses detail commands into one end-aligned Actions menu in the heading", async () => {
+    const { app } = fixture("/articles/1");
+    await mount(app);
+    const user = userEvent.setup();
+    const trigger = screen.getByRole("button", { name: "Actions" });
+    const headingRow = screen.getByRole("heading", {
+      name: "First",
+    }).parentElement;
+    expect(
+      headingRow?.querySelector("[data-admin-page-actions]")?.contains(trigger)
+    ).toBeTruthy();
+    expect({
+      delete: screen.queryByRole("button", { name: "Delete First" }),
+      edit: screen.queryByRole("button", { name: "Edit First" }),
+      expanded: trigger.getAttribute("aria-expanded"),
+      menu: screen.queryByRole("menu"),
+    }).toStrictEqual({
+      delete: null,
+      edit: null,
+      expanded: "false",
+      menu: null,
+    });
+    await user.click(trigger);
+    const menu = await screen.findByRole("menu", { name: "Actions" });
+    expect(menu.dataset.align).toBe("end");
+    expect(
+      within(menu)
+        .getAllByRole("menuitem")
+        .map((item) => item.textContent)
+    ).toStrictEqual(["List articles", "Edit First", "Delete First"]);
+    expect(
+      within(menu).getByRole("menuitem", { name: "Delete First" }).dataset.tone
+    ).toBe("critical");
+  });
+
+  it("supports keyboard opening, navigation, dismissal and activation of detail actions", async () => {
+    const { app } = fixture("/articles/1");
+    await mount(app);
+    const user = userEvent.setup();
+    const trigger = screen.getByRole("button", { name: "Actions" });
+    trigger.focus();
+    await user.keyboard("{Enter}");
+    await screen.findByRole("menu", { name: "Actions" });
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(screen.queryByRole("menu")).toBeNull();
+    trigger.focus();
+    await user.keyboard("{ArrowDown}");
+    const list = await screen.findByRole("menuitem", { name: "List articles" });
+    await waitFor(() => expect(document.activeElement).toBe(list));
+    await user.keyboard("{ArrowDown}");
+    expect(document.activeElement).toBe(
+      screen.getByRole("menuitem", { name: "Edit First" })
+    );
+    await user.keyboard("{Enter}");
+    await expect(screen.findByDisplayValue("First")).resolves.toBeTruthy();
+  });
+
+  it("navigates back to the collection from the detail Actions menu", async () => {
+    const { app } = fixture("/articles/1");
+    await mount(app);
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: "Actions" }));
+    await user.click(
+      await screen.findByRole("menuitem", { name: "List articles" })
+    );
+    await expect(
+      screen.findByRole("heading", { name: "Articles" })
+    ).resolves.toBeTruthy();
+    expect(screen.queryByRole("menu")).toBeNull();
+  });
+
+  it("hands detail deletion focus to confirmation and returns it to Actions on cancel", async () => {
+    const { app, adapter } = fixture("/articles/1");
+    await mount(app);
+    const user = userEvent.setup();
+    const trigger = screen.getByRole("button", { name: "Actions" });
+    await user.click(trigger);
+    await user.click(
+      await screen.findByRole("menuitem", { name: "Delete First" })
+    );
+    const dialog = await screen.findByRole("alertdialog");
+    expect(screen.queryByRole("menu")).toBeNull();
+    expect(document.activeElement).toBe(
+      within(dialog).getByRole("button", { name: "Cancel" })
+    );
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("alertdialog")).toBeNull());
+    await waitFor(() => expect(document.activeElement).toBe(trigger));
+    expect(adapter.remove).not.toHaveBeenCalled();
+  });
+
+  it("keeps available custom commands in the detail menu and reports execution errors after closing", async () => {
+    const execute = vi
+      .fn<() => Promise<void>>()
+      .mockRejectedValue(new Error("offline"));
+    const unavailable = vi.fn<() => void>();
+    const { app } = fixture("/articles/1", {}, undefined, [
+      { execute, id: "publish", label: () => "Publish", target: "record" },
+      {
+        execute: unavailable,
+        id: "hidden",
+        isAvailable: () => false,
+        label: () => "Hidden",
+        target: "record",
+      },
+    ]);
+    await mount(app);
+    const user = userEvent.setup();
+    const trigger = screen.getByRole("button", { name: "Actions" });
+    await user.click(trigger);
+    expect(screen.queryByRole("menuitem", { name: "Hidden" })).toBeNull();
+    await user.click(await screen.findByRole("menuitem", { name: "Publish" }));
+    await expect(screen.findByRole("alert")).resolves.toBeTruthy();
+    expect(screen.queryByRole("menu")).toBeNull();
+    expect([
+      execute.mock.calls.length,
+      unavailable.mock.calls.length,
+    ]).toStrictEqual([1, 0]);
+    expect(document.activeElement).toBe(trigger);
   });
 
   it("derives listing, filters, pagination and empty states without screen components", async () => {

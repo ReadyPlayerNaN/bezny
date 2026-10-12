@@ -347,7 +347,10 @@ describe.each(["programmatic", "file-based"])(
       const user = userEvent.setup();
       await user.click(screen.getByRole("link", { name: "Gamma" }));
       await screen.findByRole("heading", { name: "Gamma" });
-      await user.click(screen.getByRole("button", { name: "List records" }));
+      await user.click(screen.getByRole("button", { name: "Actions" }));
+      await user.click(
+        await screen.findByRole("menuitem", { name: "List records" })
+      );
       await screen.findByRole("link", { name: "Gamma" });
       expect({ ...application.router.state.location.search }).toStrictEqual({
         filters: { status: "draft" },

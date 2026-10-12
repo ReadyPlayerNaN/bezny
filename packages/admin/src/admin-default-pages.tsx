@@ -9,6 +9,7 @@ import {
   AdminCollectionFilters,
   AdminCollectionPagination,
 } from "./admin-collection-controls.js";
+import { AdminDetailActions } from "./admin-detail-actions.js";
 import {
   useAdminEntityCommands,
   useAdminEntityNavigate,
@@ -175,16 +176,14 @@ export const AdminDefaultDetailPage = () => {
     <AdminPage
       heading={record.label}
       actions={
-        <>
-          {[
+        <AdminDetailActions
+          commands={[
             commands.list,
             ...commands
               .forRecord(record.id)
               .filter((command) => command.location?.view !== "detail"),
-          ].map((command) => (
-            <CommandButton key={command.id} command={command} />
-          ))}
-        </>
+          ]}
+        />
       }
     >
       <dl>

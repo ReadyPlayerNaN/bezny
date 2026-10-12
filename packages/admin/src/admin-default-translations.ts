@@ -2,6 +2,7 @@ import type { i18n } from "i18next";
 
 const defaultPageTranslations = {
   ar: {
+    actionMenu: "الإجراءات",
     actions: "إجراءات {{record}}",
     all: "الكل",
     apply: "تطبيق",
@@ -31,6 +32,7 @@ const defaultPageTranslations = {
     selectionCount: "المحدد: {{formattedCount}}",
   },
   cs: {
+    actionMenu: "Akce",
     actions: "Akce pro {{record}}",
     all: "Vše",
     apply: "Použít",
@@ -60,6 +62,7 @@ const defaultPageTranslations = {
     selectionCount: "Vybráno: {{formattedCount}}",
   },
   en: {
+    actionMenu: "Actions",
     actions: "Actions for {{record}}",
     all: "All",
     apply: "Apply",

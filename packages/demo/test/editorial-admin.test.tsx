@@ -428,8 +428,9 @@ describe("registration-driven editorial admin", () => {
     expect(
       screen.getByRole("status", { name: "Current context" }).textContent
     ).toBe("Context: Article 1");
+    await user.click(main.getByRole("button", { name: "Actions" }));
     await user.click(
-      main.getByRole("button", { name: "Edit Welcome to Bezny" })
+      await screen.findByRole("menuitem", { name: "Edit Welcome to Bezny" })
     );
     const title = await main.findByRole("textbox", { name: "Title" });
     await user.clear(title);
@@ -478,8 +479,9 @@ describe("registration-driven editorial admin", () => {
 
   it("confirms detail deletion through the package dialog and returns to the list", async () => {
     const { user, main, application } = await renderDemo("/articles/1");
+    await user.click(main.getByRole("button", { name: "Actions" }));
     await user.click(
-      main.getByRole("button", { name: "Delete Welcome to Bezny" })
+      await screen.findByRole("menuitem", { name: "Delete Welcome to Bezny" })
     );
     await user.click(
       within(await screen.findByRole("alertdialog")).getByRole("button", {
