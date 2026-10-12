@@ -124,7 +124,7 @@ describe("admin header chrome", () => {
     const button = screen.getByRole("button", { name: "Refresh records" });
     await user.click(button);
     await expect(screen.findByRole("alert")).resolves.toBeTruthy();
-    expect(button.hasAttribute("disabled")).toBeFalsy();
+    await waitFor(() => expect(button.hasAttribute("disabled")).toBeFalsy());
     await user.click(button);
     await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
     expect(execute).toHaveBeenCalledTimes(2);
