@@ -33,6 +33,7 @@ import {
   AdminLanguageMenuItems,
 } from "@bezny/admin/header";
 import { createAdminI18n } from "@bezny/admin/i18n";
+import { AdminKeyboardNavigation } from "@bezny/admin/keyboard-navigation";
 import { AdminLayout } from "@bezny/admin/layout";
 import { useAdminListControls } from "@bezny/admin/list";
 import { AdminPage } from "@bezny/admin/page";
@@ -46,6 +47,7 @@ import { I18nextProvider } from "react-i18next";
 // Verify the public export without Vitest's module resolution or transforms.
 for (const component of [
   AdminProvider,
+  AdminKeyboardNavigation,
   AdminHeader,
   AdminAccountMenu,
   AdminCommandPalette,
@@ -77,6 +79,7 @@ for (const component of [
 ]) {
   assert.equal(typeof component, "function");
 }
+assert.equal(renderToStaticMarkup(createElement(AdminKeyboardNavigation)), "");
 const chrome = renderToStaticMarkup(
   createElement(
     I18nextProvider,

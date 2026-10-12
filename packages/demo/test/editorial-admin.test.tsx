@@ -21,6 +21,10 @@ import { createDemoApplication, DemoApp } from "../src/demo-application.js";
 import type { DemoApplication } from "../src/demo-application.js";
 
 const applications: DemoApplication[] = [];
+const demoNavigationRects = () => {
+  const rect = new DOMRect(20, 40, 100, 24);
+  return Object.assign([rect], { item: () => rect });
+};
 const renderDemo = async (pathname = "/articles") => {
   const history = createMemoryHistory({ initialEntries: [pathname] });
   const application = createDemoApplication(history);
@@ -75,6 +79,29 @@ describe("registration-driven editorial admin", () => {
       application.dispose();
     }
     vi.restoreAllMocks();
+  });
+
+  it("exposes a keyboard-operable setting that disables and reenables letter hints", async () => {
+    vi.spyOn(HTMLElement.prototype, "getClientRects").mockImplementation(
+      demoNavigationRects
+    );
+    const { user } = await renderDemo();
+    const toggle = screen.getByRole("button", {
+      name: "Keyboard navigation (F)",
+    });
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    act(() => toggle.focus());
+    await user.keyboard("f");
+    expect(document.querySelector("[data-bezny-hint-overlay]")).not.toBeNull();
+    await user.keyboard("{Enter}");
+    await user.keyboard("f");
+    expect({
+      enabled: toggle.getAttribute("aria-pressed"),
+      overlay: document.querySelector("[data-bezny-hint-overlay]"),
+    }).toStrictEqual({ enabled: "false", overlay: null });
+    await user.keyboard("{Enter}");
+    await user.keyboard("f");
+    expect(document.querySelector("[data-bezny-hint-overlay]")).not.toBeNull();
   });
 
   it("uses package-owned CRUD pages for every entity and redirects the root", async () => {

@@ -10,6 +10,7 @@ This private workspace package builds ESM JavaScript and TypeScript declarations
 | --- | --- |
 | `@bezny/admin` | `AdminProvider`, `AdminProviderProps` |
 | `@bezny/admin/layout` | `AdminLayout` |
+| `@bezny/admin/keyboard-navigation` | `AdminKeyboardNavigation`, `AdminKeyboardNavigationProps` |
 | `@bezny/admin/header` | `AdminHeader`, `AdminCommandPalette`, `AdminAccountMenu`, `AdminLanguageMenuItems`, their props, and `adminCommandPaletteTriggerId` |
 | `@bezny/admin/style.css` | Package-owned header, palette, account-form, and collection-control styles |
 | `@bezny/admin/toasts` | `useAdminToasts`, `AdminToastProvider`, message/options/API types |
@@ -101,6 +102,28 @@ export function Workspace({ account }: { account: AdminAccountMenuProps }) {
 Authentication, authorization, account persistence, logout/session cleanup, application title and user data remain host-owned. The demo supplies only those bindings, its simulation-specific description and editorial content. No simulated-authentication logic is shipped as framework policy.
 
 English, Czech and Arabic UI text lives in the package's `beznyAdmin.chrome` namespace; consumers can override the resource bundle through their app-scoped i18next setup. Styles consume `--bezny-control-admin-chrome-*` aliases of structural tokens, including header height, palette result height, typography, surfaces and focus states. Build output includes ESM entry points, declarations and `style.css`; React, base primitives, RHF, cmdk and state/router dependencies are not bundled copies.
+
+## Optional letter-hint navigation
+
+Mount `AdminKeyboardNavigation` once in your workspace to enable Vimium-like navigation:
+
+```tsx
+import { AdminKeyboardNavigation } from "@bezny/admin/keyboard-navigation";
+
+import "@bezny/base/style.css";
+import "@bezny/admin/style.css";
+
+// Inside your shell, alongside the route outlet:
+<AdminKeyboardNavigation enabled={keyboardNavigationEnabled} />;
+```
+
+Press **F**, then type the letters shown on an actionable control. Text inputs/editors receive focus; other controls activate through their ordinary handlers. Radix dropdowns and select-only comboboxes receive Enter through the primitive's keyboard contract. Open dialogs, menus, listboxes and native popovers scope hints, including root-owned portals. The first Escape dismisses hints without dismissing the underlying layer; a subsequent Escape retains the primitive's normal behavior. Backspace edits a partial code; Tab and other unrelated interactions cancel hint mode without blocking their normal behavior.
+
+- Mounting is opt-in. `enabled` defaults to `true` when mounted. **Expose an accessible setting to turn off this global character shortcut**, as the demo does with its header keyboard toggle. It never starts while typing in inputs, textboxes or rich editors, during composition, or with Ctrl/Alt/Meta. Descendant handlers may reject entry using `preventDefault()` or stopped propagation. Browser-extension hotkeys remain user-configured; exclude the admin URL in Vimium if needed.
+- `shortcut` defaults to `"f"` and accepts one ASCII letter, case-insensitively. `alphabet` defaults to `"asdfghjkl"` and requires at least two distinct ASCII letters. Codes are deterministic and prefix-free, expanding beyond two or three letters as necessary; no target-count limit is imposed by the code generator.
+- `rootRef` optionally limits discovery to a connected container and its owned portals. Without it, the whole document is eligible. Buttons, links, inputs, summaries, editable regions and supported ARIA controls are discovered semantically. Disabled, hidden, inert, covered, offscreen and closing controls are excluded; labeled checkboxes/radios are deduplicated.
+- Use `data-bezny-hint` to include a custom control, `data-bezny-hint="off"` to exclude one, or `data-bezny-hints="off"` to exclude a subtree and prevent entry there. A custom control must already implement its own behavior and accessibility. Set `data-bezny-hint-action="focus"`, `"click"` or `"enter"` when its activation contract differs from the semantic default; navigation does not invent or bypass action permissions or confirmation flows.
+- Idle mode installs one bubbling key listener, with no observers, polling or geometry reads. Activation batches discovery and visibility reads before inserting one noninteractive, theme-inheriting overlay. Prefix filtering uses cached codes and performs no layout reads. Scrolling, resizing, focus/pointer interaction, navigation and relevant DOM changes invalidate the session; disable/unmount removes all session resources. Hint styles use four-layer tokens under `--bezny-control-admin-navigation-*`.
 
 ## Toast notifications
 

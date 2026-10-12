@@ -14,10 +14,13 @@ import {
   useAdminEntityRegistry,
 } from "@bezny/admin/context";
 import { AdminHeader } from "@bezny/admin/header";
+import { AdminKeyboardNavigation } from "@bezny/admin/keyboard-navigation";
 import { AdminLayout } from "@bezny/admin/layout";
+import { IconButton } from "@bezny/base";
 import { Link, Outlet } from "@tanstack/react-router";
 import { useAtomValue } from "jotai";
-import { useEffect } from "react";
+import { Keyboard } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { EditorialAccountMenu } from "./editorial-account-menu.js";
@@ -56,6 +59,7 @@ export const editorialComponents = {
 
 const EditorialWorkspace = () => {
   const { t, i18n } = useTranslation("editorial");
+  const [navigationEnabled, setNavigationEnabled] = useState(true);
   const context = useAdminEntityContext();
   let contextLabel = t("noEntity", {
     entity:
@@ -88,9 +92,25 @@ const EditorialWorkspace = () => {
     : "";
   return (
     <>
+      <AdminKeyboardNavigation enabled={navigationEnabled} />
       <AdminLayout
         header={
-          <AdminHeader title={t("shell")} tools={<EditorialAccountMenu />} />
+          <AdminHeader
+            title={t("shell")}
+            tools={
+              <>
+                <IconButton
+                  icon={Keyboard}
+                  variant="secondary"
+                  aria-label={t("keyboardNavigation")}
+                  aria-pressed={navigationEnabled}
+                  title={t("keyboardNavigation")}
+                  onClick={() => setNavigationEnabled((current) => !current)}
+                />
+                <EditorialAccountMenu />
+              </>
+            }
+          />
         }
         navigation={
           <ul>

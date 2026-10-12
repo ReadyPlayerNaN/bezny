@@ -1,0 +1,44 @@
+@use "./admin-navigation-appearance" as appearance;
+
+.overlay {
+  @include appearance.declarations;
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+  pointer-events: none;
+  z-index: appearance.token("z-index");
+  contain: layout style;
+
+  &::backdrop {
+    background: transparent;
+    pointer-events: none;
+  }
+}
+
+.badge {
+  position: absolute;
+  padding-inline: appearance.token("padding");
+  border: appearance.token("border-width") solid appearance.token("border");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  color: appearance.token("text");
+  box-shadow: appearance.token("shadow");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+  font-weight: appearance.token("font-weight");
+  white-space: nowrap;
+  pointer-events: none;
+
+  &[hidden] {
+    display: none;
+  }
+}

@@ -15,6 +15,8 @@ The dev script builds base/admin first, then starts Vite (normally `http://local
 
 The header title/tool arrangement, command palette/input editor, avatar/account dropdown/profile form, and language-menu UI are supplied by `@bezny/admin/header`, with styles from `@bezny/admin/style.css`. The demo uses `AdminHeader`; its account wrapper only binds the mock session, persistence callbacks and logout cleanup. No palette or account UI implementation remains in the demo. Applications can reuse these components with their own title, user data, services and registered command catalog.
 
+The workspace also mounts [`AdminKeyboardNavigation`](../admin/README.md#optional-letter-hint-navigation). Press **F**, then type a visible hint code to activate a control or focus an editor. The localized keyboard icon toggles this optional character shortcut; it is enabled initially and does not intercept typing or Ctrl/Cmd+K. Open menus/dialogs/navigation popovers scope hints, and the first Escape cancels hints without closing the underlying layer.
+
 ## Login and account demo
 
 - **Email/password:** `editor@example.com` / `bezny-demo`. Incorrect credentials show a retryable error; required fields and email format use RHF validation.

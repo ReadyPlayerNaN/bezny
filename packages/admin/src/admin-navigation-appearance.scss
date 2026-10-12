@@ -1,0 +1,33 @@
+@use "../../base/src/tokens/css-properties";
+@use "../../base/src/tokens/structural";
+@use "../../base/src/tokens/surfaces";
+
+$-definitions: (
+  "background": structural.token("badge-warning-background"),
+  "text": structural.token("badge-warning-text"),
+  "font-family": structural.token("badge-font-family"),
+  "font-size": structural.token("badge-font-size"),
+  "line-height": structural.token("badge-line-height"),
+  "font-weight": structural.token("badge-font-weight"),
+  "padding": structural.token("field-gap"),
+  "radius": structural.token("input-checkable-radius"),
+  "border-width": surfaces.token("border-width"),
+  "border": surfaces.token("border"),
+  "shadow": surfaces.token("shadow"),
+  "z-index": surfaces.token("z-index"),
+);
+
+@function token($name) {
+  @return css-properties.reference(
+    $-definitions,
+    $name,
+    "control-admin-navigation"
+  );
+}
+
+@mixin declarations {
+  @include css-properties.declarations(
+    $-definitions,
+    "control-admin-navigation"
+  );
+}
