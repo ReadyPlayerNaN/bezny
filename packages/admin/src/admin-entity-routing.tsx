@@ -22,7 +22,6 @@ import {
   AdminDefaultUnavailablePage,
 } from "./admin-default-pages.js";
 import { AdminDeleteDialog } from "./admin-delete-dialog.js";
-import { useAdminEntityCommands } from "./admin-entity-commands.js";
 import {
   AdminEntityRegistryProvider,
   useAdminEntityContext,
@@ -37,7 +36,6 @@ import type { AdminToastOptions } from "./admin-toasts.js";
 
 const EntityScreenContent = () => {
   const { entity, view, kind } = useAdminEntityContext();
-  const { refresh } = useAdminEntityCommands();
   const { t } = useTranslation("beznyAdmin");
   const { NotFound } = useAdminEntityPresentation();
   const Screen = entity && view ? entity.screens[view] : undefined;
@@ -48,21 +46,7 @@ const EntityScreenContent = () => {
     return <output aria-label={t("loading")}>{t("loading")}</output>;
   }
   if (kind === "error") {
-    return (
-      <>
-        <p role="alert">{t("error")}</p>
-        {refresh && (
-          <button
-            type="button"
-            onClick={async () => {
-              await refresh.execute();
-            }}
-          >
-            {refresh.label}
-          </button>
-        )}
-      </>
-    );
+    return <p role="alert">{t("error")}</p>;
   }
   if (!Screen || kind === "unavailable") {
     return <NotFound />;

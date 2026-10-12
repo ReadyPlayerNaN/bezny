@@ -135,6 +135,29 @@ describe("registration-driven editorial admin", () => {
     await waitFor(() => expect(document.activeElement).toBe(account));
   });
 
+  it.each(["/articles", "/articles/1"])(
+    "keeps refresh in the banner on %s, directly left of the palette",
+    async (path) => {
+      const { user, main } = await renderDemo(path);
+      const banner = within(screen.getByRole("banner"));
+      const refresh = banner.getByRole("button", { name: "Refresh records" });
+      const palette = banner.getByRole("button", { name: "Command palette" });
+      expect(refresh.nextElementSibling).toBe(palette);
+      expect({
+        className: refresh.className,
+        icon: refresh.querySelector("svg") !== null,
+        text: refresh.textContent,
+      }).toStrictEqual({ className: palette.className, icon: true, text: "" });
+      expect(
+        main.queryByRole("button", { name: "Refresh records" })
+      ).toBeNull();
+      refresh.focus();
+      await user.keyboard("{Enter}");
+      await waitFor(() => expect(refresh.hasAttribute("disabled")).toBeFalsy());
+      expect(main.getByRole("heading", { level: 1 })).toBeTruthy();
+    }
+  );
+
   it("derives one collection navigation and creation commands from the registry", async () => {
     const { user, main, application } = await renderDemo();
     const nav = screen.getByRole("navigation", { name: "Entities" });

@@ -84,12 +84,7 @@ export const AdminDefaultListPage = () => {
   return (
     <AdminPage
       heading={entity.label}
-      actions={
-        <>
-          {commands.create && <CommandButton command={commands.create} />}
-          {commands.refresh && <CommandButton command={commands.refresh} />}
-        </>
-      }
+      actions={commands.create && <CommandButton command={commands.create} />}
     >
       <AdminCollectionFilters />
       {kind === "loading" && (

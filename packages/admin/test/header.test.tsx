@@ -72,6 +72,64 @@ describe("admin header chrome", () => {
     expect(screen.getByRole("button", { name: "Help" })).toBeDefined();
   });
 
+  it("places a labeled refresh icon immediately before the palette and prevents duplicate execution", async () => {
+    const gate = Promise.withResolvers<null>();
+    const execute = vi.fn<() => Promise<void>>(async () => {
+      await gate.promise;
+    });
+    const user = userEvent.setup();
+    mount(
+      <AdminHeader
+        title="Research"
+        commandPalette={{ commands: [] }}
+        refresh={{ execute, id: "refresh", label: "Refresh records" }}
+      />
+    );
+    const button = screen.getByRole("button", { name: "Refresh records" });
+    expect({
+      icon: button.querySelector("svg") !== null,
+      next: button.nextElementSibling,
+      text: button.textContent,
+    }).toStrictEqual({
+      icon: true,
+      next: screen.getByRole("button", { name: "Command palette" }),
+      text: "",
+    });
+    button.focus();
+    await user.keyboard("{Enter}");
+    expect({
+      busy: button.getAttribute("aria-busy"),
+      disabled: button.hasAttribute("disabled"),
+    }).toStrictEqual({ busy: "true", disabled: true });
+    await user.click(button);
+    expect(execute).toHaveBeenCalledOnce();
+    gate.resolve(null);
+    await waitFor(() => expect(button.hasAttribute("disabled")).toBeFalsy());
+    expect(button.getAttribute("aria-busy")).toBeNull();
+  });
+
+  it("announces refresh failures and allows retry", async () => {
+    const execute = vi
+      .fn<() => Promise<void>>()
+      .mockRejectedValueOnce(new Error("offline"))
+      .mockResolvedValue();
+    const user = userEvent.setup();
+    mount(
+      <AdminHeader
+        title="Research"
+        commandPalette={false}
+        refresh={{ execute, id: "refresh", label: "Refresh records" }}
+      />
+    );
+    const button = screen.getByRole("button", { name: "Refresh records" });
+    await user.click(button);
+    await expect(screen.findByRole("alert")).resolves.toBeTruthy();
+    expect(button.hasAttribute("disabled")).toBeFalsy();
+    await user.click(button);
+    await waitFor(() => expect(screen.queryByRole("alert")).toBeNull());
+    expect(execute).toHaveBeenCalledTimes(2);
+  });
+
   it("searches and executes explicit commands by keyboard after closing and restores focus", async () => {
     const user = userEvent.setup();
     const execute = vi.fn<() => void>();

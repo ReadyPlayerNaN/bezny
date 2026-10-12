@@ -27,6 +27,7 @@ import {
   AdminApplicationProvider,
 } from "../src/admin-entity-routing.js";
 import type { AdminApplication } from "../src/admin-entity-routing.js";
+import { AdminHeader } from "../src/admin-header.js";
 
 interface Article {
   id: string;
@@ -39,9 +40,15 @@ interface Article {
 type Values = Omit<Article, "id">;
 const applications: AdminApplication[] = [];
 const Root = () => (
-  <main>
-    <Outlet />
-  </main>
+  <>
+    <AdminHeader
+      title="Test administration"
+      commandPalette={{ shortcut: false }}
+    />
+    <main>
+      <Outlet />
+    </main>
+  </>
 );
 const NotFound = () => <h1>Unavailable</h1>;
 const parseValues = (values: unknown): Values => {
@@ -593,6 +600,61 @@ describe("registration-driven default pages", () => {
     expect(app.store.get(adminSelectionAtom)).toBeNull();
   });
 
+  it.each(["/articles", "/articles/1"])(
+    "refreshes %s only through the header icon",
+    async (path) => {
+      const { app, adapter } = fixture(path);
+      const reload = vi.spyOn(adapter, path === "/articles" ? "list" : "get");
+      await mount(app);
+      const button = screen.getByRole("button", { name: "Refresh records" });
+      expect(button.nextElementSibling).toBe(
+        screen.getByRole("button", { name: "Command palette" })
+      );
+      expect(
+        within(screen.getByRole("main")).queryByRole("button", {
+          name: "Refresh records",
+        })
+      ).toBeNull();
+      expect({
+        icon: button.querySelector("svg") !== null,
+        text: button.textContent,
+      }).toStrictEqual({ icon: true, text: "" });
+      await userEvent.setup().click(button);
+      await waitFor(() => expect(reload).toHaveBeenCalledTimes(2));
+    }
+  );
+
+  it("omits registered refresh on the create page", async () => {
+    const { app } = fixture("/articles/create");
+    await mount(app);
+    expect(
+      screen.queryByRole("button", { name: "Refresh records" })
+    ).toBeNull();
+    expect(
+      screen.getByRole("button", { name: "Command palette" })
+    ).toBeTruthy();
+  });
+
+  it("retries failed detail loading from the header without a separate page button", async () => {
+    const { app, adapter } = fixture("/articles/1");
+    vi.spyOn(adapter, "get").mockRejectedValueOnce(new Error("offline"));
+    await mount(app);
+    await expect(screen.findByRole("alert")).resolves.toBeTruthy();
+    const retry = screen.getByRole("button", { name: "Retry loading records" });
+    expect(
+      within(screen.getByRole("main")).queryByRole("button", {
+        name: "Retry loading records",
+      })
+    ).toBeNull();
+    await userEvent.setup().click(retry);
+    await expect(
+      screen.findByRole("heading", { name: "First" })
+    ).resolves.toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: "Refresh records" })
+    ).toBeTruthy();
+  });
+
   it("shows retry errors while retaining filter controls", async () => {
     const list = vi
       .fn<AdminDataAdapter<Article, Values>["list"]>()
@@ -637,11 +699,23 @@ describe("registration-driven default pages", () => {
       screen.findByLabelText("Loading records…")
     ).resolves.toBeTruthy();
     expect(screen.getByRole("button", { name: "Search: All" })).toBeTruthy();
+    expect(
+      screen
+        .getByRole("button", { name: "Refresh records" })
+        .hasAttribute("disabled")
+    ).toBeTruthy();
     await act(async () => {
       gate.resolve({ items: [], total: 0 });
       await gate.promise;
     });
     await expect(screen.findByText("No records found.")).resolves.toBeTruthy();
+    await waitFor(() =>
+      expect(
+        screen
+          .getByRole("button", { name: "Refresh records" })
+          .hasAttribute("disabled")
+      ).toBeFalsy()
+    );
   });
 
   it("retains form values on mutation failure and exposes real palette Cancel", async () => {
