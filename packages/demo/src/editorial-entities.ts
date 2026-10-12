@@ -1,6 +1,8 @@
 import { defineAdminEntity } from "@bezny/admin/adapters";
 import type { AdminEntityDefinition } from "@bezny/admin/adapters";
+import { Badge } from "@bezny/base";
 import type { i18n } from "i18next";
+import { createElement } from "react";
 
 import {
   editorialContentLocales,
@@ -14,6 +16,15 @@ import {
   parseEditorialRecord,
   parseEditorialValues,
 } from "./editorial-records.js";
+
+const summaryCharacterLimit = 140;
+const summaryWhitespace = /\s+/gu;
+const editorialSummary = (body: string) => {
+  const characters = [...body.replace(summaryWhitespace, " ").trim()];
+  return characters.length > summaryCharacterLimit
+    ? `${characters.slice(0, summaryCharacterLimit).join("").trimEnd()}…`
+    : characters.join("");
+};
 
 /** All CRUD pages, fields, commands and confirmation UI come from registration. */
 export const createEditorialEntities = (
@@ -30,20 +41,27 @@ export const createEditorialEntities = (
       columns: [
         {
           key: "body",
-          label: "Body",
-          labelKey: "editorial:body",
-          render: (data) => parseEditorialRecord(data).body,
+          label: "Summary",
+          labelKey: "editorial:summary",
+          render: (data, view) => {
+            const { body } = parseEditorialRecord(data);
+            return view === "list" ? editorialSummary(body) : body;
+          },
         },
         {
           key: "published",
           label: "Status",
           labelKey: "editorial:status",
-          render: (data) =>
-            translations.t(
-              parseEditorialRecord(data).published
-                ? "editorial:published"
-                : "editorial:draft"
-            ),
+          render: (data) => {
+            const { published } = parseEditorialRecord(data);
+            return createElement(
+              Badge,
+              { type: published ? "success" : "neutral" },
+              translations.t(
+                published ? "editorial:published" : "editorial:draft"
+              )
+            );
+          },
         },
       ],
       filters: [

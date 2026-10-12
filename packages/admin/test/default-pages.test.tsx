@@ -134,6 +134,14 @@ const fixture = (
   };
   const entity = defineAdminEntity({
     adapter,
+    columns: [
+      { key: "body", label: "Body", render: (data) => parseValues(data).body },
+      {
+        key: "status",
+        label: "Status",
+        render: (data) => parseValues(data).status,
+      },
+    ],
     filters: [
       { key: "search", label: "Search" },
       {
@@ -228,6 +236,17 @@ describe("registration-driven default pages", () => {
     }
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
+  });
+
+  it("renders registered metadata as compact semantic label/value pairs", async () => {
+    const { app } = fixture();
+    await mount(app);
+    const row = screen.getByRole("group", { name: "Item 1" });
+    expect(
+      [...row.querySelectorAll("dt, dd")].map((element) => element.textContent)
+    ).toStrictEqual(["Body:", "First body", "Status:", "draft"]);
+    expect(row.querySelector("dl")?.className).toContain("recordSummary");
+    expect(within(row).getByRole("link", { name: "First" })).toBeTruthy();
   });
 
   it("derives listing, filters, pagination and empty states without screen components", async () => {

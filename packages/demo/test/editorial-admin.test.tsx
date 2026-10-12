@@ -243,6 +243,28 @@ describe("registration-driven editorial admin", () => {
     expect(application.store.get(adminSelectionAtom)).toBeNull();
   });
 
+  it("presents compact summaries and status badges while keeping the full body on detail", async () => {
+    const { application, main, user } = await renderDemo();
+    const row = main.getByRole("group", { name: "Item 1" });
+    expect(within(row).getByText("Summary:")).toBeTruthy();
+    expect(within(row).getByText("Published").dataset.type).toBe("success");
+    const body = "Long body ".repeat(40).trim();
+    await act(async () => {
+      await application.session.update("articles", "1", {
+        body,
+        published: true,
+        title: "Welcome to Bezny",
+      });
+    });
+    const updatedRow = main.getByRole("group", { name: "Item 1" });
+    const summary = within(updatedRow).getByText(/^Long body.*…$/u);
+    expect(summary.textContent?.length).toBeLessThanOrEqual(141);
+    await user.click(
+      within(updatedRow).getByRole("link", { name: "Welcome to Bezny" })
+    );
+    await expect(main.findByText(body)).resolves.toBeTruthy();
+  });
+
   it("provides a shared floating selection menu and restores its focus after cancellation", async () => {
     const { user, main, application } = await renderDemo();
     expect(main.queryByRole("button", { name: /Delete selected/u })).toBeNull();

@@ -31,6 +31,8 @@ import { AdminRegisteredField } from "./admin-registered-field.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
 import { AdminSelectionBar } from "./admin-selection-bar.js";
 
+import collectionStyles from "./admin-collection.module.scss";
+
 export const AdminDefaultLoadingPage = () => {
   const { t } = useTranslation("beznyAdmin");
   return <output aria-label={t("loading")}>{t("loading")}</output>;
@@ -127,20 +129,21 @@ export const AdminDefaultListPage = () => {
                 onSelect: command.execute,
                 tone: command.destructive ? "critical" : "secondary",
               })),
-              description: (
-                <dl>
-                  {entity.columns?.map((column) => (
+              description: entity.columns?.length ? (
+                <dl className={collectionStyles.recordSummary}>
+                  {entity.columns.map((column) => (
                     <div key={column.key}>
                       <dt>
                         {t(column.labelKey ?? column.label, {
                           defaultValue: column.label,
                         })}
+                        :
                       </dt>
-                      <dd>{column.render(record.data)}</dd>
+                      <dd>{column.render(record.data, "list")}</dd>
                     </div>
                   ))}
                 </dl>
-              ),
+              ) : undefined,
               id: record.id,
               title: (
                 <Link
@@ -193,7 +196,7 @@ export const AdminDefaultDetailPage = () => {
                     defaultValue: column.label,
                   })}
                 </dt>
-                <dd>{column.render(record.data)}</dd>
+                <dd>{column.render(record.data, "detail")}</dd>
               </div>
             ))
           : entity.form?.fields.map((field) => (

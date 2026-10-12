@@ -32,6 +32,19 @@ describe("admin collection styling", () => {
     expect(css).toMatch(/\.filters,[\s\S]*?flex-wrap: wrap;/u);
   });
 
+  it("removes browser definition-list spacing and wraps compact metadata without overflow", () => {
+    const { css } = compile(path.resolve("src/admin-collection.module.scss"));
+    expect(css).toMatch(
+      /\.recordSummary \{[^}]*display: flex;[^}]*flex-wrap: wrap;[^}]*margin: 0;/u
+    );
+    expect(css).toMatch(
+      /\.recordSummary dd \{[^}]*margin: 0;[^}]*overflow-wrap: anywhere;/u
+    );
+    expect(css).toContain(
+      "--bezny-control-admin-collection-muted: var(--bezny-structural-surface-muted)"
+    );
+  });
+
   it("restores a compact fixed bottom-center selection bar with complete control references", async () => {
     const { css } = compile(path.resolve("src/admin-selection.module.scss"));
     const base = await readFile(

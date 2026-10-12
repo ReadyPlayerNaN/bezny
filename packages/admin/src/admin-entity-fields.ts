@@ -59,5 +59,6 @@ export interface AdminEntityColumn {
   key: string;
   label: string;
   labelKey?: string;
-  render: (data: unknown) => ReactNode;
+  /** Default pages pass their view so list previews need not truncate detail content. */
+  render: (data: unknown, view?: "list" | "detail") => ReactNode;
 }

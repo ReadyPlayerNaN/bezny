@@ -59,6 +59,8 @@ List/detail pages are available by default. Default create/update pages require 
 
 ## Collection controls
 
+Registered column values appear beneath each row title in a compact, wrapping definition list with inline label/value pairs, subdued labels, and no browser-default indentation or vertical margins. Empty column registrations do not emit an empty description. Column `render(data, view)` receives `"list"` or `"detail"` (the second parameter is optional for backward compatibility), allowing concise list previews while retaining full detail content. Render shared components such as `Badge` for status values instead of building custom pages.
+
 The default list uses the existing `ValueFilter` search/value chips and `ChoiceFilter` option chips above the rows. It does not recreate filter editors with inline forms.
 
 A single pagination navigation appears **below** the rows (including empty/loading states): locale-formatted page/total summary, Previous/Next icon buttons, a bounded numbered-page window of TanStack hyperlinks with first/last anchors, and one inline records-per-page selector. There are no page-number/page-size forms. Page, page size, search, and filters live in URL search parameters, synchronized into Jotai by admitted loaders. Copying a numbered-page link preserves the full listing query; Back/Forward and reload restore it. Ordinary controls and parameterized palette inputs navigate through the same validated contract. See [shareable listing URLs](ENTITIES.md#shareable-listing-urls).
