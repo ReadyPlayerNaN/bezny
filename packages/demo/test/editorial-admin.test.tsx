@@ -114,6 +114,9 @@ describe("registration-driven editorial admin", () => {
     ).toBe(context);
     expect(context.className).toContain("statusBar");
     expect(context.textContent).toBe("Context: Articles");
+    expect(screen.getByRole("contentinfo").textContent).toBe(
+      context.textContent
+    );
   });
 
   it("preserves shared header tool styling and account-language keyboard focus", async () => {

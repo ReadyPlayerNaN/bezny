@@ -14,8 +14,6 @@ export const editorialTranslations = {
         articles: { plural: "المقالات", singular: "مقالة" },
         pages: { plural: "الصفحات", singular: "صفحة" },
       },
-      footer:
-        "مساحة تجريبية · تُحفظ التغييرات في الذاكرة وتُمسح عند إعادة التحميل.",
       navigation: "الكيانات",
       noEntity: "غير متاح: {{entity}}",
       notifications: "الإشعارات",
@@ -44,8 +42,6 @@ export const editorialTranslations = {
         articles: { plural: "Články", singular: "Článek" },
         pages: { plural: "Stránky", singular: "Stránka" },
       },
-      footer:
-        "Ukázkový prostor · Změny jsou v paměti a obnovení stránky je zruší.",
       navigation: "Entity",
       noEntity: "Nedostupná entita: {{entity}}",
       notifications: "Oznámení",
@@ -74,8 +70,6 @@ export const editorialTranslations = {
         articles: { plural: "Articles", singular: "Article" },
         pages: { plural: "Pages", singular: "Page" },
       },
-      footer:
-        "Demo workspace · Changes are kept in memory and reset on reload.",
       navigation: "Entities",
       noEntity: "No available {{entity}}",
       notifications: "Notifications",

@@ -110,14 +110,11 @@ const EditorialWorkspace = () => {
       openNavigationLabel={t("openNavigation")}
       closeNavigationLabel={t("closeNavigation")}
       footer={
-        <>
-          {t("footer")}
-          <output className={styles.statusBar} aria-label={t("currentContext")}>
-            <span title={t("context", { label: contextLabel })}>
-              {t("context", { label: contextLabel })}
-            </span>
-          </output>
-        </>
+        <output className={styles.statusBar} aria-label={t("currentContext")}>
+          <span title={t("context", { label: contextLabel })}>
+            {t("context", { label: contextLabel })}
+          </span>
+        </output>
       }
     >
       <output aria-label={t("notifications")}>{noticeText}</output>
