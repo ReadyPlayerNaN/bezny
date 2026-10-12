@@ -281,11 +281,35 @@ describe("registration-driven default pages", () => {
       within(menu)
         .getAllByRole("menuitem")
         .map((item) => item.textContent)
-    ).toStrictEqual(["List articles", "Edit First", "Delete First"]);
+    ).toStrictEqual(["List articles", "Edit", "Delete"]);
     expect(
-      within(menu).getByRole("menuitem", { name: "Delete First" }).dataset.tone
+      within(menu).getByRole("menuitem", { name: "Delete" }).dataset.tone
     ).toBe("critical");
   });
+
+  it.each([
+    { labels: ["View", "Edit", "Delete"], language: "en" },
+    { labels: ["Zobrazit", "Upravit", "Smazat"], language: "cs" },
+    { labels: ["عرض", "تعديل", "حذف"], language: "ar" },
+  ])(
+    "uses concise localized record menu labels in $language",
+    async ({ language, labels }) => {
+      const { app } = fixture();
+      await app.i18n.changeLanguage(language);
+      await mount(app);
+      const user = userEvent.setup();
+      await user.pointer({
+        keys: "[MouseRight]",
+        target: screen.getByText("First"),
+      });
+      const menu = await screen.findByRole("menu");
+      expect(
+        within(menu)
+          .getAllByRole("menuitem")
+          .map((item) => item.textContent)
+      ).toStrictEqual(labels);
+    }
+  );
 
   it("supports keyboard opening, navigation, dismissal and activation of detail actions", async () => {
     const { app } = fixture("/articles/1");
@@ -304,7 +328,7 @@ describe("registration-driven default pages", () => {
     await waitFor(() => expect(document.activeElement).toBe(list));
     await user.keyboard("{ArrowDown}");
     expect(document.activeElement).toBe(
-      screen.getByRole("menuitem", { name: "Edit First" })
+      screen.getByRole("menuitem", { name: "Edit" })
     );
     await user.keyboard("{Enter}");
     await expect(screen.findByDisplayValue("First")).resolves.toBeTruthy();
@@ -330,9 +354,7 @@ describe("registration-driven default pages", () => {
     const user = userEvent.setup();
     const trigger = screen.getByRole("button", { name: "Actions" });
     await user.click(trigger);
-    await user.click(
-      await screen.findByRole("menuitem", { name: "Delete First" })
-    );
+    await user.click(await screen.findByRole("menuitem", { name: "Delete" }));
     const dialog = await screen.findByRole("alertdialog");
     expect(screen.queryByRole("menu")).toBeNull();
     expect(document.activeElement).toBe(
@@ -350,7 +372,13 @@ describe("registration-driven default pages", () => {
       .mockRejectedValue(new Error("offline"));
     const unavailable = vi.fn<() => void>();
     const { app } = fixture("/articles/1", {}, undefined, [
-      { execute, id: "publish", label: () => "Publish", target: "record" },
+      {
+        execute,
+        id: "publish",
+        label: () => "Publish First",
+        menuLabel: () => "Publish",
+        target: "record",
+      },
       {
         execute: unavailable,
         id: "hidden",

@@ -63,7 +63,7 @@ export const AdminDetailActions = ({
                 pending.current = command;
               }}
             >
-              {command.label}
+              {command.menuLabel ?? command.label}
             </DropdownMenuItem>
           ))}
         </DropdownMenuContent>

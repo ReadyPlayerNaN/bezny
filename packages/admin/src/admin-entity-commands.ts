@@ -99,6 +99,7 @@ const actionCommand = (
 ): AdminCommand => ({
   id: `${scope.entity.key}.action.${action.id}.${JSON.stringify(scope.ids)}`,
   label: action.label(scope),
+  ...(action.menuLabel ? { menuLabel: action.menuLabel(scope) } : {}),
   ...(action.destructive ? { destructive: true } : {}),
   execute: () => {
     // Revalidate availability and target existence, including stale palette items.
@@ -253,6 +254,7 @@ export const useAdminEntityCommands = () => {
             record: record.label,
           }),
           location,
+          menuLabel: t(view === "detail" ? "defaults.view" : "defaults.edit"),
         });
       }
     }

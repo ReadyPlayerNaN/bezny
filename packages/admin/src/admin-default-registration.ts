@@ -84,6 +84,14 @@ export const resolveAdminEntityDefinition = (
           execute: (scope) => requestDeletion(scope, target),
           id,
           label: (scope) => deletionLabel(scope, target),
+          ...(target === "record"
+            ? {
+                menuLabel: (scope: AdminActionScope) =>
+                  scope.translate?.("defaults.delete", {
+                    defaultValue: "Delete",
+                  }) ?? "Delete",
+              }
+            : {}),
           target,
         });
       }

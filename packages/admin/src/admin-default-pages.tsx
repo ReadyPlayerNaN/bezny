@@ -118,7 +118,7 @@ export const AdminDefaultListPage = () => {
             selectLabel={(row) => commands.forSelection(row.id).label}
             selectionActions={commands.selectionCommands.map((command) => ({
               key: command.id,
-              label: command.label,
+              label: command.menuLabel ?? command.label,
               onSelect: command.execute,
               tone: command.destructive ? "critical" : "secondary",
             }))}
@@ -126,7 +126,7 @@ export const AdminDefaultListPage = () => {
               actions: commands.forRecord(record.id).map((command) => ({
                 bulkable: false,
                 key: command.id,
-                label: command.label,
+                label: command.menuLabel ?? command.label,
                 onSelect: command.execute,
                 tone: command.destructive ? "critical" : "secondary",
               })),

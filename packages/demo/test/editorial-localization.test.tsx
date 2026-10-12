@@ -189,10 +189,10 @@ describe("editorial localization", () => {
       name: "إجراءات مرحبًا ببيزني",
     });
     expect(menu.getAttribute("dir")).toBe("rtl");
-    within(menu).getByRole("menuitem", { name: "عرض مرحبًا ببيزني" }).focus();
+    within(menu).getByRole("menuitem", { name: "عرض" }).focus();
     await user.keyboard("{ArrowDown}");
     expect(document.activeElement).toBe(
-      within(menu).getByRole("menuitem", { name: "تعديل مرحبًا ببيزني" })
+      within(menu).getByRole("menuitem", { name: "تعديل" })
     );
     await user.keyboard("{Escape}");
     await waitFor(() => expect(document.activeElement).toBe(row));

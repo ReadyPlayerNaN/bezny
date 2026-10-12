@@ -22,6 +22,8 @@ export type AdminStore = ReturnType<typeof createStore>;
 export interface AdminCommand {
   id: string;
   label: string;
+  /** Concise contextual-menu label; the palette keeps the full label. */
+  menuLabel?: string;
   execute: () => void | Promise<void>;
   destructive?: boolean;
   input?: {
@@ -52,6 +54,8 @@ export interface AdminEntityAction {
   id: string;
   target: "record" | "selection";
   label: (scope: AdminActionScope) => string;
+  /** Optional contextual-menu label, falling back to label. */
+  menuLabel?: (scope: AdminActionScope) => string;
   execute: (scope: AdminActionScope) => void | Promise<void>;
   destructive?: boolean;
   enabled?: Atom<boolean>;

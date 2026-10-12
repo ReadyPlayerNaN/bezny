@@ -191,9 +191,7 @@ describe("registration-driven editorial admin", () => {
     expect(
       menu.queryByRole("menuitem", { name: /Delete selected/u })
     ).toBeNull();
-    await user.click(
-      menu.getByRole("menuitem", { name: "Delete Welcome to Bezny" })
-    );
+    await user.click(menu.getByRole("menuitem", { name: "Delete" }));
     const dialog = within(await screen.findByRole("alertdialog"));
     expect(dialog.getByText(/Welcome to Bezny/u)).toBeDefined();
     expect(document.activeElement).toBe(
@@ -362,9 +360,7 @@ describe("registration-driven editorial admin", () => {
     expect(application.router.state.location.search.page).toBe(2);
     expect(application.store.get(adminSelectionAtom)).toBeNull();
     fireEvent.contextMenu(main.getByRole("group", { name: "Item 4" }));
-    await user.click(
-      await screen.findByRole("menuitem", { name: "Delete Fourth article" })
-    );
+    await user.click(await screen.findByRole("menuitem", { name: "Delete" }));
     await user.click(
       within(await screen.findByRole("alertdialog")).getByRole("button", {
         name: "Delete",
@@ -429,9 +425,7 @@ describe("registration-driven editorial admin", () => {
       screen.getByRole("status", { name: "Current context" }).textContent
     ).toBe("Context: Article 1");
     await user.click(main.getByRole("button", { name: "Actions" }));
-    await user.click(
-      await screen.findByRole("menuitem", { name: "Edit Welcome to Bezny" })
-    );
+    await user.click(await screen.findByRole("menuitem", { name: "Edit" }));
     const title = await main.findByRole("textbox", { name: "Title" });
     await user.clear(title);
     await user.type(title, "Updated welcome");
@@ -480,9 +474,7 @@ describe("registration-driven editorial admin", () => {
   it("confirms detail deletion through the package dialog and returns to the list", async () => {
     const { user, main, application } = await renderDemo("/articles/1");
     await user.click(main.getByRole("button", { name: "Actions" }));
-    await user.click(
-      await screen.findByRole("menuitem", { name: "Delete Welcome to Bezny" })
-    );
+    await user.click(await screen.findByRole("menuitem", { name: "Delete" }));
     await user.click(
       within(await screen.findByRole("alertdialog")).getByRole("button", {
         name: "Delete",
@@ -498,18 +490,19 @@ describe("registration-driven editorial admin", () => {
     expect(application.router.state.location.pathname).toBe("/articles");
   });
 
-  it("uses the same row commands and selection commands in the searchable palette", async () => {
+  it("uses concise row labels and keeps record identity in the searchable palette", async () => {
     const { user, main } = await renderDemo();
     fireEvent.contextMenu(main.getByRole("group", { name: "Item 1" }));
     const menu = await screen.findByRole("menu");
     const labels = within(menu)
       .getAllByRole("menuitem")
       .map((item) => item.textContent);
+    expect(labels).toStrictEqual(["View", "Edit", "Delete"]);
     await user.keyboard("{Escape}");
     const palette = await openPalette(user);
     expect(
       labels.every((label) =>
-        palette.queryByRole("option", { name: label ?? "" })
+        palette.queryByRole("option", { name: `${label} Welcome to Bezny` })
       )
     ).toBeTruthy();
     await user.type(
@@ -636,9 +629,7 @@ describe("registration-driven editorial admin", () => {
     const row = main.getByRole("group", { name: "Item 1" });
     row.focus();
     await user.keyboard("{Shift>}{F10}{/Shift}");
-    await user.click(
-      await screen.findByRole("menuitem", { name: "Delete Welcome to Bezny" })
-    );
+    await user.click(await screen.findByRole("menuitem", { name: "Delete" }));
     const dialog = within(await screen.findByRole("alertdialog"));
     await user.keyboard("{Control>}k{/Control}");
     expect(screen.queryByRole("dialog")).toBeNull();
