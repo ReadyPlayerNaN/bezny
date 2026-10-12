@@ -108,15 +108,13 @@ describe("registration-driven editorial admin", () => {
       })
     ).toBeNull();
     expect(
-      within(screen.getByRole("contentinfo")).getByRole("status", {
+      within(screen.getByRole("main")).queryByRole("status", {
         name: "Current context",
       })
-    ).toBe(context);
+    ).toBeNull();
     expect(context.className).toContain("statusBar");
     expect(context.textContent).toBe("Context: Articles");
-    expect(screen.getByRole("contentinfo").textContent).toBe(
-      context.textContent
-    );
+    expect(screen.queryByRole("contentinfo")).toBeNull();
   });
 
   it("preserves shared header tool styling and account-language keyboard focus", async () => {

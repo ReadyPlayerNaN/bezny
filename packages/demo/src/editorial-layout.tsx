@@ -87,39 +87,39 @@ const EditorialWorkspace = () => {
       })
     : "";
   return (
-    <AdminLayout
-      header={
-        <AdminHeader title={t("shell")} tools={<EditorialAccountMenu />} />
-      }
-      navigation={
-        <ul>
-          {registry.entities.map((entity) => (
-            <li key={entity.key}>
-              <Link
-                to="/$entity"
-                params={{ entity: entity.key }}
-                activeProps={{ "aria-current": "page" }}
-              >
-                {entity.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      }
-      navigationLabel={t("navigation")}
-      openNavigationLabel={t("openNavigation")}
-      closeNavigationLabel={t("closeNavigation")}
-      footer={
-        <output className={styles.statusBar} aria-label={t("currentContext")}>
-          <span title={t("context", { label: contextLabel })}>
-            {t("context", { label: contextLabel })}
-          </span>
-        </output>
-      }
-    >
-      <output aria-label={t("notifications")}>{noticeText}</output>
-      <Outlet />
-    </AdminLayout>
+    <>
+      <AdminLayout
+        header={
+          <AdminHeader title={t("shell")} tools={<EditorialAccountMenu />} />
+        }
+        navigation={
+          <ul>
+            {registry.entities.map((entity) => (
+              <li key={entity.key}>
+                <Link
+                  to="/$entity"
+                  params={{ entity: entity.key }}
+                  activeProps={{ "aria-current": "page" }}
+                >
+                  {entity.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        }
+        navigationLabel={t("navigation")}
+        openNavigationLabel={t("openNavigation")}
+        closeNavigationLabel={t("closeNavigation")}
+      >
+        <output aria-label={t("notifications")}>{noticeText}</output>
+        <Outlet />
+      </AdminLayout>
+      <output className={styles.statusBar} aria-label={t("currentContext")}>
+        <span title={t("context", { label: contextLabel })}>
+          {t("context", { label: contextLabel })}
+        </span>
+      </output>
+    </>
   );
 };
 
