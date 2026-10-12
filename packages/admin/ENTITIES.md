@@ -70,11 +70,46 @@ export const App = () => <AdminApplicationProvider application={application} />;
 - `list(query, { signal })` returns `{ items, total }`. Respect `query.page`, `pageSize`, `filters`, and `locale`; return only the requested page.
 - `get(id, { signal })` returns that record or `null`.
 - Optional `create(values, request)`, `update(id, values, request)`, and `remove(ids, request)` perform backend mutations.
+- Optional `subscribe(observer, request)` attaches an entity-wide realtime change stream. See the subscription contract below.
 - Optional `dispose()` releases adapter-owned resources when the application is permanently disposed. It must be safe if multiple definitions share a backend.
 
 Honor cancellation signals and validate backend responses in your adapter. `defineAdminEntity` preserves record/value generics, validates references and list bounds, wraps complete records in `{ id, label, data }` envelopes, and parses unknown form values before passing typed values to mutations. The application independently limits cached payload size. Payloads must be plain JSON-compatible data, not class instances, DOM nodes, cycles, or subscriptions. The cache validates graph depth/node count, creates detached canonical copies, and freezes them so accidental backend/client mutation cannot bypass its bounds.
 
 List and detail screens default to the package-owned pages. Default create/update screens require registered `form` metadata and corresponding adapter operations; custom create/update screens require their operations but may own their forms. `screens` optionally overrides each view. Missing adapter capabilities mean omitted operation commands, not pretend operations. Entity keys are unique lowercase slugs; record IDs are non-empty, unique within each returned page, and cannot be `create` (case-insensitively reserved for the create route). Get/update adapters must return the requested ID. Invalid async data becomes a recoverable loading error rather than retained invalid state.
+
+## Optional backend realtime subscriptions
+
+`AdminDataAdapter` optionally implements `subscribe: AdminEntitySubscription`; both this type and `AdminSubscriptionObserver` are exported from `@bezny/admin/adapters`.
+
+```ts
+const articleAdapter: AdminDataAdapter<Article, ArticleValues> = {
+  ...articleOperations, // Existing typed list/get/create/update/remove methods.
+  subscribe({ onChange, onError }, { signal, locale }) {
+    // Illustrative backend SDK: the host implements this transport bridge.
+    return backend.watchArticles({ signal, locale, onChange, onError });
+  },
+};
+```
+
+The signature is `subscribe(observer, request): () => void`. The observer has `onChange(): void` and `onError(error: unknown): void`; the request supplies a lifetime `AbortSignal` and current UI locale. Return a synchronous, idempotent unsubscribe function. Honor both signal cancellation and unsubscribe. Connection establishment may be asynchronous internally, but the disposer must be returned immediately and must also close a connection that finishes opening after cancellation.
+
+No realtime transport or backend SDK is bundled. SSE, WebSocket, GraphQL subscriptions, and database change feeds can all implement the same hook. The adapter remains bound to its original `this` through `defineAdminEntity`.
+
+### Session ownership and behavior
+
+- A session owns at most **one subscription**, for the active registered entity and locale. It starts only on admitted activation, never from speculative route preloading or entity registration. Page/filter/view changes within that entity reuse the stream. Entity/locale changes, leaving entity routes, provider unmount/pause, and disposal abort/unsubscribe it; remount creates a fresh lease. Late callbacks from old leases are ignored.
+- `onChange()` means **invalidate this entity**, not apply an arbitrary record patch. All its cached pages/details are invalidated. Active lists/details refetch through the normal typed, validated, byte-bounded adapter pipeline, preserving displayed ready data while the background read runs. This keeps filtered ordering, totals, pagination clamping, and missing-record behavior authoritative on the backend.
+- Bursts in one event-loop turn coalesce. While a read is pending, changes queue one follow-up instead of repeatedly aborting/restarting it. A response invalidated during its read cannot overwrite newer state or repopulate the cache. No backend event payload/history is retained.
+- Newly attached streams invalidate old entity cache entries before reading, covering changes missed while that entity was inactive. The backend must emit `onChange` after an internal reconnect/resynchronization too.
+- Displayed create/update forms are **not automatically refetched**, so realtime events cannot discard drafts. Their cached data is still invalidated; initial edit loading catches up before displaying the form. Explicit refresh/navigation uses fresh data. Conflict detection and optimistic concurrency remain backend/domain responsibilities.
+
+Adapters without `subscribe` retain ordinary request/response behavior. To suppress supported streams globally, pass `realtime: false` to either `createAdminApplication` or `createAdminRuntime`. Direct sessions accept it as a fourth argument: `createAdminDataSession(registry, store, cache, { realtime: false })`.
+
+### Failure and reconnect contract
+
+`onError` reports a **terminal** subscription failure. The session aborts/unsubscribes that stream, keeps ordinary loaded data usable, and does not run an automatic retry loop. `session.refresh()` retries a failed lease and reloads the current data. Adapters may instead own reconnect/backoff internally and report `onChange` after catching up; do not report terminal `onError` if the same lease will continue emitting.
+
+Read `session.realtimeAtom` using Jotai for `{ entity, status: "inactive" | "active" | "error", error }`. This is separate from the data snapshot's loading/error status; `active` means an attached subscription lease, **not** transport-level connection readiness. Setup and unsubscribe errors are contained and exposed through this channel rather than breaking ordinary reads/disposal. `session.diagnostics()` additionally reports `realtimeSubscriptions` and `realtimeRefreshScheduled`.
 
 ## Route contract
 

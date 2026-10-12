@@ -34,6 +34,7 @@ export interface AdminRuntimeOptions {
   entities: readonly AdminEntityDefinition[];
   NotFound?: FunctionComponent;
   cache?: Partial<AdminCachePolicy>;
+  realtime?: boolean;
   store?: AdminStore;
   i18n?: i18n;
   routes?: AdminRouteBindings;
@@ -44,13 +45,14 @@ export const createAdminRuntime = ({
   entities,
   NotFound = AdminDefaultUnavailablePage,
   cache,
+  realtime = true,
   store = createStore(),
   i18n: translations = createAdminI18n(),
   routes = defaultAdminRouteBindings,
 }: AdminRuntimeOptions) => {
   registerAdminDefaultTranslations(translations);
   const registry = createAdminEntityRegistry(entities);
-  const session = createAdminDataSession(registry, store, cache);
+  const session = createAdminDataSession(registry, store, cache, { realtime });
   const bindings = Object.freeze(
     Object.fromEntries(
       Object.entries(routes).map(([view, binding]) => [

@@ -91,6 +91,7 @@ export {
 export interface AdminApplicationOptions {
   entities: readonly AdminEntityDefinition[];
   cache?: Partial<AdminCachePolicy>;
+  realtime?: boolean;
   Root: FunctionComponent;
   NotFound?: FunctionComponent;
   history?: RouterHistory;
@@ -105,11 +106,13 @@ export const createAdminApplication = ({
   history = createBrowserHistory(),
   store,
   cache,
+  realtime = true,
   i18n: translations,
 }: AdminApplicationOptions) => {
   const runtime = createAdminRuntime({
     NotFound,
     entities,
+    realtime,
     ...(store ? { store } : {}),
     ...(cache ? { cache } : {}),
     ...(translations ? { i18n: translations } : {}),

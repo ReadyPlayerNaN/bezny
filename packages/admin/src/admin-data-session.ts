@@ -17,8 +17,16 @@ import {
   adminSelectionAtom,
 } from "./admin-entity-model.js";
 import { adminListQueriesAtom } from "./admin-list-state.js";
+import { createAdminRealtimeSubscription } from "./admin-realtime-subscription.js";
+import type { AdminRealtimeSnapshot } from "./admin-realtime-subscription.js";
 import { serializeAdminRecords } from "./admin-record-serialization.js";
 
+export type { AdminRealtimeSnapshot } from "./admin-realtime-subscription.js";
+
+export interface AdminDataSessionOptions {
+  /** Adapter subscription support is enabled by default when provided. */
+  realtime?: boolean;
+}
 export interface AdminCachePolicy {
   maxEntries: number;
   maxBytes: number;
@@ -143,7 +151,8 @@ const loadAdapterData = async (
 export const createAdminDataSession = (
   registry: AdminEntityRegistry,
   store: AdminStore,
-  configuration: Partial<AdminCachePolicy> = {}
+  configuration: Partial<AdminCachePolicy> = {},
+  options: AdminDataSessionOptions = {}
 ) => {
   const policy = { ...defaultAdminCachePolicy, ...configuration };
   for (const [name, value] of Object.entries(policy)) {
@@ -155,6 +164,11 @@ export const createAdminDataSession = (
     throw new Error("Invalid cache policy ttlMs");
   }
   const snapshotAtom = atom<AdminDataSnapshot>(emptySnapshot());
+  const realtimeAtom = atom<AdminRealtimeSnapshot>({
+    entity: null,
+    error: null,
+    status: "inactive",
+  });
   const cache = new Map<
     string,
     { snapshot: AdminDataSnapshot; expires: number; bytes: number }
@@ -247,22 +261,44 @@ export const createAdminDataSession = (
     }
     scheduleExpiry();
   };
+  const realtime = createAdminRealtimeSubscription({
+    canRefresh: () =>
+      active?.view === "list" ||
+      active?.view === "detail" ||
+      (active?.view === "update" &&
+        store.get(snapshotAtom).status === "loading"),
+    invalidate,
+    isReading: () => controller !== null,
+    publish: (snapshot) => store.set(realtimeAtom, snapshot),
+    refresh: async () => {
+      if (active) {
+        // oxlint-disable-next-line no-use-before-define -- Lazy callback runs after construction; refresh must reuse normal activation without replacing the lease.
+        await activateRequest(active, true, true);
+      }
+    },
+  });
   const isCurrent = (pending: AbortController, requestGeneration: number) =>
     !disposed && !pending.signal.aborted && generation === requestGeneration;
   const fetchSnapshot = async (
     entity: AdminEntity,
     request: AdminDataRequest,
-    key: string
+    key: string,
+    background: boolean
   ) => {
     const { query } = request;
-    publish({
-      ...emptySnapshot(),
-      entity: entity.key,
-      key,
-      query,
-      status: "loading",
-    });
+    realtime.reading();
+    const previous = store.get(snapshotAtom);
+    if (!background || previous.key !== key || previous.status !== "ready") {
+      publish({
+        ...emptySnapshot(),
+        entity: entity.key,
+        key,
+        query,
+        status: "loading",
+      });
+    }
     const requestGeneration = generation;
+    const realtimeRevision = realtime.revision();
     const pending = new AbortController();
     controller = pending;
     try {
@@ -271,7 +307,10 @@ export const createAdminDataSession = (
         request,
         pending.signal
       );
-      if (!isCurrent(pending, requestGeneration)) {
+      if (
+        !isCurrent(pending, requestGeneration) ||
+        realtimeRevision !== realtime.revision()
+      ) {
         return;
       }
       const snapshot: AdminDataSnapshot = {
@@ -286,7 +325,10 @@ export const createAdminDataSession = (
       };
       publish(putCache(snapshot));
     } catch (error) {
-      if (!isCurrent(pending, requestGeneration)) {
+      if (
+        !isCurrent(pending, requestGeneration) ||
+        realtimeRevision !== realtime.revision()
+      ) {
         return;
       }
       publish({
@@ -302,6 +344,7 @@ export const createAdminDataSession = (
       if (controller === pending) {
         controller = null;
       }
+      realtime.settled();
     }
   };
   const cachedSnapshot = (key: string, force: boolean) => {
@@ -313,9 +356,10 @@ export const createAdminDataSession = (
     cache.set(key, cached);
     return cached.snapshot;
   };
-  const activate = async (
+  const activateRequest = async (
     request: AdminDataRequest | null,
-    force = false
+    force: boolean,
+    background: boolean
   ): Promise<void> => {
     if (disposed) {
       return;
@@ -330,12 +374,8 @@ export const createAdminDataSession = (
     }
     active = request;
     const entity = request ? registry.get(request.entity) : undefined;
-    if (
-      !request ||
-      !entity ||
-      !entity.screens[request.view] ||
-      request.view === "create"
-    ) {
+    if (!request || !entity || !entity.screens[request.view]) {
+      realtime.stop();
       publish({
         ...emptySnapshot(),
         entity: entity?.key ?? null,
@@ -346,6 +386,7 @@ export const createAdminDataSession = (
     }
     const { query } = request;
     if (!validListQuery(query, policy)) {
+      realtime.stop();
       publish({
         ...emptySnapshot(),
         entity: entity.key,
@@ -356,13 +397,24 @@ export const createAdminDataSession = (
       });
       return;
     }
+    realtime.activate(
+      options.realtime === false ? undefined : entity,
+      query.locale
+    );
+    if (request.view === "create") {
+      publish({ ...emptySnapshot(), entity: entity.key, key, query });
+      return;
+    }
     const cached = cachedSnapshot(key, force);
     if (cached) {
       publish(cached);
       return;
     }
     cache.delete(key);
-    await fetchSnapshot(entity, request, key);
+    await fetchSnapshot(entity, request, key, background);
+  };
+  const activate = async (request: AdminDataRequest | null, force = false) => {
+    await activateRequest(request, force, false);
   };
   const mutate = async <T>(
     entity: AdminEntity,
@@ -401,6 +453,7 @@ export const createAdminDataSession = (
     return entity;
   };
   const pause = () => {
+    realtime.stop();
     cancelRead();
     for (const pending of mutationControllers) {
       pending.abort();
@@ -423,6 +476,7 @@ export const createAdminDataSession = (
     return canonical;
   };
   const snapshotReader: Atom<AdminDataSnapshot> = snapshotAtom;
+  const realtimeReader: Atom<AdminRealtimeSnapshot> = realtimeAtom;
   return {
     activate,
     create: async (key: string, values: unknown) => {
@@ -447,6 +501,7 @@ export const createAdminDataSession = (
       expiryScheduled: expiryTimer !== undefined,
       pendingRequests: Number(controller !== null) + mutationControllers.size,
       subscriptions: disposalCallbacks.size,
+      ...realtime.diagnostics(),
     }),
     dispose: () => {
       if (disposed) {
@@ -472,7 +527,9 @@ export const createAdminDataSession = (
     },
     pause,
     policy,
+    realtimeAtom: realtimeReader,
     refresh: async () => {
+      realtime.retry();
       if (active) {
         await activate(active, true);
       }

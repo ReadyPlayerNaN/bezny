@@ -239,6 +239,10 @@ Use `createAdminRuntime` when your application owns a TanStack file-based routet
 
 Both routing modes run the admin behavior suite and the complete demo test journeys, including LCRUD, forms, palette/UI actions, selection, pagination, localization/RTL, authentication presentation and custom building blocks.
 
+## Optional realtime backend integration
+
+Entity adapters can provide `subscribe(observer, { signal, locale })`, returning an idempotent unsubscribe function. The session owns one active entity/locale stream, coalesces invalidations, refreshes active lists/details through the same bounded loading pipeline, protects drafts and ignores stale callbacks. Unmount/navigation/disposal clean up streams; transport failures are exposed separately through `session.realtimeAtom`, and explicit refresh retries them. Omit the hook for ordinary loading or pass `realtime: false` to either application factory. No backend transport is bundled. See [the subscription contract](ENTITIES.md#optional-backend-realtime-subscriptions).
+
 ## Runnable application example
 
 [`@bezny/demo`](../demo/README.md) registers Articles and Pages using the shared entity application API. It supplies shell branding, authentication bindings, a bounded adapter-backed mock repository, and domain field/filter/column registrations. CRUD pages, RHF forms, shared filter chips, below-list pagination, deletion confirmation, generic routes, entity context, bounded data/cache lifetimes, selection, localization/direction integration, and the command catalog come from `@bezny/admin`; no custom entity pages remain in the demo. Run `pnpm --filter @bezny/demo dev` from the repository root.

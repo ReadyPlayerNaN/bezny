@@ -32,6 +32,17 @@ export interface AdminListResult<TRecord> {
   total: number;
 }
 
+/** Entity-wide invalidation notifications, not unvalidated record patches. */
+export interface AdminSubscriptionObserver {
+  onChange: () => void;
+  /** Terminal stream/setup failure. Reconnect internally or report failure, not both. */
+  onError: (error: unknown) => void;
+}
+export type AdminEntitySubscription = (
+  observer: AdminSubscriptionObserver,
+  request: AdminAdapterRequest
+) => () => void;
+
 /** Data belongs to an adapter/backend, not a permanently registered collection atom. */
 export interface AdminDataAdapter<TRecord, TValues> {
   list: (
@@ -49,6 +60,8 @@ export interface AdminDataAdapter<TRecord, TValues> {
     ids: readonly string[],
     request: AdminAdapterRequest
   ) => Promise<void>;
+  /** Optional entity-wide stream. Return an idempotent synchronous unsubscribe. */
+  subscribe?: AdminEntitySubscription;
   dispose?: () => void;
 }
 export interface AdminRecordEnvelope extends AdminRecordReference {
@@ -73,6 +86,7 @@ export interface AdminEntityAdapter {
     request: AdminAdapterRequest
   ) => Promise<AdminRecordEnvelope>;
   remove?: AdminDataAdapter<unknown, unknown>["remove"];
+  subscribe?: AdminEntitySubscription;
   dispose?: () => void;
 }
 export interface AdminFilterDefinition {
@@ -132,6 +146,7 @@ export const defineAdminEntity = <TRecord, TValues>(
   const update = adapter.update?.bind(adapter);
   const remove = adapter.remove?.bind(adapter);
   const dispose = adapter.dispose?.bind(adapter);
+  const subscribe = adapter.subscribe?.bind(adapter);
   const normalized: AdminEntityAdapter = {
     get: async (id, request) => {
       const record = await adapter.get(id, request);
@@ -188,6 +203,7 @@ export const defineAdminEntity = <TRecord, TValues>(
         }
       : {}),
     ...(remove ? { remove } : {}),
+    ...(subscribe ? { subscribe } : {}),
     ...(dispose ? { dispose } : {}),
   };
   if (definition.screens?.create && !normalized.create) {
