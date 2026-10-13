@@ -209,7 +209,15 @@ export function ProfileEditor() {
 
 Fields preserve externally supplied `aria-describedby` IDs and append generated help/error IDs. They set `aria-invalid` on invalid controls, announce error messages, and connect RHF focus refs to actual inputs/buttons. `RadioField` accepts string-valued `options` with labels and optional `disabled` flags; values must be unique. It labels the group and focuses the selected enabled option, or the first enabled option, on validation errors. `CheckboxField` and `ToggleField` bind boolean form values; use unbound `CheckboxInput` for tri-state controls. `ToggleField` supports RHF reset, disabled values, validation feedback, blur/touched tracking, and error focus just like other fields. A `required` rule means the switch must be on; omit that rule when both on and off are valid.
 
-Install `react-hook-form` in the consuming application when importing its APIs. The library keeps RHF, React, Radix, and Lucide external in the Vite build, so form components use the same provider runtime as their consumers.
+Install `react-hook-form` in the consuming application when importing its APIs. The library keeps RHF, React, Lucide, and shared Radix interaction modules external, so forms use the consumer's provider and modal components share focus/dismissal infrastructure. Modal Radix entry points are bundled to deliver the library's CSP-compatible styling integration.
+
+## Modal scrolling and CSP
+
+Modal menus, dialogs, popovers, and selects retain Radix focus management, dismissal, and background scroll isolation. Import `@bezny/base/style.css` once: document overflow locking and Select viewport scrollbar styling live in this external stylesheet, not injected `<style>` elements. No CSP nonce, hash, or unsafe style allowance is required for these rules.
+
+Nested locks retain document locking until the final lock closes. The library adds scoped classes and reserved `data-bezny-scroll-locked`/`data-bezny-scrollbar-gutter` attributes temporarily, restoring pre-existing values on cleanup. It does not overwrite the application's inline overflow or margin styles. Browsers with `scrollbar-gutter` support retain classic scrollbar space without JavaScript-generated CSS; existing stable gutters, RTL layouts, and documents without scrollbars are preserved. Modeless menus remain modeless and do not acquire a document lock.
+
+The build adapts the pinned scroll-isolation dependency through its public UI/sidecar entries. Radix still owns keyboard, focus, pointer, portal, and wheel/touch behavior. A one-match, fail-closed build transform moves only Radix Select's static viewport stylesheet into Bezny SCSS; dependency drift requires reviewing that integration rather than silently injecting styles again.
 
 ## Light and dark mode
 
@@ -332,6 +340,7 @@ Imports are pure. `minimum-width(compact|wide)` supplies validated compile-time 
 pnpm --filter @bezny/base build
 pnpm --filter @bezny/base typecheck
 pnpm --filter @bezny/base test
+CHROMIUM_PATH=/usr/bin/chromium pnpm --filter @bezny/base test:scroll-lock:browser
 ```
 
 Build first when running package tests directly. The root `pnpm test` builds automatically through Turbo. Builds emit `dist/index.js`, type declarations, source maps, and `dist/style.css`. React and its JSX runtime remain external; consumers supply React through the peer dependency.
@@ -339,6 +348,8 @@ Build first when running package tests directly. The root `pnpm test` builds aut
 ### Browser regression checks
 
 These explicit checks are **not included in `pnpm test`**. Install Chromium (or a compatible Chrome executable), install workspace dependencies, then run from the repository root:
+
+The scroll-lock browser gate builds a consumer of the shipped package and runs modal row menus, nested dialogs, dropdowns, popovers, and selects under a self-only stylesheet CSP. It checks wheel/touch containment, menu scrolling, focus restoration, dismissal, cleanup, classic scrollbar/RTL/existing-gutter/no-scrollbar geometry, and zero injected style elements or CSP violations. It requires Chromium and must be run after the package build.
 
 ```sh
 pnpm --filter @bezny/base build

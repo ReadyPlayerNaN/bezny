@@ -1,0 +1,10 @@
+.documentLocked,
+.documentLocked :global(body) {
+  overflow: hidden !important;
+  overscroll-behavior: contain;
+}
+
+// Reserve an existing classic scrollbar, not a new gutter on short documents.
+.reservedScrollbar {
+  scrollbar-gutter: stable;
+}

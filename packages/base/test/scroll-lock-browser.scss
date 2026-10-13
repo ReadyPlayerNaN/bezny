@@ -1,0 +1,39 @@
+body {
+  margin: 8px;
+}
+#document-space {
+  block-size: 3000px;
+}
+html.short-document #document-space {
+  block-size: 0;
+}
+html.both-gutters {
+  scrollbar-gutter: stable both-edges;
+}
+#triggers {
+  position: fixed;
+  inset-block-start: 40px;
+  inset-inline-start: 30px;
+  inline-size: 260px;
+}
+#fixed-header {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  block-size: 24px;
+}
+#background-scroll {
+  position: fixed;
+  inset-block-end: 20px;
+  inset-inline-end: 20px;
+  inline-size: 200px;
+  block-size: 150px;
+  overflow: auto;
+}
+#background-scroll > div {
+  block-size: 1200px;
+}
+[role="menu"] {
+  max-block-size: 140px;
+  overflow: auto;
+}

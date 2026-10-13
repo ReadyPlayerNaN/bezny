@@ -39,6 +39,13 @@
 }
 .viewport {
   padding: appearance.token("padding-small");
+  // Radix viewport mechanics live in the external stylesheet, not a style node.
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 .item {
   display: flex;

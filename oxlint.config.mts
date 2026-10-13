@@ -8,7 +8,11 @@ const jsPlugins = selectJsPlugins(["react-doctor"]);
 
 export default defineConfig({
   extends: [core, react, vitest, jsPlugins],
-  ignorePatterns: core.ignorePatterns,
+  ignorePatterns: [
+    ...(core.ignorePatterns ?? []),
+    "**/.tmp/**",
+    "**/.worktrees/**",
+  ],
   jsPlugins: jsPlugins.jsPlugins,
   settings: jsPluginSettings,
 });

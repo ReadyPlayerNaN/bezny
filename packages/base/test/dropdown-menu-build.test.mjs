@@ -51,7 +51,7 @@ test("published dropdown parts support menu button composition", () => {
   assert.match(html, /type="button"/u);
   assert.match(html, /aria-haspopup="menu"/u);
 });
-test("dropdown styling binds local surface tokens and keeps Radix external", () => {
+test("dropdown styling binds local surface tokens and ships CSP-compatible Radix composition", () => {
   const css = readFileSync(
     new URL(import.meta.resolve("@bezny/base/style.css")),
     "utf-8"
@@ -71,5 +71,20 @@ test("dropdown styling binds local surface tokens and keeps Radix external", () 
   assert.ok(
     css.includes("var(--radix-dropdown-menu-content-available-height)")
   );
-  assert.ok(javascript.includes('from "@radix-ui/react-dropdown-menu"'));
+  assert.equal(
+    javascript.includes('from "@radix-ui/react-dropdown-menu"'),
+    false
+  );
+  const sourceMap = JSON.parse(
+    readFileSync(
+      new URL("index.js.map", import.meta.resolve("@bezny/base")),
+      "utf-8"
+    )
+  );
+  assert.ok(
+    sourceMap.sources.some((source) =>
+      source.includes("/@radix-ui/react-dropdown-menu/dist/")
+    )
+  );
+  assert.ok(javascript.includes("data-bezny-scroll-locked"));
 });

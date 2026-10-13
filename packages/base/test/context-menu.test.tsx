@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+/* oxlint-disable vitest/prefer-to-be-truthy, vitest/prefer-to-be-falsy -- Assert literal lock-state booleans. */
 import {
   cleanup,
   fireEvent,
@@ -103,6 +104,32 @@ describe(ContextMenu, () => {
     await waitFor(() =>
       expect(screen.queryByRole("menuitem", { name: "Export" })).toBeNull()
     );
+  });
+
+  it("locks modal scrolling without creating a style element and cleans up on dismissal", async () => {
+    const user = userEvent.setup();
+    render(
+      <ContextMenu>
+        <ContextMenuTrigger>Locked row</ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem>Archive</ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+    );
+    const styles = [...document.querySelectorAll("style")];
+    await user.tab();
+    await user.keyboard("{Shift>}{F10}{/Shift}");
+    await screen.findByRole("menu");
+    expect([...document.querySelectorAll("style")]).toStrictEqual(styles);
+    expect(
+      Object.hasOwn(document.documentElement.dataset, "beznyScrollLocked")
+    ).toBe(true);
+    await user.keyboard("{Escape}");
+    await waitFor(() => expect(screen.queryByRole("menu")).toBeNull());
+    expect(
+      Object.hasOwn(document.documentElement.dataset, "beznyScrollLocked")
+    ).toBe(false);
+    expect(document.activeElement?.textContent).toBe("Locked row");
   });
 
   it("honours cancelled keyboard opening", async () => {
