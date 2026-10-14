@@ -27,6 +27,10 @@ export interface AdminAdapterRequest {
   signal: AbortSignal;
   locale?: string;
 }
+/** Opaque starting detail for domain concurrency checks; not current authority. */
+export interface AdminMutationRequest extends AdminAdapterRequest {
+  initialRecord?: unknown;
+}
 export interface AdminListResult<TRecord> {
   items: readonly TRecord[];
   total: number;
@@ -54,7 +58,7 @@ export interface AdminDataAdapter<TRecord, TValues> {
   update?: (
     id: string,
     values: TValues,
-    request: AdminAdapterRequest
+    request: AdminMutationRequest
   ) => Promise<TRecord>;
   remove?: (
     ids: readonly string[],
@@ -66,6 +70,11 @@ export interface AdminDataAdapter<TRecord, TValues> {
 }
 export interface AdminRecordEnvelope extends AdminRecordReference {
   data: unknown;
+}
+/** Opaque backend presentation hints; never an authorization grant. */
+export interface AdminMutationScope {
+  view: "create" | "update";
+  record?: AdminRecordEnvelope;
 }
 export interface AdminEntityAdapter {
   list: (
@@ -83,7 +92,7 @@ export interface AdminEntityAdapter {
   update?: (
     id: string,
     values: unknown,
-    request: AdminAdapterRequest
+    request: AdminMutationRequest
   ) => Promise<AdminRecordEnvelope>;
   remove?: AdminDataAdapter<unknown, unknown>["remove"];
   subscribe?: AdminEntitySubscription;
@@ -110,6 +119,8 @@ export interface AdminEntityDefinition {
     detail?: ComponentType;
     update?: ComponentType;
   };
+  /** Pure presentation callback. Omission preserves stock mutation availability. */
+  isMutationAvailable?: (scope: AdminMutationScope) => boolean;
   actions?: readonly AdminEntityAction[];
   filters?: readonly AdminFilterDefinition[];
   pageSize?: number;
@@ -188,7 +199,7 @@ export const defineAdminEntity = <TRecord, TValues>(
           update: async (
             id: string,
             values: unknown,
-            request: AdminAdapterRequest
+            request: AdminMutationRequest
           ) => {
             const result = envelope(
               await update(id, parseValues(values), request)

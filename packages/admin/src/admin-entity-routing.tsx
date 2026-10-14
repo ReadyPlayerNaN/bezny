@@ -20,6 +20,7 @@ import type { AdminCachePolicy } from "./admin-data-session.js";
 import {
   AdminDefaultLoadingPage,
   AdminDefaultUnavailablePage,
+  AdminDefaultErrorPage,
 } from "./admin-default-pages.js";
 import { AdminDeleteDialog } from "./admin-delete-dialog.js";
 import {
@@ -46,7 +47,7 @@ const EntityScreenContent = () => {
     return <output aria-label={t("loading")}>{t("loading")}</output>;
   }
   if (kind === "error") {
-    return <p role="alert">{t("error")}</p>;
+    return <AdminDefaultErrorPage />;
   }
   if (!Screen || kind === "unavailable") {
     return <NotFound />;

@@ -18,6 +18,7 @@ import {
 import {
   useAdminEntityContext,
   useAdminDataSession,
+  useAdminEntityPresentation,
 } from "./admin-entity-context.js";
 import type {
   AdminFormValues,
@@ -27,6 +28,8 @@ import { readAdminFormValues } from "./admin-entity-fields.js";
 import { adminSelectionAtom } from "./admin-entity-model.js";
 import type { AdminCommand } from "./admin-entity-model.js";
 import { createAdminFormFieldCommands } from "./admin-form-field-commands.js";
+import { useAdminFormLifetime } from "./admin-form-lifetime.js";
+import { isAdminFormMutationCurrent } from "./admin-mutation-availability.js";
 import { AdminPage } from "./admin-page.js";
 import { AdminRegisteredField } from "./admin-registered-field.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
@@ -37,6 +40,11 @@ import collectionStyles from "./admin-collection.module.scss";
 export const AdminDefaultLoadingPage = () => {
   const { t } = useTranslation("beznyAdmin");
   return <output aria-label={t("loading")}>{t("loading")}</output>;
+};
+
+export const AdminDefaultErrorPage = () => {
+  const { t } = useTranslation("beznyAdmin");
+  return <p role="alert">{t("error")}</p>;
 };
 
 const CommandButton = ({ command }: { command: AdminCommand }) => {
@@ -210,9 +218,29 @@ export const AdminDefaultDetailPage = () => {
 const DefaultEntityForm = () => {
   const { entity, data, recordId, view } = useAdminEntityContext();
   const session = useAdminDataSession();
+  const store = useStore();
+  const isAlive = useAdminFormLifetime();
+  const canMutate = useCallback(
+    () =>
+      isAlive() &&
+      !!entity &&
+      (view === "create" || view === "update") &&
+      isAdminFormMutationCurrent(
+        entity,
+        view,
+        recordId,
+        data,
+        store.get(session.snapshotAtom)
+      ),
+    [data, entity, isAlive, recordId, session, store, view]
+  );
   const navigate = useAdminEntityNavigate();
   const { t } = useTranslation("beznyAdmin");
   const record = data?.items.find((item) => item.id === recordId);
+  // Borrow the starting detached detail alongside RHF's initial values, never
+  // replace it with newer hints or treat it as current mutation authority.
+  // oxlint-disable-next-line react/hook-use-state -- Read-only edit origin, deliberately never replaced by newer hints.
+  const [initialRecord] = useState(() => record?.data);
   const configured = entity?.form;
   const form = useForm<AdminFormValues>({
     defaultValues: configured
@@ -223,14 +251,14 @@ const DefaultEntityForm = () => {
   const [deriving, setDeriving] = useState(0);
   const deriveValues = useCallback(
     async (field: AdminEntityField) => {
-      if (!field.deriveValues) {
+      if (!field.deriveValues || !canMutate()) {
         return;
       }
       const previous = form.getValues();
       setDeriving((count) => count + 1);
       try {
         const patch = await field.deriveValues(previous, record?.data);
-        if (form.getValues(field.key) === previous[field.key]) {
+        if (canMutate() && form.getValues(field.key) === previous[field.key]) {
           for (const [key, value] of Object.entries(patch)) {
             if (
               value !== undefined &&
@@ -247,16 +275,21 @@ const DefaultEntityForm = () => {
           }
         }
       } catch {
-        form.setError("root", { message: t("error") });
+        if (canMutate()) {
+          form.setError("root", { message: t("error") });
+        }
       }
-      setDeriving((count) => count - 1);
+      if (isAlive()) {
+        setDeriving((count) => count - 1);
+      }
     },
-    [configured, form, record, t]
+    [canMutate, configured, form, isAlive, record, t]
   );
   const [saving, setSaving] = useState(false);
   const save = useMemo(
     () => async (values: AdminFormValues) => {
-      if (!entity || saving || deriving > 0) {
+      // RHF may yield during validation: check live scope and current hints now.
+      if (!entity || saving || deriving > 0 || !canMutate()) {
         return;
       }
       setSaving(true);
@@ -273,23 +306,54 @@ const DefaultEntityForm = () => {
       try {
         const result =
           view === "update" && recordId
-            ? await session.update(entity.key, recordId, parsedValues)
+            ? await session.update(
+                entity.key,
+                recordId,
+                parsedValues,
+                initialRecord
+              )
             : await session.create(entity.key, parsedValues);
-        await navigate({
-          entity: entity.key,
-          recordId: result.id,
-          view: "detail",
-        });
+        const current = store.get(session.snapshotAtom);
+        if (
+          isAlive() &&
+          current.entity === entity.key &&
+          current.key === data?.key
+        ) {
+          await navigate({
+            entity: entity.key,
+            recordId: result.id,
+            view: "detail",
+          });
+        }
       } catch {
-        form.setError("root", {
-          message: t("defaults.saveError", {
-            defaultValue: "Could not save. Check the values and try again.",
-          }),
-        });
+        if (canMutate()) {
+          form.setError("root", {
+            message: t("defaults.saveError", {
+              defaultValue: "Could not save. Check the values and try again.",
+            }),
+          });
+        }
       }
-      setSaving(false);
+      if (isAlive()) {
+        setSaving(false);
+      }
     },
-    [deriving, entity, form, navigate, recordId, saving, session, t, view]
+    [
+      canMutate,
+      data,
+      deriving,
+      entity,
+      form,
+      initialRecord,
+      isAlive,
+      navigate,
+      recordId,
+      saving,
+      session,
+      store,
+      t,
+      view,
+    ]
   );
   const pageCommands = useMemo<AdminCommand[]>(
     () =>
@@ -297,7 +361,9 @@ const DefaultEntityForm = () => {
         ? [
             {
               execute: async () => {
-                await form.handleSubmit(save)();
+                if (canMutate()) {
+                  await form.handleSubmit(save)();
+                }
               },
               id: `${entity.key}.save`,
               label: t("defaults.save", { defaultValue: "Save" }),
@@ -314,10 +380,32 @@ const DefaultEntityForm = () => {
               form,
               translate: t,
               values: watchedValues,
-            }),
+            }).map((command) => ({
+              ...command,
+              execute: () => (canMutate() ? command.execute() : undefined),
+              ...(command.input
+                ? {
+                    input: {
+                      ...command.input,
+                      execute: (value: string) =>
+                        canMutate() ? command.input?.execute(value) : undefined,
+                    },
+                  }
+                : {}),
+            })),
           ]
         : [],
-    [configured, deriveValues, entity, form, navigate, save, t, watchedValues]
+    [
+      canMutate,
+      configured,
+      deriveValues,
+      entity,
+      form,
+      navigate,
+      save,
+      t,
+      watchedValues,
+    ]
   );
   useAdminPageCommands(pageCommands);
   if (!entity || !configured) {
@@ -358,6 +446,16 @@ const DefaultEntityForm = () => {
   );
 };
 export const AdminDefaultFormPage = () => {
-  const { scope } = useAdminEntityContext();
+  const { scope, kind } = useAdminEntityContext();
+  const { NotFound } = useAdminEntityPresentation();
+  if (kind === "unavailable") {
+    return <NotFound />;
+  }
+  if (kind === "loading") {
+    return <AdminDefaultLoadingPage />;
+  }
+  if (kind === "error") {
+    return <AdminDefaultErrorPage />;
+  }
   return <DefaultEntityForm key={scope} />;
 };

@@ -102,13 +102,15 @@ An adapter implements `AdminDataAdapter<TRecord, TValues>`:
 
 - `list(query, { signal })` returns `{ items, total }`. Respect `query.page`, `pageSize`, `filters`, and `locale`; return only the requested page.
 - `get(id, { signal })` returns that record or `null`.
-- Optional `create(values, request)`, `update(id, values, request)`, and `remove(ids, request)` perform backend mutations.
+- Optional `create(values, request)`, `update(id, values, request)`, and `remove(ids, request)` perform backend mutations. Update uses `AdminMutationRequest` (exported from `@bezny/admin/adapters`), adding optional opaque `initialRecord` to the ordinary signal/locale request. Default forms capture their starting detached detail once and forward it for application-owned concurrency checks; programmatic `session.update(key, id, values, initialRecord?)` can supply the same origin. Omitted origins preserve the legacy request shape. Validate it in the adapter; it never substitutes for current backend authorization.
 - Optional `subscribe(observer, request)` attaches an entity-wide realtime change stream. See the subscription contract below.
 - Optional `dispose()` releases adapter-owned resources when the application is permanently disposed. It must be safe if multiple definitions share a backend.
 
 Honor cancellation signals and validate backend responses in your adapter. `defineAdminEntity` preserves record/value generics, validates references and list bounds, wraps complete records in `{ id, label, data }` envelopes, and parses unknown form values before passing typed values to mutations. The application independently limits cached payload size. Payloads must be plain JSON-compatible data, not class instances, DOM nodes, cycles, or subscriptions. The cache validates graph depth/node count, creates detached canonical copies, and freezes them so accidental backend/client mutation cannot bypass its bounds.
 
 List and detail screens default to the package-owned pages. Default create/update screens require registered `form` metadata and corresponding adapter operations; custom create/update screens require their operations but may own their forms. `screens` optionally overrides each view. Missing adapter capabilities mean omitted operation commands, not pretend operations. Entity keys are unique lowercase slugs; record IDs are non-empty, unique within each returned page, and cannot be `create` (case-insensitively reserved for the create route). Get/update adapters must return the requested ID. Invalid async data becomes a recoverable loading error rather than retained invalid state.
+
+Optional `isMutationAvailable(scope)` is the generic stock create/update presentation hook. Its `AdminMutationScope` (exported from `@bezny/admin/adapters`) contains `view: "create" | "update"` and an optional detached `record` envelope. Consume validated backend capabilities; do not evaluate roles in the library or treat visible controls as authorization. Omission preserves existing consumers. The same hint gates stock commands/palette, direct mutation routes and default RHF invocation guards. See [backend-provided mutation presentation](DEFAULT-PAGES.md#backend-provided-mutation-presentation) for current-data, host invalidation and custom-handler responsibilities.
 
 ## Optional backend realtime subscriptions
 

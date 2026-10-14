@@ -543,14 +543,24 @@ export const createAdminDataSession = (
       await mutate(entity, (signal) => remove(ids, { signal }));
     },
     snapshotAtom: snapshotReader,
-    update: async (key: string, id: string, values: unknown) => {
+    update: async (
+      key: string,
+      id: string,
+      values: unknown,
+      initialRecord?: unknown
+    ) => {
       const entity = findEntity(key);
       const { update } = entity.adapter;
       if (!update) {
         throw new Error(`Updates unavailable: ${key}`);
       }
       return boundedMutationRecord(
-        await mutate(entity, (signal) => update(id, values, { signal }))
+        await mutate(entity, (signal) =>
+          update(id, values, {
+            signal,
+            ...(initialRecord === undefined ? {} : { initialRecord }),
+          })
+        )
       );
     },
   };

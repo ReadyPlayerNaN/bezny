@@ -22,6 +22,7 @@ import type {
   AdminSelection,
 } from "./admin-entity-model.js";
 import { adminListQueriesAtom } from "./admin-list-state.js";
+import { isAdminMutationAvailable } from "./admin-mutation-availability.js";
 import {
   adminRouteLocation,
   useAdminRouteBindings,
@@ -170,7 +171,12 @@ const dataContextKind = (
     return "error";
   }
   if (view === "create") {
-    return base;
+    return data.key === key &&
+      data.entity === entity.key &&
+      data.status === "idle" &&
+      isAdminMutationAvailable(entity, view)
+      ? base
+      : "unavailable";
   }
   if (data.key !== key || data.status === "idle" || data.status === "loading") {
     return "loading";
@@ -178,8 +184,19 @@ const dataContextKind = (
   if (data.status === "error") {
     return "error";
   }
+  if (
+    view === "update" &&
+    !isAdminMutationAvailable(entity, view, data.items[0])
+  ) {
+    return "unavailable";
+  }
   return base;
 };
+
+const presentedReferences = (
+  kind: ReturnType<typeof dataContextKind>,
+  records: readonly AdminRecordReference[]
+) => (["loading", "error", "unavailable"].includes(kind) ? [] : records);
 
 const entityContextScope = (
   entity: AdminEntity | null,
@@ -228,7 +245,7 @@ export const useAdminEntityContext = () => {
     kind,
     query,
     recordId,
-    records: kind === "loading" || kind === "error" ? [] : records,
+    records: presentedReferences(kind, records),
     request,
     scope: entityContextScope(entity, view, recordId),
     selectedIds: kind === "selection" ? selectedIds : [],

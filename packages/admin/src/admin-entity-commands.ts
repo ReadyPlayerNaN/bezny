@@ -26,6 +26,7 @@ import { adminLanguages } from "./admin-i18n.js";
 import { useAdminListControls } from "./admin-list-controls.js";
 import { adminListSearch } from "./admin-list-search.js";
 import { adminListQueriesAtom } from "./admin-list-state.js";
+import { isAdminMutationAvailable } from "./admin-mutation-availability.js";
 import {
   adminRouteLocation,
   useAdminRouteBindings,
@@ -187,20 +188,47 @@ export const useAdminEntityCommands = () => {
   const bindings = useAdminRouteBindings();
   const setSelection = useSetAtom(adminSelectionAtom);
   const registeredPageCommands = useAtomValue(adminPageCommandsAtom);
-  const navigationCommands = registry.entities.flatMap((entity) => [
-    routeCommand(entity, "list", navigate, t),
-    ...(entity.screens.create
-      ? [routeCommand(entity, "create", navigate, t)]
-      : []),
-  ]);
+  const createCommand = (target: AdminEntity): AdminCommand | null => {
+    const presented = store.get(session.snapshotAtom);
+    if (
+      !presented.key ||
+      !presented.entity ||
+      presented.status === "disposed" ||
+      !target.screens.create ||
+      !isAdminMutationAvailable(target, "create")
+    ) {
+      return null;
+    }
+    return {
+      ...routeCommand(target, "create", navigate, t),
+      execute: () => {
+        const current = store.get(session.snapshotAtom);
+        if (
+          current !== presented ||
+          !current.key ||
+          !current.entity ||
+          current.status === "disposed" ||
+          !isAdminMutationAvailable(target, "create")
+        ) {
+          return;
+        }
+        return navigate({ entity: target.key, view: "create" });
+      },
+    };
+  };
+  const navigationCommands = registry.entities.flatMap((target) => {
+    const creation = createCommand(target);
+    return [
+      routeCommand(target, "list", navigate, t),
+      ...(creation ? [creation] : []),
+    ];
+  });
   const entity = context.entity ?? registry.entities[0];
   if (!entity) {
     throw new Error("No registered admin entity.");
   }
   const list = routeCommand(entity, "list", navigate, t);
-  const create = entity.screens.create
-    ? routeCommand(entity, "create", navigate, t)
-    : null;
+  const create = createCommand(entity);
   const customCommands = (
     target: "record" | "selection",
     records: readonly AdminRecordReference[]
@@ -239,16 +267,39 @@ export const useAdminEntityCommands = () => {
       record.id === "create" ||
       !context.entity ||
       context.kind === "loading" ||
-      context.kind === "error"
+      context.kind === "error" ||
+      context.kind === "unavailable"
     ) {
       return [];
     }
+    const presented = context.data;
+    const envelope = presented?.items.find((item) => item.id === recordId);
     const routeCommands: AdminCommand[] = [];
     for (const view of ["detail", "update"] as const) {
-      if (entity.screens[view]) {
+      if (
+        entity.screens[view] &&
+        (view !== "update" || isAdminMutationAvailable(entity, view, envelope))
+      ) {
         const location = { entity: entity.key, recordId, view };
         routeCommands.push({
-          execute: () => navigate(location),
+          execute: () => {
+            if (view === "update") {
+              const current = store.get(session.snapshotAtom);
+              if (
+                current !== presented ||
+                current.entity !== entity.key ||
+                current.status !== "ready" ||
+                !isAdminMutationAvailable(
+                  entity,
+                  view,
+                  current.items.find((item) => item.id === recordId)
+                )
+              ) {
+                return;
+              }
+            }
+            return navigate(location);
+          },
           id: `${entity.key}.record.${recordId}.${view}`,
           label: t(view === "detail" ? "view" : "edit", {
             record: record.label,
