@@ -605,6 +605,62 @@ describe("stock mutation availability and edit origins", () => {
     fresh.unmount();
   });
 
+  it("navigates a successful stock update through its own authoritative refresh", async () => {
+    const { app, update, get } = fixture("/records/writer/edit");
+    await mount(app);
+    const gate = Promise.withResolvers<Awaited<ReturnType<typeof get>>>();
+    get.mockReturnValueOnce(gate.promise);
+    await userEvent.setup().click(screen.getByRole("button", { name: "Save" }));
+    await screen.findByLabelText("Loading records…");
+    expect(update).toHaveBeenCalledOnce();
+    expect(screen.queryByRole("textbox", { name: "Title" })).toBeNull();
+    await act(async () => {
+      gate.resolve({
+        editable: true,
+        id: "writer",
+        revision: "2",
+        title: "Writer",
+      });
+      await gate.promise;
+    });
+    await waitFor(() =>
+      expect(app.router.state.location.pathname).toBe("/records/writer")
+    );
+    expect(screen.getByRole("heading", { name: "Writer" })).toBeTruthy();
+    expect(screen.queryByRole("button", { name: "Save" })).toBeNull();
+  });
+
+  it("does not settle an old Save into a reopened same-scope form after a late refresh", async () => {
+    const { app, get } = fixture("/records/writer/edit");
+    await mount(app);
+    const gate = Promise.withResolvers<Awaited<ReturnType<typeof get>>>();
+    get.mockReturnValueOnce(gate.promise);
+    let saving: void | Promise<void>;
+    act(() => {
+      saving = saveCommand().execute();
+    });
+    await screen.findByLabelText("Loading records…");
+    await act(async () => {
+      await app.router.navigate({ to: "/records" });
+    });
+    await screen.findByRole("heading", { name: "Records" });
+    await act(async () => {
+      await app.router.navigate({ to: "/records/writer/edit" });
+    });
+    await screen.findByRole("textbox", { name: "Title" });
+    await act(async () => {
+      gate.resolve({
+        editable: true,
+        id: "writer",
+        revision: "2",
+        title: "Writer",
+      });
+      await saving;
+    });
+    expect(app.router.state.location.pathname).toBe("/records/writer/edit");
+    expect(screen.getByRole("textbox", { name: "Title" })).toBeTruthy();
+  });
+
   it("does not navigate a cancelled form when its pending mutation returns late", async () => {
     const { app, update } = fixture("/records/writer/edit");
     const gate = Promise.withResolvers<{

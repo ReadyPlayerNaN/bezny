@@ -30,6 +30,7 @@ import {
 } from "./admin-entity-context.js";
 import type { AdminStore, AdminEntityView } from "./admin-entity-model.js";
 import { adminEntityPaths } from "./admin-entity-paths.js";
+import { AdminFormNavigationLifetime } from "./admin-form-lifetime.js";
 import { AdminProvider } from "./admin-provider.js";
 import type { AdminProviderProps } from "./admin-provider.js";
 import { AdminRouteBindingsContext } from "./admin-route-bindings.js";
@@ -58,10 +59,10 @@ const EntityScreenContent = () => {
 export const AdminEntityScreen = () => {
   const { scope } = useAdminEntityContext();
   return (
-    <>
+    <AdminFormNavigationLifetime key={scope}>
       <EntityScreenContent />
       <AdminDeleteDialog key={scope} />
-    </>
+    </AdminFormNavigationLifetime>
   );
 };
 

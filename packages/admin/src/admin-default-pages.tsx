@@ -28,7 +28,10 @@ import { readAdminFormValues } from "./admin-entity-fields.js";
 import { adminSelectionAtom } from "./admin-entity-model.js";
 import type { AdminCommand } from "./admin-entity-model.js";
 import { createAdminFormFieldCommands } from "./admin-form-field-commands.js";
-import { useAdminFormLifetime } from "./admin-form-lifetime.js";
+import {
+  useAdminFormLifetime,
+  useAdminFormNavigationLifetime,
+} from "./admin-form-lifetime.js";
 import { isAdminFormMutationCurrent } from "./admin-mutation-availability.js";
 import { AdminPage } from "./admin-page.js";
 import { AdminRegisteredField } from "./admin-registered-field.js";
@@ -220,6 +223,7 @@ const DefaultEntityForm = () => {
   const session = useAdminDataSession();
   const store = useStore();
   const isAlive = useAdminFormLifetime();
+  const isNavigationAlive = useAdminFormNavigationLifetime();
   const canMutate = useCallback(
     () =>
       isAlive() &&
@@ -315,7 +319,7 @@ const DefaultEntityForm = () => {
             : await session.create(entity.key, parsedValues);
         const current = store.get(session.snapshotAtom);
         if (
-          isAlive() &&
+          (isNavigationAlive?.() ?? isAlive()) &&
           current.entity === entity.key &&
           current.key === data?.key
         ) {
@@ -346,6 +350,7 @@ const DefaultEntityForm = () => {
       form,
       initialRecord,
       isAlive,
+      isNavigationAlive,
       navigate,
       recordId,
       saving,
