@@ -66,6 +66,39 @@ pnpm typecheck
 pnpm test
 ```
 
+## GitHub preview packages
+
+Every push to `master` runs [the preview workflow](.github/workflows/preview-packages.yml): lint, packaging tests, builds, typechecks, and tests must pass before publishing **only** the base and admin libraries to `https://npm.pkg.github.com`. Nothing is published to npmjs.org. The separate publish job uses the built-in `GITHUB_TOKEN` with `packages: write`; no npm token or personal publishing secret is needed.
+
+GitHub requires package scopes to match the owning account, so this repository publishes `@readyplayernan/bezny-base` and `@readyplayernan/bezny-admin`. Source manifests remain private and retain their `@bezny/*` names. Staged packages use a matching version of the form `0.0.0-nightly.<run-id>.<attempt>.sha<commit-prefix>` and the `nightly` dist-tag (not `latest`). Admin's `@bezny/base` dependency is an npm alias pinned to that exact GitHub preview version. The package scope follows the repository owner if the repository moves.
+
+### Install a preview
+
+GitHub's npm registry requires authentication even for public packages. Create a personal access token **(classic)** with `read:packages` and access to both packages. Export it as `NODE_AUTH_TOKEN` in your shell or consumer CI, then add this to the consuming project's `.npmrc` (never commit the token itself):
+
+```ini
+@readyplayernan:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}
+```
+
+Install using aliases so the documented imports remain unchanged:
+
+```sh
+pnpm add '@bezny/base@npm:@readyplayernan/bezny-base@nightly' '@bezny/admin@npm:@readyplayernan/bezny-admin@nightly'
+```
+
+For reproducible testing, replace both `nightly` selectors with the **same exact version** from the workflow summary or GitHub Packages page. The two packages publish sequentially (base first), not atomically; wait for a successful workflow before installing. Overlapping runs can finish out of order, so `nightly` reflects publishing order, not necessarily commit order. React 19 and React DOM 19 remain consumer-provided peer dependencies.
+
+### Repository administration
+
+- GitHub Actions and package creation must be permitted by the repository/account policies. New packages are private by default; grant testers access to **both** packages or change their visibility in GitHub's package settings. Consumers in other Actions repositories need package read access explicitly granted before using their own `GITHUB_TOKEN`.
+- If a package with the same name already exists, connect it to this repository and grant this repository Actions access before publishing.
+- To retry a partially published run, choose **Re-run all jobs**. This builds a new version using the incremented attempt, avoiding immutable-version conflicts. Re-running only the failed publish job may encounter an already-published version.
+- Verified tarballs are retained as workflow artifacts for seven days. Published GitHub package versions are not automatically deleted; manage their retention in GitHub Packages separately.
+- To test the packaging logic locally without publishing: `node --test .github/scripts/prepare-preview-packages-tests.mjs`.
+
+See [GitHub's npm registry documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry) for authentication and permissions.
+
 ## Administration demo
 
 ```sh

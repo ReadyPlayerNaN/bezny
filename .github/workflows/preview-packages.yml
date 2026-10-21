@@ -1,0 +1,89 @@
+name: Publish GitHub preview packages
+
+on:
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Verify and pack
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm exec oxlint . .github/scripts
+      - name: Test preview packaging
+        run: node --test .github/scripts/prepare-preview-packages-tests.mjs
+      - name: Build
+        run: pnpm build
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Test
+        # Each Vitest suite already uses workers; avoid competing package suites.
+        run: pnpm test --concurrency=1
+      - name: Prepare and pack preview libraries
+        shell: bash
+        run: |
+          node .github/scripts/prepare-preview-packages.mjs "$RUNNER_TEMP/preview-packages"
+          mkdir "$RUNNER_TEMP/preview-tarballs"
+          for library in base admin; do
+            (
+              cd "$RUNNER_TEMP/preview-packages/$library"
+              npm pack --ignore-scripts --pack-destination "$RUNNER_TEMP/preview-tarballs"
+            )
+          done
+      - name: Upload verified packages
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: preview-packages
+          path: ${{ runner.temp }}/preview-tarballs/*.tgz
+          if-no-files-found: error
+          retention-days: 7
+          overwrite: true
+
+  publish:
+    name: Publish to GitHub Packages
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      # No checkout or dependency installation in the write-permission job.
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: preview-packages
+          path: tarballs
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          registry-url: https://npm.pkg.github.com
+          package-manager-cache: false
+      - name: Publish base, then admin
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          npm publish tarballs/*-bezny-base-*.tgz --registry=https://npm.pkg.github.com --tag=nightly --ignore-scripts
+          npm publish tarballs/*-bezny-admin-*.tgz --registry=https://npm.pkg.github.com --tag=nightly --ignore-scripts
+          {
+            echo '### Published GitHub preview packages'
+            echo
+            for archive in tarballs/*.tgz; do
+              echo "- $(basename "$archive" .tgz)"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
