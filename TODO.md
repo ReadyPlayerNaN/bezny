@@ -2,6 +2,10 @@
 
 > Every implemented feature must also be implemented and demonstrated in `@bezny/demo` as part of the same functional slice.
 
+## Completed work
+
+The entries below are historical implementation and verification snapshots, not a current test report or active backlog. Test counts describe the suite at the time each slice was completed and should not be read as today's totals. For current checks, use the [workspace commands](README.md#getting-started) and the separate [browser regression checks](packages/base/README.md#browser-regression-checks).
+
 - [x] Resolve memory leaks and unbounded data retention while keeping Jotai.
   - Implemented: application-owned Jotai snapshots, paginated adapters, bounded entry/byte/TTL cache, immutable detached JSON payloads, cancellation/late-response guards, subscription cleanup, and idempotent disposal. Demo uses a capped adapter-backed repository and HMR disposal; field lengths are bounded independently of frontend validation.
   - Separate long-lived entity definitions from record-data lifetimes.

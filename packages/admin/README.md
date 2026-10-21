@@ -254,7 +254,7 @@ Define replacements at module scope. Changing the override object alone does not
 
 ## Registered entity applications
 
-Use [registered entity applications](ENTITIES.md) when building an entity-oriented admin. Typed entity/adapter definitions and an application-owned bounded data session drive the generic `/$entity`, `/$entity/create`, `/$entity/$recordId`, and `/$entity/$recordId/edit` routes and the shared command catalog. Context comes from route matches, not pathname parsing. Default CRUD pages derive fields, filters, columns, and commands from registration; custom screens remain optional per-view overrides. Shared filter chips sit above the list and one integrated pagination navigation sits below it. See [default pages](DEFAULT-PAGES.md) for configuration. Form screens register real callbacks for the palette rather than hardcoding form IDs. The low-level provider above remains useful when owning a different route tree.
+Start with the [minimal entity application](ENTITIES.md#minimal-entity-application) when building an entity-oriented admin. Typed entity/adapter definitions and an application-owned bounded data session drive the generic `/$entity`, `/$entity/create`, `/$entity/$recordId`, and `/$entity/$recordId/edit` routes and the shared command catalog. Context comes from route matches, not pathname parsing. Default CRUD pages derive fields, filters, columns, and commands from registration; custom screens remain optional per-view overrides. Shared filter chips sit above the list and one integrated pagination navigation sits below it. See [default pages](DEFAULT-PAGES.md) for configuration. Form screens register real callbacks for the palette rather than hardcoding form IDs. The low-level provider above remains useful when owning a different route tree.
 
 ## File-based routing
 
@@ -292,7 +292,7 @@ Every entity interface follows **LCRUD**:
 | Update | Editing page | `/articles/1/edit` |
 | Delete | Confirmation dialog | Opened against the current entity or selection; no standalone delete page required |
 
-These URLs illustrate the intended navigation, not a route convention imposed by today's package. Static create routes must not be mistaken for entity identifiers. List, create, detail, and update pages must support direct URL entry. Deletion requires explicit confirmation and consistent post-delete navigation/selection cleanup.
+`createAdminApplication` installs the generic `/$entity`, `/$entity/create`, `/$entity/$recordId`, and `/$entity/$recordId/edit` routes illustrated above. With `createAdminRuntime`, the host owns the route tree and binds its entity routes to the runtime's route contract. The low-level `AdminProvider` alone imposes no entity route convention. Static create routes must not be mistaken for entity identifiers. List, create, detail, and update pages must support direct URL entry. Deletion requires explicit confirmation and consistent post-delete navigation/selection cleanup.
 
 ### 3. Referential UI context
 

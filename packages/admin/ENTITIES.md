@@ -6,35 +6,53 @@ One entity configuration drives screens, generic URLs, route context, and comman
 
 Entity registrations can derive all CRUD pages from adapter capabilities, field metadata, filters, and actions. `screens` is optional and overrides individual views. See [registration-driven default pages](DEFAULT-PAGES.md) for a no-custom-screens example, field configuration, and default deletion behavior.
 
-## Typed adapters and entity definitions
+## Minimal entity application
+
+In a React 19 browser application in this workspace, add `@bezny/admin` and `@bezny/base` with `workspace:*`, and declare `@tanstack/react-router`, `react`, and `react-dom` as direct dependencies. Run `pnpm install` and build both libraries before starting the host:
+
+```sh
+pnpm --filter @bezny/base build
+pnpm --filter @bezny/admin build
+```
+
+Use this as the application's `src/main.tsx`, with `<div id="root"></div>` in its HTML entry. It is a self-contained, read-only Documents application: `/` redirects to `/documents`, and record links open `/documents/1` or `/documents/2`. The header supplies the command palette and refresh/retry controls; both stylesheets are required.
 
 ```tsx
 import { defineAdminEntity } from "@bezny/admin/adapters";
+import type { AdminDataAdapter } from "@bezny/admin/adapters";
 import {
   createAdminApplication,
   AdminApplicationProvider,
 } from "@bezny/admin/application";
-import { useAdminEntityContext } from "@bezny/admin/context";
+import { AdminHeader } from "@bezny/admin/header";
 import { AdminLayout } from "@bezny/admin/layout";
-import { AdminPage } from "@bezny/admin/page";
 import { Outlet } from "@tanstack/react-router";
+import { createRoot } from "react-dom/client";
 
-import { documentAdapter } from "./document-adapter";
-import { parseDocumentValues } from "./document-validation";
+import "@bezny/base/style.css";
+import "@bezny/admin/style.css";
 
-const DocumentList = () => {
-  const { entity, records } = useAdminEntityContext();
-  return (
-    <AdminPage heading={entity?.label}>
-      {records.map((record) => (
-        <p key={record.id}>{record.label}</p>
-      ))}
-    </AdminPage>
-  );
-};
-const DocumentDetail = () => {
-  const { recordId } = useAdminEntityContext();
-  return <AdminPage heading={`Document ${recordId}`} />;
+interface DocumentRecord {
+  id: string;
+  title: string;
+}
+const records: readonly DocumentRecord[] = [
+  { id: "1", title: "Getting started" },
+  { id: "2", title: "Editorial guidelines" },
+];
+const documentAdapter: AdminDataAdapter<DocumentRecord, never> = {
+  list: async ({ page, pageSize }, { signal }) => {
+    signal.throwIfAborted();
+    const start = (page - 1) * pageSize;
+    return {
+      items: records.slice(start, start + pageSize),
+      total: records.length,
+    };
+  },
+  get: async (id, { signal }) => {
+    signal.throwIfAborted();
+    return records.find((record) => record.id === id) ?? null;
+  },
 };
 const documents = defineAdminEntity({
   key: "documents",
@@ -42,19 +60,19 @@ const documents = defineAdminEntity({
   singularLabel: "Document",
   adapter: documentAdapter,
   reference: (record) => ({ id: record.id, label: record.title }),
-  parseValues: parseDocumentValues,
-  screens: { list: DocumentList, detail: DocumentDetail },
+  // Required by the registration contract; unused without mutation operations.
+  parseValues: (): never => {
+    throw new Error("Documents are read-only.");
+  },
 });
 const Root = () => (
-  <AdminLayout>
+  <AdminLayout header={<AdminHeader title="Documents workspace" />}>
     <Outlet />
   </AdminLayout>
 );
-const NotFound = () => <AdminPage heading="Unavailable" />;
 const application = createAdminApplication({
   entities: [documents],
   Root,
-  NotFound,
   cache: {
     maxEntries: 8,
     maxBytes: 2_000_000,
@@ -62,10 +80,25 @@ const application = createAdminApplication({
     maxPageSize: 100,
   },
 });
-export const App = () => <AdminApplicationProvider application={application} />;
+const container = document.getElementById("root");
+if (!container) {
+  throw new Error("Missing application root element.");
+}
+const root = createRoot(container);
+root.render(<AdminApplicationProvider application={application} />);
+
+// Call when permanently abandoning this application, including host HMR cleanup.
+export const dispose = () => {
+  root.unmount();
+  application.dispose();
+};
 ```
 
-`documentAdapter` implements `AdminDataAdapter<Document, DocumentValues>`:
+The fixed fixture needs no backend and has no registered filters or localized record content. Production adapters should use bounded backend requests, honor filters/locale, and enforce authorization. To add editing, provide mutation operations, a validating `parseValues`, and [form metadata](DEFAULT-PAGES.md). Default pages and unavailable/loading states need no custom screen components. For a full editable, localized example, see the [demo](../demo/README.md).
+
+## Typed adapters and entity definitions
+
+An adapter implements `AdminDataAdapter<TRecord, TValues>`:
 
 - `list(query, { signal })` returns `{ items, total }`. Respect `query.page`, `pageSize`, `filters`, and `locale`; return only the requested page.
 - `get(id, { signal })` returns that record or `null`.
@@ -201,9 +234,9 @@ Adapters own domain persistence separately. Do not close over unbounded client-s
 - `selectionCommands` for bulk actions and clear-selection.
 - Registered `pageCommands` and a composed `paletteCommands` catalog.
 
-Commands carry stable identity, labels, one execution function, and optional typed `location`. Use the same instances/execution paths for navigation, rows, details, menus, and palette presentation. `useAdminEntityNavigate()` accepts `{ entity, view, recordId? }` instead of handwritten URLs.
+Commands carry stable identity, labels, one execution function, and optional typed `location`. An optional command `menuLabel` supplies a concise contextual label (for example, `Edit`), while `label` retains the full palette label (for example, `Edit Editorial guidelines`). Default row, detail, and selection menus use `menuLabel ?? label`; the palette uses `label`. Use the same instances/execution paths for navigation, rows, details, menus, and palette presentation. `useAdminEntityNavigate()` accepts `{ entity, view, recordId? }` instead of handwritten URLs.
 
-An entity action has an `id`, `target` (`record`/`selection`), label function, execution callback, optional destructive flag, reactive `enabled` boolean atom, and optional context-dependent `isAvailable(scope)`. The scope includes entity, matched view, target IDs/references, Jotai store, data session, and domain navigation. Use the session for mutations/cache invalidation; request confirmation before destructive changes. Actual backend authorization remains mandatory.
+An entity action has an `id`, `target` (`record`/`selection`), label function, execution callback, optional destructive flag, reactive `enabled` boolean atom, and optional context-dependent `isAvailable(scope)`. An action may also provide `menuLabel(scope)`; its result becomes the command's contextual menu label, falling back to the ordinary label when omitted. The scope includes entity, matched view, target IDs/references, Jotai store, data session, and domain navigation. Use the session for mutations/cache invalidation; request confirmation before destructive changes. Actual backend authorization remains mandatory.
 
 Targets/permissions are revalidated at execution. Bulk commands also revalidate their selection snapshot; stale selection commands cannot mutate a different entity. IDs in different entity namespaces never collide. Selection is limited to current visible references and clears when changing collections, queries, or leaving a list (including browser history).
 

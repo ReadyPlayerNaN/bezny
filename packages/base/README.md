@@ -334,12 +334,24 @@ pnpm --filter @bezny/base typecheck
 pnpm --filter @bezny/base test
 ```
 
-Real-browser theme and contrast tests require Chromium (or a compatible Chrome executable):
+Build first when running package tests directly. The root `pnpm test` builds automatically through Turbo. Builds emit `dist/index.js`, type declarations, source maps, and `dist/style.css`. React and its JSX runtime remain external; consumers supply React through the peer dependency.
+
+### Browser regression checks
+
+These explicit checks are **not included in `pnpm test`**. Install Chromium (or a compatible Chrome executable), install workspace dependencies, then run from the repository root:
 
 ```sh
-CHROMIUM_PATH=/usr/bin/chromium node --test test/theme.browser.mjs
+pnpm --filter @bezny/base build
+CHROMIUM_PATH=/usr/bin/chromium node --test packages/base/test/*.browser.mjs
 ```
 
-Run this from `packages/base` after building. The tests exercise both OS preferences, explicit class overrides, returning to automatic mode, nested boundaries, native colour schemes, component colours, derived states, focus rings, and contrast.
+Set `CHROMIUM_PATH` to your executable, or omit the assignment if `chromium` is on `PATH`. No running demo server is required; the tests create local fixtures. To run one check, replace the glob with its file path:
 
-Build first when running package tests directly. The root `pnpm test` builds automatically through Turbo. Builds emit `dist/index.js`, type declarations, source maps, and `dist/style.css`. React and its JSX runtime remain external; consumers supply React through the peer dependency.
+| File under `packages/base/test/` | Coverage |
+| --- | --- |
+| `theme.browser.mjs` | OS preferences, explicit and nested themes, native colour schemes, control colours, focus rings, and contrast |
+| `interaction-contrast.browser.mjs` | Badges, entity links, highlighted rows/destructive actions, keyboard rings, and button fills in both themes |
+| `shell.browser.mjs` | Native navigation popovers, responsive breakpoint boundaries, and LTR/RTL layout |
+| `dialog-motion.browser.mjs` | Panel/backdrop enter and exit animations, preserved positioning, and reduced-motion behavior |
+
+See [contrast verification](CONTRAST.md) for the measured states and the limits of the accessibility review.

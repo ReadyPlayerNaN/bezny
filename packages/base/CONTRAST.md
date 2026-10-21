@@ -23,12 +23,6 @@ After rebuilding, the live demo was rechecked in both themes with no text contra
 
 ## Repeatable checks
 
-```sh
-pnpm --filter @bezny/base build
-node --test packages/base/test/interaction-contrast.browser.mjs
-node --test packages/base/test/theme.browser.mjs
-```
-
-These explicit browser checks require Chromium (`chromium`, or set `CHROMIUM_PATH`). The interaction fixture renders published components with the built stylesheet and measures resolved colours in Chromium, including CSS `color-mix()` and alpha compositing. It checks all five badge tones, entity links, normal/selected/keyboard-focused rows, highlighted destructive labels, focus rings, and the unchanged primary/destructive button fills in both themes.
+Run `interaction-contrast.browser.mjs` and `theme.browser.mjs` using the shared [browser regression instructions](README.md#browser-regression-checks), which cover prerequisites and the complete browser suite. These checks are separate from `pnpm test`. The interaction fixture renders published components with the built stylesheet and measures resolved colours in Chromium, including CSS `color-mix()` and alpha compositing. It checks all five badge tones, entity links, normal/selected/keyboard-focused rows, highlighted destructive labels, focus rings, and the unchanged primary/destructive button fills in both themes.
 
 Regular package tests continue checking token compilation, reference completeness, adjacent layers, component behavior, and badge palette contrast. Custom themes, images, gradients, and new surfaces need their own checks. This targeted review is not a claim of complete WCAG conformance; disabled controls were excluded from text contrast checks, and text/non-text contrast was evaluated separately.
