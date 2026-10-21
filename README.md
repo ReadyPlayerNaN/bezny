@@ -68,13 +68,13 @@ pnpm test
 
 ## npm releases
 
-Publishing a **GitHub Release** runs [the npm release workflow](.github/workflows/npm-release.yml). After lint, packaging tests, builds, typechecks, and tests pass, it publishes **only `@bezny/base` and `@bezny/admin`** as public packages to `https://registry.npmjs.org`, base first. The root workspace, `@bezny/demo`, and `@bezny/typescript-config` are never published.
+Pushing a **version tag** (`v*`) runs [the npm release workflow](.github/workflows/npm-release.yml). After lint, packaging tests, builds, typechecks, and tests pass, it publishes **only `@bezny/base` and `@bezny/admin`** as public packages to `https://registry.npmjs.org`, base first. The root workspace, `@bezny/demo`, and `@bezny/typescript-config` are never published.
 
 ### Publish a version
 
 1. Merge the desired changes, including the release workflow, before creating the release tag.
-2. Create and publish a GitHub Release with a new tag such as `v1.2.3`. The tag must be `vMAJOR.MINOR.PATCH`, optionally followed by a SemVer prerelease suffix; build metadata (`+...`) is not supported. A tag push or saved draft alone does **not** publish to npm.
-3. For a prerelease, use a tag such as `v1.3.0-rc.1` and check GitHub's **Set as a pre-release** option. The suffix and checkbox must agree. Stable releases use npm's `latest` dist-tag; prereleases use `next` and do not replace `latest`.
+2. Create and push a new tag on the intended commit, for example `git tag -a v1.2.3 origin/master -m "Release v1.2.3"` then `git push origin refs/tags/v1.2.3`. The tag must be `vMAJOR.MINOR.PATCH`, optionally followed by a SemVer prerelease suffix; build metadata (`+...`) is not supported. No GitHub Release or local GitHub API credentials are required.
+3. For a prerelease, use a tag such as `v1.3.0-rc.1`. The tag suffix alone selects npm's `next` dist-tag; stable tags select `latest`. Creating a GitHub Release is optional and does not trigger a second publish.
 4. Wait for **Publish npm release packages** to succeed before installing both packages:
 
    ```sh
@@ -85,6 +85,7 @@ The release tag is the version source for **both** packages, independent of the 
 
 ### npm authentication and recovery
 
+- For an existing tag that never triggered publishing (including `v0.1.0`, created before tag-triggered delivery), open **Actions → Publish npm release packages → Run workflow**, select **master**, and enter the existing tag in the **tag** input. This uses master's current workflow/packaging code but checks out, builds, and publishes the exact tagged source, recording the tag's commit rather than master's commit. It does not move or recreate the tag. With GitHub CLI authentication, the equivalent is `gh workflow run npm-release.yml --ref master -f tag=v0.1.0`. Changing the workflow does not retroactively trigger old tags.
 - The separate publish job uses the repository secret **`NPM_TOKEN`** through `NODE_AUTH_TOKEN`. It does not check out source or install dependencies, and publishing disables lifecycle scripts. The build job never receives the npm token.
 - The token must be an unexpired **granular npm access token** with read/write access to both packages (and permission to create them under the `@bezny` scope for the first release). Enable **bypass 2FA** for automated publishing, and ensure package/organization policies allow token-based publishing. Merely having the secret configured does not verify those permissions. See [npm's CI/CD authentication guidance](https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow).
 - Publish releases in version order and wait for each workflow to finish before starting the next. Publishing an older stable release also moves `latest` to that version.

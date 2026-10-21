@@ -15,7 +15,6 @@ import {
 const environment = {
   GITHUB_REPOSITORY: "ReadyPlayerNaN/bezny",
   GITHUB_SHA: "abcdef0123456789abcdef0123456789abcdef01",
-  RELEASE_PRERELEASE: "false",
   RELEASE_TAG: "v1.2.3",
 };
 const metadata = npmReleaseMetadata(environment);
@@ -43,7 +42,6 @@ test("stable and prerelease versions use latest and next respectively", () => {
   for (const suffix of ["alpha", "beta.0", "rc.12", "0", "0abc", "alpha-1"]) {
     const prerelease = npmReleaseMetadata({
       ...environment,
-      RELEASE_PRERELEASE: "true",
       RELEASE_TAG: `v2.0.0-${suffix}`,
     });
     assert.equal(prerelease.version, `2.0.0-${suffix}`);
@@ -51,7 +49,7 @@ test("stable and prerelease versions use latest and next respectively", () => {
   }
 });
 
-test("invalid tags and mismatched prerelease flags fail closed", () => {
+test("invalid tags and missing repository metadata fail closed", () => {
   for (const tag of [
     undefined,
     "",
@@ -66,23 +64,13 @@ test("invalid tags and mismatched prerelease flags fail closed", () => {
     "v1.2.3-01",
     "v1.2.3-rc.01",
     "v1.2.3;echo bad",
+    "v1.2.3\n",
   ]) {
     assert.throws(
       () => npmReleaseMetadata({ ...environment, RELEASE_TAG: tag }),
       /Release tag/u
     );
   }
-  for (const prerelease of [undefined, "", "yes", "true"]) {
-    assert.throws(
-      () =>
-        npmReleaseMetadata({ ...environment, RELEASE_PRERELEASE: prerelease }),
-      /prerelease flag/u
-    );
-  }
-  assert.throws(
-    () => npmReleaseMetadata({ ...environment, RELEASE_TAG: "v1.2.3-rc.1" }),
-    /prerelease flag/u
-  );
   for (const key of ["GITHUB_REPOSITORY", "GITHUB_SHA"]) {
     assert.throws(
       () => npmReleaseMetadata({ ...environment, [key]: undefined }),
@@ -198,7 +186,21 @@ const createReleaseFixture = async (context) => {
 };
 
 test("workflow publishes only verified local tarballs without exposing the npm token to builds", () => {
-  assert.match(workflow, /release:\s+types: \[published\]/u);
+  assert.match(workflow, /push:\s+tags: \["v\*"\]/u);
+  assert.match(workflow, /workflow_dispatch:\s+inputs:\s+tag:/u);
+  assert.ok(!workflow.includes("github.event.release"));
+  assert.match(workflow, /RELEASE_TAG:.*inputs.tag \|\| github.ref_name/u);
+  assert.match(
+    workflow,
+    /group: npm-release-.*inputs.tag \|\| github.ref_name/u
+  );
+  assert.match(workflow, /if: github.event_name == 'workflow_dispatch'/u);
+  assert.match(workflow, /ref: refs\/tags\/.*inputs.tag/u);
+  assert.match(workflow, /NPM_DIST_TAG:.*needs.build.outputs.dist-tag/u);
+  assert.ok(
+    workflow.indexOf("Test workflow packaging") <
+      workflow.indexOf("ref: refs/tags/")
+  );
   assert.match(workflow, /needs: build/u);
   assert.equal(publishCommands.length, 2);
   for (const [index, command] of publishCommands.entries()) {
@@ -229,7 +231,6 @@ for (const prerelease of [false, true]) {
     await mkdir(tarballs);
     const release = prepareNpmPackages(root, destination, {
       ...environment,
-      RELEASE_PRERELEASE: String(prerelease),
       RELEASE_TAG: prerelease ? "v1.2.3-rc.1" : "v1.2.3",
     });
     const stagedLibraries = await readdir(destination);
@@ -312,6 +313,97 @@ for (const prerelease of [false, true]) {
     });
   });
 }
+
+test("manual retries use current packaging code but the existing tag's source and commit", async (context) => {
+  const root = await createReleaseFixture(context);
+  const runnerTemp = await mkdtemp(path.join(tmpdir(), "bezny-npm-retry-"));
+  context.after(() => rm(runnerTemp, { force: true, recursive: true }));
+  // Retain the selected workflow's standalone script outside the source checkout.
+  writeFileSync(
+    path.join(runnerTemp, "prepare-npm-packages.mjs"),
+    readFileSync(new URL("prepare-npm-packages.mjs", import.meta.url))
+  );
+  const runGit = (...arguments_) =>
+    execFileSync("git", arguments_, {
+      cwd: root,
+      encoding: "utf-8",
+      stdio: "pipe",
+    }).trim();
+  runGit("init", "--initial-branch=master");
+  const oldScript = path.join(root, ".github/scripts/prepare-npm-packages.mjs");
+  mkdirSync(path.dirname(oldScript), { recursive: true });
+  writeFileSync(
+    oldScript,
+    'throw new Error("Old tag does not support tag publishing");\n'
+  );
+  runGit("add", ".");
+  runGit(
+    "-c",
+    "user.name=Release test",
+    "-c",
+    "user.email=release@example.com",
+    "commit",
+    "-m",
+    "Release source"
+  );
+  const releaseCommit = runGit("rev-parse", "HEAD");
+  runGit("tag", "v0.1.0");
+  writeFileSync(
+    path.join(root, "packages/base/README.md"),
+    "Newer unreleased source\n"
+  );
+  runGit("add", ".");
+  runGit(
+    "-c",
+    "user.name=Release test",
+    "-c",
+    "user.email=release@example.com",
+    "commit",
+    "-m",
+    "Newer workflow revision"
+  );
+  const workflowCommit = runGit("rev-parse", "HEAD");
+  runGit("checkout", "refs/tags/v0.1.0");
+  const prepareCommand = workflow
+    .split("\n")
+    .map((line) => line.trim())
+    .find((line) =>
+      line.startsWith('GITHUB_SHA="$(git rev-parse HEAD)" node ')
+    );
+  assert.ok(
+    prepareCommand,
+    "Use the checked-out tag commit, not workflow_dispatch's SHA"
+  );
+  execFileSync(
+    "bash",
+    ["--noprofile", "--norc", "-e", "-o", "pipefail", "-c", prepareCommand],
+    {
+      cwd: root,
+      env: {
+        ...process.env,
+        ...environment,
+        GITHUB_SHA: workflowCommit,
+        RELEASE_TAG: "v0.1.0",
+        RUNNER_TEMP: runnerTemp,
+      },
+      stdio: "pipe",
+    }
+  );
+  for (const library of ["base", "admin"]) {
+    const target = path.join(runnerTemp, "npm-packages", library);
+    const manifest = JSON.parse(
+      readFileSync(path.join(target, "package.json"), "utf-8")
+    );
+    assert.equal(manifest.version, "0.1.0");
+    assert.equal(manifest.gitHead, releaseCommit);
+    assert.notEqual(manifest.gitHead, workflowCommit);
+    assert.equal(
+      readFileSync(path.join(target, "README.md"), "utf-8"),
+      "fixture\n"
+    );
+  }
+  assert.equal(runGit("rev-parse", "refs/tags/v0.1.0"), releaseCommit);
+});
 
 test("staging rejects missing build outputs and invalid metadata", async (context) => {
   const root = await createReleaseFixture(context);

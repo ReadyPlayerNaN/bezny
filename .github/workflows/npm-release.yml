@@ -1,14 +1,23 @@
 name: Publish npm release packages
 
 on:
-  release:
-    types: [published]
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Existing version tag to publish (for example v0.1.0)
+        required: true
+        type: string
 
 permissions:
   contents: read
 
+env:
+  RELEASE_TAG: ${{ inputs.tag || github.ref_name }}
+
 concurrency:
-  group: npm-release-${{ github.event.release.tag_name }}
+  group: npm-release-${{ inputs.tag || github.ref_name }}
   cancel-in-progress: false
 
 jobs:
@@ -16,20 +25,41 @@ jobs:
     name: Verify and pack npm release
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    outputs:
+      dist-tag: ${{ steps.release.outputs.dist-tag }}
     steps:
+      # Use the selected workflow revision's packaging code, even when retrying an older tag.
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Validate release metadata
+        id: release
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { appendFileSync } from 'node:fs';
+          import { npmReleaseMetadata } from './.github/scripts/prepare-npm-packages.mjs';
+          const metadata = npmReleaseMetadata(process.env);
+          appendFileSync(process.env.GITHUB_OUTPUT, `dist-tag=${metadata.tag}\n`);
+          NODE
+          cp .github/scripts/prepare-npm-packages.mjs "$RUNNER_TEMP/prepare-npm-packages.mjs"
+      - name: Test workflow packaging
+        run: node --test .github/scripts/*-tests.mjs
+      - name: Check out the existing release tag for a manual retry
+        if: github.event_name == 'workflow_dispatch'
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: refs/tags/${{ inputs.tag }}
           persist-credentials: false
       - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
           cache: pnpm
-      - name: Validate release metadata
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-          RELEASE_PRERELEASE: ${{ github.event.release.prerelease }}
-        run: node --input-type=module -e 'import { npmReleaseMetadata } from "./.github/scripts/prepare-npm-packages.mjs"; npmReleaseMetadata(process.env);'
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Lint
@@ -44,11 +74,9 @@ jobs:
         run: pnpm test --concurrency=1
       - name: Prepare and pack npm libraries
         shell: bash
-        env:
-          RELEASE_TAG: ${{ github.event.release.tag_name }}
-          RELEASE_PRERELEASE: ${{ github.event.release.prerelease }}
         run: |
-          node .github/scripts/prepare-npm-packages.mjs "$RUNNER_TEMP/npm-packages"
+          # workflow_dispatch's GITHUB_SHA is the workflow revision, not the release tag.
+          GITHUB_SHA="$(git rev-parse HEAD)" node "$RUNNER_TEMP/prepare-npm-packages.mjs" "$RUNNER_TEMP/npm-packages"
           mkdir "$RUNNER_TEMP/npm-tarballs"
           for library in base admin; do
             (
@@ -85,7 +113,7 @@ jobs:
         shell: bash
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NPM_DIST_TAG: ${{ github.event.release.prerelease && 'next' || 'latest' }}
+          NPM_DIST_TAG: ${{ needs.build.outputs.dist-tag }}
         run: |
           test -n "$NODE_AUTH_TOKEN" || { echo 'NPM_TOKEN is required for publishing.' >&2; exit 1; }
           npm publish ./tarballs/bezny-base-*.tgz --registry=https://registry.npmjs.org --access=public --tag="$NPM_DIST_TAG" --ignore-scripts

@@ -14,11 +14,11 @@ export const npmReleaseMetadata = (environment) => {
     GITHUB_REPOSITORY: repository,
     GITHUB_SHA: commit,
     RELEASE_TAG: releaseTag,
-    RELEASE_PRERELEASE: prerelease,
   } = environment;
   const match = releaseTagPattern.exec(releaseTag ?? "");
   if (
     !match ||
+    match[0] !== releaseTag ||
     (match.groups.prerelease &&
       !match.groups.prerelease
         .split(".")
@@ -26,14 +26,6 @@ export const npmReleaseMetadata = (environment) => {
   ) {
     throw new Error(
       "Release tag must be vMAJOR.MINOR.PATCH with an optional SemVer prerelease (no build metadata)."
-    );
-  }
-  if (
-    !["true", "false"].includes(prerelease) ||
-    (prerelease === "true") !== Boolean(match.groups.prerelease)
-  ) {
-    throw new Error(
-      "GitHub's prerelease flag must match the release tag's prerelease suffix."
     );
   }
   if (
@@ -47,7 +39,7 @@ export const npmReleaseMetadata = (environment) => {
   return {
     commit,
     repository,
-    tag: prerelease === "true" ? "next" : "latest",
+    tag: match.groups.prerelease ? "next" : "latest",
     version: releaseTag.slice(1),
   };
 };
