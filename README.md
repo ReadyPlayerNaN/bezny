@@ -66,9 +66,34 @@ pnpm typecheck
 pnpm test
 ```
 
+## npm releases
+
+Publishing a **GitHub Release** runs [the npm release workflow](.github/workflows/npm-release.yml). After lint, packaging tests, builds, typechecks, and tests pass, it publishes **only `@bezny/base` and `@bezny/admin`** as public packages to `https://registry.npmjs.org`, base first. The root workspace, `@bezny/demo`, and `@bezny/typescript-config` are never published.
+
+### Publish a version
+
+1. Merge the desired changes, including the release workflow, before creating the release tag.
+2. Create and publish a GitHub Release with a new tag such as `v1.2.3`. The tag must be `vMAJOR.MINOR.PATCH`, optionally followed by a SemVer prerelease suffix; build metadata (`+...`) is not supported. A tag push or saved draft alone does **not** publish to npm.
+3. For a prerelease, use a tag such as `v1.3.0-rc.1` and check GitHub's **Set as a pre-release** option. The suffix and checkbox must agree. Stable releases use npm's `latest` dist-tag; prereleases use `next` and do not replace `latest`.
+4. Wait for **Publish npm release packages** to succeed before installing both packages:
+
+   ```sh
+   pnpm add @bezny/base@1.2.3 @bezny/admin@1.2.3
+   ```
+
+The release tag is the version source for **both** packages, independent of the source manifests' development versions. CI stages built files into fresh directories, makes only those staged manifests public, removes development dependencies and lifecycle scripts, and pins admin's `@bezny/base` dependency to the exact release version. All source manifests remain private; no manual version bump or lockfile change is required for releasing.
+
+### npm authentication and recovery
+
+- The separate publish job uses the repository secret **`NPM_TOKEN`** through `NODE_AUTH_TOKEN`. It does not check out source or install dependencies, and publishing disables lifecycle scripts. The build job never receives the npm token.
+- The token must be an unexpired **granular npm access token** with read/write access to both packages (and permission to create them under the `@bezny` scope for the first release). Enable **bypass 2FA** for automated publishing, and ensure package/organization policies allow token-based publishing. Merely having the secret configured does not verify those permissions. See [npm's CI/CD authentication guidance](https://docs.npmjs.com/using-private-packages-in-a-ci-cd-workflow).
+- Publish releases in version order and wait for each workflow to finish before starting the next. Publishing an older stable release also moves `latest` to that version.
+- npm versions are immutable and the two publishes are not atomic. A retry is safe if neither package was published. If base succeeded but admin failed, fix the cause and publish only the missing admin tarball from that run's **npm-release-packages** artifact using an authenticated npm session: `npm publish ./bezny-admin-1.2.3.tgz --registry=https://registry.npmjs.org --access=public --tag=latest --ignore-scripts` (use the actual filename and `--tag=next` for prereleases). A full rerun will fail on the already-published base version. Alternatively, publish a new release version for both packages. Never replace a release tag to change an already-published version.
+- Verified tarballs are retained for seven days. Test packaging locally without publishing using `node --test .github/scripts/*-tests.mjs`.
+
 ## GitHub preview packages
 
-Every push to `master` runs [the preview workflow](.github/workflows/preview-packages.yml): lint, packaging tests, builds, typechecks, and tests must pass before publishing **only** the base and admin libraries to `https://npm.pkg.github.com`. Nothing is published to npmjs.org. The separate publish job uses the built-in `GITHUB_TOKEN` with `packages: write`; no npm token or personal publishing secret is needed.
+Every push to `master` runs [the preview workflow](.github/workflows/preview-packages.yml): lint, packaging tests, builds, typechecks, and tests must pass before publishing **only** the base and admin libraries to `https://npm.pkg.github.com`. This preview workflow does not publish to npmjs.org; npm delivery uses the separate release workflow above. The separate publish job uses the built-in `GITHUB_TOKEN` with `packages: write`; no npm token or personal publishing secret is needed.
 
 GitHub requires package scopes to match the owning account, so this repository publishes `@readyplayernan/bezny-base` and `@readyplayernan/bezny-admin`. Source manifests remain private and retain their `@bezny/*` names. Staged packages use a matching version of the form `0.0.0-nightly.<run-id>.<attempt>.sha<commit-prefix>` and the `nightly` dist-tag (not `latest`). Admin's `@bezny/base` dependency is an npm alias pinned to that exact GitHub preview version. The package scope follows the repository owner if the repository moves.
 

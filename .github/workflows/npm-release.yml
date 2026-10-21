@@ -1,0 +1,99 @@
+name: Publish npm release packages
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-release-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Verify and pack npm release
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@f40ffcd9367d9f12939873eb1018b921a783ffaa # v4
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: pnpm
+      - name: Validate release metadata
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_PRERELEASE: ${{ github.event.release.prerelease }}
+        run: node --input-type=module -e 'import { npmReleaseMetadata } from "./.github/scripts/prepare-npm-packages.mjs"; npmReleaseMetadata(process.env);'
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Lint
+        run: pnpm exec oxlint . .github/scripts
+      - name: Test packaging
+        run: node --test .github/scripts/*-tests.mjs
+      - name: Build
+        run: pnpm build
+      - name: Typecheck
+        run: pnpm typecheck
+      - name: Test
+        run: pnpm test --concurrency=1
+      - name: Prepare and pack npm libraries
+        shell: bash
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          RELEASE_PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          node .github/scripts/prepare-npm-packages.mjs "$RUNNER_TEMP/npm-packages"
+          mkdir "$RUNNER_TEMP/npm-tarballs"
+          for library in base admin; do
+            (
+              cd "$RUNNER_TEMP/npm-packages/$library"
+              npm pack --ignore-scripts --pack-destination "$RUNNER_TEMP/npm-tarballs"
+            )
+          done
+      - name: Upload verified npm packages
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: npm-release-packages
+          path: ${{ runner.temp }}/npm-tarballs/*.tgz
+          if-no-files-found: error
+          retention-days: 7
+          overwrite: true
+
+  publish:
+    name: Publish to npmjs
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      # No checkout or dependency installation in the job holding the npm token.
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: npm-release-packages
+          path: tarballs
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+          package-manager-cache: false
+      - name: Publish base, then admin
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_DIST_TAG: ${{ github.event.release.prerelease && 'next' || 'latest' }}
+        run: |
+          test -n "$NODE_AUTH_TOKEN" || { echo 'NPM_TOKEN is required for publishing.' >&2; exit 1; }
+          npm publish ./tarballs/bezny-base-*.tgz --registry=https://registry.npmjs.org --access=public --tag="$NPM_DIST_TAG" --ignore-scripts
+          npm publish ./tarballs/bezny-admin-*.tgz --registry=https://registry.npmjs.org --access=public --tag="$NPM_DIST_TAG" --ignore-scripts
+          {
+            echo '### Published npm release packages'
+            echo
+            for archive in tarballs/*.tgz; do
+              echo "- $(basename "$archive" .tgz) ($NPM_DIST_TAG)"
+            done
+          } >> "$GITHUB_STEP_SUMMARY"
