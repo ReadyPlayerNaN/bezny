@@ -9,7 +9,7 @@ pnpm install
 pnpm --filter @bezny/demo dev
 ```
 
-The dev script builds base/admin first, then starts Vite (normally `http://localhost:5173`). Authentication is simulated entirely in the browser. Without a valid session, the application starts on the login screen; after signing in, `/` opens the first registered entity, Articles. Pages is a second independent entity with the same UI/data shape. Rebuild the library packages after editing their source; demo edits update through Vite.
+The dev script builds base/admin first, then starts Vite (normally `http://localhost:5173`). A browser supporting module SharedWorkers is required; unsupported browsers show an explicit startup error instead of silently using a per-tab backend. Data and authentication are simulated in a SharedWorker. Without a valid session, the application starts on the login screen; after signing in, `/` opens the first registered entity, Articles. Pages is a second independent entity with the same UI/data shape. Rebuild the library packages after editing their source; demo edits update through Vite.
 
 ## Framework header and tools
 
@@ -22,9 +22,9 @@ The workspace also mounts [`AdminKeyboardNavigation`](../admin/README.md#optiona
 - **Email/password:** `editor@example.com` / `bezny-demo`. Incorrect credentials show a retryable error; required fields and email format use RHF validation.
 - **Social login:** choose **Continue with Google** or **Continue with GitHub** to simulate that provider's user. The browser simulation issues a mock token for that identity; no authentication server, network request, OAuth popup, or real provider account is involved.
 - The main header's **avatar menu** shows the current name/email, **Edit account**, language radio options, and **Log out**. Edit account updates the display name and email in an RHF form; Save updates avatar initials, and Cancel/Escape discards edits. Profile edits do not change the fixed demo login credentials.
-- Deep-link URLs are retained through sign-in. Logout hides the admin screens, clears selection/notices/deletion requests, and returns to an empty login form. In-memory editorial records remain until reload.
+- Deep-link URLs are retained through sign-in. Logout hides the admin screens, clears selection/notices/deletion requests, and returns to an empty login form. Editorial records remain in the shared worker after logout.
 
-The browser-only simulation keeps an opaque mock token in `sessionStorage` (`bezny.demo.session-token.v1`) and its mock session record separately (`bezny.demo.simulated-session.v1`). The record represents the simulated authentication provider's state: token, profile, and eight-hour expiry. Passwords are never stored. Refresh matches the token to that record and restores the profile; account edits survive refresh. Logout removes both entries. Disposal/HMR clears in-memory state without ending the simulated session. Missing, corrupt, mismatched, or expired sessions return to login. Closing the tab ends the browser session; if browser storage is blocked, login still works in memory but cannot survive refresh.
+Only an opaque mock token is kept in `sessionStorage` (`bezny.demo.session-token.v1`). The worker owns session profiles and eight-hour expiry; it validates tokens rather than trusting browser-stored identities. Passwords are never stored. Refresh restores the profile while that worker remains alive. Logout revokes the token in the worker and removes it from the tab. Clients using the same token receive profile updates and logout notifications; separately signed-in tabs have independent sessions. Disposal/HMR disconnects the client without deleting shared data or revoking its session. Unknown, expired, or pre-worker-restart tokens return to login. Closing the tab normally clears its token; if browser storage is blocked, login still works but cannot survive refresh. The old browser-stored mock session record is discarded.
 
 These are simulated tokens, not real authentication or a security boundary. All authentication runs locally, without HTTP endpoints or server middleware. Do not enter real credentials. Login/account labels support English, Czech, and Arabic/RTL.
 
@@ -65,9 +65,19 @@ Open **Command palette** with its header button or **Ctrl/Cmd+K** (also toggles 
 
 The demo owns only its domain adapter, bounded data, validation/projection callbacks, authentication bindings, translations, and shell branding. CRUD pages, forms, filter/pagination controls, deletion confirmation, routing, registry validation, entity context, selection state, and the command catalog are admin-owned. Repository mutation notifications update the shell's notice state without custom CRUD pages. See [the entity API](../admin/ENTITIES.md) for reusable contracts.
 
-The mock backend is deliberately **in memory and bounded**: three articles and one page are seeded, at most 200 records are retained with bounded field lengths, edits persist across routes, and reload resets everything. Jotai does not hold entire datasets: the admin session owns one active page/detail and an entry/byte/TTL-bounded cache, aborts stale requests, and clears data/timers/subscriptions on unmount. Permanent application disposal clears the mock repository too; Vite HMR unmounts and disposes the old application. Collection controls use shared `ValueFilter`/`ChoiceFilter` chips above the list and one integrated pagination navigation below it (numbered TanStack hyperlinks, Previous/Next icons, summary, and records-per-page selector); the palette offers the same filters, previous/next, arbitrary page navigation, and page-size changes. Page, page size, search, and filters are shareable URL search parameters (`page`, `pageSize`, JSON `filters`), synchronized with Jotai after route guards. Numbered-page links preserve the complete query for copying/new tabs; reload and Back/Forward restore it. Palette and ordinary controls use the same URL updates. Filters/page sizes reset pagination and selection consistently; out-of-range pages use replacement history when clamped. There is no production backend, authentication, permissions service, or unsaved-change blocker. This demo proves shared entity infrastructure; it does not pretend to be a production content system.
+The mock backend is deliberately **in memory and bounded**: the worker seeds three articles and one page and retains at most 200 records with bounded field lengths. Jotai does not hold entire datasets: each tab's admin session owns one active page/detail and an entry/byte/TTL-bounded cache, aborts stale requests, and clears data/timers/subscriptions on unmount. Permanent application disposal closes only that client's connection; Vite HMR unmounts and disposes the old application without clearing another tab's data. Collection controls use shared `ValueFilter`/`ChoiceFilter` chips above the list and one integrated pagination navigation below it (numbered TanStack hyperlinks, Previous/Next icons, summary, and records-per-page selector); the palette offers the same filters, previous/next, arbitrary page navigation, and page-size changes. Page, page size, search, and filters are shareable URL search parameters (`page`, `pageSize`, JSON `filters`), synchronized with Jotai after route guards. Numbered-page links preserve the complete query for copying/new tabs; reload and Back/Forward restore it. Palette and ordinary controls use the same URL updates. Filters/page sizes reset pagination and selection consistently; out-of-range pages use replacement history when clamped. There is no production backend, authentication, permissions service, or unsaved-change blocker. This demo proves shared entity infrastructure; it does not pretend to be a production content system.
 
-For built `dist/` hosting, serve `index.html` for application deep links. No authentication backend is required.
+## Shared simulated backend
+
+- `editorial-backend.worker.ts` creates **one repository and session store per worker**, not per connection. Same-origin tabs using the same worker URL/name share data within the browser's storage partition; different browsers/profiles/origins do not.
+- All CRUD, filtering, pagination, localized record reads, credential checks, profile changes, and token validation cross `MessagePort` through a typed request/response protocol. Requests are validated again in the worker. Mutations notify other clients, whose existing admin subscriptions invalidate caches and refresh active records. There is no polling or second UI data store.
+- Open two tabs, sign in, and edit a record in one: the other tab updates automatically. Reloading one tab preserves records and sessions while another tab keeps the worker alive. Closing/disposal of one client does not clear the backend for other clients.
+- **This is not durable storage.** The browser controls worker lifetime. After the last owner closes, a worker restart, or a changed worker asset URL, data and sessions may reset. A lone-tab reload is not guaranteed to preserve them. To reset deterministically, terminate the worker through browser developer tools, then reload all demo tabs. Worker-source changes during development may also require terminating the old worker/reloading all tabs.
+- Requests have correlation IDs, a 10-second timeout, cancellation, and pending-request cleanup. Abort cancels the caller's wait and is best-effort at the worker; it cannot roll back an already-committed mutation. Failed/timed-out mutations are **not automatically retried**. Reload to reconnect after a terminal connection failure.
+- Limits: 200 records, 128 stored sessions, 128 connected ports, and 64 concurrent requests per client/port. Expired sessions are pruned on sign-in. Normal page closure sends a disconnect; abrupt browser termination is ultimately handled by the browser's worker lifecycle.
+- No HTTP API, database, IndexedDB, real OAuth, production authentication, or authorization is introduced. This same-origin simulation is not a security boundary.
+
+For built `dist/` hosting, serve `index.html` for application deep links and serve the emitted `assets/editorial-backend.worker-*.js` as JavaScript (not the HTML fallback). Use an HTTP(S) origin, not `file://`, and allow same-origin workers in any Content Security Policy. No application server is required.
 
 ## Languages and localized content
 
@@ -79,7 +89,13 @@ Record content is separate from UI resources. The first article has English/Czec
 
 - `src/demo-application.tsx`: creates/mounts the shared admin application; no per-entity routes.
 - `src/editorial-entities.ts`: typed adapter, column, filter, and form metadata; no custom pages or command catalog.
-- `src/editorial-records.ts`: bounded mock backend, typed adapters, DTO validation, and data-source descriptors.
+- `src/editorial-records.ts`: record/value DTOs, validation, and data-source descriptors.
+- `src/editorial-backend.worker.ts`, `src/editorial-backend-server.ts`: SharedWorker entrypoint, validated dispatch, connections, and cross-client events.
+- `src/editorial-backend-repository.ts`, `src/editorial-backend-sessions.ts`: worker-owned bounded records and simulated sessions.
+- `src/editorial-backend-protocol.ts`: wire contracts and request validation.
+- `src/editorial-backend-connection.ts`, `src/editorial-backend-client.ts`: Vite worker construction, RPC, cancellation, and connection cleanup.
+- `src/editorial-repository-client.ts`: admin adapters and realtime subscriptions over RPC.
+- `src/editorial-notices.ts`: application-local mutation feedback.
 - `src/editorial-content.ts`: localized-content contracts and standard i18next fallback.
 - `src/editorial-translations.ts`: UI resource bundles; no record data.
 - `@bezny/admin/application`: default CRUD, loading/unavailable pages, field commands, and shared delete confirmation.
@@ -87,7 +103,7 @@ Record content is separate from UI resources. The first article has English/Czec
 - `src/editorial-authentication.tsx`: login screen callbacks to the authentication service.
 - `src/editorial-auth-contract.ts`: session/profile DTOs and fixed demo identity.
 - `src/editorial-auth-state.ts`: application-scoped user and restoration state.
-- `src/editorial-auth-session.ts`: browser-only token/session simulation, persistence, restoration, profile updates, and logout.
+- `src/editorial-auth-session.ts`: token-only browser storage and worker-backed authentication bindings.
 - `src/editorial-account-menu.tsx`: mock-authentication/account callback bindings for `AdminAccountMenu`.
 - `src/editorial-account-translations.ts`: localized login/account messages.
 - `@bezny/admin/header`: shared header, palette, account editor and `AdminLanguageMenuItems`.
@@ -100,6 +116,8 @@ pnpm build
 pnpm typecheck
 pnpm test
 pnpm exec ultracite check packages/admin packages/demo
+# Requires Chromium on PATH, or CHROMIUM_PATH=/path/to/chromium:
+pnpm --filter @bezny/demo test:browser
 ```
 
-Admin tests verify arbitrary/renamed entity registrations, generic routing and encoded IDs, route/capability-command parity, permission updates, missing targets, scoped selection, real screen command registration/cleanup, and invalid registrations. Demo tests exercise LCRUD, two independent entities, shared palette/UI actions, forms, history, and modal keyboard/focus behavior. Sass tests verify pure accessors and emitted token references.
+Admin tests verify arbitrary/renamed entity registrations, generic routing and encoded IDs, route/capability-command parity, permission updates, missing targets, scoped selection, real screen command registration/cleanup, and invalid registrations. Demo tests exercise LCRUD, two independent entities, shared palette/UI actions, forms, history, and modal keyboard/focus behavior. Sass tests verify pure accessors and emitted token references. Worker tests run the real dispatcher over structured-cloning MessageChannels, covering multi-client CRUD, invalidation, sessions, bounds, cancellation, timeout, and disposal. The separate Chromium test runs the production build across real tabs, verifies a single SharedWorker, cross-tab UI updates, reload/disconnect survival, and unsupported-browser feedback.

@@ -138,11 +138,14 @@ describe("editorial localization", () => {
     );
     await user.click(screen.getByRole("button", { name: "Uložit" }));
     await screen.findByRole("heading", { name: "Nový článek" });
-    expect(
-      application.repository
-        .inspect("articles")
-        .find((record) => record.id === "4")?.content
-    ).toStrictEqual({ cs: { body: "Český obsah", title: "Nový článek" } });
+    const created = await application.backend.request("get", {
+      entity: "articles",
+      id: "4",
+      locale: "cs",
+    });
+    expect(created?.content).toStrictEqual({
+      cs: { body: "Český obsah", title: "Nový článek" },
+    });
   });
 
   it("edits localized content independently of UI language and preserves other content locales", async () => {
@@ -163,9 +166,11 @@ describe("editorial localization", () => {
     await user.type(title, "Nový název");
     await user.click(screen.getByRole("button", { name: "Save" }));
     await screen.findByRole("heading", { name: "Welcome to Bezny" });
-    const record = application.repository
-      .inspect("articles")
-      .find((item) => item.id === "1");
+    const record = await application.backend.request("get", {
+      entity: "articles",
+      id: "1",
+      locale: "en",
+    });
     expect(record?.content?.cs?.title).toBe("Nový název");
     expect(record?.content?.en?.title).toBe("Welcome to Bezny");
     await user.click(screen.getByRole("button", { name: "Account menu" }));

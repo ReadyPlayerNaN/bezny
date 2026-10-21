@@ -2,10 +2,8 @@ import { createMemoryHistory } from "@tanstack/react-router";
 import { describe, expect, it } from "vitest";
 
 import { createDemoApplication } from "../src/demo-application.js";
-import {
-  createEditorialRepository,
-  editorialTextLimits,
-} from "../src/editorial-records.js";
+import { createEditorialRepository } from "../src/editorial-backend-repository.js";
+import { editorialTextLimits } from "../src/editorial-records.js";
 
 describe("editorial adapter lifecycle", () => {
   it("bounds the demo backend's record count and releases all data on disposal", async () => {
@@ -62,15 +60,16 @@ describe("editorial adapter lifecycle", () => {
     repository.dispose();
   });
 
-  it("disposes the mock backend through the public application lifecycle", () => {
+  it("disconnects the client through the public application lifecycle", async () => {
     const application = createDemoApplication(
       createMemoryHistory({ initialEntries: ["/articles"] })
     );
     application.dispose();
     application.dispose();
-    expect(application.repository.diagnostics()).toMatchObject({
+    await application.authenticationReady;
+    expect(application.backend.diagnostics()).toMatchObject({
       disposed: true,
-      records: 0,
+      pendingRequests: 0,
     });
     expect(application.session.diagnostics()).toMatchObject({
       activeRecords: 0,

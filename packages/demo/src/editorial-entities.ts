@@ -9,13 +9,13 @@ import {
   isEditorialContentLocale,
   readEditorialContent,
 } from "./editorial-content.js";
-import type { EditorialRepository } from "./editorial-records.js";
 import {
   editorialResources,
   editorialTextLimits,
   parseEditorialRecord,
   parseEditorialValues,
 } from "./editorial-records.js";
+import type { EditorialRepositoryClient } from "./editorial-repository-client.js";
 
 const summaryCharacterLimit = 140;
 const summaryWhitespace = /\s+/gu;
@@ -28,7 +28,7 @@ const editorialSummary = (body: string) => {
 
 /** All CRUD pages, fields, commands and confirmation UI come from registration. */
 export const createEditorialEntities = (
-  repository: EditorialRepository,
+  repository: EditorialRepositoryClient,
   translations: i18n
 ): AdminEntityDefinition[] => {
   const contentLocale = () =>

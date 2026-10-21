@@ -12,10 +12,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { createDemoApplication, DemoApp } from "../src/demo-application.js";
 import type { DemoApplication } from "../src/demo-application.js";
-import {
-  editorialSessionTokenKey,
-  editorialSimulatedSessionKey,
-} from "../src/editorial-auth-session.js";
+import { editorialSessionTokenKey } from "../src/editorial-auth-session.js";
 import { editorialUserAtom } from "../src/editorial-auth-state.js";
 
 const applications: DemoApplication[] = [];
@@ -214,7 +211,7 @@ describe("demo authentication", () => {
       await screen.findByRole("button", { name: "Account menu" });
       const token = window.sessionStorage.getItem(editorialSessionTokenKey);
       expect(token).toMatch(/^[a-f\d-]{36}$/u);
-      expect(window.sessionStorage).toHaveLength(2);
+      expect(window.sessionStorage).toHaveLength(1);
       const identity = application.store.get(editorialUserAtom);
       cleanup();
       application.dispose();
@@ -231,16 +228,13 @@ describe("demo authentication", () => {
       expect(
         window.sessionStorage.getItem(editorialSessionTokenKey)
       ).toBeNull();
-      expect(
-        window.sessionStorage.getItem(editorialSimulatedSessionKey)
-      ).toBeNull();
       cleanup();
       refreshed.dispose();
       await renderLogin();
     }
   );
 
-  it("restores edited profile details from the browser simulation after refresh", async () => {
+  it("restores edited profile details from the shared backend after refresh", async () => {
     const { application, user } = await renderLogin();
     await user.click(
       screen.getByRole("button", { name: "Continue with Google" })

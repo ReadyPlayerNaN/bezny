@@ -1,8 +1,18 @@
-import { beforeEach, vi } from "vitest";
+import { afterEach, beforeEach, vi } from "vitest";
+
+import {
+  connectTestWorker,
+  resetTestWorker,
+} from "./editorial-worker-environment.js";
+
+vi.mock("../src/editorial-backend-connection.js", () => ({
+  createEditorialWorker: () => connectTestWorker(),
+}));
 
 beforeEach(() => {
   window.sessionStorage.clear();
 });
+afterEach(resetTestWorker);
 
 // CSS modules are mocked: expose the native shell navigation as on desktop.
 // Native Popover behavior and responsive CSS are verified in base Chromium tests.

@@ -10,9 +10,11 @@ import { useEffect } from "react";
 import { editorialAccountTranslations } from "./editorial-account-translations.js";
 import { createEditorialAuthentication } from "./editorial-auth-session.js";
 import { editorialAuthenticationAtom } from "./editorial-auth-state.js";
+import { createEditorialBackendClient } from "./editorial-backend-client.js";
 import { createEditorialEntities } from "./editorial-entities.js";
 import { editorialComponents, EditorialShell } from "./editorial-layout.js";
-import { createEditorialRepository, noticeAtom } from "./editorial-records.js";
+import { noticeAtom } from "./editorial-notices.js";
+import { createEditorialRepositoryClient } from "./editorial-repository-client.js";
 import { editorialTranslations } from "./editorial-translations.js";
 
 export const createDemoApplication = (
@@ -28,7 +30,8 @@ export const createDemoApplication = (
     }),
   });
   const store = createStore();
-  const repository = createEditorialRepository((notice) =>
+  const backend = createEditorialBackendClient();
+  const repository = createEditorialRepositoryClient(backend, (notice) =>
     store.set(noticeAtom, notice)
   );
   const application = createAdminApplication({
@@ -42,11 +45,21 @@ export const createDemoApplication = (
     application.store.set(noticeAtom, null);
   };
   application.session.onDispose(clearPresentation);
-  const authentication = createEditorialAuthentication(application.store);
+  const authentication = createEditorialAuthentication(
+    application.store,
+    backend
+  );
   application.store.set(editorialAuthenticationAtom, authentication);
   const authenticationReady = authentication.restore();
   application.session.onDispose(authentication.dispose);
-  return { ...application, authentication, authenticationReady, repository };
+  application.session.onDispose(backend.dispose);
+  return {
+    ...application,
+    authentication,
+    authenticationReady,
+    backend,
+    repository,
+  };
 };
 export type DemoApplication = ReturnType<typeof createDemoApplication>;
 export const DemoApp = ({ application }: { application: DemoApplication }) => {

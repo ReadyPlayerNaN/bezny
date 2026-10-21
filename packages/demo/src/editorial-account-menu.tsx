@@ -7,7 +7,7 @@ import {
   editorialUserAtom,
   editorialAuthenticationAtom,
 } from "./editorial-auth-state.js";
-import { noticeAtom } from "./editorial-records.js";
+import { noticeAtom } from "./editorial-notices.js";
 
 /** Demo authentication bindings only; all account UI belongs to admin. */
 export const EditorialAccountMenu = () => {

@@ -29,7 +29,7 @@ import {
   editorialUserAtom,
 } from "./editorial-auth-state.js";
 import { EditorialLogin } from "./editorial-authentication.js";
-import { noticeAtom } from "./editorial-records.js";
+import { noticeAtom } from "./editorial-notices.js";
 
 import styles from "./editorial-admin.module.scss";
 

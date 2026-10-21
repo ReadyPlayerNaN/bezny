@@ -21,6 +21,13 @@ import { createDemoApplication, DemoApp } from "../src/demo-application.js";
 import type { DemoApplication } from "../src/demo-application.js";
 
 const applications: DemoApplication[] = [];
+const readRecords = async (application: DemoApplication, entity: string) => {
+  const result = await application.backend.request("list", {
+    entity,
+    query: { filters: {}, locale: "en", page: 1, pageSize: 100 },
+  });
+  return result.items;
+};
 const demoNavigationRects = () => {
   const rect = new DOMRect(20, 40, 100, 24);
   return Object.assign([rect], { item: () => rect });
@@ -274,7 +281,7 @@ describe("registration-driven editorial admin", () => {
       "1",
       "2",
     ]);
-    expect(application.repository.inspect("articles")).toHaveLength(3);
+    await expect(readRecords(application, "articles")).resolves.toHaveLength(3);
     fireEvent.contextMenu(row);
     await user.click(
       await screen.findByRole("menuitem", { name: "Delete selected (2)" })
@@ -284,11 +291,10 @@ describe("registration-driven editorial admin", () => {
         name: "Delete",
       })
     );
-    await waitFor(() =>
-      expect(
-        application.repository.inspect("articles").map((record) => record.id)
-      ).toStrictEqual(["3"])
-    );
+    await waitFor(async () => {
+      const records = await readRecords(application, "articles");
+      expect(records.map((record) => record.id)).toStrictEqual(["3"]);
+    });
     expect(application.store.get(adminSelectionAtom)).toBeNull();
   });
 
@@ -450,11 +456,12 @@ describe("registration-driven editorial admin", () => {
     await user.click(main.getByRole("button", { name: "Save" }));
     await main.findByRole("heading", { level: 1, name: "New article" });
     expect(application.router.state.location.pathname).toBe("/articles/4");
-    expect(
-      application.repository
-        .inspect("articles")
-        .find((record) => record.id === "4")
-    ).toStrictEqual({
+    const created = await application.backend.request("get", {
+      entity: "articles",
+      id: "4",
+      locale: "en",
+    });
+    expect(created).toStrictEqual({
       body: "A new publication.",
       content: { en: { body: "A new publication.", title: "New article" } },
       id: "4",
@@ -481,9 +488,8 @@ describe("registration-driven editorial admin", () => {
     await user.type(title, "Updated welcome");
     await user.click(main.getByRole("button", { name: "Save" }));
     await main.findByRole("heading", { level: 1, name: "Updated welcome" });
-    expect(application.repository.inspect("articles")[0]?.title).toBe(
-      "Updated welcome"
-    );
+    const records = await readRecords(application, "articles");
+    expect(records[0]?.title).toBe("Updated welcome");
   });
 
   it("does not save a cancelled edit", async () => {
@@ -493,9 +499,8 @@ describe("registration-driven editorial admin", () => {
     await user.type(title, "Unsaved title");
     await user.click(main.getByRole("button", { name: "Cancel" }));
     await main.findByRole("heading", { level: 1, name: "Articles" });
-    expect(application.repository.inspect("articles")[0]?.title).toBe(
-      "Welcome to Bezny"
-    );
+    const records = await readRecords(application, "articles");
+    expect(records[0]?.title).toBe("Welcome to Bezny");
   });
 
   it("clears selection on collection navigation, including browser history", async () => {
@@ -531,9 +536,8 @@ describe("registration-driven editorial admin", () => {
       })
     );
     await main.findByRole("heading", { level: 1, name: "Articles" });
-    expect(
-      application.repository.inspect("articles").map((record) => record.id)
-    ).toStrictEqual(["2", "3"]);
+    const records = await readRecords(application, "articles");
+    expect(records.map((record) => record.id)).toStrictEqual(["2", "3"]);
     expect(
       screen.getByRole("status", { name: "Notifications" }).textContent
     ).toBe("1 article deleted.");
@@ -590,7 +594,9 @@ describe("registration-driven editorial admin", () => {
     ).toBeDefined();
     await user.click(dialog.getByRole("button", { name: "Delete" }));
     await main.findByText("No records found.");
-    expect(application.repository.inspect("articles")).toStrictEqual([]);
+    await expect(readRecords(application, "articles")).resolves.toStrictEqual(
+      []
+    );
     expect(application.store.get(adminSelectionAtom)).toBeNull();
   });
 
@@ -613,11 +619,12 @@ describe("registration-driven editorial admin", () => {
     await runCommand(user, "Published");
     await runCommand(user, "Save");
     await main.findByRole("heading", { level: 1, name: "Palette article" });
-    expect(
-      application.repository
-        .inspect("articles")
-        .find((record) => record.id === "4")?.published
-    ).toBeTruthy();
+    const created = await application.backend.request("get", {
+      entity: "articles",
+      id: "4",
+      locale: "en",
+    });
+    expect(created?.published).toBeTruthy();
   });
 
   it("keeps the compact accessible palette and keyboard navigation in search", async () => {
@@ -707,8 +714,8 @@ describe("registration-driven editorial admin", () => {
     await runCommand(user, "Save");
     await main.findByRole("heading", { level: 1, name: "Contact" });
     expect(application.router.state.location.pathname).toBe("/pages/2");
-    expect(application.repository.inspect("pages")).toHaveLength(2);
-    expect(application.repository.inspect("articles")).toHaveLength(3);
+    await expect(readRecords(application, "pages")).resolves.toHaveLength(2);
+    await expect(readRecords(application, "articles")).resolves.toHaveLength(3);
   });
 
   it("resets generic form state between entities and drops stale form commands", async () => {

@@ -8,7 +8,8 @@
     "build": "vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run && pnpm test:file-routes",
-    "test:file-routes": "vitest run --config vite.file-routes.config.ts"
+    "test:file-routes": "vitest run --config vite.file-routes.config.ts",
+    "test:browser": "pnpm build && node --test test/editorial-backend.browser.mjs"
   },
   "dependencies": {
     "@bezny/admin": "workspace:*",
