@@ -78,8 +78,9 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          npm publish tarballs/*-bezny-base-*.tgz --registry=https://npm.pkg.github.com --tag=nightly --ignore-scripts
-          npm publish tarballs/*-bezny-admin-*.tgz --registry=https://npm.pkg.github.com --tag=nightly --ignore-scripts
+          # Explicit relative paths prevent npm from treating these as GitHub shorthand.
+          npm publish ./tarballs/*-bezny-base-*.tgz --registry=https://npm.pkg.github.com --tag=nightly --ignore-scripts
+          npm publish ./tarballs/*-bezny-admin-*.tgz --registry=https://npm.pkg.github.com --tag=nightly --ignore-scripts
           {
             echo '### Published GitHub preview packages'
             echo

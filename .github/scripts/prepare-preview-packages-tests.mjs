@@ -13,6 +13,7 @@ import {
 } from "./prepare-preview-packages.mjs";
 
 const { join } = path;
+const localPublishCommandPattern = /^npm publish \.\/tarballs\//u;
 const environment = {
   GITHUB_REPOSITORY: "ReadyPlayerNaN/bezny",
   GITHUB_RUN_ATTEMPT: "1",
@@ -187,6 +188,70 @@ test("staged packages pack JS, declarations, CSS, Sass, and README without works
   assert.throws(() => preparePreviewPackages(root, destination, environment), {
     code: "EEXIST",
   });
+});
+
+test("workflow publish commands resolve downloaded tarballs as local packages", async (context) => {
+  const workflow = readFileSync(
+    new URL("../workflows/preview-packages.yml", import.meta.url),
+    "utf-8"
+  );
+  const commands = workflow
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("npm publish "));
+  assert.equal(commands.length, 2);
+  // Fail before invoking npm if a path could be parsed as GitHub shorthand.
+  for (const command of commands) {
+    assert.match(command, localPublishCommandPattern);
+  }
+
+  const root = await mkdtemp(join(tmpdir(), "bezny-preview-publish-"));
+  context.after(() => rm(root, { force: true, recursive: true }));
+  await Promise.all(
+    ["base", "admin"].map((library) => createLibraryFixture(root, library))
+  );
+  const destination = join(root, "preview");
+  const tarballs = join(root, "tarballs");
+  await mkdir(tarballs);
+  preparePreviewPackages(root, destination, environment);
+  for (const library of ["base", "admin"]) {
+    execFileSync(
+      "npm",
+      ["pack", "--ignore-scripts", "--pack-destination", tarballs],
+      {
+        cwd: join(destination, library),
+        stdio: "pipe",
+      }
+    );
+  }
+
+  // Exercise the workflow's actual shell commands and globs, not absolute paths.
+  for (const [index, command] of commands.entries()) {
+    const result = JSON.parse(
+      execFileSync(
+        "bash",
+        [
+          "--noprofile",
+          "--norc",
+          "-e",
+          "-o",
+          "pipefail",
+          "-c",
+          `${command} --dry-run --offline --json`,
+        ],
+        {
+          cwd: root,
+          encoding: "utf-8",
+          stdio: "pipe",
+        }
+      )
+    );
+    const expectedName = `@readyplayernan/bezny-${["base", "admin"][index]}`;
+    // npm versions report either a package object or an object keyed by name.
+    const published = result[expectedName] ?? result;
+    assert.equal(published.name, expectedName);
+    assert.equal(published.version, metadata.version);
+  }
 });
 
 test("staging fails when a declared build output is missing", async (context) => {
