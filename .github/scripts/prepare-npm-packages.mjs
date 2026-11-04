@@ -94,7 +94,7 @@ export const npmReleaseManifest = (manifest, library, metadata) => {
 
 export const prepareNpmPackages = (root, destination, environment) => {
   const metadata = npmReleaseMetadata(environment);
-  // Stage only the two public libraries; leave every source manifest private.
+  // Stage only the two public libraries without changing source manifests.
   // A fresh destination prevents stale output from a previous release leaking in.
   mkdirSync(destination);
   for (const library of libraryNames) {

@@ -111,7 +111,11 @@ test("real public manifests retain exports and peers and pin the admin dependenc
       assert.equal(release.dependencies["@bezny/base"], "1.2.3");
     }
     assert.deepEqual(manifest, original);
-    assert.equal(manifest.private, true);
+    assert.equal(manifest.private, false);
+    assert.deepEqual(manifest.publishConfig, {
+      access: "public",
+      registry: "https://registry.npmjs.org",
+    });
   }
 });
 

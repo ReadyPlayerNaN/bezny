@@ -81,7 +81,7 @@ Pushing a **version tag** (`v*`) runs [the npm release workflow](.github/workflo
    pnpm add @bezny/base@1.2.3 @bezny/admin@1.2.3
    ```
 
-The release tag is the version source for **both** packages, independent of the source manifests' development versions. CI stages built files into fresh directories, makes only those staged manifests public, removes development dependencies and lifecycle scripts, and pins admin's `@bezny/base` dependency to the exact release version. All source manifests remain private; no manual version bump or lockfile change is required for releasing.
+The release tag is the version source for **both** packages, independent of the source manifests' development versions. Base and admin are explicitly configured with `private: false` and `publishConfig.access: public`, targeting the npm registry. The root workspace, demo, and TypeScript config remain private. CI stages built files into fresh directories, removes development dependencies and lifecycle scripts, and pins admin's `@bezny/base` dependency to the exact release version without modifying source manifests. No manual version bump or lockfile change is required for releasing.
 
 ### npm authentication and recovery
 
@@ -96,7 +96,7 @@ The release tag is the version source for **both** packages, independent of the 
 
 Every push to `master` runs [the preview workflow](.github/workflows/preview-packages.yml): lint, packaging tests, builds, typechecks, and tests must pass before publishing **only** the base and admin libraries to `https://npm.pkg.github.com`. This preview workflow does not publish to npmjs.org; npm delivery uses the separate release workflow above. The separate publish job uses the built-in `GITHUB_TOKEN` with `packages: write`; no npm token or personal publishing secret is needed.
 
-GitHub requires package scopes to match the owning account, so this repository publishes `@readyplayernan/bezny-base` and `@readyplayernan/bezny-admin`. Source manifests remain private and retain their `@bezny/*` names. Staged packages use a matching version of the form `0.0.0-nightly.<run-id>.<attempt>.sha<commit-prefix>` and the `nightly` dist-tag (not `latest`). Admin's `@bezny/base` dependency is an npm alias pinned to that exact GitHub preview version. The package scope follows the repository owner if the repository moves.
+GitHub requires package scopes to match the owning account, so this repository publishes `@readyplayernan/bezny-base` and `@readyplayernan/bezny-admin`. Source manifests retain their `@bezny/*` names and public npm publishing settings; staging overrides the names and registry for GitHub previews only. Staged packages use a matching version of the form `0.0.0-nightly.<run-id>.<attempt>.sha<commit-prefix>` and the `nightly` dist-tag (not `latest`). Admin's `@bezny/base` dependency is an npm alias pinned to that exact GitHub preview version. The package scope follows the repository owner if the repository moves.
 
 ### Install a preview
 
