@@ -1,7 +1,6 @@
 {
   "name": "@bezny/base",
-  "version": "0.0.0",
-  "private": true,
+  "version": "0.1.1",
   "files": [
     "dist",
     "src/tokens/_viewports.scss",
