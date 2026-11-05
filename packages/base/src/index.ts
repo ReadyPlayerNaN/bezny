@@ -204,6 +204,13 @@ export {
 } from "./content/avatar.js";
 export { Badge, type BadgeProps, type BadgeType } from "./content/badge.js";
 export {
+  JsonViewer,
+  type JsonViewerProps,
+  type JsonViewerMode,
+  type JsonViewerLabels,
+  type JsonViewerLeafRenderContext,
+} from "./content/json-viewer.js";
+export {
   Card,
   CardTitle,
   CardBody,

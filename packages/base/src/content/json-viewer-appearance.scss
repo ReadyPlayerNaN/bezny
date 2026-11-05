@@ -1,0 +1,33 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/surfaces";
+
+$-definitions: ();
+@each $name
+    in (
+      background,
+      text,
+      muted,
+      border,
+      border-width,
+      radius,
+      padding,
+      gap,
+      font-size,
+      line-height,
+      font-weight,
+      code-font-family,
+      focus-ring,
+      hover
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-json-viewer");
+}
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-json-viewer");
+}

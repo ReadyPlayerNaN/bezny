@@ -237,6 +237,31 @@ Also exports Group, Label, Separator, CheckboxItem, RadioGroup/RadioItem, ItemIn
 
 Styles bind `--bezny-control-dropdown-menu-*` to structural surface colours, spacing, typography, disabled opacity, borders, shadow, and stacking tokens. Menus scroll within Radix's available viewport size. Content/SubContent preserve `forceMount` through their owned portals; callers manage closed-state lifecycle when opting in. Triggers are intentionally styled through `asChild` + Button.
 
+## JSON viewer
+
+```tsx
+<JsonViewer
+  label="Task payload"
+  value={payload}
+  defaultMode="tree"
+  renderLeaf={({ path, formattedValue }) =>
+    path === "/description" ? (
+      <button onClick={inspectOverride}>{formattedValue}</button>
+    ) : undefined
+  }
+/>
+```
+
+`JsonViewer` is read-only presentation of an unknown value. Tree mode starts with only the root expanded. Branches use Radix Collapsible (Enter/Space); Expand all and Collapse all operate on this viewer only. Tree/Raw is a Radix single toggle group with roving focus and a persistent selected value. Expansion survives mode changes. Raw output has a keyboard-scrollable surface; expansion controls are disabled in raw mode. Mode and expansion do not submit surrounding forms.
+
+`labels` overrides `tree`, `raw`, `mode`, `expandAll`, `collapseAll` and `root`. `label` names the containing region; native section props, class and React 19 ref are forwarded. Pass `dir="rtl"` for matching Radix keyboard direction. No motion is introduced. Immutable `value` updates refresh output; matching expanded paths are retained, so key the viewer when a new document should reset it.
+
+`renderLeaf({ value, key, formattedValue, path })` may provide React content; null/undefined uses the default escaped text. `path` is a canonical RFC 6901 pointer: the root is `""`, `~` and `/` are escaped as `~0` and `~1`, and array indices use numeric tokens. `key` is the displayed key (including brackets for array indices), or null at root. The host owns annotations, actions and dialogs. There is no HTML interpretation, data fetching or schema validation.
+
+Objects, arrays (including holes), scalars, dates, regular expressions, bigint, undefined, symbols and functions have readable representations. Actual ancestor cycles show `[Circular]`; repeated references expand independently. Inspection errors are shown as text. Raw mode is a diagnostic JSON serialization, not a lossless transport encoding: non-JSON values are represented as strings; normal JSON number serialization applies to non-finite numbers.
+
+Scoped `--bezny-control-json-viewer-*` aliases cover surface colours, border, radius, padding/gap, font size/line-height/weight, code family, hover and focus ring. Code typography follows structural surface-code-font-family → logical font-family-code → foundational font-family-mono. Long raw lines scroll locally; tree leaf text wraps within the viewer. Import the shared stylesheet once.
+
 ## Avatar
 
 Compose `Avatar`, one `AvatarImage`, and `AvatarFallback`. Radix preloads the image and displays fallback while loading or after an error; `delayMs` on Fallback optionally avoids flashing. `onLoadingStatusChange` reports the native `idle`/`loading`/`loaded`/`error` lifecycle. All three parts forward DOM props, refs, classes, and `asChild`. Image requires an `alt` string (empty for decoration). No image loading or fallback timers are independently reimplemented by Bezny.
