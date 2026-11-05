@@ -6,6 +6,8 @@
 
 $-definitions: (
   "autocomplete-width": logical.token("picker-width"),
+  "calendar-width": logical.token("picker-width"),
+  "calendar-icon-size": logical.icon-size("md"),
   "cron-builder-width": logical.token("picker-width"),
   "prose-font-size": logical.font-size("sm"),
   "prose-line-height": logical.line-height("lg"),

@@ -1,0 +1,39 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/surfaces";
+@use "../tokens/structural";
+$-definitions: (
+  "width": structural.token("calendar-width"),
+  "icon-size": structural.token("calendar-icon-size"),
+);
+@each $name
+    in (
+      background,
+      text,
+      muted,
+      border,
+      border-width,
+      radius,
+      gap,
+      compact,
+      padding-small,
+      font-family,
+      font-size,
+      line-height,
+      hover,
+      accent,
+      on-accent,
+      danger,
+      height,
+      focus-ring,
+      opacity-disabled
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-calendar");
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-calendar");
+}

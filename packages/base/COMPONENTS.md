@@ -237,6 +237,36 @@ Also exports Group, Label, Separator, CheckboxItem, RadioGroup/RadioItem, ItemIn
 
 Styles bind `--bezny-control-dropdown-menu-*` to structural surface colours, spacing, typography, disabled opacity, borders, shadow, and stacking tokens. Menus scroll within Radix's available viewport size. Content/SubContent preserve `forceMount` through their owned portals; callers manage closed-state lifecycle when opting in. Triggers are intentionally styled through `asChild` + Button.
 
+## Date and month inputs/fields
+
+```tsx
+<DateInput
+  aria-label="Published from"
+  value={publishedFrom}
+  onValueChange={setPublishedFrom}
+  locale="en-US"
+  minYear={1900}
+  max={publishedTo}
+/>
+<MonthInput aria-label="Started" value={started} onValueChange={setStarted} minYear={1900} />
+<DateField name="issuedAt" control={form.control} label="Issued" rules={{ required: "Required" }} />
+<MonthField name="started" label="Started" /> // inside FormProvider
+```
+
+`DateInput`/`MonthInput` are RHF-unbound controlled Gregorian date-only controls. Committed values are `YYYY-MM-DD`/`YYYY-MM`, or an empty string. They are not timestamps. Intl formatting and calendar arithmetic use an explicit UTC carrier, so a stored date never shifts with the browser timezone. `locale` defaults to `en` and controls numeric field order, separators, localized digits, weekday/month names and Gregorian year rendering, including locales whose default calendar is not Gregorian. Supported years are 0001–9999.
+
+Type localized separated text or compact digits (eight/six for dates, six/four for months); canonical ISO text also works. One/two-digit years pivot into the most recent century relative to the current year. Four-digit years are never pivoted. Enter or blur commits only real, in-range values; invalid or out-of-range drafts remain visible with an associated error rather than rolling into another date. Empty text clears. IME Enter and post-composition key code 229 do not commit. An externally changed value/locale resets the private draft and refreshes an open calendar. For an unbound reset to the exact same value, explicitly remount with a reset key if a private draft must be discarded.
+
+`min`/`max` are inclusive canonical values of the corresponding kind; empty bounds are unbounded. `minYear` defaults to **1**, not a recruitment/birth-date policy; use 1900 explicitly when carrying over that legacy constraint. Malformed bounds or invalid minimum-year configuration throw; inverted bounds leave no eligible choices. The application owns business constraints. Today/current month uses the browser's local calendar date, or a caller-supplied canonical `today` value for an application-specific timezone/clock. Bounds also disable navigation, years, dates/months and Today. Clear remains available. `disabled`/`readOnly` close and block the popup without reopening it when re-enabled.
+
+Radix Popover owns portals, dismissal and trigger-focus restoration. There is no public Radix calendar/grid primitive; the installed roving-focus package explicitly says it is an internal utility not intended for public use, so this control does not depend on that internal API. The native table follows the [APG calendar grid pattern](https://www.w3.org/WAI/ARIA/apg/patterns/dialog-modal/examples/datepicker-dialog/) with one tabbable date/month/year button, full accessible labels and selected-cell state. The popup remains modeless, matching Popover semantics; Tab leaves the grid for the remaining controls rather than traversing every cell. Arrow keys move by cell/row, respecting RTL horizontally; Home/End move to row ends. PageUp/PageDown change months, years or twelve-year pages according to the view; Shift+PageUp/PageDown change a day grid by year. Month/year moves clamp the day instead of rolling past February. Year inspection does not commit a value. Navigation reaching a disabled boundary moves focus into the grid. Escape/selection restore trigger focus; changing month/year is announced politely. Forced-colors mode retains an outline and selected border.
+
+Use a visible label through `id`/`htmlFor` or an accessible name. Native input props and refs reach the text input; `className` styles the composition. `onBlur` is a composite zero-argument callback reported on input blur and popup closure. `labels` localizes open/clear/today, navigation, year selection and error strings; `weekStartsOn` defaults to Monday (1). `dir` supports explicit direction or the Radix direction context. `portalContainer` selects the themed portal boundary; use a container inside modal content when embedded in a modal. Calendar width/icon size and all presentation use `--bezny-control-calendar-*` aliases through the four token layers.
+
+**Form ownership:** unbound inputs emit canonical values through `onValueChange` only at commit; `onDraftChange` optionally exposes raw edits to hosts that must guard submission while a draft is uncommitted/invalid. The last committed value alone is not a complete form-validation state. Native FormData contains displayed localized text, not the canonical date—serialize the controlled value instead.
+
+`DateField`/`MonthField` use the existing RHF owner (explicit `control` or FormProvider), labels, feedback and input focus refs. While editing, they keep raw text in RHF, then normalize it at valid commit; this prevents an invalid visible draft from silently submitting a previous valid ISO value. Built-in field rules reject noncanonical or out-of-range values and preserve caller validators, including name collisions. Required remains caller-owned. **RHF resolvers replace field rules:** a supplied resolver must validate ISO values and business bounds itself; it receives current raw drafts, never a hidden previous ISO value. Reset restores both the RHF value and displayed draft. Labels/help/invalid state, required focus, canonical submit, invalid-draft blocking and resolver integration are covered by tests.
+
 ## Controlled autocomplete and multi-item pickers
 
 ```tsx

@@ -68,6 +68,19 @@ export {
   MultiItemPicker,
   type MultiItemPickerProps,
 } from "./inputs/multi-item-picker.js";
+export {
+  DateInput,
+  MonthInput,
+  type DateInputProps,
+  type MonthInputProps,
+  type CalendarInputLabels,
+} from "./inputs/calendar-input.js";
+export {
+  DateField,
+  MonthField,
+  type DateFieldProps,
+  type MonthFieldProps,
+} from "./fields/calendar-field.js";
 export { TextInput, type TextInputProps } from "./inputs/text-input.js";
 export { ToggleInput, type ToggleInputProps } from "./inputs/toggle-input.js";
 export {

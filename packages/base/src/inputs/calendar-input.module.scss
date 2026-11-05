@@ -1,0 +1,118 @@
+@use "./calendar-appearance" as appearance;
+.root,
+.panel {
+  @include appearance.declarations;
+  min-inline-size: 0;
+}
+.root,
+.calendar {
+  display: grid;
+  gap: appearance.token(gap);
+}
+.field {
+  display: flex;
+  align-items: center;
+  gap: appearance.token(gap);
+  > :first-child {
+    flex: 1;
+    min-inline-size: 0;
+  }
+}
+.icon {
+  inline-size: appearance.token(icon-size);
+  block-size: appearance.token(icon-size);
+}
+.panel {
+  inline-size: appearance.token(width);
+  max-block-size: var(--radix-popover-content-available-height);
+  overflow: auto;
+}
+.header {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: appearance.token(gap);
+  > :nth-child(2) {
+    min-inline-size: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+.heading {
+  text-align: center;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: appearance.token(gap);
+}
+.grid {
+  inline-size: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+  font-family: appearance.token(font-family);
+  font-size: appearance.token(font-size);
+  line-height: appearance.token(line-height);
+  th {
+    color: appearance.token(muted);
+    padding-block: appearance.token(compact);
+  }
+  td {
+    padding: 0;
+  }
+  &:focus-visible {
+    box-shadow: appearance.token(focus-ring);
+  }
+}
+.cell {
+  inline-size: 100%;
+  min-block-size: appearance.token(height);
+  padding: appearance.token(compact);
+  border: appearance.token(border-width) solid transparent;
+  border-radius: appearance.token(radius);
+  background: appearance.token(background);
+  color: appearance.token(text);
+  font: inherit;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  &[data-outside] {
+    color: appearance.token(muted);
+  }
+  &:hover:not(:disabled) {
+    background: appearance.token(hover);
+  }
+  &[aria-current="date"] {
+    border-color: appearance.token(accent);
+  }
+  &[data-selected] {
+    background: appearance.token(accent);
+    color: appearance.token(on-accent);
+  }
+  &:focus-visible {
+    position: relative;
+    z-index: 1;
+    outline: none;
+    box-shadow: appearance.token(focus-ring);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: appearance.token(opacity-disabled);
+  }
+}
+@media (forced-colors: active) {
+  .cell[data-selected] {
+    border-color: currentColor;
+  }
+  .cell:focus-visible,
+  .grid:focus-visible {
+    outline: appearance.token(border-width) solid currentColor;
+    outline-offset: appearance.token(border-width);
+  }
+}
+.error {
+  color: appearance.token(danger);
+  font-family: appearance.token(font-family);
+  font-size: appearance.token(font-size);
+  line-height: appearance.token(line-height);
+}
