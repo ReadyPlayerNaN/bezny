@@ -237,6 +237,21 @@ Also exports Group, Label, Separator, CheckboxItem, RadioGroup/RadioItem, ItemIn
 
 Styles bind `--bezny-control-dropdown-menu-*` to structural surface colours, spacing, typography, disabled opacity, borders, shadow, and stacking tokens. Menus scroll within Radix's available viewport size. Content/SubContent preserve `forceMount` through their owned portals; callers manage closed-state lifecycle when opting in. Triggers are intentionally styled through `asChild` + Button.
 
+## Cron input and field
+
+```tsx
+<CronInput aria-label="Schedule" value={expression} onValueChange={setExpression} />
+<CronField name="schedule" control={form.control} label="Schedule" rules={{ required: "Required" }} />
+```
+
+`CronInput` is controlled raw five-field text with a Radix Popover builder; `CronField` binds it through RHF using the existing field-label/feedback contract. Use a FormProvider or explicit control. Rules/resolvers remain application-owned; RHF required/error focus, help/error descriptions, reset and submission are tested. Native input props and refs reach the raw input; `className` styles the composition. `onBlur` is reported for raw-input blur and builder closure. `disabled`/`readOnly` block edits and opening the builder; an already-open builder becomes read-only.
+
+Hourly (1–12 hour intervals), daily, weekly and monthly modes use existing Bezny Select/ToggleGroup controls. All minute values (0–59) and hours (0–23) are available; day selections are sorted/deduplicated when generating expressions. Clearing a day selection generates `*` (every day), **not a disabled schedule**. Unsupported patterns, ranges, named days/months and invalid drafts remain raw Custom expressions without automatic normalization. Explicit Custom editing stays mounted even when its text becomes representable; external value updates refresh the builder without creating a second expression owner. Mode changes that generate an expression update immediately; Escape closes the builder, not an undo dialog.
+
+Descriptions use `cronstrue` with twelve-hour time by default. They are previews, not a validation policy. `describeExpression` supplies a localized/custom preview; `labels` covers the builder, modes, fields, invalid preview and seven weekday names. The host owns scheduling validation, timezones and execution. No jobs are created. Pass `dir="rtl"` for builder keyboard/layout direction; cron syntax itself stays LTR. `portalContainer` applies to the builder and nested Select portals, allowing explicit nested theme boundaries. Radix owns dismissal and focus restoration.
+
+Control aliases `--bezny-control-cron-*` cover spacing, typography, code family, muted preview text and builder width. The 20rem builder width follows structural cron-builder-width → logical picker-width → foundational size-320, bounded by Radix's available viewport dimensions. Days use a seven-column grid; overflow scrolls within the builder. Existing primitives own their colours and focus rings.
+
 ## File dropzone
 
 ```tsx

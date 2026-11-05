@@ -5,6 +5,7 @@
 @use "viewports";
 
 $-definitions: (
+  "cron-builder-width": logical.token("picker-width"),
   "prose-font-size": logical.font-size("sm"),
   "prose-line-height": logical.line-height("lg"),
   "skeleton-background": logical.token("color-neutral"),

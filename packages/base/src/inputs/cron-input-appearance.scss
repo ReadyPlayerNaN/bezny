@@ -1,0 +1,26 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/surfaces";
+@use "../tokens/structural";
+$-definitions: (
+  "width": structural.token("cron-builder-width"),
+);
+@each $name
+    in (
+      gap,
+      compact,
+      muted,
+      font-family,
+      font-size,
+      line-height,
+      code-font-family
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-cron");
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-cron");
+}

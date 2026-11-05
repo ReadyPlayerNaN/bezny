@@ -46,6 +46,7 @@ $-definitions: (
   "icon-size-4xl": foundational.size(48),
   "font-family-body": foundational.$font-family-sans,
   "font-family-code": foundational.token("font-family-mono"),
+  "picker-width": foundational.size(320),
   "font-weight-bold": foundational.$font-weight-700,
   "shell-header-height": foundational.size(48),
   "status-height": foundational.size(20),

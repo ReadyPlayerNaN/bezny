@@ -1,0 +1,52 @@
+@use "./cron-input-appearance" as appearance;
+.root,
+.panel {
+  @include appearance.declarations;
+  min-inline-size: 0;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: appearance.token(gap);
+  > :first-child {
+    flex: 1;
+    min-inline-size: 0;
+  }
+}
+.description {
+  display: block;
+  margin-block-start: appearance.token(gap);
+  color: appearance.token(muted);
+  font-family: appearance.token(font-family);
+  font-size: appearance.token(font-size);
+  line-height: appearance.token(line-height);
+}
+.panel {
+  inline-size: appearance.token(width);
+  display: grid;
+  gap: appearance.token(gap);
+  max-block-size: var(--radix-popover-content-available-height);
+  overflow: auto;
+  p {
+    margin: 0;
+  }
+  code {
+    font-family: appearance.token(code-font-family);
+    overflow-wrap: anywhere;
+  }
+}
+.choice {
+  display: grid;
+  gap: appearance.token(gap);
+  min-inline-size: 0;
+}
+.choices {
+  flex-wrap: wrap;
+}
+.monthDays {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+.day {
+  padding-inline: appearance.token(compact);
+}
