@@ -1,0 +1,66 @@
+@use "./file-dropzone-appearance" as appearance;
+.root {
+  @include appearance.declarations;
+  display: grid;
+  gap: appearance.token(gap);
+  min-inline-size: 0;
+  color: appearance.token(text);
+  font-family: appearance.token(font-family);
+  font-size: appearance.token(font-size);
+  line-height: appearance.token(line-height);
+  &[data-disabled] {
+    opacity: appearance.token(opacity-disabled);
+  }
+}
+.target {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: appearance.token(gap);
+  padding: appearance.token(padding-large);
+  border: appearance.token(border-width) dashed appearance.token(border);
+  border-radius: appearance.token(radius);
+  background: appearance.token(background);
+  text-align: center;
+  overflow-wrap: anywhere;
+  &:has(input:focus-visible) {
+    box-shadow: appearance.token(focus-ring);
+  }
+  &:has(input[aria-invalid="true"]) {
+    border-color: appearance.token(danger);
+  }
+  &[data-dragging] {
+    border-color: appearance.token(accent);
+    background: appearance.token(hover);
+  }
+}
+.input {
+  position: absolute;
+  inset: 0;
+  inline-size: 100%;
+  block-size: 100%;
+  opacity: 0;
+  cursor: pointer;
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+.primary {
+  font-weight: appearance.token(font-weight);
+}
+.secondary {
+  color: appearance.token(muted);
+}
+.selection {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: appearance.token(gap);
+}
+.summary {
+  display: grid;
+  flex: 1;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}

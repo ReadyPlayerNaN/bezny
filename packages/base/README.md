@@ -360,6 +360,7 @@ Set `CHROMIUM_PATH` to your executable, or omit the assignment if `chromium` is 
 
 | File under `packages/base/test/` | Coverage |
 | --- | --- |
+| `file-dropzone.browser.mjs` | Native chooser keyboard activation, same-file reselection, drop, disabled state, focus and narrow light/dark/RTL layouts |
 | `prose.browser.mjs` | Authored heading scale, semantic lists/tables/links, focus, local code overflow, narrow light/dark and RTL typography |
 | `tabs.browser.mjs` | Roving activation, panel focus and inactive panel exclusion, retained drafts, narrow light/dark and RTL layouts |
 | `accordion.browser.mjs` | Mounted hidden RHF bodies, retained drafts, submission, keyboard focus exclusion, light/dark and narrow RTL layouts |

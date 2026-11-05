@@ -47,6 +47,11 @@ export {
   type ToggleGroupProps,
   type ToggleGroupItemProps,
 } from "./inputs/toggle-group.js";
+export {
+  FileDropzone,
+  type FileDropzoneProps,
+  type FileDropzoneLabels,
+} from "./inputs/file-dropzone.js";
 export { TextInput, type TextInputProps } from "./inputs/text-input.js";
 export { ToggleInput, type ToggleInputProps } from "./inputs/toggle-input.js";
 export {

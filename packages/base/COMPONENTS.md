@@ -237,6 +237,23 @@ Also exports Group, Label, Separator, CheckboxItem, RadioGroup/RadioItem, ItemIn
 
 Styles bind `--bezny-control-dropdown-menu-*` to structural surface colours, spacing, typography, disabled opacity, borders, shadow, and stacking tokens. Menus scroll within Radix's available viewport size. Content/SubContent preserve `forceMount` through their owned portals; callers manage closed-state lifecycle when opting in. Triggers are intentionally styled through `asChild` + Button.
 
+## File dropzone
+
+```tsx
+<FileDropzone
+  value={file}
+  onValueChange={setFile}
+  accept="application/pdf"
+  aria-label="Invoice PDF"
+/>
+```
+
+`FileDropzone` is a controlled single-file input: `File | null` plus `onValueChange`. A native file input covers the browse/drop area, preserving keyboard activation, file-chooser behavior and input refs for error focus. Dropping selects the first file; empty drops/cancelled dialogs leave selection unchanged. Selection displays name and size; Clear emits null and restores input focus. Disabled state blocks browse/drop/clear. No uploads or network work occur.
+
+`accept` is a browser chooser hint, **not validation**; validate MIME/type/size in the application. Selection resets the native input immediately to permit same-file reselection. The authoritative File therefore lives in controlled state, not native FormData. Native `required` is intentionally excluded: bind `value` and `onValueChange` through RHF Controller and validate that File there. Forward Controller `name`, `ref`, `onBlur`, `aria-invalid` and error-description IDs; use existing FieldLabel/FieldFeedback as needed. RHF reset and error focus are tested.
+
+Native input props (including ARIA/blur/accept/name) and its React 19 ref are forwarded; `className` styles the outer control. `labels` overrides `choose`, `drop` and `clear`; `formatSize(bytes)` localizes the size display (default: exact bytes). Existing description IDs are retained and the selection summary is added. Scoped `--bezny-control-file-dropzone-*` aliases cover surface/hover/accent/error, borders/radius, spacing, typography, focus and disabled opacity through structural surface tokens. The focusable native input is visually transparent, not hidden.
+
 ## Prose
 
 ```tsx
