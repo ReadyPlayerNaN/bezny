@@ -360,6 +360,7 @@ Set `CHROMIUM_PATH` to your executable, or omit the assignment if `chromium` is 
 
 | File under `packages/base/test/` | Coverage |
 | --- | --- |
+| `autocomplete.browser.mjs` | Controlled single/multiple selection, late results/statuses, IME, disabled/limits, modal Escape ownership, themed portals and narrow RTL layouts |
 | `cron.browser.mjs` | RHF cron builder, raw/custom expressions, nested themed Select portals, CSP, keyboard focus, validation and narrow RTL layouts |
 | `file-dropzone.browser.mjs` | Native chooser keyboard activation, same-file reselection, drop, disabled state, focus and narrow light/dark/RTL layouts |
 | `prose.browser.mjs` | Authored heading scale, semantic lists/tables/links, focus, local code overflow, narrow light/dark and RTL typography |

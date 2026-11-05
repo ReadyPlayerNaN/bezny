@@ -1,0 +1,58 @@
+@use "./autocomplete-appearance" as appearance;
+.root,
+.panel {
+  @include appearance.declarations;
+  min-inline-size: 0;
+}
+.field {
+  display: flex;
+  align-items: center;
+  gap: appearance.token(gap);
+  > :first-child {
+    flex: 1;
+    min-inline-size: 0;
+  }
+}
+.panel {
+  inline-size: max(appearance.token(width), var(--radix-popover-trigger-width));
+  max-block-size: min(
+    appearance.token(max-height),
+    var(--radix-popover-content-available-height)
+  );
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+.list {
+  display: grid;
+}
+.option {
+  display: grid;
+  gap: appearance.token(gap);
+  inline-size: 100%;
+  padding: appearance.token(gap);
+  border: 0;
+  border-radius: appearance.token(radius);
+  background: appearance.token(background);
+  color: appearance.token(text);
+  font-family: appearance.token(font-family);
+  font-size: appearance.token(font-size);
+  line-height: appearance.token(line-height);
+  text-align: start;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  &[data-active],
+  &:hover:not(:disabled) {
+    background: appearance.token(hover);
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: appearance.token(focus-ring);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: appearance.token(opacity-disabled);
+  }
+}
+.sublabel {
+  color: appearance.token(muted);
+}

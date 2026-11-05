@@ -1,0 +1,38 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/surfaces";
+@use "../tokens/structural";
+$-definitions: (
+  "width": structural.token("autocomplete-width"),
+  "max-height": structural.token("command-list-max-height"),
+);
+@each $name
+    in (
+      background,
+      text,
+      muted,
+      border,
+      border-width,
+      radius,
+      padding,
+      gap,
+      font-family,
+      font-size,
+      line-height,
+      hover,
+      focus-ring,
+      opacity-disabled
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+@function token($name) {
+  @return css-properties.reference(
+    $-definitions,
+    $name,
+    "control-autocomplete"
+  );
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-autocomplete");
+}

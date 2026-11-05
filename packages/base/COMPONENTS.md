@@ -237,6 +237,49 @@ Also exports Group, Label, Separator, CheckboxItem, RadioGroup/RadioItem, ItemIn
 
 Styles bind `--bezny-control-dropdown-menu-*` to structural surface colours, spacing, typography, disabled opacity, borders, shadow, and stacking tokens. Menus scroll within Radix's available viewport size. Content/SubContent preserve `forceMount` through their owned portals; callers manage closed-state lifecycle when opting in. Triggers are intentionally styled through `asChild` + Button.
 
+## Controlled autocomplete and multi-item pickers
+
+```tsx
+<AutocompleteInput
+  aria-label="Company"
+  value={company}
+  onValueChange={setCompany}
+  query={companyQuery}
+  onQueryChange={setCompanyQuery}
+  options={companyOptions}
+  getOptionKey={(option) => option.id}
+  getOptionLabel={(option) => option.name}
+  getOptionSublabel={(option) => option.website}
+  loading={searching}
+/>
+<MultiItemPicker
+  aria-label="Skills"
+  selectionLabel="Selected skills"
+  value={selectedSkills}
+  onValueChange={setSelectedSkills}
+  query={skillQuery}
+  onQueryChange={setSkillQuery}
+  options={skillOptions}
+  getOptionKey={(option) => option.id}
+  getOptionLabel={(option) => option.name}
+  maxItems={10}
+/>
+```
+
+Both controls accept non-null option values of a generic type; keys must be unique, stable strings. Selection and query are separate controlled values. `AutocompleteInput` requests an option or null through `onValueChange`; typing into a committed selection clears that selection. Selecting an option clears the query and displays its label. Clear and Backspace/Delete on the committed value request null and an empty query. A query is not an accepted free-text selection. External values/options are reflected without another data owner.
+
+`MultiItemPicker` requests a new value array, excludes already-selected keys from suggestions, and provides individual removals. `maxItems` disables additional search/selection while leaving removals available. Reaching a limit moves focus to the named fieldset instead of leaving focus on a newly disabled input. Removing a chip focuses the input, or the fieldset when the input is still disabled before the controlled update. The host owns optimistic updates, mutations and error restoration.
+
+The host supplies options, query, loading and optional string `error`; there is no fetcher, debounce, local filtering or async session inside either control. Loading/error presentation does not invalidate options the host still supplies: clear them or mark individual options disabled when they must not be chosen. `getOptionDisabled` excludes suggestions from keyboard navigation and activation. `minimumQueryLength` defaults to one trimmed character; use zero for initially available options. Focus never emits a query request. Query changes are emitted during composition to keep the controlled draft visible; native composition callbacks are forwarded so the host can defer remote searches until composition ends.
+
+Radix Popover owns positioning and outside dismissal. Radix has no editable combobox primitive; the input/listbox implement the [APG combobox pattern](https://www.w3.org/WAI/ARIA/apg/patterns/combobox/). DOM focus stays on the native input with mounted `aria-controls`/`aria-activedescendant` references. Arrow keys navigate enabled options; Enter explicitly commits without submitting a surrounding form; Escape dismisses without clearing the query; Tab leaves without selecting. Native text-editing keys remain native. IME Enter (including key code 229 after composition end) does not commit. An unavailable control closes its popup without reopening on re-enable. Explicit focus moves made by selection callbacks are respected.
+
+Provide a visible label through `id`/`htmlFor`, or `aria-label`/`aria-labelledby`. Native input props/ref reach the text input; `className` styles the composition. A custom `renderOption(option, {active, selected})` may supply non-interactive presentation; do not nest buttons/links inside an option. `labels` localizes options/loading/empty/clear text. Multi-selection also accepts `selectionLabel` and `removeLabel(label)`. `dir` applies to the composition and popup. `portalContainer` supports themed portals; inside a modal, use a container within the modal's accessible content, rather than an already-hidden external container.
+
+For RHF, use `Controller` to bind the selected value, `field.ref`, `field.onBlur` and `field.onChange`; keep the search query separately controlled. Required selection and other validation belong to the selection schema/rules, not the native input's non-empty search text. Required/error focus, submission and reset are tested with the real RHF owner. Reset query state alongside the form when clearing drafts. Native FormData contains the displayed input text, not an entity/ID; serialize the controlled selection through the host form owner.
+
+`--bezny-control-autocomplete-*` aliases cover popup width/height, spacing, selection chips, typography, surfaces and focus. Structural autocomplete-width resolves through logical picker-width and foundational size-320; popups are bounded by Radix's available viewport and scroll internally. Long labels and selected items wrap at narrow widths.
+
 ## Cron input and field
 
 ```tsx

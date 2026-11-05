@@ -59,6 +59,15 @@ export {
 } from "./inputs/cron-input.js";
 export type { CronMode } from "./inputs/cron-expression.js";
 export { CronField, type CronFieldProps } from "./fields/cron-field.js";
+export {
+  AutocompleteInput,
+  type AutocompleteInputProps,
+  type AutocompleteLabels,
+} from "./inputs/autocomplete-input.js";
+export {
+  MultiItemPicker,
+  type MultiItemPickerProps,
+} from "./inputs/multi-item-picker.js";
 export { TextInput, type TextInputProps } from "./inputs/text-input.js";
 export { ToggleInput, type ToggleInputProps } from "./inputs/toggle-input.js";
 export {

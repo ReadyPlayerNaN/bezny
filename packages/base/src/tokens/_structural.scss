@@ -5,6 +5,7 @@
 @use "viewports";
 
 $-definitions: (
+  "autocomplete-width": logical.token("picker-width"),
   "cron-builder-width": logical.token("picker-width"),
   "prose-font-size": logical.font-size("sm"),
   "prose-line-height": logical.line-height("lg"),
