@@ -1,0 +1,56 @@
+@use "./tabs-appearance" as appearance;
+.root {
+  @include appearance.declarations;
+  min-inline-size: 0;
+  color: appearance.token(text);
+  font-family: appearance.token(font-family);
+  font-size: appearance.token(font-size);
+  line-height: appearance.token(line-height);
+}
+.list {
+  display: flex;
+  gap: appearance.token(gap);
+  overflow: auto;
+  padding: appearance.token(compact);
+  border-block-end: appearance.token(border-width) solid
+    appearance.token(border);
+  &[data-orientation="vertical"] {
+    flex-direction: column;
+  }
+}
+.trigger {
+  flex: none;
+  border: 0;
+  border-radius: appearance.token(radius);
+  padding-inline: appearance.token(padding);
+  min-block-size: appearance.token(height);
+  color: inherit;
+  background: appearance.token(background);
+  font: inherit;
+  font-weight: appearance.token(font-weight);
+  cursor: pointer;
+  &:hover:not(:disabled):not([data-state="active"]) {
+    background: appearance.token(hover);
+  }
+  &[data-state="active"] {
+    color: appearance.token(on-accent);
+    background: appearance.token(accent);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: appearance.token(opacity-disabled);
+  }
+}
+.trigger:focus-visible,
+.content:focus-visible {
+  outline: none;
+  box-shadow: appearance.token(focus-ring);
+}
+.content {
+  min-inline-size: 0;
+  padding: appearance.token(padding);
+  overflow-wrap: anywhere;
+  &[data-state="inactive"] {
+    display: none;
+  }
+}

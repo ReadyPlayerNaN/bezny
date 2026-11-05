@@ -1,0 +1,34 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/surfaces";
+$-definitions: ();
+@each $name
+    in (
+      background,
+      text,
+      border,
+      border-width,
+      radius,
+      padding,
+      compact,
+      gap,
+      font-family,
+      font-size,
+      line-height,
+      font-weight,
+      height,
+      focus-ring,
+      hover,
+      opacity-disabled,
+      accent,
+      on-accent
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-tabs");
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-tabs");
+}

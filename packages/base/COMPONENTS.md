@@ -237,6 +237,29 @@ Also exports Group, Label, Separator, CheckboxItem, RadioGroup/RadioItem, ItemIn
 
 Styles bind `--bezny-control-dropdown-menu-*` to structural surface colours, spacing, typography, disabled opacity, borders, shadow, and stacking tokens. Menus scroll within Radix's available viewport size. Content/SubContent preserve `forceMount` through their owned portals; callers manage closed-state lifecycle when opting in. Triggers are intentionally styled through `asChild` + Button.
 
+## Tabs
+
+```tsx
+<Tabs value={locale} onValueChange={setLocale}>
+  <TabsList aria-label="Content language">
+    <TabsTrigger value="en">English</TabsTrigger>
+    <TabsTrigger value="cs">Czech</TabsTrigger>
+  </TabsList>
+  <TabsContent value="en" forceMount>
+    <EnglishEditor />
+  </TabsContent>
+  <TabsContent value="cs" forceMount>
+    <CzechEditor />
+  </TabsContent>
+</Tabs>
+```
+
+`Tabs`, `TabsList`, `TabsTrigger` and `TabsContent` wrap Radix, forwarding primitive props, refs, classes and `asChild`. Match each trigger's unique value to its panel. Label the List. Use `value`/`onValueChange` for controlled state, or `defaultValue` for uncontrolled state. Radix owns selected/panel relationships, roving focus, Arrow/Home/End navigation, disabled triggers and horizontal/vertical orientation. Pass `dir="rtl"` for RTL keyboard direction. Automatic activation is the default; `activationMode="manual"` waits for Enter/Space/click after focus movement.
+
+Inactive panels unmount by default. `forceMount` preserves mounted editor state; Bezny's stylesheet hides inactive panels with `display: none` to exclude their controls from focus/navigation. Do not override that rule. Panel focus remains Radix-owned. Tabs do not load data or control routes: use ordinary links for route navigation and preserve the host's locale/resource ownership.
+
+The List scrolls locally when labels exceed available width. Scoped `--bezny-control-tabs-*` aliases cover surfaces, spacing, typography, minimum trigger height, active accent/on-accent, focus and disabled opacity using structural surface tokens. No animations are introduced.
+
 ## Accordion
 
 ```tsx

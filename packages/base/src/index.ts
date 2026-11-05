@@ -214,6 +214,16 @@ export {
   type AccordionTriggerProps,
   type AccordionContentProps,
 } from "./content/accordion.js";
+export {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+  type TabsProps,
+  type TabsListProps,
+  type TabsTriggerProps,
+  type TabsContentProps,
+} from "./content/tabs.js";
 export { Badge, type BadgeProps, type BadgeType } from "./content/badge.js";
 export {
   JsonViewer,
