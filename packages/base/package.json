@@ -31,7 +31,8 @@
     "build": "vite build && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "test": "vitest run && node --test test/*.test.mjs",
-    "test:scroll-lock:browser": "node --test test/scroll-lock.browser.mjs"
+    "test:scroll-lock:browser": "node --test test/scroll-lock.browser.mjs",
+    "test:content:browser": "node --test test/table-skeleton.browser.mjs"
   },
   "dependencies": {
     "@radix-ui/react-alert-dialog": "1.1.24",

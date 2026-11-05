@@ -1,0 +1,62 @@
+@use "./table-appearance" as appearance;
+
+.table,
+.scrollArea {
+  @include appearance.declarations;
+}
+
+.table {
+  inline-size: 100%;
+  border-collapse: collapse;
+  background: appearance.token("background");
+  color: appearance.token("text");
+  font-family: appearance.token("font-family");
+  font-size: appearance.token("font-size");
+  line-height: appearance.token("line-height");
+}
+
+.cell {
+  padding-block: appearance.token("padding-small");
+  padding-inline: appearance.token("padding");
+  border-block-end: appearance.token("border-width") solid
+    appearance.token("border");
+  text-align: start;
+  vertical-align: top;
+
+  &[data-numeric] {
+    text-align: end;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+}
+
+.headerCell,
+.foot {
+  font-weight: appearance.token("font-weight");
+}
+
+.head {
+  color: appearance.token("muted");
+}
+
+.caption {
+  padding-block: appearance.token("padding-small");
+  text-align: start;
+  color: appearance.token("muted");
+}
+
+.row {
+  // No hover or click affordance: tables present comparisons, not entity actions.
+  cursor: auto;
+}
+
+.scrollArea {
+  min-inline-size: 0;
+  max-inline-size: 100%;
+  overflow-x: auto;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: appearance.token("focus-ring");
+  }
+}

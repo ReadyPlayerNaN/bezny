@@ -213,6 +213,28 @@ export {
   type CardTitleProps,
 } from "./content/card.js";
 export {
+  Table,
+  TableCaption,
+  TableHead,
+  TableBody,
+  TableFoot,
+  TableRow,
+  TableHeaderCell,
+  TableCell,
+  TableScrollArea,
+  TableSkeletonRow,
+  type TableProps,
+  type TableCaptionProps,
+  type TableHeadProps,
+  type TableBodyProps,
+  type TableFootProps,
+  type TableRowProps,
+  type TableHeaderCellProps,
+  type TableCellProps,
+  type TableScrollAreaProps,
+  type TableSkeletonRowProps,
+} from "./content/table.js";
+export {
   Skeleton,
   LoadingSkeleton,
   type SkeletonProps,

@@ -113,6 +113,42 @@ Action keys and row IDs must be unique. Callback actions are bulkable by default
 
 Context menus use local `ContextMenu` components for right-click, long press, Shift+F10, submenu navigation, and focus. Native selection controls support keyboard activation; selected lists support drag selection and Shift-drag clearing, excluding nested interactive content. Removing rows/actions prunes selection. Token prefix: `--bezny-control-entity-row-*`.
 
+## Analytical tables
+
+Use native semantic tables when readers compare aligned values across records: benchmarks, scoring breakdowns, or salary statistics. Prefer `EntityRowList` for entity browsing and actions. These components are not a data grid: sorting, filtering, selection, fetching, pagination, and mutations remain caller-owned.
+
+```tsx
+<TableScrollArea label="Benchmark comparison scroll area">
+  <Table>
+    <TableCaption>Benchmark scores</TableCaption>
+    <TableHead>
+      <TableRow>
+        <TableHeaderCell>Pair</TableHeaderCell>
+        <TableHeaderCell numeric>Expected</TableHeaderCell>
+        <TableHeaderCell numeric>Actual</TableHeaderCell>
+        <TableHeaderCell numeric>Delta</TableHeaderCell>
+      </TableRow>
+    </TableHead>
+    <TableBody>
+      <TableRow>
+        <TableHeaderCell scope="row">Candidate A / Position B</TableHeaderCell>
+        <TableCell numeric>0.82</TableCell>
+        <TableCell numeric>0.80</TableCell>
+        <TableCell numeric>−0.02</TableCell>
+      </TableRow>
+    </TableBody>
+  </Table>
+</TableScrollArea>
+```
+
+`Table`, `TableCaption`, `TableHead`, `TableBody`, `TableFoot`, `TableRow`, `TableHeaderCell`, and `TableCell` render their native HTML elements and preserve native props, children, classes, and React 19 refs. Headers default to `scope="col"`; use `scope="row"` for row labels and native `headers`, `id`, `colSpan`, or `rowSpan` for more complex associations. `numeric` on either cell type uses tabular numerals, logical end alignment (including RTL), and prevents numeric values from wrapping. Name each table with a caption or ARIA label.
+
+The optional `TableScrollArea` is a labelled, focusable section with horizontal overflow and a visible keyboard focus ring. Its required `label` names the scroll region, not the table. Native keyboard scrolling works without custom handlers; all rows remain native table rows rather than cards or an ARIA grid. This explicit wrapper adds a tab stop even when content fits. Put real links/buttons in cells when needed; rows do not gain click behavior or selection implicitly.
+
+For initial loading, retain headers, set `aria-busy` on the table, and render `TableSkeletonRow columns={4}` inside `TableBody`. The positive integer column count must match the table. Placeholder rows/cells are decorative and inert; announce a localized loading status once **outside** the busy table (for example, with an `output` next to it). Remove the status and loading rows when settled. Render empty/error states using a real `TableRow`/`TableCell colSpan={4}`, with an appropriate alert/retry control when needed. Do not wrap a real table in `LoadingSkeleton`, which hides its placeholder-only children from accessibility.
+
+Control tokens use `--bezny-control-table-*`: background, text, muted, border, border-width, padding, padding-small, font-family, font-size, line-height, font-weight, and focus-ring. They bind shared structural surface purposes and follow explicit/nested light and dark themes. No new data, state, or grid tokens are introduced.
+
 ## Skeletons
 
 `Skeleton` is a decorative, non-focusable span with `text` (default), `heading`, `circle`, and `block` variants. It forwards native props/classes/React 19 refs, forces `aria-hidden`, and accepts no children. Use a class or style to customize geometry when the defaults do not match the eventual content.

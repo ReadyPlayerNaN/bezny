@@ -364,5 +364,6 @@ Set `CHROMIUM_PATH` to your executable, or omit the assignment if `chromium` is 
 | `interaction-contrast.browser.mjs` | Badges, entity links, highlighted rows/destructive actions, keyboard rings, and button fills in both themes |
 | `shell.browser.mjs` | Native navigation popovers, responsive breakpoint boundaries, and LTR/RTL layout |
 | `dialog-motion.browser.mjs` | Panel/backdrop enter and exit animations, preserved positioning, and reduced-motion behavior |
+| `table-skeleton.browser.mjs` | Analytical table semantics, numeric alignment, keyboard scrolling, entity-row loading geometry, nested themes, and reduced motion (`pnpm --filter @bezny/base test:content:browser`) |
 
 See [contrast verification](CONTRAST.md) for the measured states and the limits of the accessibility review.
