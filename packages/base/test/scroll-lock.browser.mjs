@@ -1,7 +1,7 @@
 /* oxlint-disable vitest/no-import-node-test, vitest/prefer-importing-vitest-globals, vitest/prefer-each -- Exercise shipped modal behavior in real Chromium with strict CSP. */
 import assert from "node:assert/strict";
 import { once } from "node:events";
-import { mkdtemp, readFile } from "node:fs/promises";
+import { mkdir, mkdtemp, readFile } from "node:fs/promises";
 import { createServer } from "node:http";
 import path from "node:path";
 import test from "node:test";
@@ -14,6 +14,7 @@ const packageRoot = fileURLToPath(new URL("..", import.meta.url));
 const scratch = fileURLToPath(
   new URL("../../../.tmp/scroll-lock/", import.meta.url)
 );
+await mkdir(scratch, { recursive: true });
 const directory = await mkdtemp(path.join(scratch, "browser-"));
 await build({
   build: {
