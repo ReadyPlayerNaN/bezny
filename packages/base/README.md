@@ -360,6 +360,7 @@ Set `CHROMIUM_PATH` to your executable, or omit the assignment if `chromium` is 
 
 | File under `packages/base/test/` | Coverage |
 | --- | --- |
+| `accordion.browser.mjs` | Mounted hidden RHF bodies, retained drafts, submission, keyboard focus exclusion, light/dark and narrow RTL layouts |
 | `json-viewer.browser.mjs` | Tree/raw keyboard behavior, custom leaf actions, local overflow, nested light/dark themes, LTR/RTL and narrow/wide layouts under strict CSP |
 | `theme.browser.mjs` | OS preferences, explicit and nested themes, native colour schemes, control colours, focus rings, and contrast |
 | `interaction-contrast.browser.mjs` | Badges, entity links, highlighted rows/destructive actions, keyboard rings, and button fills in both themes |

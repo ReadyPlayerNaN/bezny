@@ -237,6 +237,29 @@ Also exports Group, Label, Separator, CheckboxItem, RadioGroup/RadioItem, ItemIn
 
 Styles bind `--bezny-control-dropdown-menu-*` to structural surface colours, spacing, typography, disabled opacity, borders, shadow, and stacking tokens. Menus scroll within Radix's available viewport size. Content/SubContent preserve `forceMount` through their owned portals; callers manage closed-state lifecycle when opting in. Triggers are intentionally styled through `asChild` + Button.
 
+## Accordion
+
+```tsx
+<Accordion type="single" defaultValue="details" collapsible>
+  <AccordionItem value="details">
+    <AccordionHeader asChild>
+      <h2>
+        <AccordionTrigger>Details</AccordionTrigger>
+      </h2>
+    </AccordionHeader>
+    <AccordionContent forceMount>
+      <Editor />
+    </AccordionContent>
+  </AccordionItem>
+</Accordion>
+```
+
+`Accordion`, `AccordionItem`, `AccordionHeader`, `AccordionTrigger` and `AccordionContent` wrap Radix and preserve its props, events, React 19 refs and `asChild` composition. Items need unique `value`s. Use `type="single"` with a string value/defaultValue, or `type="multiple"` with string arrays. Controlled `value`/`onValueChange`, disabled roots/items, optional `collapsible` for single mode, orientation and `dir="rtl"` follow Radix. Keep each Trigger inside Header; Header defaults to h3 and supports an appropriate heading through `asChild`. Triggers include a decorative open/closed indicator; with `asChild`, supply your own indicator inside the single child if desired.
+
+Enter/Space expands; Arrow keys and Home/End navigate enabled triggers. Regions are labelled by their triggers. Content normally unmounts while closed. `forceMount` keeps it registered and preserves unsaved form state; Bezny's stylesheet applies `display: none` to closed content so it is neither exposed nor keyboard-focusable. This is intentionally not an exit animation API. Import the stylesheet once; do not override the closed-state display rule or nest another interactive control inside Trigger. The accordion does not own form state.
+
+Scoped `--bezny-control-accordion-*` tokens map surface colour, border/radius, spacing, typography, minimum trigger height, hover, focus and disabled opacity through structural surface tokens. No animation is introduced.
+
 ## JSON viewer
 
 ```tsx

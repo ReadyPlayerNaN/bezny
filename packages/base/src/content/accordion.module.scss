@@ -1,0 +1,79 @@
+@use "./accordion-appearance" as appearance;
+
+.root {
+  @include appearance.declarations;
+  min-inline-size: 0;
+  border: appearance.token(border-width) solid appearance.token(border);
+  border-radius: appearance.token(radius);
+  color: appearance.token(text);
+  background: appearance.token(background);
+  font-family: appearance.token(font-family);
+  font-size: appearance.token(font-size);
+  line-height: appearance.token(line-height);
+  &[data-orientation="horizontal"] {
+    display: flex;
+  }
+}
+.item {
+  min-inline-size: 0;
+  flex: 1;
+  & + & {
+    border-block-start: appearance.token(border-width) solid
+      appearance.token(border);
+  }
+  &[data-orientation="horizontal"] + & {
+    border-block-start: 0;
+    border-inline-start: appearance.token(border-width) solid
+      appearance.token(border);
+  }
+}
+.header {
+  margin: 0;
+  font: inherit;
+}
+.trigger {
+  display: flex;
+  align-items: center;
+  gap: appearance.token(gap);
+  inline-size: 100%;
+  min-block-size: appearance.token(height);
+  border: 0;
+  padding: appearance.token(padding);
+  font: inherit;
+  font-weight: appearance.token(font-weight);
+  text-align: start;
+  overflow-wrap: anywhere;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  &:hover:not(:disabled) {
+    background: appearance.token(hover);
+  }
+  &:focus-visible {
+    outline: none;
+    box-shadow: appearance.token(focus-ring);
+  }
+  &:disabled {
+    cursor: not-allowed;
+    opacity: appearance.token(opacity-disabled);
+  }
+}
+.indicator {
+  flex: none;
+  margin-inline-start: auto;
+  &::before {
+    content: "+";
+  }
+}
+.trigger[data-state="open"] .indicator::before {
+  content: "−";
+}
+.content {
+  min-inline-size: 0;
+  padding: appearance.token(padding);
+  overflow-wrap: anywhere;
+  // Radix forceMount keeps the body mounted; closed form fields must not remain focusable.
+  &[data-state="closed"] {
+    display: none;
+  }
+}

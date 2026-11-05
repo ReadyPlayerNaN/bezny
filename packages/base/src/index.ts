@@ -202,6 +202,18 @@ export {
   type AvatarImageLoadingStatus,
   type AvatarFallbackProps,
 } from "./content/avatar.js";
+export {
+  Accordion,
+  AccordionItem,
+  AccordionHeader,
+  AccordionTrigger,
+  AccordionContent,
+  type AccordionProps,
+  type AccordionItemProps,
+  type AccordionHeaderProps,
+  type AccordionTriggerProps,
+  type AccordionContentProps,
+} from "./content/accordion.js";
 export { Badge, type BadgeProps, type BadgeType } from "./content/badge.js";
 export {
   JsonViewer,
