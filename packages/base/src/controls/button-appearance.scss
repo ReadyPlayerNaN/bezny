@@ -68,9 +68,21 @@ $font-weight: css-properties.reference(
 );
 $gap: css-properties.reference($-definitions, "gap", "control-button");
 $radius: css-properties.reference($-definitions, "radius", "control-button");
-$icon-button-size: css-properties.reference($-definitions, "icon-button-size", "control-button");
-$icon-button-icon-size: css-properties.reference($-definitions, "icon-button-icon-size", "control-button");
-$icon-button-radius: css-properties.reference($-definitions, "icon-button-radius", "control-button");
+$icon-button-size: css-properties.reference(
+  $-definitions,
+  "icon-button-size",
+  "control-button"
+);
+$icon-button-icon-size: css-properties.reference(
+  $-definitions,
+  "icon-button-icon-size",
+  "control-button"
+);
+$icon-button-radius: css-properties.reference(
+  $-definitions,
+  "icon-button-radius",
+  "control-button"
+);
 $border-width: css-properties.reference(
   $-definitions,
   "border-width",

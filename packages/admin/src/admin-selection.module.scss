@@ -5,7 +5,9 @@
   margin: 0;
   min-inline-size: 0;
   position: fixed;
-  inset-block-end: calc(#{appearance.token("bottom-offset")} + #{appearance.token("padding")});
+  inset-block-end: calc(
+    #{appearance.token("bottom-offset")} + #{appearance.token("padding")}
+  );
   left: 50%;
   transform: translateX(-50%);
   z-index: appearance.token("z-index");

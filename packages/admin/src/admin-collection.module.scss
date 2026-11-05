@@ -38,7 +38,8 @@
 .pagination {
   justify-content: space-between;
   padding-block-start: appearance.token("padding");
-  border-block-start: appearance.token("border-width") solid appearance.token("border");
+  border-block-start: appearance.token("border-width") solid
+    appearance.token("border");
   color: appearance.token("text");
   font-family: appearance.token("font-family");
   font-size: appearance.token("font-size");

@@ -20,9 +20,16 @@ $-definitions: (
 );
 
 @function token($name) {
-  @return css-properties.reference($-definitions, $name, "control-admin-collection");
+  @return css-properties.reference(
+    $-definitions,
+    $name,
+    "control-admin-collection"
+  );
 }
 
 @mixin declarations {
-  @include css-properties.declarations($-definitions, "control-admin-collection");
+  @include css-properties.declarations(
+    $-definitions,
+    "control-admin-collection"
+  );
 }
