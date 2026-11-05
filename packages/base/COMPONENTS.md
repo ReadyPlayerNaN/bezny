@@ -237,6 +237,21 @@ Also exports Group, Label, Separator, CheckboxItem, RadioGroup/RadioItem, ItemIn
 
 Styles bind `--bezny-control-dropdown-menu-*` to structural surface colours, spacing, typography, disabled opacity, borders, shadow, and stacking tokens. Menus scroll within Radix's available viewport size. Content/SubContent preserve `forceMount` through their owned portals; callers manage closed-state lifecycle when opting in. Triggers are intentionally styled through `asChild` + Button.
 
+## Prose
+
+```tsx
+<Prose><h2>Terms</h2><p>Authored content.</p></Prose>
+<Prose>{cmsText}</Prose>
+// Sanitize at the application's trust boundary before rendering HTML:
+<Prose dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />
+```
+
+`Prose` forwards native div props, children, classes and React 19 refs. It only applies typography; strings stay escaped, and it does not parse Markdown or sanitize HTML. Do not pass untrusted content through `dangerouslySetInnerHTML`. Native HTML and children are mutually exclusive under React's own contract.
+
+Styles cover six heading levels, paragraphs, lists, links, quotes, inline/block code, authored tables, separators and responsive images/video. Long words wrap; preformatted lines scroll locally. Give authored scroll regions a tab stop when needed for keyboard scrolling. This does not authorize tables for ordinary admin listings or replace analytical table components.
+
+`--bezny-control-prose-*` covers body/heading typography, code family, surface colours, links/focus, spacing, borders and radii. Prose body size/line-height and six heading sizes reference explicit structural prose purposes, then the logical scale. Other tokens reuse structural surface purposes. Native heading semantics are unchanged by visual sizing; the host still owns document hierarchy.
+
 ## Tabs
 
 ```tsx

@@ -1,0 +1,44 @@
+@use "sass:map";
+@use "../tokens/css-properties";
+@use "../tokens/structural";
+@use "../tokens/surfaces";
+$-definitions: (
+  "font-size": structural.token("prose-font-size"),
+  "line-height": structural.token("prose-line-height"),
+);
+@each $name
+    in (
+      text,
+      muted,
+      border,
+      border-width,
+      radius,
+      padding,
+      padding-large,
+      gap,
+      compact,
+      font-family,
+      font-weight,
+      code-font-family,
+      hover,
+      focus-ring,
+      accent-text
+    )
+{
+  $-definitions: map.set($-definitions, $name, surfaces.token($name));
+}
+@for $level from 1 through 6 {
+  @each $property in (font-size, line-height) {
+    $-definitions: map.set(
+      $-definitions,
+      "heading-#{$level}-#{$property}",
+      structural.token("prose-heading-#{$level}-#{$property}")
+    );
+  }
+}
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-prose");
+}
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-prose");
+}

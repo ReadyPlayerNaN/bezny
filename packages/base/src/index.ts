@@ -224,6 +224,7 @@ export {
   type TabsTriggerProps,
   type TabsContentProps,
 } from "./content/tabs.js";
+export { Prose, type ProseProps } from "./content/prose.js";
 export { Badge, type BadgeProps, type BadgeType } from "./content/badge.js";
 export {
   JsonViewer,
