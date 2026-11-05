@@ -5,6 +5,9 @@
 @use "viewports";
 
 $-definitions: (
+  "skeleton-background": logical.token("color-neutral"),
+  "skeleton-duration": logical.token("duration-placeholder"),
+  "skeleton-opacity-min": logical.token("opacity-disabled"),
   "command-list-max-height": logical.token("command-list-max-height"),
   "dialog-duration-enter": logical.token("duration-modal-enter"),
   "dialog-duration-exit": logical.token("duration-modal-exit"),

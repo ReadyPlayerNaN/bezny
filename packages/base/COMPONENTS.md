@@ -113,6 +113,26 @@ Action keys and row IDs must be unique. Callback actions are bulkable by default
 
 Context menus use local `ContextMenu` components for right-click, long press, Shift+F10, submenu navigation, and focus. Native selection controls support keyboard activation; selected lists support drag selection and Shift-drag clearing, excluding nested interactive content. Removing rows/actions prunes selection. Token prefix: `--bezny-control-entity-row-*`.
 
+## Skeletons
+
+`Skeleton` is a decorative, non-focusable span with `text` (default), `heading`, `circle`, and `block` variants. It forwards native props/classes/React 19 refs, forces `aria-hidden`, and accepts no children. Use a class or style to customize geometry when the defaults do not match the eventual content.
+
+`EntityRowSkeleton` reuses entity-row spacing and supports `variant="small"`, `leading` (a circular placeholder), and `description={false}`. It contains no links, menus, selection controls, or fake records. Standalone skeletons do not announce loading; announce it once at the resource boundary.
+
+```tsx
+<EntityRowListSkeleton label="Loading companies" rows={3} leading />
+
+<LoadingSkeleton label="Loading company details">
+  <Skeleton variant="heading" />
+  <Skeleton />
+  <Skeleton variant="block" />
+</LoadingSkeleton>
+```
+
+`EntityRowListSkeleton` combines a positive integer `rows` count (default 3) with one localized loading status. `LoadingSkeleton` provides the same status for custom compositions. Its children are hidden from assistive technology and inert: only put placeholders there, never real content or controls. Replace the loading composition when data, empty results, or an error arrives. Keep existing data visible during refresh where appropriate; these components do not own fetching.
+
+Skeletons pulse using `--bezny-control-skeleton-duration` and `opacity-min`; `prefers-reduced-motion: reduce` disables animation. Their control aliases also cover background, radius, text-height, heading-height, circle-size, circle-radius, block-height, and gap. Background follows light/dark semantic neutral surfaces. Override shared `--bezny-structural-skeleton-*` aliases on a theme boundary or the control aliases on the skeleton itself. All design values follow the four token layers; screen-reader-only clipping is layout mechanics, not theme styling.
+
 ## Filters
 
 Ported the reusable behavior from aipocapso's `calls/` filters, dropping the application-specific `Call` prefix and airline/backend coupling:

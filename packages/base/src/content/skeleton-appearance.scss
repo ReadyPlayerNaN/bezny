@@ -1,0 +1,24 @@
+@use "../tokens/css-properties";
+@use "../tokens/structural";
+@use "../tokens/surfaces";
+
+$-definitions: (
+  "background": structural.token("skeleton-background"),
+  "duration": structural.token("skeleton-duration"),
+  "opacity-min": structural.token("skeleton-opacity-min"),
+  "radius": surfaces.token("radius"),
+  "text-height": surfaces.token("line-height"),
+  "heading-height": surfaces.token("row-title-line-height"),
+  "circle-size": structural.token("avatar-size-normal"),
+  "circle-radius": structural.token("avatar-radius"),
+  "block-height": surfaces.token("height"),
+  "gap": surfaces.token("gap"),
+);
+
+@function token($name) {
+  @return css-properties.reference($-definitions, $name, "control-skeleton");
+}
+
+@mixin declarations {
+  @include css-properties.declarations($-definitions, "control-skeleton");
+}

@@ -1,0 +1,60 @@
+@use "./skeleton-appearance" as appearance;
+
+.skeleton,
+.loading {
+  @include appearance.declarations;
+}
+
+.skeleton {
+  display: block;
+  inline-size: 100%;
+  block-size: appearance.token("text-height");
+  border-radius: appearance.token("radius");
+  background: appearance.token("background");
+  animation: pulse appearance.token("duration") ease-in-out infinite;
+
+  &[data-variant="heading"] {
+    block-size: appearance.token("heading-height");
+  }
+
+  &[data-variant="circle"] {
+    flex-shrink: 0;
+    inline-size: appearance.token("circle-size");
+    block-size: appearance.token("circle-size");
+    border-radius: appearance.token("circle-radius");
+  }
+
+  &[data-variant="block"] {
+    block-size: appearance.token("block-height");
+  }
+}
+
+.content {
+  display: grid;
+  gap: appearance.token("gap");
+}
+
+.label {
+  position: absolute;
+  inline-size: 0.0625rem;
+  block-size: 0.0625rem;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: appearance.token("opacity-min");
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
