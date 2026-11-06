@@ -31,6 +31,8 @@ export type {
   AdminEntityForm,
   AdminEntityColumn,
   AdminFormValues,
+  AdminFieldScope,
+  AdminFieldComponentProps,
 } from "./admin-entity-fields.js";
 
 export {

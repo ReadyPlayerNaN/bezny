@@ -25,9 +25,14 @@ import type {
   AdminFormValues,
   AdminEntityField,
 } from "./admin-entity-fields.js";
-import { readAdminFormValues } from "./admin-entity-fields.js";
+import {
+  readAdminFormValues,
+  isAdminSensitiveField,
+  isAdminFieldDisabled,
+} from "./admin-entity-fields.js";
 import { adminSelectionAtom } from "./admin-entity-model.js";
 import type { AdminCommand } from "./admin-entity-model.js";
+import { applyAdminFormErrors } from "./admin-form-errors.js";
 import { createAdminFormFieldCommands } from "./admin-form-field-commands.js";
 import {
   useAdminFormLifetime,
@@ -205,16 +210,20 @@ export const AdminDefaultDetailPage = () => {
                 <dd>{column.render(record.data, "detail")}</dd>
               </div>
             ))
-          : entity.form?.fields.map((field) => (
-              <div key={field.key}>
-                <dt>
-                  {t(field.labelKey ?? field.label, {
-                    defaultValue: field.label,
-                  })}
-                </dt>
-                <dd>{String(values?.[field.key] ?? "")}</dd>
-              </div>
-            ))}
+          : entity.form?.fields.flatMap((field) =>
+              isAdminSensitiveField(field)
+                ? []
+                : [
+                    <div key={field.key}>
+                      <dt>
+                        {t(field.labelKey ?? field.label, {
+                          defaultValue: field.label,
+                        })}
+                      </dt>
+                      <dd>{String(values?.[field.key] ?? "")}</dd>
+                    </div>,
+                  ]
+            )}
       </dl>
     </AdminPage>
   );
@@ -248,6 +257,7 @@ const DefaultEntityForm = () => {
   const [initialRecord] = useState(() => record?.data);
   const configured = entity?.form;
   const form = useForm<AdminFormValues>({
+    ...(configured?.resolver ? { resolver: configured.resolver } : {}),
     defaultValues: configured
       ? readAdminFormValues(configured, record?.data)
       : {},
@@ -256,7 +266,14 @@ const DefaultEntityForm = () => {
   const [deriving, setDeriving] = useState(0);
   const deriveValues = useCallback(
     async (field: AdminEntityField) => {
-      if (!field.deriveValues || !canMutate()) {
+      if (
+        !field.deriveValues ||
+        !canMutate() ||
+        isAdminFieldDisabled(field, {
+          record: record?.data,
+          values: form.getValues(),
+        })
+      ) {
         return;
       }
       const previous = form.getValues();
@@ -334,13 +351,16 @@ const DefaultEntityForm = () => {
               : { entity: entity.key, view: "list" }
           );
         }
-      } catch {
+      } catch (error) {
         if (canMutate()) {
-          form.setError("root", {
-            message: t("defaults.saveError", {
+          applyAdminFormErrors(
+            form,
+            configured,
+            error,
+            t("defaults.saveError", {
               defaultValue: "Could not save. Check the values and try again.",
-            }),
-          });
+            })
+          );
         }
       }
       if (isAlive()) {
@@ -349,6 +369,7 @@ const DefaultEntityForm = () => {
     },
     [
       canMutate,
+      configured,
       data,
       deriving,
       entity,
@@ -388,6 +409,11 @@ const DefaultEntityForm = () => {
               entityKey: entity.key,
               fields: configured?.fields ?? [],
               form,
+              isAvailable: (field) =>
+                !isAdminFieldDisabled(field, {
+                  record: record?.data,
+                  values: form.getValues(),
+                }),
               translate: t,
               values: watchedValues,
             }).map((command) => ({
@@ -412,6 +438,7 @@ const DefaultEntityForm = () => {
       entity,
       form,
       navigate,
+      record,
       save,
       t,
       watchedValues,
@@ -438,6 +465,10 @@ const DefaultEntityForm = () => {
               <AdminRegisteredField
                 key={field.key}
                 field={field}
+                disabled={isAdminFieldDisabled(field, {
+                  record: record?.data,
+                  values: form.getValues(),
+                })}
                 onValueChange={() => deriveValues(field)}
               />
             ))}

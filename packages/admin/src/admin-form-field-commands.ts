@@ -5,6 +5,7 @@ import type {
   AdminEntityField,
   AdminFormValues,
 } from "./admin-entity-fields.js";
+import { isAdminSensitiveField } from "./admin-entity-fields.js";
 import type { AdminCommand } from "./admin-entity-model.js";
 
 export const createAdminFormFieldCommands = ({
@@ -14,6 +15,7 @@ export const createAdminFormFieldCommands = ({
   values,
   translate,
   deriveValues,
+  isAvailable = () => true,
 }: {
   entityKey: string;
   fields: readonly AdminEntityField[];
@@ -21,18 +23,40 @@ export const createAdminFormFieldCommands = ({
   values: Partial<AdminFormValues>;
   translate: TFunction;
   deriveValues: (field: AdminEntityField) => Promise<void>;
+  isAvailable?: (field: AdminEntityField) => boolean;
 }): AdminCommand[] =>
-  fields.map((field) => {
+  fields.flatMap<AdminCommand>((field) => {
+    if (!isAvailable(field)) {
+      return [];
+    }
     const label = translate(field.labelKey ?? field.label, {
       defaultValue: field.label,
     });
     const setValue = async (value: string | boolean) => {
+      if (!isAvailable(field)) {
+        return;
+      }
       form.setValue(field.key, value, {
         shouldDirty: true,
         shouldValidate: true,
       });
       await deriveValues(field);
     };
+    if (
+      isAdminSensitiveField(field) ||
+      field.component ||
+      field.type === "date"
+    ) {
+      return {
+        execute: () => {
+          if (isAvailable(field)) {
+            form.setFocus(field.key);
+          }
+        },
+        id: `${entityKey}.field.${field.key}`,
+        label,
+      };
+    }
     if (field.type === "checkbox") {
       return {
         execute: () => setValue(form.getValues(field.key) !== true),
@@ -41,7 +65,11 @@ export const createAdminFormFieldCommands = ({
       };
     }
     return {
-      execute: () => form.setFocus(field.key),
+      execute: () => {
+        if (isAvailable(field)) {
+          form.setFocus(field.key);
+        }
+      },
       id: `${entityKey}.field.${field.key}`,
       input: {
         allowEmpty: !field.required,
@@ -49,6 +77,9 @@ export const createAdminFormFieldCommands = ({
         label,
         ...(field.max === undefined ? {} : { max: field.max }),
         ...(field.min === undefined ? {} : { min: field.min }),
+        ...(field.type === "number"
+          ? { min: field.min ?? -Number.MAX_VALUE, step: field.step ?? "any" }
+          : {}),
         ...(field.maxLength === undefined
           ? {}
           : { maxLength: field.maxLength }),

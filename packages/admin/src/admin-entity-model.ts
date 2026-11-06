@@ -37,6 +37,7 @@ export interface AdminCommand {
     type?: "text" | "number" | "textarea";
     min?: number;
     max?: number;
+    step?: number | "any";
     maxLength?: number;
     options?: readonly { value: string; label: string }[];
     multiple?: boolean;

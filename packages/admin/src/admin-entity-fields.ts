@@ -1,12 +1,41 @@
-import type { ReactNode } from "react";
+import type { ComponentType, ReactNode } from "react";
+import type { Resolver } from "react-hook-form";
 
 /** Flat form values are parsed into domain mutation values by parseValues. */
 export type AdminFormValues = Record<string, string | number | boolean>;
+export interface AdminFieldScope {
+  values: Readonly<AdminFormValues>;
+  record: unknown;
+}
+export interface AdminFieldComponentProps {
+  field: AdminEntityField;
+  disabled: boolean;
+  onValueChange?: () => void | Promise<void>;
+}
 export interface AdminEntityField {
   key: string;
   label: string;
   labelKey?: string;
-  type?: "text" | "textarea" | "number" | "checkbox" | "select";
+  type?:
+    | "text"
+    | "textarea"
+    | "number"
+    | "checkbox"
+    | "select"
+    | "email"
+    | "url"
+    | "password"
+    | "date";
+  /** Component binds the registered key through the existing RHF FormProvider. */
+  component?: ComponentType<AdminFieldComponentProps>;
+  disabled?: boolean | ((scope: AdminFieldScope) => boolean);
+  /** Exclude from detail fallback, record projection and palette value editors. */
+  sensitive?: boolean;
+  autoComplete?: string;
+  step?: number | "any";
+  minLength?: number;
+  minDate?: string;
+  maxDate?: string;
   required?: boolean;
   min?: number;
   max?: number;
@@ -21,10 +50,17 @@ export interface AdminEntityField {
 }
 export interface AdminEntityForm {
   fields: readonly AdminEntityField[];
+  /** Schema-library-neutral RHF validation; transformed values reach parseValues. */
+  resolver?: Resolver<AdminFormValues>;
+  /** Map host validation/transport errors to registered keys; no raw errors are exposed. */
+  errors?: (error: unknown) => Readonly<Record<string, string>>;
   defaultValues?: AdminFormValues | (() => AdminFormValues);
   /** Project a complete adapter payload into the registered editable fields. */
   readValues?: (data: unknown) => AdminFormValues;
 }
+export const isAdminSensitiveField = (field: AdminEntityField) =>
+  field.sensitive === true || field.type === "password";
+
 /** Native flat records need no projection; nested/domain records can supply readValues. */
 export const readAdminFormValues = (
   form: AdminEntityForm,
@@ -39,7 +75,10 @@ export const readAdminFormValues = (
   return Object.fromEntries(
     form.fields.map((field) => {
       const value =
-        projected && typeof projected === "object" && field.key in projected
+        !isAdminSensitiveField(field) &&
+        projected &&
+        typeof projected === "object" &&
+        field.key in projected
           ? Reflect.get(projected, field.key)
           : undefined;
       const fallback =
@@ -55,6 +94,13 @@ export const readAdminFormValues = (
     })
   );
 };
+export const isAdminFieldDisabled = (
+  field: AdminEntityField,
+  scope: AdminFieldScope
+) =>
+  typeof field.disabled === "function"
+    ? field.disabled(scope)
+    : field.disabled === true;
 export interface AdminEntityColumn {
   key: string;
   label: string;

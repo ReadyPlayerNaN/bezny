@@ -15,6 +15,7 @@ import { useTranslation } from "react-i18next";
 import { AdminCommandMultiChoice } from "./admin-command-multi-choice.js";
 import { AdminCommandSorting } from "./admin-command-sorting.js";
 import type { AdminCommand } from "./admin-entity-model.js";
+import { isAdminNumberValue } from "./admin-number-value.js";
 import { AdminReferenceFilterInput } from "./admin-reference-filter-input.js";
 
 const CommandTextField = ({
@@ -41,15 +42,19 @@ const CommandTextField = ({
       type={input.type ?? "text"}
       min={input.min}
       max={input.max}
+      step={input.step}
       maxLength={input.maxLength}
       rules={
         input.type === "number"
           ? {
-              required: t("numberRequired"),
+              required: input.allowEmpty ? false : t("numberRequired"),
               validate: (value: string) =>
-                (Number.isSafeInteger(Number(value)) &&
-                  Number(value) >= (input.min ?? 1) &&
-                  Number(value) <= (input.max ?? Number.MAX_SAFE_INTEGER)) ||
+                (input.allowEmpty && value === "") ||
+                isAdminNumberValue(value, {
+                  max: input.max ?? Number.MAX_SAFE_INTEGER,
+                  min: input.min ?? 1,
+                  step: input.step ?? 1,
+                }) ||
                 t("numberInvalid"),
             }
           : {}

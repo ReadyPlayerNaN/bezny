@@ -1,5 +1,6 @@
 import {
   CheckboxField,
+  DateField,
   TextField,
   TextareaField,
   FieldLabel,
@@ -15,6 +16,7 @@ import { Controller } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import type { AdminEntityField } from "./admin-entity-fields.js";
+import { isAdminNumberValue } from "./admin-number-value.js";
 
 export const AdminRegisteredField = ({
   field,
@@ -35,6 +37,25 @@ export const AdminRegisteredField = ({
       : false,
   };
   const props = { disabled, help: field.help, label, name: field.key, rules };
+  const Component = field.component;
+  if (Component) {
+    return (
+      <Component
+        field={field}
+        disabled={disabled}
+        {...(onValueChange ? { onValueChange } : {})}
+      />
+    );
+  }
+  if (field.type === "date") {
+    return (
+      <DateField
+        {...props}
+        {...(field.minDate ? { min: field.minDate } : {})}
+        {...(field.maxDate ? { max: field.maxDate } : {})}
+      />
+    );
+  }
   if (field.type === "checkbox") {
     return <CheckboxField {...props} />;
   }
@@ -121,12 +142,35 @@ export const AdminRegisteredField = ({
   return (
     <TextField
       {...props}
-      type={field.type === "number" ? "number" : "text"}
+      type={field.type ?? "text"}
+      autoComplete={field.autoComplete}
+      minLength={field.minLength}
+      step={field.step}
       min={field.min}
       max={field.max}
       maxLength={field.maxLength}
       rules={{
         ...rules,
+        ...(field.minLength
+          ? { minLength: { message: t("error"), value: field.minLength } }
+          : {}),
+        ...(field.type === "email"
+          ? {
+              validate: (value: unknown) =>
+                (!field.required && value === "") ||
+                (typeof value === "string" &&
+                  /^[^\s@]+@[^\s@]+\.[^\s@]+$/u.test(value)) ||
+                t("error"),
+            }
+          : {}),
+        ...(field.type === "url"
+          ? {
+              validate: (value: unknown) =>
+                (!field.required && value === "") ||
+                (typeof value === "string" && URL.canParse(value)) ||
+                t("error"),
+            }
+          : {}),
         ...(field.maxLength
           ? { maxLength: { message: t("error"), value: field.maxLength } }
           : {}),
@@ -134,9 +178,7 @@ export const AdminRegisteredField = ({
           ? {
               validate: (value: unknown) =>
                 (!field.required && value === "") ||
-                (Number.isFinite(Number(value)) &&
-                  Number(value) >= (field.min ?? -Infinity) &&
-                  Number(value) <= (field.max ?? Infinity)) ||
+                isAdminNumberValue(value, field) ||
                 t("error"),
             }
           : {}),
