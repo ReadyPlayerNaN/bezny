@@ -3,6 +3,7 @@ import type { i18n, InitOptions } from "i18next";
 
 import { adminChromeTranslations } from "./admin-chrome-translations.js";
 import { adminReferenceFilterTranslations } from "./admin-reference-filter-translations.js";
+import { adminSortingTranslations } from "./admin-sorting-translations.js";
 
 export const adminLanguages = ["en", "cs", "ar"] as const;
 export const adminTranslations = {
@@ -36,6 +37,7 @@ export const adminTranslations = {
       refresh: "تحديث السجلات",
       retry: "إعادة محاولة التحميل",
       select: "تحديد {{record}}",
+      sorting: adminSortingTranslations.ar,
       unavailable: "الكيان غير متاح.",
       view: "عرض {{record}}",
     },
@@ -70,6 +72,7 @@ export const adminTranslations = {
       refresh: "Obnovit záznamy",
       retry: "Zkusit načíst znovu",
       select: "Vybrat {{record}}",
+      sorting: adminSortingTranslations.cs,
       unavailable: "Entita není dostupná.",
       view: "Zobrazit {{record}}",
     },
@@ -104,6 +107,7 @@ export const adminTranslations = {
       refresh: "Refresh records",
       retry: "Retry loading records",
       select: "Select {{record}}",
+      sorting: adminSortingTranslations.en,
       unavailable: "Entity unavailable.",
       view: "View {{record}}",
     },

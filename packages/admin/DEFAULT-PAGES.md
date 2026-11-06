@@ -50,7 +50,7 @@ Pass the definition to `createAdminApplication({ entities: [articles], Root, Not
 
 ## What the registration generates
 
-- **List:** selectable `EntityRowList`, record links and View/Edit/Delete menus, a compact fixed bottom-center `AdminSelectionBar` with a localized selected count, an icon-triggered bulk action menu and clear-selection icon, registered filters, clear filters, pagination/page-size commands, and loading/error/empty states. Selection actions reuse the row/palette catalog; Radix manages menu focus/dismissal, and cancelled confirmation returns focus to the menu trigger. `AdminSelectionBar` is also exported from `@bezny/admin/list` for custom lists. Its `--bezny-control-admin-selection-*` tokens style the bar; override `bottom-offset` on the bar to accommodate a custom fixed footer.
+- **List:** selectable `EntityRowList`, record links and View/Edit/Delete menus, a compact fixed bottom-center `AdminSelectionBar` with a localized selected count, an icon-triggered bulk action menu and clear-selection icon, registered filters, clear filters, registered ordered sorting, pagination/page-size commands, and loading/error/empty states. Selection actions reuse the row/palette catalog; Radix manages menu focus/dismissal, and cancelled confirmation returns focus to the menu trigger. `AdminSelectionBar` is also exported from `@bezny/admin/list` for custom lists. Its `--bezny-control-admin-selection-*` tokens style the bar; override `bottom-offset` on the bar to accommodate a custom fixed footer.
 - **Detail:** record title, registered columns or field values, collection navigation, edit and record actions.
 - **Create/update:** RHF forms using shared Bezny fields, registered defaults and validation, accessible labels/errors and invalid-field focus, Save/Cancel commands shared with the command palette, submission state, recoverable mutation errors. Save opens the saved record's detail page.
 - **Delete:** record and bulk commands when `adapter.remove` exists, a shared Radix-backed confirmation dialog, cancellation without clearing selection, retryable failures, successful invalidation/refresh and collection navigation.
@@ -73,9 +73,31 @@ Registered column values appear beneath each row title in a compact, wrapping de
 
 The default list uses the existing `ValueFilter` search/value chips and `ModeFilter` option chips above the rows. Registered asynchronous references use the base `MultiItemPicker`, including single-reference replacement. Applications do not need their own filter bars or list screens.
 
-A single pagination navigation appears **below** the rows (including empty/loading states): locale-formatted page/total summary, Previous/Next icon buttons, a bounded numbered-page window of TanStack hyperlinks with first/last anchors, and one inline records-per-page selector. There are no page-number/page-size forms. Page, page size, search, and filters live in URL search parameters, synchronized into Jotai by admitted loaders. Copying a numbered-page link preserves the full listing query; Back/Forward and reload restore it. Ordinary controls and parameterized palette inputs navigate through the same validated contract. See [shareable listing URLs](ENTITIES.md#shareable-listing-urls).
+A single pagination navigation appears **below** the rows (including empty/loading states): locale-formatted page/total summary, Previous/Next icon buttons, a bounded numbered-page window of TanStack hyperlinks with first/last anchors, and one inline records-per-page selector. There are no page-number/page-size forms. Page, page size, search, filters, and registered sorting live in URL search parameters, synchronized into Jotai by admitted loaders. Copying a numbered-page link preserves the full listing query; Back/Forward and reload restore it. Ordinary controls and parameterized palette inputs navigate through the same validated contract. See [shareable listing URLs](ENTITIES.md#shareable-listing-urls).
 
-`AdminCollectionFilters` and `AdminCollectionPagination` are exported from `@bezny/admin/list` for custom list compositions. Their responsive flex layout uses `--bezny-control-admin-collection-*` aliases for structural surface gap, padding, border, text, and typography. Override shared structural aliases on their declaration scope; component control aliases can be overridden on the filters/pagination boundary after loading `@bezny/admin/style.css`.
+`AdminCollectionFilters`, `AdminCollectionSorting`, and `AdminCollectionPagination` are exported from `@bezny/admin/list` for custom list compositions. Their responsive flex layout uses `--bezny-control-admin-collection-*` aliases for structural surface gap, padding, border, text, and typography. Override shared structural aliases on their declaration scope; component control aliases can be overridden on the filters/pagination boundary after loading `@bezny/admin/style.css`.
+
+### Registered ordered sorting
+
+Register `sorting` on an entity to expose an ordered editor in the default collection and the connected palette:
+
+```ts
+sorting: {
+  fields: [
+    { key: "title", label: "Title" },
+    { key: "publishedAt", label: "Publication date" },
+  ],
+  default: [{ key: "publishedAt", direction: "desc" }],
+};
+```
+
+Both entrypoints use the same RHF draft and validated command. Add/remove fields, choose ascending/descending directions, move priority up/down, clear sorting, or restore registered defaults. Apply commits the draft; Cancel/Escape leaves the query unchanged. Field `labelKey` is optional and uses ordinary i18next translation keys. English, Czech, and Arabic controls use `beznyAdmin.sorting`.
+
+Adapters receive `query.sort` as an ordered array of `{ key, direction: "asc" | "desc" }`. Keys are opaque; adapters translate them into their backend's supported ordering contract. The framework does not sort records client-side. `AdminSortField`, `AdminSortRule`, and `AdminSortingDefinition` are exported from `@bezny/admin/adapters`. The optional query property leaves entities without a sorting registration unchanged.
+
+The native URL `sort` value is a JSON array handled by the router. An absent value uses registered defaults; `[]` explicitly chooses no sorting, even when defaults exist. Invalid URL rules fall back to defaults; invalid commands are rejected. Default-equivalent rules omit `sort` from the URL. Up to 50 unique registered fields/rules are supported, with nonempty keys of at most 200 UTF-16 code units and nonempty labels of at most 1,000. Unknown/duplicate keys or directions other than `asc`/`desc` are invalid. Defaults are validated at registration.
+
+Sort changes reset page/selection while retaining filters and page size. Paging, filtering, locale changes, refresh and mutation invalidation retain the current sorting. Copied URLs, reload and Back/Forward restore the same adapter query. Ordered rules participate in cache/request identity and stale-command fencing; no separate list owner is needed. Custom lists can compose `AdminCollectionSorting` or consume `useAdminListControls().sortCommand` from `@bezny/admin/list`.
 
 ### Registered multiple-choice filters
 

@@ -388,6 +388,7 @@ export const useAdminEntityCommands = () => {
         : []),
       ...pageCommands,
       ...listControls.filterCommands,
+      ...(listControls.sortCommand ? [listControls.sortCommand] : []),
       ...listControls.paginationCommands,
       ...(listControls.clear ? [listControls.clear] : []),
       ...(refresh ? [refresh] : []),

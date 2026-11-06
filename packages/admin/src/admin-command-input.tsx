@@ -13,6 +13,7 @@ import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
 import { AdminCommandMultiChoice } from "./admin-command-multi-choice.js";
+import { AdminCommandSorting } from "./admin-command-sorting.js";
 import type { AdminCommand } from "./admin-entity-model.js";
 import { AdminReferenceFilterInput } from "./admin-reference-filter-input.js";
 
@@ -102,10 +103,12 @@ export const AdminCommandInput = ({
   command,
   apply,
   cancel,
+  cancelLabel,
 }: {
   command: AdminCommand;
-  apply: (value: string) => void;
+  apply: (value: string) => void | Promise<void>;
   cancel: () => void;
+  cancelLabel?: string;
 }) => {
   const { input } = command;
   const { t } = useTranslation("beznyAdmin", { keyPrefix: "chrome" });
@@ -142,6 +145,9 @@ export const AdminCommandInput = ({
       />
     );
   }
+  if (input.sorting) {
+    editor = <AdminCommandSorting input={input} />;
+  }
   return (
     <FormProvider {...form}>
       <form
@@ -151,7 +157,7 @@ export const AdminCommandInput = ({
         {editor}
         <Submit>{t("applyCommand")}</Submit>
         <Button variant="secondary" onClick={cancel}>
-          {t("backCommands")}
+          {cancelLabel ?? t("backCommands")}
         </Button>
       </form>
     </FormProvider>

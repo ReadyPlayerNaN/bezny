@@ -20,6 +20,7 @@ import { adminListQueriesAtom } from "./admin-list-state.js";
 import { createAdminRealtimeSubscription } from "./admin-realtime-subscription.js";
 import type { AdminRealtimeSnapshot } from "./admin-realtime-subscription.js";
 import { serializeAdminRecords } from "./admin-record-serialization.js";
+import { adminSortKey, readAdminSort } from "./admin-sort-model.js";
 
 export type { AdminRealtimeSnapshot } from "./admin-realtime-subscription.js";
 
@@ -93,6 +94,7 @@ export const adminDataRequestKey = (request: AdminDataRequest) =>
     request.query.page,
     request.query.pageSize,
     request.query.locale,
+    adminSortKey(request.query.sort),
     Object.entries(request.query.filters).toSorted(([first], [second]) =>
       first.localeCompare(second)
     ),
@@ -123,6 +125,22 @@ const validListQuery = (query: AdminListQuery, policy: AdminCachePolicy) =>
   Number.isSafeInteger(query.pageSize) &&
   query.pageSize >= 1 &&
   query.pageSize <= policy.maxPageSize;
+const listQueryError = (
+  query: AdminListQuery,
+  policy: AdminCachePolicy,
+  entity: AdminEntity
+) => {
+  if (!validListQuery(query, policy)) {
+    return "Invalid pagination query.";
+  }
+  if (
+    query.sort !== undefined &&
+    readAdminSort(query.sort, entity.sorting) === null
+  ) {
+    return "Invalid sorting query.";
+  }
+  return null;
+};
 const loadAdapterData = async (
   entity: AdminEntity,
   request: AdminDataRequest,
@@ -385,12 +403,13 @@ export const createAdminDataSession = (
       return;
     }
     const { query } = request;
-    if (!validListQuery(query, policy)) {
+    const queryError = listQueryError(query, policy, entity);
+    if (queryError) {
       realtime.stop();
       publish({
         ...emptySnapshot(),
         entity: entity.key,
-        error: "Invalid pagination query.",
+        error: queryError,
         key,
         query,
         status: "error",

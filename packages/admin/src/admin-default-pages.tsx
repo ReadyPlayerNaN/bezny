@@ -9,6 +9,7 @@ import {
   AdminCollectionFilters,
   AdminCollectionPagination,
 } from "./admin-collection-controls.js";
+import { AdminCollectionSorting } from "./admin-collection-sorting.js";
 import { AdminDetailActions } from "./admin-detail-actions.js";
 import {
   useAdminEntityCommands,
@@ -98,6 +99,7 @@ export const AdminDefaultListPage = () => {
       actions={commands.create && <CommandButton command={commands.create} />}
     >
       <AdminCollectionFilters />
+      <AdminCollectionSorting />
       {kind === "loading" && (
         <output aria-label={t("loading")}>{t("loading")}</output>
       )}

@@ -7,6 +7,8 @@ import type { AdminDataSession } from "./admin-data-session.js";
 import { resolveAdminEntityDefinition } from "./admin-default-registration.js";
 import type { AdminReferenceFilterInput } from "./admin-reference-filter-model.js";
 import { validateAdminReferenceRegistration } from "./admin-reference-filter-model.js";
+import { validateAdminSorting } from "./admin-sort-model.js";
+import type { AdminSortingDefinition } from "./admin-sort-model.js";
 
 export type AdminEntityView = "list" | "create" | "detail" | "update";
 export interface AdminRecordReference {
@@ -39,6 +41,7 @@ export interface AdminCommand {
     options?: readonly { value: string; label: string }[];
     multiple?: boolean;
     reference?: AdminReferenceFilterInput;
+    sorting?: AdminSortingDefinition;
     execute: (value: string) => void | Promise<void>;
   };
   location?: AdminEntityLocation;
@@ -76,6 +79,7 @@ export interface AdminEntityRegistry {
 }
 const entityKeyPattern = /^[a-z][a-z0-9-]*$/u;
 const validateListDefinition = (entity: AdminEntityDefinition) => {
+  validateAdminSorting(entity.sorting);
   if (
     entity.pageSize !== undefined &&
     (!Number.isSafeInteger(entity.pageSize) || entity.pageSize < 1)

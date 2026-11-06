@@ -262,6 +262,7 @@ export const createAdminRuntime = ({
                     filters: search.filters,
                     page: search.page,
                     pageSize: search.pageSize,
+                    sort: search.sort,
                   },
                 }),
               }

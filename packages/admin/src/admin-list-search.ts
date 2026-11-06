@@ -3,6 +3,7 @@ import type {
   AdminListQuery,
 } from "./admin-data-adapter.js";
 import { normalizeAdminFilterValue } from "./admin-filter-values.js";
+import { adminSortKey, readAdminSort } from "./admin-sort-model.js";
 
 const searchRecord = (value: unknown): Record<string, unknown> =>
   value !== null && typeof value === "object" && !Array.isArray(value)
@@ -26,7 +27,7 @@ const positiveInteger = (
 /** Bound untrusted URL input to the registered collection's query contract. */
 export const readAdminListSearch = (
   search: unknown,
-  entity: Pick<AdminEntityDefinition, "pageSize" | "filters">,
+  entity: Pick<AdminEntityDefinition, "pageSize" | "filters" | "sorting">,
   maxPageSize: number,
   locale: string
 ): AdminListQuery => {
@@ -42,6 +43,14 @@ export const readAdminListSearch = (
     })
   );
   return {
+    ...(entity.sorting
+      ? {
+          sort:
+            readAdminSort(parameters.sort, entity.sorting) ??
+            readAdminSort(entity.sorting.default ?? [], entity.sorting) ??
+            [],
+        }
+      : {}),
     filters,
     locale,
     page: positiveInteger(parameters.page, 1),
@@ -56,13 +65,16 @@ export const readAdminListSearch = (
 /** Preserve host search keys, omit collection defaults, and never serialize UI locale. */
 export const adminListSearch = (
   query: AdminListQuery,
-  entity: Pick<AdminEntityDefinition, "pageSize">,
+  entity: Pick<AdminEntityDefinition, "pageSize" | "sorting">,
   current: unknown = {}
 ): Record<string, unknown> => {
   const parameters = { ...searchRecord(current) };
   delete parameters.page;
   delete parameters.pageSize;
   delete parameters.filters;
+  if (entity.sorting) {
+    delete parameters.sort;
+  }
   return {
     ...parameters,
     ...(query.page === 1 ? {} : { page: query.page }),
@@ -70,5 +82,10 @@ export const adminListSearch = (
       ? {}
       : { pageSize: query.pageSize }),
     ...(Object.keys(query.filters).length ? { filters: query.filters } : {}),
+    ...(entity.sorting &&
+    adminSortKey(query.sort ?? entity.sorting.default) !==
+      adminSortKey(entity.sorting.default)
+      ? { sort: query.sort ?? entity.sorting.default ?? [] }
+      : {}),
   };
 };

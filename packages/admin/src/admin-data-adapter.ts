@@ -9,6 +9,16 @@ import type {
   AdminRecordReference,
 } from "./admin-entity-model.js";
 import type { AdminReferenceFilterSource } from "./admin-reference-filter-model.js";
+import type {
+  AdminSortingDefinition,
+  AdminSortRule,
+} from "./admin-sort-model.js";
+
+export type {
+  AdminSortingDefinition,
+  AdminSortRule,
+  AdminSortField,
+} from "./admin-sort-model.js";
 
 export type {
   AdminFilterReference,
@@ -30,6 +40,8 @@ export {
 
 export type AdminFilterValues = Readonly<Record<string, string>>;
 export interface AdminListQuery {
+  /** Ordered rules for entities with registered sorting; empty explicitly means no sorting. */
+  sort?: readonly AdminSortRule[];
   page: number;
   pageSize: number;
   filters: AdminFilterValues;
@@ -139,6 +151,7 @@ export interface AdminEntityDefinition {
   isMutationAvailable?: (scope: AdminMutationScope) => boolean;
   actions?: readonly AdminEntityAction[];
   filters?: readonly AdminFilterDefinition[];
+  sorting?: AdminSortingDefinition;
   pageSize?: number;
 }
 export type AdminEntityConfiguration<TRecord, TValues> = Omit<

@@ -1,6 +1,6 @@
 # Registered collection sorting
 
-Status: authorized implementation; consumer-neutral patch release required.
+Status: implementation and source validation complete; independent review and matching patch publication remain pending.
 
 ## Contract
 
@@ -14,6 +14,24 @@ Register sortable fields and optional ordered defaults on an entity. Ordinary de
 - The standard editor supports adding/removing fields, changing directions, moving priority up/down, clearing and restoring defaults. Base Select/Button/Popover composition owns keyboard, focus, dismissal and portals. Palette and collection use the same command and editor; draft changes do not apply until submission, and cancelling does not mutate queries.
 - Behavioral tests exercise real registrations/default pages, router/store/session, adapter-visible queries, shared commands, invalid input, cancellation, cache separation and stale work. Browser checks cover keyboard/focus, history/reload, light/dark and narrow LTR/RTL layouts. Preserve existing filter behavior and published APIs.
 - Validate source with the declared check/build/typecheck/test scripts, serialized browser suites and packaging checks. Obtain independent read-only review of the complete diff and evidence before merging and releasing matching base/admin patch versions. Verify registry metadata/integrity/bytes and downstream frozen installation and regression gates before adoption.
+
+## Source validation
+
+The implementation exposes typed registration/query rules, native URL defaults/explicit-empty semantics, one ordered RHF editor shared by the collection Popover and palette, and the existing session/command lifecycle. Usage is documented in [default pages](../packages/admin/DEFAULT-PAGES.md#registered-ordered-sorting).
+
+Parent-executed checks (2026-11-06), with evidence under ignored `.tmp/registered-sorting/`:
+
+- `pnpm check`, `pnpm build`, `pnpm typecheck`: passed (`check-final-2.log`, `build-final.log`, `types-final-2.log`).
+- `pnpm test --concurrency=1`: base 311 unit + 58 build/token tests; admin 347; demo 83 in each configuration, all passed (`tests-final-2.log`).
+- Serialized base/admin/demo native browser suites: 88 passed (`browser-final.log`), including sorting keyboard Tab/Enter/End, focus return, reorder/removal, draft cancellation, URL reload/history and narrow light/dark × LTR/RTL checks.
+- Packaging suites: 17 passed (`packaging-final.log`). `git diff --check` passed.
+- Eight sorting screenshots are in `.tmp/sorting-browser/`. Collection content and palette editors scroll within constrained viewports; native controls and Apply remain reachable.
+
+Behavioral tests execute both programmatic and host file-route applications, default pages, actual router/store/session and adapter callbacks. They cover defaults, invalid URLs/commands/registrations, explicit empty rules, cache direction/priority identity, copied URLs, Back/Forward, page/selection reset, preserved filters/page sizes, pagination, locale, refresh/mutation, paused/disposed commands and late response cancellation. Tests do not substitute source matching for runtime behavior.
+
+Preserved initial failures: the browser test initially sent Enter before Radix's deferred End-key focus settled; it now awaits the actual focused option before Enter, without sleeps/timeouts. Stricter assertions initially compared router null-prototype search objects against ordinary objects; assertions now compare copied search entries while retaining exact key/value checks. No production behavior was changed to accommodate those test issues. Existing build directive, router CLI circular-dependency and npm user-config warnings remain; no dependency or CI changes were introduced.
+
+This is not publication or downstream-adoption evidence. Those gates remain separate.
 
 ## Non-goals
 

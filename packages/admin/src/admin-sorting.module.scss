@@ -1,0 +1,50 @@
+@use "admin-collection-appearance" as appearance;
+
+.editor {
+  @include appearance.declarations;
+  display: grid;
+  gap: appearance.token("gap");
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  legend {
+    padding: 0;
+    margin-block-end: appearance.token("gap");
+  }
+  ol {
+    display: grid;
+    gap: appearance.token("padding");
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: appearance.token("compact");
+    min-inline-size: 0;
+  }
+  p {
+    margin: 0;
+  }
+  button {
+    max-inline-size: 100%;
+  }
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: appearance.token("compact");
+}
+.popover {
+  @include appearance.declarations;
+  max-inline-size: min(100vi, var(--radix-popover-content-available-width));
+  max-block-size: var(--radix-popover-content-available-height);
+  overflow: auto;
+  box-sizing: border-box;
+  form {
+    display: grid;
+    gap: appearance.token("gap");
+  }
+}

@@ -14,15 +14,19 @@ import { normalizeAdminFilterValue } from "./admin-filter-values.js";
 import { adminListSearch } from "./admin-list-search.js";
 import { adminListQueriesAtom } from "./admin-list-state.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
+import { createAdminSortCommand } from "./admin-sort-command.js";
+import { adminSortKey } from "./admin-sort-model.js";
 
 export { adminListSearch, readAdminListSearch } from "./admin-list-search.js";
 
 export { AdminSelectionBar } from "./admin-selection-bar.js";
+export { AdminCollectionSorting } from "./admin-collection-sorting.js";
 
 const queryIdentity = (query: AdminListQuery) =>
   JSON.stringify([
     query.page,
     query.pageSize,
+    adminSortKey(query.sort),
     Object.entries(query.filters).toSorted(([first], [second]) =>
       first.localeCompare(second)
     ),
@@ -149,6 +153,12 @@ export const useAdminListControls = () => {
         };
       })
     : [];
+  const sortCommand = createAdminSortCommand(
+    active ? entity : null,
+    query,
+    t,
+    update
+  );
   const paginationCommands: AdminCommand[] = [];
   if (active) {
     if (query.page > 1) {
@@ -210,7 +220,15 @@ export const useAdminListControls = () => {
           label: t("clearFilters"),
         }
       : null;
-  return { clear, filterCommands, pageCount, paginationCommands, query, total };
+  return {
+    clear,
+    filterCommands,
+    pageCount,
+    paginationCommands,
+    query,
+    sortCommand,
+    total,
+  };
 };
 
 export {
