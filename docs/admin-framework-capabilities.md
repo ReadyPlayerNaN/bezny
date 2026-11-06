@@ -1,10 +1,10 @@
 # Registered application capability batch
 
-Status: implemented and locally validated as one capability batch. Publication remains paused.
+Status: implemented, validated and independently approved for patch release `0.3.3`.
 
 ## Purpose and boundaries
 
-Extend the reusable entity framework without coupling it to any consuming project, backend SDK, permission model, schema library or resource vocabulary. This batch is validated as a whole before publication; functional slices are committed separately. Publication is paused. Existing registrations must remain compatible.
+Extend the reusable entity framework without coupling it to any consuming project, backend SDK, permission model, schema library or resource vocabulary. This batch is validated as a whole before publication; functional slices are committed separately. Publication was paused until independent approval. Existing registrations must remain compatible.
 
 ## Accepted functional slices
 
@@ -34,7 +34,21 @@ The implementing agent ran these gates successfully from the worktree:
 
 Evidence is retained under `.tmp/framework/final/` (check/build/types/unit/browser/ packaging logs and visual-review sheets), with native captures in `.tmp/capabilities-browser/`. Earlier slice and failed-attempt logs remain under `.tmp/framework/`. Integration inspection identified a filter-trigger remount/focus risk; keeping trigger identity stable and resetting only its draft fixed it, and native acceptance verifies focus restoration. The final forms use existing control-token spacing rather than browser-default fieldset borders. A submission experiment that disabled RHF registration during validation omitted values; the failing tests were preserved and that change was reverted in favor of the existing native fieldset submission guard. Browser harness corrections wait on actual command completion and explicitly target the inline retry control rather than the separate header retry.
 
-This is local implementation/verification evidence, not independent review, consumer-integration acceptance, registry verification or release approval. No package publication, dependency adoption, CI jobs, new dependencies, tag changes or application-specific transport/policy code are included. Independent review and a release/tag decision remain outstanding before publication.
+The initial evidence above covered local implementation, not independent review or publication. No dependency adoption, CI jobs, new dependencies or application-specific transport/policy code are included.
+
+## Independent review and patch approval
+
+The independent reviewer inspected the complete batch at `76dba10` and reported two findings: a disabled select was not disabled in its RHF Controller, and managed-action input field keys were not validated at registration. Both were accepted and fixed:
+
+- `8325c96`: disabled selects now omit values on submit and preserve selection when re-enabled. A real-route regression test failed before the fix and passed afterward.
+- `e10a8ad`: entity and action forms share field registration validation, including duplicate/reserved/nested keys and select choices. Registration regression tests failed before the fix and passed afterward.
+- `788ec5c`: additional tests cover closing/reopening while transport ignores abort and duplicate submissions waiting on an asynchronous resolver.
+
+The same reviewer rechecked the focused fixes at `788ec5cb216511b55f7ae82e13f7dbc2776f6585`, found no remaining issues, and explicitly approved a patch release with notes (review runs `dfeb7162-b781-446d-8b4e-09a4a37d5dfb` and `2bf818fa-8417-45c8-9812-1f7d3a0b225e`). This was independent source/test/log inspection, not independent command reruns.
+
+Post-fix gates passed: check/build/types, **382 Admin tests**, Base 311+58, Demo 83 per configuration, **92 native browsers**, and **17 packaging checks**. Build/typecheck logs include cache hits. Evidence and red/green logs are under `.tmp/framework/reviewer-fixes/`. The first browser run failed only in unchanged Demo Chromium-profile cleanup (`ENOTEMPTY`); the focused retry and full suite rerun passed. `git diff 76dba10..788ec5c -- packages/demo/test/editorial-backend.browser.mjs` is empty; no cleanup, timeout or CI changes were made.
+
+The operator authorized a patch release after reviewer approval. `v0.3.3` is the next unused patch tag; the existing `v0.3.2` tag remains unchanged. Registry publication/integrity verification is a separate delivery gate, and consumer integration remains outside this batch.
 
 ## Non-goals
 
