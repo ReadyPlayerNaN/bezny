@@ -1,4 +1,5 @@
 import type { AdminFilterDefinition } from "./admin-data-adapter.js";
+import { isAdminTypedFilterValue } from "./admin-typed-filter.js";
 
 export const adminFilterSelectionLimit = 50;
 const valueLengthLimit = 200;
@@ -72,7 +73,8 @@ export const normalizeAdminFilterValue = (
   }
   const normalized = filter.reference ? value : value.trim();
   if (
-    normalized.length > valueLengthLimit ||
+    normalized.length > (filter.maxLength ?? valueLengthLimit) ||
+    !isAdminTypedFilterValue(filter, normalized) ||
     (normalized &&
       filter.options &&
       !filter.options.some((option) => option.value === normalized))

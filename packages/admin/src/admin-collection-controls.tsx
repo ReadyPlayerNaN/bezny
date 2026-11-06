@@ -25,6 +25,7 @@ import { useAdminListControls } from "./admin-list-controls.js";
 import { adminListSearch } from "./admin-list-search.js";
 import { AdminReferenceFilterInput } from "./admin-reference-filter-input.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
+import { AdminScalarFilter } from "./admin-scalar-filter.js";
 
 import styles from "./admin-collection.module.scss";
 
@@ -43,7 +44,7 @@ const useCollectionExecution = () => {
   return { execute, failed };
 };
 export const AdminCollectionFilters = () => {
-  const { filterCommands, clear } = useAdminListControls();
+  const { filterCommands, clear, query } = useAdminListControls();
   const { t } = useTranslation("beznyAdmin");
   const { execute, failed } = useCollectionExecution();
   return (
@@ -53,6 +54,14 @@ export const AdminCollectionFilters = () => {
           const { input } = command;
           if (!input) {
             return null;
+          }
+          if (input.type === "date" || input.type === "number") {
+            return (
+              <AdminScalarFilter
+                key={`${command.id}:${JSON.stringify(query)}`}
+                command={command}
+              />
+            );
           }
           if (input.reference) {
             return (

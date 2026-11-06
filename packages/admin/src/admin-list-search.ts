@@ -4,6 +4,7 @@ import type {
 } from "./admin-data-adapter.js";
 import { normalizeAdminFilterValue } from "./admin-filter-values.js";
 import { adminSortKey, readAdminSort } from "./admin-sort-model.js";
+import { invalidAdminFilterRanges } from "./admin-typed-filter.js";
 
 const searchRecord = (value: unknown): Record<string, unknown> =>
   value !== null && typeof value === "object" && !Array.isArray(value)
@@ -33,7 +34,7 @@ export const readAdminListSearch = (
 ): AdminListQuery => {
   const parameters = searchRecord(search);
   const suppliedFilters = searchRecord(parameters.filters);
-  const filters = Object.fromEntries(
+  const normalizedFilters = Object.fromEntries(
     (entity.filters ?? []).flatMap((filter) => {
       const value = Object.hasOwn(suppliedFilters, filter.key)
         ? suppliedFilters[filter.key]
@@ -41,6 +42,14 @@ export const readAdminListSearch = (
       const normalized = normalizeAdminFilterValue(filter, value);
       return normalized ? [[filter.key, normalized]] : [];
     })
+  );
+  const invalidKeys = new Set(
+    invalidAdminFilterRanges(entity.filters ?? [], normalizedFilters).flatMap(
+      (filter) => [filter.key, filter.before]
+    )
+  );
+  const filters = Object.fromEntries(
+    Object.entries(normalizedFilters).filter(([key]) => !invalidKeys.has(key))
   );
   return {
     ...(entity.sorting

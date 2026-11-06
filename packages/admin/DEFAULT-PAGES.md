@@ -79,6 +79,20 @@ A single pagination navigation appears **below** the rows (including empty/loadi
 
 `AdminCollectionFilters`, `AdminCollectionSorting`, and `AdminCollectionPagination` are exported from `@bezny/admin/list` for custom list compositions. Their responsive flex layout uses `--bezny-control-admin-collection-*` aliases for structural surface gap, padding, border, text, and typography. Override shared structural aliases on their declaration scope; component control aliases can be overridden on the filters/pagination boundary after loading `@bezny/admin/style.css`.
 
+### Typed scalar and paired range filters
+
+Use `type: "number"` with `min`, `max`, `step`, or `type: "date"` with ISO `minDate`/`maxDate`. The default collection and palette share an RHF editor using Base number/calendar fields; Apply commits, Cancel/Escape discards. Empty values clear the filter. Values remain strings in the native nested `filters` URL and adapter query. Optional `maxLength` is bounded to 1–200 characters.
+
+A lower-bound filter can name its upper bound with `before: "until"` (both must have the same number/date type). Reversed ranges are rejected by commands. Incoming URLs drop invalid scalar values and both ends of reversed ranges before loading. Clear an endpoint before moving a range entirely beyond its previous bounds. Invalid registrations fail early; typed scalar filters cannot also be choices, references or multiple selections. Existing choice-based date presets need no special type. No currency, timezone or backend parsing policy is inferred.
+
+```ts
+filters: [
+  { key: "from", label: "From", type: "date", before: "until" },
+  { key: "until", label: "Until", type: "date" },
+  { key: "weight", label: "Minimum weight", type: "number", min: 0, step: 0.5 },
+];
+```
+
 ### Registered ordered sorting
 
 Register `sorting` on an entity to expose an ordered editor in the default collection and the connected palette:

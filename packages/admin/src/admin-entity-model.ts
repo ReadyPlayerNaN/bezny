@@ -9,6 +9,7 @@ import type { AdminReferenceFilterInput } from "./admin-reference-filter-model.j
 import { validateAdminReferenceRegistration } from "./admin-reference-filter-model.js";
 import { validateAdminSorting } from "./admin-sort-model.js";
 import type { AdminSortingDefinition } from "./admin-sort-model.js";
+import { validateAdminTypedFilters } from "./admin-typed-filter.js";
 
 export type AdminEntityView = "list" | "create" | "detail" | "update";
 export interface AdminRecordReference {
@@ -34,7 +35,10 @@ export interface AdminCommand {
     label: string;
     value: string;
     allowEmpty?: boolean;
-    type?: "text" | "number" | "textarea";
+    type?: "text" | "number" | "textarea" | "date";
+    minDate?: string;
+    maxDate?: string;
+    validate?: (value: string) => boolean;
     min?: number;
     max?: number;
     step?: number | "any";
@@ -81,6 +85,7 @@ export interface AdminEntityRegistry {
 const entityKeyPattern = /^[a-z][a-z0-9-]*$/u;
 const validateListDefinition = (entity: AdminEntityDefinition) => {
   validateAdminSorting(entity.sorting);
+  validateAdminTypedFilters(entity.filters ?? []);
   if (
     entity.pageSize !== undefined &&
     (!Number.isSafeInteger(entity.pageSize) || entity.pageSize < 1)

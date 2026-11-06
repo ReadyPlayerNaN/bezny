@@ -1,5 +1,6 @@
 import {
   Button,
+  DateField,
   Select,
   SelectTrigger,
   SelectValue,
@@ -24,6 +25,19 @@ const CommandTextField = ({
   input: NonNullable<AdminCommand["input"]>;
 }) => {
   const { t } = useTranslation("beznyAdmin", { keyPrefix: "chrome" });
+  const validate = (value: string) =>
+    !input.validate || input.validate(value) || t("valueInvalid");
+  if (input.type === "date") {
+    return (
+      <DateField
+        name="value"
+        label={input.label}
+        rules={{ validate }}
+        {...(input.minDate ? { min: input.minDate } : {})}
+        {...(input.maxDate ? { max: input.maxDate } : {})}
+      />
+    );
+  }
   if (input.type === "textarea") {
     return (
       <TextareaField<{ value: string }>
@@ -49,15 +63,16 @@ const CommandTextField = ({
           ? {
               required: input.allowEmpty ? false : t("numberRequired"),
               validate: (value: string) =>
-                (input.allowEmpty && value === "") ||
-                isAdminNumberValue(value, {
-                  max: input.max ?? Number.MAX_SAFE_INTEGER,
-                  min: input.min ?? 1,
-                  step: input.step ?? 1,
-                }) ||
-                t("numberInvalid"),
+                (((input.allowEmpty && value === "") ||
+                  isAdminNumberValue(value, {
+                    max: input.max ?? Number.MAX_SAFE_INTEGER,
+                    min: input.min ?? 1,
+                    step: input.step ?? 1,
+                  })) &&
+                  validate(value)) ||
+                t(input.step === undefined ? "numberInvalid" : "valueInvalid"),
             }
-          : {}
+          : { validate }
       }
     />
   );

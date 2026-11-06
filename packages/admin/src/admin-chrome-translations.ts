@@ -24,6 +24,7 @@ export const adminChromeTranslations = {
     palette: "لوحة الأوامر",
     saveAccount: "حفظ الحساب",
     searchCommands: "البحث في الأوامر",
+    valueInvalid: "أدخل قيمة صالحة ضمن الحدود المسموحة.",
   },
   cs: {
     accountDescription: "Upravte svůj profil.",
@@ -50,6 +51,7 @@ export const adminChromeTranslations = {
     palette: "Paleta příkazů",
     saveAccount: "Uložit účet",
     searchCommands: "Hledat příkazy",
+    valueInvalid: "Zadejte platnou hodnotu v povolených mezích.",
   },
   en: {
     accountDescription: "Update your profile.",
@@ -76,5 +78,6 @@ export const adminChromeTranslations = {
     palette: "Command palette",
     saveAccount: "Save account",
     searchCommands: "Search commands",
+    valueInvalid: "Enter a valid value within the allowed bounds.",
   },
 };

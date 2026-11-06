@@ -135,6 +135,15 @@ export interface AdminEntityAdapter {
   dispose?: () => void;
 }
 export interface AdminFilterDefinition {
+  type?: "text" | "number" | "date";
+  min?: number;
+  max?: number;
+  step?: number | "any";
+  minDate?: string;
+  maxDate?: string;
+  maxLength?: number;
+  /** This lower bound must not exceed the named number/date upper bound. */
+  before?: string;
   /** Async options and selected-label resolution; mutually exclusive with static options. */
   reference?: AdminReferenceFilterSource;
   /** Multi-choice values use the public bounded JSON-selection codec. */

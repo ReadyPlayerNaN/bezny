@@ -16,6 +16,7 @@ import { adminListQueriesAtom } from "./admin-list-state.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
 import { createAdminSortCommand } from "./admin-sort-command.js";
 import { adminSortKey } from "./admin-sort-model.js";
+import { invalidAdminFilterRanges } from "./admin-typed-filter.js";
 
 export { adminListSearch, readAdminListSearch } from "./admin-list-search.js";
 
@@ -128,6 +129,9 @@ export const useAdminListControls = () => {
           if (normalized) {
             filters[filter.key] = normalized;
           }
+          if (invalidAdminFilterRanges(entity.filters ?? [], filters).length) {
+            throw new Error("Invalid filter range.");
+          }
           return update({ ...query, filters, page: 1 });
         };
         return {
@@ -137,7 +141,29 @@ export const useAdminListControls = () => {
             allowEmpty: true,
             execute,
             label: filter.label,
-            ...(filter.multiple ? { multiple: true } : { maxLength: 200 }),
+            ...(filter.multiple
+              ? { multiple: true }
+              : { maxLength: filter.maxLength ?? 200 }),
+            ...(filter.type ? { type: filter.type } : {}),
+            ...(filter.type === "number"
+              ? {
+                  max: filter.max ?? Number.MAX_VALUE,
+                  min: filter.min ?? -Number.MAX_VALUE,
+                  step: filter.step ?? "any",
+                }
+              : {}),
+            ...(filter.minDate ? { minDate: filter.minDate } : {}),
+            ...(filter.maxDate ? { maxDate: filter.maxDate } : {}),
+            validate: (candidate) => {
+              const normalized = normalizeAdminFilterValue(filter, candidate);
+              return (
+                normalized !== null &&
+                invalidAdminFilterRanges(entity.filters ?? [], {
+                  ...query.filters,
+                  [filter.key]: normalized,
+                }).length === 0
+              );
+            },
             ...(filter.options ? { options: filter.options } : {}),
             ...(filter.reference
               ? {
