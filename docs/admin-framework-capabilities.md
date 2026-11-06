@@ -1,6 +1,6 @@
 # Registered application capability batch
 
-Status: implemented, validated and independently approved for patch release `0.3.3`.
+Status: independently approved, published and registry-verified as patch release `0.3.3`.
 
 ## Purpose and boundaries
 
@@ -49,6 +49,21 @@ The same reviewer rechecked the focused fixes at `788ec5cb216511b55f7ae82e13f7db
 Post-fix gates passed: check/build/types, **382 Admin tests**, Base 311+58, Demo 83 per configuration, **92 native browsers**, and **17 packaging checks**. Build/typecheck logs include cache hits. Evidence and red/green logs are under `.tmp/framework/reviewer-fixes/`. The first browser run failed only in unchanged Demo Chromium-profile cleanup (`ENOTEMPTY`); the focused retry and full suite rerun passed. `git diff 76dba10..788ec5c -- packages/demo/test/editorial-backend.browser.mjs` is empty; no cleanup, timeout or CI changes were made.
 
 The operator authorized a patch release after reviewer approval. `v0.3.3` is the next unused patch tag; the existing `v0.3.2` tag remains unchanged. Registry publication/integrity verification is a separate delivery gate, and consumer integration remains outside this batch.
+
+## Release delivery
+
+Annotated tag `v0.3.3` points to `db97f0dac6e3af1348cc75a84db9522194aebc22`; the existing `v0.3.2` tag was not changed. The reviewed branch was fast-forwarded to `master` and pushed before publication.
+
+[Release workflow](https://github.com/ReadyPlayerNaN/bezny/actions/runs/42236626767) verified and packed successfully, but its npm publication job failed. Workflow log download returned HTTP 403, so the publication failure's underlying cause was not established. The same locally verified tagged-source tarballs were subsequently published interactively, Base first and Admin second, with operator npm authorization. No CI configuration was changed.
+
+Registry checks completed on 2026-11-06 at 15:04 UTC:
+
+| Package | Version / latest | Tarball bytes | SHA-512 integrity |
+| --- | --- | --- | --- |
+| `@bezny/base` | `0.3.3` | 291678 | `sha512-9y1aumxhs+XZB183XRkWkdCGUIzqkXbJGXQ+QzsS09pWdA78YzsLorWH+GB+nPRXJjuKM9I9zGFS84rp4aHROg==` |
+| `@bezny/admin` | `0.3.3` | 1278895 | `sha512-xZ6pogijsoNg2gJqQPuwWxR3f2Z5wlVJC8zhsTIcEG9BOpMb1WqSYhY+4mr6+LSRMuPaDGe3eXgJbCsjqKVh4A==` |
+
+For both packages, registry `gitHead` matches the tag, repository metadata is correct, SHA-1/SHA-512 match downloaded tarballs, and registry bytes equal the local tagged-source tarballs exactly. Admin's dependency on `@bezny/base` is exactly `0.3.3`. Frozen installation and build succeeded before staging. Evidence is retained in `.tmp/framework/release-0.3.3/`, including CI results, package manifests, pack output, registry metadata, downloaded tarballs and `verified-{base,admin}.json`. An initial Admin metadata lookup returned 404 during publication propagation; the subsequent verification passed. Consumer adoption is not part of this release.
 
 ## Non-goals
 
