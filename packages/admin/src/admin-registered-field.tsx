@@ -76,6 +76,7 @@ export const AdminRegisteredField = ({
   if (field.type === "select") {
     return (
       <Controller
+        disabled={disabled}
         name={field.key}
         rules={rules}
         render={({ field: binding, fieldState }) => (

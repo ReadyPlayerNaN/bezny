@@ -236,6 +236,44 @@ describe("registered form extensions", () => {
     );
   });
 
+  it("omits a conditionally disabled select and restores its value when re-enabled", async () => {
+    create.mockRejectedValueOnce(new Error("retry"));
+    await setup({
+      defaultValues: { category: "news", locked: false },
+      fields: [
+        { key: "locked", label: "Locked", type: "checkbox" },
+        {
+          disabled: ({ values }) => values.locked === true,
+          key: "category",
+          label: "Category",
+          options: [{ label: "News", value: "news" }],
+          required: true,
+          type: "select",
+        },
+      ],
+    });
+    const user = userEvent.setup();
+    await user.click(await screen.findByRole("checkbox", { name: "Locked" }));
+    expect(
+      screen
+        .getByRole("combobox", { name: "Category" })
+        .hasAttribute("disabled")
+    ).toBeTruthy();
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() =>
+      expect(create).toHaveBeenCalledWith({ locked: true }, expect.anything())
+    );
+    await screen.findByRole("alert");
+    await user.click(screen.getByRole("checkbox", { name: "Locked" }));
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() =>
+      expect(create).toHaveBeenLastCalledWith(
+        { category: "news", locked: false },
+        expect.anything()
+      )
+    );
+  });
+
   it.each(["email", "url"] as const)(
     "validates native %s semantics without a schema dependency",
     async (type) => {
