@@ -296,6 +296,8 @@ Use a visible label through `id`/`htmlFor` or an accessible name. Native input p
 />
 ```
 
+Both controls expose optional `onOpenChange(open)` notifications of rendered suggestion visibility (including Escape, outside dismissal, query thresholds and disabled/read-only changes). Async owners can cancel search work when it becomes false; they must also clean up their requests on unmount. This notification does not control the popup or transfer Radix behavior to the host.
+
 Both controls accept non-null option values of a generic type; keys must be unique, stable strings. Selection and query are separate controlled values. `AutocompleteInput` requests an option or null through `onValueChange`; typing into a committed selection clears that selection. Selecting an option clears the query and displays its label. Clear and Backspace/Delete on the committed value request null and an empty query. A query is not an accepted free-text selection. External values/options are reflected without another data owner.
 
 `MultiItemPicker` requests a new value array, excludes already-selected keys from suggestions, and provides individual removals. `maxItems` disables additional search/selection while leaving removals available. Reaching a limit moves focus to the named fieldset instead of leaving focus on a newly disabled input. Removing a chip focuses the input, or the fieldset when the input is still disabled before the controlled update. The host owns optimistic updates, mutations and error restoration.

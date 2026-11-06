@@ -123,6 +123,33 @@ const Form = ({ save }: { save: (data: { company: Item | null }) => void }) => {
 describe(AutocompleteInput, () => {
   afterEach(cleanup);
 
+  it("reports actual popup visibility on dismissal, query limits and availability", async () => {
+    const user = userEvent.setup();
+    const onOpenChange = vi.fn<(open: boolean) => void>();
+    const props = {
+      ...optionProps,
+      "aria-label": "Category",
+      onOpenChange,
+      onQueryChange: vi.fn<(query: string) => void>(),
+      onValueChange: vi.fn<(value: Item | null) => void>(),
+      query: "a",
+      value: null,
+    };
+    const { rerender } = render(<AutocompleteInput {...props} />);
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    await user.click(screen.getByRole("combobox"));
+    expect(onOpenChange).toHaveBeenLastCalledWith(true);
+    await user.keyboard("{Escape}");
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    await user.keyboard("{ArrowDown}");
+    rerender(<AutocompleteInput {...props} query="" />);
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+    rerender(<AutocompleteInput {...props} />);
+    await user.keyboard("{ArrowDown}");
+    rerender(<AutocompleteInput {...props} disabled />);
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+  });
+
   it("keeps DOM focus on the input and exposes mounted suggestion IDs", async () => {
     const user = userEvent.setup();
     render(<Single />);

@@ -1,5 +1,5 @@
 import { useComposedRefs } from "@radix-ui/react-compose-refs";
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { KeyboardEvent, ReactNode } from "react";
 
 import { Button } from "../controls/button.js";
@@ -34,6 +34,8 @@ export type AutocompleteInputProps<T> = Omit<
   onValueChange: (value: T | null) => void;
   query: string;
   onQueryChange: (query: string) => void;
+  /** Reports rendered suggestion visibility, including dismissal and availability changes. */
+  onOpenChange?: (open: boolean) => void;
   options: readonly T[];
   getOptionKey: (option: T) => string;
   getOptionLabel: (option: T) => string;
@@ -64,6 +66,7 @@ export const AutocompleteInput = <T,>({
   onValueChange,
   query,
   onQueryChange,
+  onOpenChange,
   options,
   getOptionKey,
   getOptionLabel,
@@ -100,6 +103,10 @@ export const AutocompleteInput = <T,>({
   const [activeKey, setActiveKey] = useState<string | null>(null);
   const expanded =
     open && !unavailable && query.trim().length >= minimumQueryLength;
+  useEffect(() => {
+    // oxlint-disable-next-line react-doctor/no-pass-data-to-parent -- External request owners must observe derived visibility, including prop-driven availability/query changes without an input event.
+    onOpenChange?.(expanded);
+  }, [expanded, onOpenChange]);
   const enabledOptions = options.filter((option) => !getOptionDisabled(option));
   const activeOption =
     enabledOptions.find((option) => getOptionKey(option) === activeKey) ??
