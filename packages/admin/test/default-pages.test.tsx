@@ -723,6 +723,70 @@ describe("registration-driven default pages", () => {
     );
   });
 
+  it.each(["button", "palette"] as const)(
+    "returns Edit Cancel via %s to the edited record without saving the draft",
+    async (entrypoint) => {
+      const { app, adapter } = fixture("/articles/2/edit");
+      await mount(app);
+      const user = userEvent.setup();
+      const title = screen.getByRole("textbox", { name: /Title/u });
+      await user.clear(title);
+      await user.type(title, "Unsaved edit");
+      if (entrypoint === "palette") {
+        await user.click(
+          screen.getByRole("button", { name: "Command palette" })
+        );
+        await user.click(await screen.findByRole("option", { name: "Cancel" }));
+      } else {
+        await user.click(screen.getByRole("button", { name: "Cancel" }));
+      }
+      await waitFor(() =>
+        expect(app.router.state.location.pathname).toBe("/articles/2")
+      );
+      await expect(
+        screen.findByRole("heading", { name: "Second" })
+      ).resolves.toBeTruthy();
+      expect(adapter.create).not.toHaveBeenCalled();
+      expect(adapter.update).not.toHaveBeenCalled();
+      expect(app.store.get(adminPageCommandsAtom)).toBeNull();
+      await act(async () => {
+        await app.router.navigate({
+          params: { entity: "articles", recordId: "2" },
+          to: "/$entity/$recordId/edit",
+        });
+      });
+      await expect(screen.findByDisplayValue("Second")).resolves.toBeTruthy();
+    }
+  );
+
+  it.each(["button", "palette"] as const)(
+    "returns Create Cancel via %s to the collection without creating a record",
+    async (entrypoint) => {
+      const { app, adapter } = fixture("/articles/create");
+      await mount(app);
+      const user = userEvent.setup();
+      await user.type(
+        screen.getByRole("textbox", { name: /Title/u }),
+        "Unsaved creation"
+      );
+      if (entrypoint === "palette") {
+        await user.click(
+          screen.getByRole("button", { name: "Command palette" })
+        );
+        await user.click(await screen.findByRole("option", { name: "Cancel" }));
+      } else {
+        await user.click(screen.getByRole("button", { name: "Cancel" }));
+      }
+      await expect(
+        screen.findByRole("heading", { name: "Articles" })
+      ).resolves.toBeTruthy();
+      expect(app.router.state.location.pathname).toBe("/articles");
+      expect(adapter.create).not.toHaveBeenCalled();
+      expect(adapter.update).not.toHaveBeenCalled();
+      expect(app.store.get(adminPageCommandsAtom)).toBeNull();
+    }
+  );
+
   it("retains form values on mutation failure and exposes real palette Cancel", async () => {
     const create = vi
       .fn<NonNullable<AdminDataAdapter<Article, Values>["create"]>>()

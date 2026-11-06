@@ -678,6 +678,13 @@ describe("stock mutation availability and edit origins", () => {
     await userEvent
       .setup()
       .click(screen.getByRole("button", { name: "Cancel" }));
+    await screen.findByRole("heading", { name: "Writer" });
+    expect(app.router.state.location.pathname).toBe("/records/writer");
+    // Leave the cancellation destination before the old Save settles: it must
+    // not navigate back to that detail after the operator has moved on.
+    await act(async () => {
+      await app.router.navigate({ to: "/records" });
+    });
     await screen.findByRole("heading", { name: "Records" });
     await act(() => {
       gate.resolve({

@@ -498,7 +498,8 @@ describe("registration-driven editorial admin", () => {
     await user.clear(title);
     await user.type(title, "Unsaved title");
     await user.click(main.getByRole("button", { name: "Cancel" }));
-    await main.findByRole("heading", { level: 1, name: "Articles" });
+    await main.findByRole("heading", { level: 1, name: "Welcome to Bezny" });
+    expect(application.router.state.location.pathname).toBe("/articles/1");
     const records = await readRecords(application, "articles");
     expect(records[0]?.title).toBe("Welcome to Bezny");
   });

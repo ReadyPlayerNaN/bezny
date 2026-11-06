@@ -401,7 +401,12 @@ const DefaultEntityForm = () => {
               label: t("defaults.save", { defaultValue: "Save" }),
             },
             {
-              execute: () => navigate({ entity: entity.key, view: "list" }),
+              execute: () =>
+                navigate(
+                  view === "update" && recordId
+                    ? { entity: entity.key, recordId, view: "detail" }
+                    : { entity: entity.key, view: "list" }
+                ),
               id: `${entity.key}.cancel`,
               label: t("defaults.cancel", { defaultValue: "Cancel" }),
             },
@@ -440,8 +445,10 @@ const DefaultEntityForm = () => {
       form,
       navigate,
       record,
+      recordId,
       save,
       t,
+      view,
       watchedValues,
     ]
   );
