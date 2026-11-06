@@ -150,6 +150,22 @@ describe("managed registered actions", () => {
     expect(screen.queryByRole("dialog")).toBeNull();
   });
 
+  it.each(["reason", "constructor", "nested.value"])(
+    "rejects duplicate or unsafe managed-input key %s at registration",
+    async (key) => {
+      await expect(
+        setup({
+          input: {
+            fields: [
+              { key: "reason", label: "Reason" },
+              { key, label: "Other" },
+            ],
+          },
+        })
+      ).rejects.toThrow(/Invalid or duplicate field/u);
+    }
+  );
+
   it("runs immediate actions without an extra confirmation", async () => {
     await setup();
     await open();

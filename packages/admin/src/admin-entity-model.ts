@@ -13,6 +13,7 @@ import type {
   AdminEntityField,
   AdminFormValues,
 } from "./admin-entity-fields.js";
+import { validateAdminFormFields } from "./admin-entity-fields.js";
 import type { AdminReferenceFilterInput } from "./admin-reference-filter-model.js";
 import { validateAdminReferenceRegistration } from "./admin-reference-filter-model.js";
 import { validateAdminSorting } from "./admin-sort-model.js";
@@ -180,6 +181,10 @@ export const createAdminEntityRegistry = (
         throw new Error(`Duplicate action ${action.id} for ${entity.key}`);
       }
       actionIds.add(action.id);
+      validateAdminFormFields(
+        action.operation?.input?.fields ?? [],
+        `${entity.key}/${action.id}`
+      );
       if (Boolean(action.execute) === Boolean(action.operation)) {
         throw new Error(
           `Action requires exactly one execution contract: ${entity.key}/${action.id}`

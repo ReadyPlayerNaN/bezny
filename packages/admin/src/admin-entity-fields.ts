@@ -101,6 +101,31 @@ export const isAdminFieldDisabled = (
   typeof field.disabled === "function"
     ? field.disabled(scope)
     : field.disabled === true;
+export const validateAdminFormFields = (
+  definitions: readonly AdminEntityField[],
+  owner: string
+) => {
+  const fields = new Set<string>();
+  for (const field of definitions) {
+    if (
+      !/^[a-zA-Z][a-zA-Z0-9_-]*$/u.test(field.key) ||
+      fields.has(field.key) ||
+      ["constructor", "prototype", "__proto__"].includes(field.key)
+    ) {
+      throw new Error(`Invalid or duplicate field ${field.key} for ${owner}`);
+    }
+    if (
+      field.type === "select" &&
+      (!field.options?.length ||
+        new Set(field.options.map((option) => option.value)).size !==
+          field.options.length ||
+        field.options.some((option) => !option.value))
+    ) {
+      throw new Error(`Invalid choices for ${owner}/${field.key}`);
+    }
+    fields.add(field.key);
+  }
+};
 export interface AdminEntityColumn {
   key: string;
   label: string;

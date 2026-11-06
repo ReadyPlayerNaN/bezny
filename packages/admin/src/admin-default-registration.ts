@@ -5,6 +5,7 @@ import {
   AdminDefaultFormPage,
 } from "./admin-default-pages.js";
 import { adminDeletionRequestAtom } from "./admin-delete-dialog.js";
+import { validateAdminFormFields } from "./admin-entity-fields.js";
 import type {
   AdminActionScope,
   AdminEntityAction,
@@ -23,30 +24,6 @@ const requestDeletion = (
       ) ?? returnFocus;
   }
   scope.store.set(adminDeletionRequestAtom, { returnFocus, scope, target });
-};
-const validateEntityFields = (definition: AdminEntityDefinition) => {
-  const fields = new Set<string>();
-  for (const field of definition.form?.fields ?? []) {
-    if (
-      !/^[a-zA-Z][a-zA-Z0-9_-]*$/u.test(field.key) ||
-      fields.has(field.key) ||
-      ["constructor", "prototype", "__proto__"].includes(field.key)
-    ) {
-      throw new Error(
-        `Invalid or duplicate field ${field.key} for ${definition.key}`
-      );
-    }
-    if (
-      field.type === "select" &&
-      (!field.options?.length ||
-        new Set(field.options.map((option) => option.value)).size !==
-          field.options.length ||
-        field.options.some((option) => !option.value))
-    ) {
-      throw new Error(`Invalid choices for ${definition.key}/${field.key}`);
-    }
-    fields.add(field.key);
-  }
 };
 const deletionLabel = (
   scope: AdminActionScope,
@@ -71,7 +48,7 @@ const deletionLabel = (
 export const resolveAdminEntityDefinition = (
   definition: AdminEntityDefinition
 ) => {
-  validateEntityFields(definition);
+  validateAdminFormFields(definition.form?.fields ?? [], definition.key);
   if (
     !definition.adapter.get &&
     (definition.screens?.detail ||
