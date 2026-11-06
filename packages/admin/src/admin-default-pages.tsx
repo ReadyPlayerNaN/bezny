@@ -48,6 +48,7 @@ import {
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
 import { AdminSelectionBar } from "./admin-selection-bar.js";
 
+import chromeStyles from "./admin-chrome.module.scss";
 import collectionStyles from "./admin-collection.module.scss";
 
 export {
@@ -456,8 +457,13 @@ const DefaultEntityForm = () => {
       })}
     >
       <FormProvider {...form}>
-        <form noValidate onSubmit={form.handleSubmit(save)}>
+        <form
+          className={chromeStyles.form}
+          noValidate
+          onSubmit={form.handleSubmit(save)}
+        >
           <fieldset
+            className={chromeStyles.fields}
             disabled={form.formState.isSubmitting || deriving > 0}
             aria-label={entity.singularLabel}
           >
@@ -477,10 +483,12 @@ const DefaultEntityForm = () => {
             <p role="alert">{form.formState.errors.root.message}</p>
           )}
           {deriving > 0 && <AdminDefaultLoadingPage />}
-          <Submit disabled={form.formState.isSubmitting || deriving > 0}>
-            {t("defaults.save", { defaultValue: "Save" })}
-          </Submit>
-          {pageCommands[1] && <CommandButton command={pageCommands[1]} />}
+          <div className={chromeStyles.actions}>
+            <Submit disabled={form.formState.isSubmitting || deriving > 0}>
+              {t("defaults.save", { defaultValue: "Save" })}
+            </Submit>
+            {pageCommands[1] && <CommandButton command={pageCommands[1]} />}
+          </div>
         </form>
       </FormProvider>
     </AdminPage>

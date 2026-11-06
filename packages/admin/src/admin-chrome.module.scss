@@ -38,6 +38,14 @@
   display: grid;
   gap: appearance.token("padding-large");
 }
+.fields {
+  border: 0;
+  margin: 0;
+  padding: 0;
+  min-inline-size: 0;
+  display: grid;
+  gap: appearance.token("gap");
+}
 .palette[role="dialog"] {
   inset-block-start: 20dvh;
   transform: translateX(-50%);

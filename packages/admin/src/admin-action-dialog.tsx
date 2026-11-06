@@ -27,6 +27,8 @@ import type { AdminActionResult } from "./admin-entity-model.js";
 import { applyAdminFormErrors } from "./admin-form-errors.js";
 import { AdminRegisteredField } from "./admin-registered-field.js";
 
+import styles from "./admin-chrome.module.scss";
+
 const remainingIds = (result: AdminActionResult, ids: readonly string[]) => {
   const failed = result?.failedIds ?? [];
   const targets = new Set(ids);
@@ -120,7 +122,7 @@ const ActionForm = ({
         }
         setResult({
           failedIds: failed,
-          message: response?.message ?? t("error"),
+          message: response?.message ?? t("chrome.commandError"),
         });
       } else if (response?.message) {
         setResult({ message: response.message });
@@ -132,7 +134,12 @@ const ActionForm = ({
         !owner.signal.aborted &&
         scope.store.get(adminActionRequestAtom) === request
       ) {
-        applyAdminFormErrors(form, operation.input, error, t("error"));
+        applyAdminFormErrors(
+          form,
+          operation.input,
+          error,
+          t("chrome.commandError")
+        );
       }
     }
     if (controller.current === owner && !owner.signal.aborted) {
@@ -159,23 +166,26 @@ const ActionForm = ({
   return (
     <FormProvider {...form}>
       <form
+        className={styles.form}
         noValidate
         onSubmit={(event) => {
           void form.handleSubmit(submit)(event);
         }}
       >
-        <fieldset disabled={busy || complete}>
-          {operation?.input?.fields.map((field) => (
-            <AdminRegisteredField
-              key={field.key}
-              field={field}
-              disabled={isAdminFieldDisabled(field, {
+        {operation?.input?.fields.map((field) => (
+          <AdminRegisteredField
+            key={field.key}
+            field={field}
+            disabled={
+              busy ||
+              complete ||
+              isAdminFieldDisabled(field, {
                 record: undefined,
                 values: form.getValues(),
-              })}
-            />
-          ))}
-        </fieldset>
+              })
+            }
+          />
+        ))}
         {form.formState.errors.root && (
           <p role="alert">{form.formState.errors.root.message}</p>
         )}
@@ -184,23 +194,25 @@ const ActionForm = ({
             {result.message}
           </p>
         )}
-        {!complete && (
-          <Submit
-            disabled={busy}
-            variant={action.destructive ? "critical" : "primary"}
-          >
-            {action.label({
-              ...scope,
-              ids: targets,
-              records: scope.records.filter((record) =>
-                targetSet.has(record.id)
-              ),
-            })}
-          </Submit>
-        )}
-        <Button variant="secondary" onClick={close}>
-          {t("chrome.cancel")}
-        </Button>
+        <div className={styles.actions}>
+          {!complete && (
+            <Submit
+              disabled={busy}
+              variant={action.destructive ? "critical" : "primary"}
+            >
+              {action.label({
+                ...scope,
+                ids: targets,
+                records: scope.records.filter((record) =>
+                  targetSet.has(record.id)
+                ),
+              })}
+            </Submit>
+          )}
+          <Button variant="secondary" onClick={close}>
+            {t("chrome.cancel")}
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );

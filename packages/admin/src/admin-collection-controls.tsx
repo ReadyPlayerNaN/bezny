@@ -44,7 +44,7 @@ const useCollectionExecution = () => {
   return { execute, failed };
 };
 export const AdminCollectionFilters = () => {
-  const { filterCommands, clear, query } = useAdminListControls();
+  const { filterCommands, clear } = useAdminListControls();
   const { t } = useTranslation("beznyAdmin");
   const { execute, failed } = useCollectionExecution();
   return (
@@ -56,12 +56,7 @@ export const AdminCollectionFilters = () => {
             return null;
           }
           if (input.type === "date" || input.type === "number") {
-            return (
-              <AdminScalarFilter
-                key={`${command.id}:${JSON.stringify(query)}`}
-                command={command}
-              />
-            );
+            return <AdminScalarFilter key={command.id} command={command} />;
           }
           if (input.reference) {
             return (

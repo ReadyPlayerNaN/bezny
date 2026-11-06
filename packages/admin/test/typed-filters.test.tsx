@@ -115,6 +115,10 @@ describe("typed registered filters", () => {
 
   it("rejects invalid shared commands without mutating the active URL", async () => {
     const app = await setup({ from: "2026-01-01", until: "2026-01-31" });
+    expect([input("from").maxDate, input("until").minDate]).toStrictEqual([
+      "2026-01-31",
+      "2026-01-01",
+    ]);
     expect(() => input("from").execute("2026-02-01")).toThrow(/range/u);
     expect(() => input("minimum").execute("0.3")).toThrow(/value/u);
     expect(() => input("maximum").execute("Infinity")).toThrow(/value/u);
@@ -143,6 +147,27 @@ describe("typed registered filters", () => {
     });
     expect(app.store.get(app.session.snapshotAtom).query.filters).toStrictEqual(
       {}
+    );
+  });
+
+  it("validates paired calendar drafts before committing the native URL", async () => {
+    const app = await setup({ until: "2026-01-31" });
+    const user = userEvent.setup();
+    await user.click(screen.getByRole("button", { name: "From: All" }));
+    const field = await screen.findByRole("textbox", { name: "From" });
+    await user.type(field, "02/01/2026");
+    await user.click(screen.getByRole("button", { name: "Apply command" }));
+    expect(app.store.get(app.session.snapshotAtom).query.filters).toStrictEqual(
+      { until: "2026-01-31" }
+    );
+    expect(field.getAttribute("aria-invalid")).toBe("true");
+    await user.clear(field);
+    await user.type(field, "01/15/2026");
+    await user.click(screen.getByRole("button", { name: "Apply command" }));
+    await waitFor(() =>
+      expect(app.store.get(app.session.snapshotAtom).query.filters.from).toBe(
+        "2026-01-15"
+      )
     );
   });
 

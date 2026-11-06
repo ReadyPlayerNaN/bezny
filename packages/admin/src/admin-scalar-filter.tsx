@@ -24,6 +24,7 @@ export const AdminScalarFilter = ({ command }: { command: AdminCommand }) => {
       </PopoverTrigger>
       <PopoverContent aria-label={command.label}>
         <AdminCommandInput
+          key={command.input?.value}
           command={command}
           cancel={() => setOpen(false)}
           cancelLabel={t("chrome.cancel")}

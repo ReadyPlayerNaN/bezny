@@ -102,7 +102,7 @@ Each source has independent loading/empty/error/retry state. New queries, palett
 
 ### Managed non-CRUD actions
 
-An entity action declares exactly one of legacy host-owned `execute(scope)` or framework-owned `operation`. Default screens mount `AdminActionDialog`; custom screens can mount that export from `@bezny/admin/routing` once per scope.
+An entity action declares exactly one of legacy host-owned `execute(scope)` or framework-owned `operation`. Default screens mount `AdminActionDialog`; custom screens can mount that export from `@bezny/admin/application` once per scope.
 
 ```ts
 operation: {

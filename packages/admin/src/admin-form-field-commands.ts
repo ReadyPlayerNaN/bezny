@@ -78,7 +78,11 @@ export const createAdminFormFieldCommands = ({
         ...(field.max === undefined ? {} : { max: field.max }),
         ...(field.min === undefined ? {} : { min: field.min }),
         ...(field.type === "number"
-          ? { min: field.min ?? -Number.MAX_VALUE, step: field.step ?? "any" }
+          ? {
+              max: field.max ?? Number.MAX_VALUE,
+              min: field.min ?? -Number.MAX_VALUE,
+              step: field.step ?? "any",
+            }
           : {}),
         ...(field.maxLength === undefined
           ? {}

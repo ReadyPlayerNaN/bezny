@@ -41,6 +41,36 @@ export const invalidAdminFilterRanges = (
     }
     return filter.type === "number" ? Number(start) > Number(end) : start > end;
   });
+export const adminFilterDateBounds = (
+  filter: AdminFilterDefinition,
+  definitions: readonly AdminFilterDefinition[],
+  values: AdminFilterValues
+) => {
+  const minimum = [
+    filter.minDate,
+    ...definitions.flatMap((other) =>
+      other.before === filter.key ? [values[other.key]] : []
+    ),
+  ]
+    .filter(
+      (value): value is string => typeof value === "string" && value !== ""
+    )
+    .toSorted()
+    .at(-1);
+  const maximum = [
+    filter.maxDate,
+    filter.before ? values[filter.before] : undefined,
+  ]
+    .filter(
+      (value): value is string => typeof value === "string" && value !== ""
+    )
+    .toSorted()
+    .at(0);
+  return {
+    ...(minimum ? { minDate: minimum } : {}),
+    ...(maximum ? { maxDate: maximum } : {}),
+  };
+};
 const validateNumericBounds = (filter: AdminFilterDefinition) => {
   if (
     [filter.min, filter.max].some(

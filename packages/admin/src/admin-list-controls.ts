@@ -16,7 +16,10 @@ import { adminListQueriesAtom } from "./admin-list-state.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
 import { createAdminSortCommand } from "./admin-sort-command.js";
 import { adminSortKey } from "./admin-sort-model.js";
-import { invalidAdminFilterRanges } from "./admin-typed-filter.js";
+import {
+  invalidAdminFilterRanges,
+  adminFilterDateBounds,
+} from "./admin-typed-filter.js";
 
 export { adminListSearch, readAdminListSearch } from "./admin-list-search.js";
 
@@ -152,8 +155,13 @@ export const useAdminListControls = () => {
                   step: filter.step ?? "any",
                 }
               : {}),
-            ...(filter.minDate ? { minDate: filter.minDate } : {}),
-            ...(filter.maxDate ? { maxDate: filter.maxDate } : {}),
+            ...(filter.type === "date"
+              ? adminFilterDateBounds(
+                  filter,
+                  entity.filters ?? [],
+                  query.filters
+                )
+              : {}),
             validate: (candidate) => {
               const normalized = normalizeAdminFilterValue(filter, candidate);
               return (
