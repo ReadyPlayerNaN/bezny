@@ -635,17 +635,17 @@ describe("registration-driven default pages", () => {
     ).toBeTruthy();
   });
 
-  it("retries failed detail loading from the header without a separate page button", async () => {
+  it("retries failed detail loading from the page as well as the header", async () => {
     const { app, adapter } = fixture("/articles/1");
     vi.spyOn(adapter, "get").mockRejectedValueOnce(new Error("offline"));
     await mount(app);
     await expect(screen.findByRole("alert")).resolves.toBeTruthy();
-    const retry = screen.getByRole("button", { name: "Retry loading records" });
+    const retry = within(screen.getByRole("main")).getByRole("button", {
+      name: "Retry loading records",
+    });
     expect(
-      within(screen.getByRole("main")).queryByRole("button", {
-        name: "Retry loading records",
-      })
-    ).toBeNull();
+      screen.getAllByRole("button", { name: "Retry loading records" })
+    ).toHaveLength(2);
     await userEvent.setup().click(retry);
     await expect(
       screen.findByRole("heading", { name: "First" })
@@ -664,9 +664,11 @@ describe("registration-driven default pages", () => {
     await mount(app);
     await expect(screen.findByRole("alert")).resolves.toBeTruthy();
     expect(screen.getByRole("button", { name: "Search: All" })).toBeTruthy();
-    await userEvent
-      .setup()
-      .click(screen.getByRole("button", { name: "Retry loading records" }));
+    await userEvent.setup().click(
+      within(screen.getByRole("main")).getByRole("button", {
+        name: "Retry loading records",
+      })
+    );
     await expect(screen.findByText("No records found.")).resolves.toBeTruthy();
   });
 
@@ -674,9 +676,12 @@ describe("registration-driven default pages", () => {
     const gate = Promise.withResolvers<AdminListResult<Article>>();
     const { app } = fixture("/articles", { list: () => gate.promise });
     render(<AdminApplicationProvider application={app} />);
-    await expect(
-      screen.findByLabelText("Loading records…")
-    ).resolves.toBeTruthy();
+    const loading = await screen.findByLabelText("Loading records…");
+    expect(loading.querySelectorAll('[data-variant="heading"]')).toHaveLength(
+      3
+    );
+    expect(loading.querySelector('[aria-hidden="true"][inert]')).toBeTruthy();
+    expect(within(loading).queryByRole("link")).toBeNull();
     await act(async () => {
       gate.resolve({ items: [], total: 0 });
       await gate.promise;

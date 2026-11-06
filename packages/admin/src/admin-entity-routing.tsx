@@ -33,19 +33,19 @@ import { adminEntityPaths } from "./admin-entity-paths.js";
 import { AdminFormNavigationLifetime } from "./admin-form-lifetime.js";
 import { AdminProvider } from "./admin-provider.js";
 import type { AdminProviderProps } from "./admin-provider.js";
+import { AdminDefaultCollectionLoadingPage } from "./admin-resource-states.js";
 import { AdminRouteBindingsContext } from "./admin-route-bindings.js";
 import type { AdminToastOptions } from "./admin-toasts.js";
 
 const EntityScreenContent = () => {
   const { entity, view, kind } = useAdminEntityContext();
-  const { t } = useTranslation("beznyAdmin");
   const { NotFound } = useAdminEntityPresentation();
   const Screen = entity && view ? entity.screens[view] : undefined;
   if (Screen && view === "list" && kind !== "unavailable") {
     return <Screen />;
   }
   if (kind === "loading") {
-    return <output aria-label={t("loading")}>{t("loading")}</output>;
+    return <AdminDefaultLoadingPage />;
   }
   if (kind === "error") {
     return <AdminDefaultErrorPage />;
@@ -127,7 +127,10 @@ export const createAdminApplication = ({
       getParentRoute: () => root,
       loader: runtime.loader(view),
       path: adminEntityPaths[view],
-      pendingComponent: AdminDefaultLoadingPage,
+      pendingComponent:
+        view === "list"
+          ? AdminDefaultCollectionLoadingPage
+          : AdminDefaultLoadingPage,
       pendingMinMs: 0,
       pendingMs: 0,
     });

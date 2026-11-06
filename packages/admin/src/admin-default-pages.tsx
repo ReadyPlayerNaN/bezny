@@ -36,20 +36,19 @@ import {
 import { isAdminFormMutationCurrent } from "./admin-mutation-availability.js";
 import { AdminPage } from "./admin-page.js";
 import { AdminRegisteredField } from "./admin-registered-field.js";
+import {
+  AdminDefaultLoadingPage,
+  AdminDefaultErrorPage,
+} from "./admin-resource-states.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
 import { AdminSelectionBar } from "./admin-selection-bar.js";
 
 import collectionStyles from "./admin-collection.module.scss";
 
-export const AdminDefaultLoadingPage = () => {
-  const { t } = useTranslation("beznyAdmin");
-  return <output aria-label={t("loading")}>{t("loading")}</output>;
-};
-
-export const AdminDefaultErrorPage = () => {
-  const { t } = useTranslation("beznyAdmin");
-  return <p role="alert">{t("error")}</p>;
-};
+export {
+  AdminDefaultLoadingPage,
+  AdminDefaultErrorPage,
+} from "./admin-resource-states.js";
 
 const CommandButton = ({ command }: { command: AdminCommand }) => {
   const { t } = useTranslation("beznyAdmin");
@@ -100,10 +99,8 @@ export const AdminDefaultListPage = () => {
     >
       <AdminCollectionFilters />
       <AdminCollectionSorting />
-      {kind === "loading" && (
-        <output aria-label={t("loading")}>{t("loading")}</output>
-      )}
-      {kind === "error" && <p role="alert">{t("error")}</p>}
+      {kind === "loading" && <AdminDefaultLoadingPage collection />}
+      {kind === "error" && <AdminDefaultErrorPage />}
       <AdminSelectionBar />
       {data?.status === "ready" &&
         (data.items.length === 0 ? (
