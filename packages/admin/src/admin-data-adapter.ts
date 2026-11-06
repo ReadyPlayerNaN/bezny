@@ -16,6 +16,11 @@ export type {
   AdminFormValues,
 } from "./admin-entity-fields.js";
 
+export {
+  encodeAdminFilterSelection,
+  decodeAdminFilterSelection,
+} from "./admin-filter-values.js";
+
 export type AdminFilterValues = Readonly<Record<string, string>>;
 export interface AdminListQuery {
   page: number;
@@ -99,6 +104,8 @@ export interface AdminEntityAdapter {
   dispose?: () => void;
 }
 export interface AdminFilterDefinition {
+  /** Multi-choice values use the public bounded JSON-selection codec. */
+  multiple?: boolean;
   key: string;
   label: string;
   labelKey?: string;

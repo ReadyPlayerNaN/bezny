@@ -21,11 +21,9 @@
   box-sizing: border-box;
   position: fixed;
   inset-block-start: 50%;
-  inset-inline-start: 50%;
+  // Centering is physical geometry, independent of content or portal direction.
+  left: 50%;
   transform: translate(-50%, -50%);
-  &:dir(rtl) {
-    transform: translate(50%, -50%);
-  }
   z-index: appearance.token("z-index");
   width: min(
     appearance.token("dialog-width"),

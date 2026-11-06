@@ -12,6 +12,7 @@ import {
 import { Controller, FormProvider, useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 
+import { AdminCommandMultiChoice } from "./admin-command-multi-choice.js";
 import type { AdminCommand } from "./admin-entity-model.js";
 
 const CommandTextField = ({
@@ -54,6 +55,48 @@ const CommandTextField = ({
     />
   );
 };
+const CommandSelectField = ({
+  input,
+}: {
+  input: NonNullable<AdminCommand["input"]>;
+}) => {
+  const { t } = useTranslation("beznyAdmin", { keyPrefix: "chrome" });
+  return (
+    <Controller<{ value: string }>
+      name="value"
+      render={({ field }) => (
+        <Select
+          name={field.name}
+          value={field.value ? `value:${field.value}` : "empty"}
+          onValueChange={(value) =>
+            field.onChange(
+              value === "empty" ? "" : value.slice("value:".length)
+            )
+          }
+        >
+          <SelectTrigger
+            ref={field.ref}
+            autoFocus
+            onBlur={() => field.onBlur()}
+            aria-label={input.label}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {input.allowEmpty && (
+              <SelectItem value="empty">{t("all")}</SelectItem>
+            )}
+            {input.options?.map((option) => (
+              <SelectItem key={option.value} value={`value:${option.value}`}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      )}
+    />
+  );
+};
 export const AdminCommandInput = ({
   command,
   apply,
@@ -71,53 +114,20 @@ export const AdminCommandInput = ({
   if (!input) {
     return null;
   }
+  let editor = <CommandTextField input={input} />;
+  if (input.options) {
+    editor = <CommandSelectField input={input} />;
+  }
+  if (input.multiple) {
+    editor = <AdminCommandMultiChoice input={input} />;
+  }
   return (
     <FormProvider {...form}>
       <form
         noValidate
         onSubmit={form.handleSubmit(({ value }) => apply(value))}
       >
-        {input.options ? (
-          <Controller
-            name="value"
-            control={form.control}
-            render={({ field }) => (
-              <Select
-                name={field.name}
-                value={field.value ? `value:${field.value}` : "empty"}
-                onValueChange={(value) =>
-                  field.onChange(
-                    value === "empty" ? "" : value.slice("value:".length)
-                  )
-                }
-              >
-                <SelectTrigger
-                  ref={field.ref}
-                  autoFocus
-                  onBlur={() => field.onBlur()}
-                  aria-label={input.label}
-                >
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {input.allowEmpty && (
-                    <SelectItem value="empty">{t("all")}</SelectItem>
-                  )}
-                  {input.options?.map((option) => (
-                    <SelectItem
-                      key={option.value}
-                      value={`value:${option.value}`}
-                    >
-                      {option.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          />
-        ) : (
-          <CommandTextField input={input} />
-        )}
+        {editor}
         <Submit>{t("applyCommand")}</Submit>
         <Button variant="secondary" onClick={cancel}>
           {t("backCommands")}

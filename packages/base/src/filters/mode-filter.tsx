@@ -71,11 +71,11 @@ const ModeFilterEditor = <TValue extends string>({
           <FieldLabel htmlFor={`${id}-all`}>{allLabel}</FieldLabel>
         </div>
       ) : null}
-      {filteredOptions.map((option) => (
+      {filteredOptions.map((option, index) => (
         <div className={styles.option} key={option.value}>
           {multiple ? (
             <CheckboxInput
-              id={`${id}-${option.value}`}
+              id={`${id}-option-${index}`}
               checked={selectedSet.has(option.value)}
               disabled={option.disabled ?? false}
               onCheckedChange={(checked) =>
@@ -90,12 +90,12 @@ const ModeFilterEditor = <TValue extends string>({
             />
           ) : (
             <RadioInput
-              id={`${id}-${option.value}`}
+              id={`${id}-option-${index}`}
               value={option.value}
               disabled={option.disabled ?? false}
             />
           )}
-          <FieldLabel htmlFor={`${id}-${option.value}`}>
+          <FieldLabel htmlFor={`${id}-option-${index}`}>
             {option.label}
           </FieldLabel>
         </div>

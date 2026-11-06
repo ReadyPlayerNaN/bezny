@@ -2,6 +2,7 @@ import type {
   AdminEntityDefinition,
   AdminListQuery,
 } from "./admin-data-adapter.js";
+import { normalizeAdminFilterValue } from "./admin-filter-values.js";
 
 const searchRecord = (value: unknown): Record<string, unknown> =>
   value !== null && typeof value === "object" && !Array.isArray(value)
@@ -36,19 +37,8 @@ export const readAdminListSearch = (
       const value = Object.hasOwn(suppliedFilters, filter.key)
         ? suppliedFilters[filter.key]
         : undefined;
-      if (typeof value !== "string") {
-        return [];
-      }
-      const normalized = value.trim();
-      if (
-        !normalized ||
-        normalized.length > 200 ||
-        (filter.options &&
-          !filter.options.some((option) => option.value === normalized))
-      ) {
-        return [];
-      }
-      return [[filter.key, normalized]];
+      const normalized = normalizeAdminFilterValue(filter, value);
+      return normalized ? [[filter.key, normalized]] : [];
     })
   );
   return {

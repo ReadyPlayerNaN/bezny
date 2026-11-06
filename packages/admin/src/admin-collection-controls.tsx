@@ -1,7 +1,7 @@
 import {
   Button,
   IconButton,
-  ChoiceFilter,
+  ModeFilter,
   ValueFilter,
   Select,
   SelectTrigger,
@@ -16,6 +16,11 @@ import { useTranslation } from "react-i18next";
 
 import { useAdminEntityContext } from "./admin-entity-context.js";
 import type { AdminCommand } from "./admin-entity-model.js";
+import {
+  adminFilterSelectionLimit,
+  decodeAdminFilterSelection,
+  encodeAdminFilterSelection,
+} from "./admin-filter-values.js";
 import { useAdminListControls } from "./admin-list-controls.js";
 import { adminListSearch } from "./admin-list-search.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
@@ -48,12 +53,23 @@ export const AdminCollectionFilters = () => {
           if (!input) {
             return null;
           }
+          const selection = input.multiple
+            ? decodeAdminFilterSelection(input.value)
+            : [];
+          const selected = new Set(selection);
           return input.options ? (
-            <ChoiceFilter
+            <ModeFilter
               key={command.id}
               label={input.label}
-              value={input.value || null}
-              options={input.options}
+              multiple={input.multiple ?? false}
+              allowAll
+              value={input.multiple ? selection : input.value || null}
+              options={input.options.map((option) => ({
+                ...option,
+                disabled:
+                  selection.length >= adminFilterSelectionLimit &&
+                  !selected.has(option.value),
+              }))}
               allLabel={t("defaults.all")}
               searchLabel={t("defaults.filterValues")}
               emptyLabel={t("defaults.noValues")}
@@ -61,7 +77,12 @@ export const AdminCollectionFilters = () => {
                 `${label}: ${labels.length ? labels.join(", ") : t("defaults.all")}`
               }
               onChange={(value) => {
-                void execute(command, value ?? "");
+                void execute(
+                  command,
+                  Array.isArray(value)
+                    ? encodeAdminFilterSelection(value)
+                    : (value ?? "")
+                );
               }}
             />
           ) : (

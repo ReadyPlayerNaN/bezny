@@ -16,7 +16,10 @@ const contentTypes = {
 const packageRoot = fileURLToPath(new URL("..", import.meta.url));
 
 /** Serve a built public-package consumer under the production-style stylesheet CSP. */
-export const startComponentBrowser = async (fixture) => {
+export const startComponentBrowser = async (
+  fixture,
+  { root = packageRoot, spa = false } = {}
+) => {
   const artifacts = fileURLToPath(
     new URL(`../../../.tmp/${fixture}/`, import.meta.url)
   );
@@ -27,12 +30,12 @@ export const startComponentBrowser = async (fixture) => {
       emptyOutDir: false,
       outDir: directory,
       rolldownOptions: {
-        input: path.join(packageRoot, `test/${fixture}.html`),
+        input: path.join(root, `test/${fixture}.html`),
       },
     },
     configFile: false,
     logLevel: "warn",
-    root: packageRoot,
+    root,
   });
   const server = createServer(async (request, response) => {
     response.setHeader(
@@ -41,7 +44,10 @@ export const startComponentBrowser = async (fixture) => {
     );
     response.setHeader("X-Content-Type-Options", "nosniff");
     const { pathname } = new URL(request.url ?? "/", "http://127.0.0.1");
-    const target = path.resolve(directory, `.${pathname}`);
+    const target = path.resolve(
+      directory,
+      spa && !path.extname(pathname) ? `test/${fixture}.html` : `.${pathname}`
+    );
     const type = contentTypes[path.extname(target)];
     if (
       request.method !== "GET" ||

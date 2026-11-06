@@ -9,6 +9,7 @@ import {
   useAdminEntityContext,
 } from "./admin-entity-context.js";
 import type { AdminCommand } from "./admin-entity-model.js";
+import { normalizeAdminFilterValue } from "./admin-filter-values.js";
 import { adminListSearch } from "./admin-list-search.js";
 import { adminListQueriesAtom } from "./admin-list-state.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
@@ -83,13 +84,8 @@ export const useAdminListControls = () => {
           ? (query.filters[filter.key] ?? "")
           : "";
         const execute = (nextValue: string) => {
-          const normalized = nextValue.trim();
-          if (
-            normalized.length > 200 ||
-            (normalized &&
-              filter.options &&
-              !filter.options.some((option) => option.value === normalized))
-          ) {
+          const normalized = normalizeAdminFilterValue(filter, nextValue);
+          if (normalized === null) {
             throw new Error("Invalid filter value.");
           }
           const filters = Object.fromEntries(
@@ -107,7 +103,7 @@ export const useAdminListControls = () => {
             allowEmpty: true,
             execute,
             label: filter.label,
-            maxLength: 200,
+            ...(filter.multiple ? { multiple: true } : { maxLength: 200 }),
             ...(filter.options ? { options: filter.options } : {}),
             value,
           },

@@ -27,6 +27,29 @@
   }
 }
 
+.choiceEditor {
+  @include appearance.declarations;
+  display: grid;
+  gap: appearance.token("gap");
+  min-inline-size: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  > div {
+    display: flex;
+    align-items: center;
+    gap: appearance.token("compact");
+  }
+  legend {
+    padding: 0;
+    margin-block-end: appearance.token("gap");
+  }
+  label {
+    overflow-wrap: anywhere;
+    min-inline-size: 0;
+  }
+}
+
 .filters,
 .pagination {
   @include appearance.declarations;

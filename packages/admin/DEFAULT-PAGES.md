@@ -77,6 +77,26 @@ A single pagination navigation appears **below** the rows (including empty/loadi
 
 `AdminCollectionFilters` and `AdminCollectionPagination` are exported from `@bezny/admin/list` for custom list compositions. Their responsive flex layout uses `--bezny-control-admin-collection-*` aliases for structural surface gap, padding, border, text, and typography. Override shared structural aliases on their declaration scope; component control aliases can be overridden on the filters/pagination boundary after loading `@bezny/admin/style.css`.
 
+### Registered multiple-choice filters
+
+Set `multiple: true` on a filter with static `options` to generate a Bezny `ModeFilter` with checkbox choices. The palette exposes the same choices through an RHF editor; Apply executes the same validated command as the ordinary filter. Clearing, page/selection reset and browser history use the existing collection lifecycle, without a custom list screen.
+
+```ts
+filters: [
+  {
+    key: "category",
+    label: "Category",
+    multiple: true,
+    options: [
+      { value: "news", label: "News" },
+      { value: "guides", label: "Guides" },
+    ],
+  },
+];
+```
+
+Adapter filter values remain strings for compatibility. Use `decodeAdminFilterSelection(query.filters.category ?? "")` from `@bezny/admin/adapters` to obtain selected IDs and `encodeAdminFilterSelection(ids)` to construct a deep-link value. Nonempty selections are JSON arrays encoded within that string; empty selections use `""` and are omitted from the URL. Do not split IDs on commas. Selection order is preserved. At most 50 distinct nonempty IDs of up to 200 UTF-16 code units are accepted. Malformed, duplicate, oversized or unregistered choices are ignored in incoming URLs and rejected by commands; decode/encode helpers throw on malformed selections. Only multiple-choice registrations use this encoding; existing text and single-choice filters are unchanged.
+
 ## Fields and display
 
 Field keys are unique flat names, not dotted RHF paths. Supported types are `text` (default), `textarea`, `number`, `checkbox`, and `select`. Fields accept labels/`labelKey`, help text, required state, maximum text length, numeric bounds, and choice options. Select options must have unique non-empty values; the default form owns its empty placeholder.

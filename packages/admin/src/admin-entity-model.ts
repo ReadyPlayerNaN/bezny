@@ -35,6 +35,7 @@ export interface AdminCommand {
     max?: number;
     maxLength?: number;
     options?: readonly { value: string; label: string }[];
+    multiple?: boolean;
     execute: (value: string) => void | Promise<void>;
   };
   location?: AdminEntityLocation;
@@ -86,9 +87,23 @@ const validateListDefinition = (entity: AdminEntityDefinition) => {
       );
     }
     filterKeys.add(filter.key);
+    if (filter.multiple !== undefined && typeof filter.multiple !== "boolean") {
+      throw new Error(
+        `Invalid multiple filter flag for ${entity.key}/${filter.key}`
+      );
+    }
+    if (filter.multiple && !filter.options) {
+      throw new Error(
+        `Multi-choice filter requires options: ${entity.key}/${filter.key}`
+      );
+    }
     const values = new Set<string>();
     for (const option of filter.options ?? []) {
-      if (!option.value || values.has(option.value)) {
+      if (
+        !option.value ||
+        values.has(option.value) ||
+        (filter.multiple && option.value.length > 200)
+      ) {
         throw new Error(
           `Invalid or duplicate option for ${entity.key}/${filter.key}`
         );

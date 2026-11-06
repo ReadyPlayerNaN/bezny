@@ -102,6 +102,7 @@
   },
   "devDependencies": {
     "@bezny/typescript-config": "workspace:*",
+    "@playwright/test": "1.63.0",
     "@tanstack/router-cli": "1.167.38",
     "@testing-library/react": "16.3.3",
     "@testing-library/user-event": "^14.6.7",

@@ -41,9 +41,6 @@
 .palette[role="dialog"] {
   inset-block-start: 20dvh;
   transform: translateX(-50%);
-  &:dir(rtl) {
-    transform: translateX(50%);
-  }
   display: block;
   padding: 0;
   overflow: hidden;
@@ -158,13 +155,20 @@
   text-align: center;
 }
 .paletteEditor {
+  box-sizing: border-box;
+  max-block-size: min(50dvh, appearance.token("palette-list-max-height"));
+  overflow-y: auto;
   padding: appearance.token("padding");
   form {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: appearance.token("gap");
     > :first-child {
       grid-column: 1 / -1;
+    }
+    > button {
+      min-inline-size: 0;
+      white-space: normal;
     }
   }
 }
