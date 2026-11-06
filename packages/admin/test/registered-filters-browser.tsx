@@ -27,6 +27,15 @@ const records = [
   { category: "guides", id: "2", label: "Beta" },
   { category: "notes", id: "3", label: "Gamma" },
 ];
+const referenceOptions = [
+  { label: "News", value: "news" },
+  { label: "Guides", value: "guides" },
+  { label: "Notes", value: "notes" },
+];
+const referenceFixture = {
+  calls: [] as { query: string; locale: string | undefined; limit: number }[],
+  failures: 0,
+};
 const translations = createAdminI18n({
   lng: new URLSearchParams(location.search).get("language") ?? "en",
 });
@@ -40,8 +49,13 @@ const entities = [
         const selected = new Set(
           decodeAdminFilterSelection(query.filters.category ?? "")
         );
+        const references = decodeAdminFilterSelection(
+          query.filters.related ?? ""
+        );
         const filtered = records.filter(
-          (record) => !selected.size || selected.has(record.category)
+          (record) =>
+            (!selected.size || selected.has(record.category)) &&
+            (!references.length || references.includes(record.category))
         );
         return Promise.resolve({
           items: filtered.slice(
@@ -53,6 +67,34 @@ const entities = [
       },
     },
     filters: [
+      {
+        key: "related",
+        label: "Related category",
+        multiple: true,
+        reference: {
+          resolve: (ids, { signal }) => {
+            signal.throwIfAborted();
+            return Promise.resolve(
+              referenceOptions.filter((option) => ids.includes(option.value))
+            );
+          },
+          search: (query, { signal, locale, limit }) => {
+            signal.throwIfAborted();
+            referenceFixture.calls.push({ limit, locale, query });
+            if (referenceFixture.failures > 0) {
+              referenceFixture.failures -= 1;
+              return Promise.reject(new Error("Lookup unavailable"));
+            }
+            return Promise.resolve(
+              referenceOptions
+                .filter((option) =>
+                  option.label.toLowerCase().includes(query.toLowerCase())
+                )
+                .slice(0, limit)
+            );
+          },
+        },
+      },
       {
         key: "category",
         label: "Category",
@@ -95,7 +137,16 @@ Object.assign(window, {
     category: translations.t("beznyAdmin:filter", { label: "Category" }),
     clear: translations.t("beznyAdmin:clearFilters"),
     palette: translations.t("beznyAdmin:chrome.palette"),
+    related: translations.t("beznyAdmin:filter", { label: "Related category" }),
+    removeGuides: translations.t("beznyAdmin:referenceFilter.remove", {
+      label: "Guides",
+    }),
+    removeNews: translations.t("beznyAdmin:referenceFilter.remove", {
+      label: "News",
+    }),
+    retry: translations.t("beznyAdmin:referenceFilter.retrySearch"),
   },
+  referenceFixture,
 });
 window.addEventListener(
   "pagehide",

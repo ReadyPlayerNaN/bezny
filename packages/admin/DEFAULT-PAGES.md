@@ -71,7 +71,7 @@ Refresh/retry is supplied by the connected `AdminHeader`, not by the generated p
 
 Registered column values appear beneath each row title in a compact, wrapping definition list with inline label/value pairs, subdued labels, and no browser-default indentation or vertical margins. Empty column registrations do not emit an empty description. Column `render(data, view)` receives `"list"` or `"detail"` (the second parameter is optional for backward compatibility), allowing concise list previews while retaining full detail content. Render shared components such as `Badge` for status values instead of building custom pages.
 
-The default list uses the existing `ValueFilter` search/value chips and `ChoiceFilter` option chips above the rows. It does not recreate filter editors with inline forms.
+The default list uses the existing `ValueFilter` search/value chips and `ModeFilter` option chips above the rows. Registered asynchronous references use the base `MultiItemPicker`, including single-reference replacement. Applications do not need their own filter bars or list screens.
 
 A single pagination navigation appears **below** the rows (including empty/loading states): locale-formatted page/total summary, Previous/Next icon buttons, a bounded numbered-page window of TanStack hyperlinks with first/last anchors, and one inline records-per-page selector. There are no page-number/page-size forms. Page, page size, search, and filters live in URL search parameters, synchronized into Jotai by admitted loaders. Copying a numbered-page link preserves the full listing query; Back/Forward and reload restore it. Ordinary controls and parameterized palette inputs navigate through the same validated contract. See [shareable listing URLs](ENTITIES.md#shareable-listing-urls).
 
@@ -96,6 +96,30 @@ filters: [
 ```
 
 Adapter filter values remain strings for compatibility. Use `decodeAdminFilterSelection(query.filters.category ?? "")` from `@bezny/admin/adapters` to obtain selected IDs and `encodeAdminFilterSelection(ids)` to construct a deep-link value. Nonempty selections are JSON arrays encoded within that string; empty selections use `""` and are omitted from the URL. Do not split IDs on commas. Selection order is preserved. At most 50 distinct nonempty IDs of up to 200 UTF-16 code units are accepted. Malformed, duplicate, oversized or unregistered choices are ignored in incoming URLs and rejected by commands; decode/encode helpers throw on malformed selections. Only multiple-choice registrations use this encoding; existing text and single-choice filters are unchanged.
+
+### Registered asynchronous reference filters
+
+Provide `reference.search` and `reference.resolve` instead of static `options`. Both callbacks return `{ value: string, label: string }[]` and receive `{ signal, locale, limit }`. Backend transport, authorization and localization remain host-owned; the framework owns the bounded lookup lifetime and presentation.
+
+```ts
+filters: [
+  {
+    key: "category",
+    label: "Category",
+    multiple: true,
+    reference: {
+      search: (query, request) => categoryApi.search(query, request),
+      resolve: (ids, request) => categoryApi.resolve(ids, request),
+    },
+  },
+];
+```
+
+The standard list applies selections immediately through the existing collection command. The palette keeps its draft in RHF until Apply. Single-reference filters (omit `multiple`) preserve one opaque ID as a string; choosing another suggestion replaces it. Multiple references use the same public JSON selection codec as static multi-choice filters. Labels never replace IDs in adapter or URL values. Missing references may be omitted from resolution results: their original IDs remain visible and removable, rather than silently dropping active filters. A failed resolution retains IDs and offers retry.
+
+Search starts after 250 ms of inactivity for a nonempty trimmed query, pauses during IME composition, and requests at most 20 options. Input is bounded to 200 UTF-16 code units. Selections contain at most 50 distinct nonempty IDs, each at most 200 code units. Resolution requests are bounded to the selected IDs; returned IDs must be requested, unique and within that bound. Labels must be nonempty strings of at most 1,000 code units. Invalid callback results produce a recoverable error, not partially accepted options. Search and selected-label errors have separate retry controls; search retry remains keyboard-accessible after popup dismissal.
+
+Query changes, popup dismissal, locale/entity/list-query changes, pause/disposal and unmount abort obsolete requests. Results from transports that ignore cancellation are fenced before presentation. Selected-label resolution remains active while its owner is mounted even when suggestions are closed. No unbounded reference cache or parallel list session is introduced. Host callbacks should honor `signal`, but remain responsible for backend access checks. The `beznyAdmin.referenceFilter` namespace supplies English, Czech and Arabic status/action text.
 
 ## Fields and display
 

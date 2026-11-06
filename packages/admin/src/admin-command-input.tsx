@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 
 import { AdminCommandMultiChoice } from "./admin-command-multi-choice.js";
 import type { AdminCommand } from "./admin-entity-model.js";
+import { AdminReferenceFilterInput } from "./admin-reference-filter-input.js";
 
 const CommandTextField = ({
   input,
@@ -120,6 +121,26 @@ export const AdminCommandInput = ({
   }
   if (input.multiple) {
     editor = <AdminCommandMultiChoice input={input} />;
+  }
+  if (input.reference) {
+    const { reference } = input;
+    editor = (
+      <Controller<{ value: string }>
+        name="value"
+        render={({ field }) => (
+          <AdminReferenceFilterInput
+            reference={reference}
+            label={input.label}
+            multiple={input.multiple ?? false}
+            value={field.value}
+            onChange={(value) => field.onChange(value)}
+            onBlur={() => field.onBlur()}
+            name={field.name}
+            inputRef={field.ref}
+          />
+        )}
+      />
+    );
   }
   return (
     <FormProvider {...form}>

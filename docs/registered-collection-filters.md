@@ -25,6 +25,14 @@ Validation: formatting/lint, build and typecheck passed; base 309 unit tests plu
 
 Independent static-slice review and focused fix re-review (`6b1abbe0-276d-4502-bac0-bc30c704d5d2`, follow-up `905c47ba-5f4e-43dd-a486-9bd6bcada2c6`) concluded **OK with notes**, with no remaining findings. The reviewer inspected source, tests, supplied logs and representative narrow RTL screenshots; it did not independently rerun validation. This is not acceptance of the outstanding async-reference slice or release.
 
+## Async-reference slice validation
+
+Registered sources now supply bounded `search` and selected-ID `resolve` callbacks. The default collection and RHF palette share the same scoped commands and base picker; IDs remain authoritative. Requests are debounced, cancellable and fenced across query, locale, entity, pause/disposal and unmount changes. Missing references remain removable by ID. Separate lookup/resolution retries preserve active filters. Base autocomplete reports suggestion visibility and keeps a retry action reachable after dismissal.
+
+Native browser validation found that removing the retry button during pointer activation allowed delayed Radix outside-interaction handling to dismiss the popup. The retry action now remains mounted and disabled while retrying; prior error context is retained until that attempt settles. The unchanged native pointer journey passes afterward. Initial failing logs remain under `.tmp/registered-filters/reference-browser-initial.log`; no test timeouts were increased.
+
+Combined validation passed: `pnpm check`, `pnpm build`, `pnpm typecheck`, `pnpm test --concurrency=1` (base 311 tests plus 58 build checks, admin 319, demo 83 per configuration), all 84 base/admin/demo browser cases and 17 packaging checks. Evidence: `.tmp/registered-filters/reference-final-*`. Parent inspection covered the narrow light LTR list and dark RTL palette screenshots; remaining screenshots are not claimed visually inspected. Independent review, patch publication and registry delivery remain pending.
+
 ## Non-goals
 
 No consumer-specific names, schemas, authentication rules or backend transports; no parallel collection lifecycle, replacement router, generic data grid, new CI steps or dependency upgrades. No silently changed scalar filter wire format. Sorting and custom URL mappings must be evaluated against their own contracts, not disguised as arbitrary free-text values or used to justify custom list pages. Additional confirmed framework gaps are reported before implementation.

@@ -47,6 +47,9 @@ export type AutocompleteInputProps<T> = Omit<
   ) => ReactNode;
   loading?: boolean;
   error?: string;
+  /** Request another host-owned search; keeps retry accessible outside the popup. */
+  onRetry?: () => void;
+  retryLabel?: string;
   minimumQueryLength?: number;
   labels?: Partial<AutocompleteLabels>;
   portalContainer?: PopoverContentProps["container"];
@@ -59,6 +62,41 @@ const defaults: AutocompleteLabels = {
 };
 const defaultOptionDisabled = () => false;
 const imeKeyCode = 229;
+const AutocompleteRetry = ({
+  error,
+  loading,
+  disabled,
+  onRetry,
+  label = "Retry",
+  onActivate,
+}: {
+  error: string | undefined;
+  loading: boolean;
+  disabled: boolean;
+  onRetry: (() => void) | undefined;
+  label: string | undefined;
+  onActivate: () => void;
+}) => {
+  if (!error || !onRetry) {
+    return null;
+  }
+  return (
+    <Button
+      variant="secondary"
+      size="small"
+      disabled={disabled || loading}
+      onClick={() => {
+        if (disabled || loading) {
+          return;
+        }
+        onActivate();
+        onRetry();
+      }}
+    >
+      {label}
+    </Button>
+  );
+};
 
 /** A controlled selection and query; remote sessions, debounce and stale-result fencing belong to the host. */
 export const AutocompleteInput = <T,>({
@@ -75,6 +113,8 @@ export const AutocompleteInput = <T,>({
   renderOption,
   loading = false,
   error,
+  onRetry,
+  retryLabel,
   minimumQueryLength = 1,
   labels: overrides,
   portalContainer,
@@ -268,6 +308,17 @@ export const AutocompleteInput = <T,>({
               onCompositionEnd={(event) => {
                 composing.current = false;
                 onCompositionEnd?.(event);
+              }}
+            />
+            <AutocompleteRetry
+              error={error}
+              loading={loading}
+              disabled={unavailable}
+              onRetry={onRetry}
+              label={retryLabel}
+              onActivate={() => {
+                input.current?.focus();
+                setOpen(true);
               }}
             />
             {value === null ? null : (

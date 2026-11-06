@@ -2,6 +2,7 @@ import { createInstance } from "i18next";
 import type { i18n, InitOptions } from "i18next";
 
 import { adminChromeTranslations } from "./admin-chrome-translations.js";
+import { adminReferenceFilterTranslations } from "./admin-reference-filter-translations.js";
 
 export const adminLanguages = ["en", "cs", "ar"] as const;
 export const adminTranslations = {
@@ -31,6 +32,7 @@ export const adminTranslations = {
       pageSize: "تغيير حجم الصفحة",
       previous: "الصفحة السابقة",
       recordsPerPage: "سجلات لكل صفحة",
+      referenceFilter: adminReferenceFilterTranslations.ar,
       refresh: "تحديث السجلات",
       retry: "إعادة محاولة التحميل",
       select: "تحديد {{record}}",
@@ -64,6 +66,7 @@ export const adminTranslations = {
       pageSize: "Změnit velikost stránky",
       previous: "Předchozí stránka",
       recordsPerPage: "Záznamů na stránce",
+      referenceFilter: adminReferenceFilterTranslations.cs,
       refresh: "Obnovit záznamy",
       retry: "Zkusit načíst znovu",
       select: "Vybrat {{record}}",
@@ -97,6 +100,7 @@ export const adminTranslations = {
       pageSize: "Change page size",
       previous: "Previous page",
       recordsPerPage: "Records per page",
+      referenceFilter: adminReferenceFilterTranslations.en,
       refresh: "Refresh records",
       retry: "Retry loading records",
       select: "Select {{record}}",

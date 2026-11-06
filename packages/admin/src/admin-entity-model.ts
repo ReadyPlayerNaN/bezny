@@ -5,6 +5,8 @@ import type { Atom, PrimitiveAtom, createStore } from "jotai";
 import type { AdminEntityDefinition } from "./admin-data-adapter.js";
 import type { AdminDataSession } from "./admin-data-session.js";
 import { resolveAdminEntityDefinition } from "./admin-default-registration.js";
+import type { AdminReferenceFilterInput } from "./admin-reference-filter-model.js";
+import { validateAdminReferenceRegistration } from "./admin-reference-filter-model.js";
 
 export type AdminEntityView = "list" | "create" | "detail" | "update";
 export interface AdminRecordReference {
@@ -36,6 +38,7 @@ export interface AdminCommand {
     maxLength?: number;
     options?: readonly { value: string; label: string }[];
     multiple?: boolean;
+    reference?: AdminReferenceFilterInput;
     execute: (value: string) => void | Promise<void>;
   };
   location?: AdminEntityLocation;
@@ -92,7 +95,8 @@ const validateListDefinition = (entity: AdminEntityDefinition) => {
         `Invalid multiple filter flag for ${entity.key}/${filter.key}`
       );
     }
-    if (filter.multiple && !filter.options) {
+    validateAdminReferenceRegistration(filter);
+    if (filter.multiple && !filter.options && !filter.reference) {
       throw new Error(
         `Multi-choice filter requires options: ${entity.key}/${filter.key}`
       );

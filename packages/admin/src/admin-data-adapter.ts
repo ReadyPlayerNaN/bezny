@@ -8,6 +8,13 @@ import type {
   AdminEntityAction,
   AdminRecordReference,
 } from "./admin-entity-model.js";
+import type { AdminReferenceFilterSource } from "./admin-reference-filter-model.js";
+
+export type {
+  AdminFilterReference,
+  AdminReferenceFilterRequest,
+  AdminReferenceFilterSource,
+} from "./admin-reference-filter-model.js";
 
 export type {
   AdminEntityField,
@@ -104,6 +111,8 @@ export interface AdminEntityAdapter {
   dispose?: () => void;
 }
 export interface AdminFilterDefinition {
+  /** Async options and selected-label resolution; mutually exclusive with static options. */
+  reference?: AdminReferenceFilterSource;
   /** Multi-choice values use the public bounded JSON-selection codec. */
   multiple?: boolean;
   key: string;

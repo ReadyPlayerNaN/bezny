@@ -123,6 +123,35 @@ const Form = ({ save }: { save: (data: { company: Item | null }) => void }) => {
 describe(AutocompleteInput, () => {
   afterEach(cleanup);
 
+  it("keeps retry keyboard-accessible after dismissing failed suggestions", async () => {
+    const user = userEvent.setup();
+    const retry = vi.fn<() => void>();
+    render(
+      <AutocompleteInput
+        {...optionProps}
+        value={null}
+        query="a"
+        onQueryChange={() => {}}
+        onValueChange={() => {}}
+        error="Lookup failed"
+        onRetry={retry}
+        retryLabel="Retry lookup"
+        aria-label="Category"
+      />
+    );
+    const input = screen.getByRole("combobox");
+    await user.click(input);
+    await user.tab();
+    expect(document.activeElement).toBe(
+      screen.getByRole("button", { name: "Retry lookup" })
+    );
+    expect(screen.queryByRole("listbox")).toBeNull();
+    await user.keyboard("{Enter}");
+    expect(retry).toHaveBeenCalledOnce();
+    expect(document.activeElement).toBe(input);
+    expect(screen.getByRole("listbox")).toBeTruthy();
+  });
+
   it("reports actual popup visibility on dismissal, query limits and availability", async () => {
     const user = userEvent.setup();
     const onOpenChange = vi.fn<(open: boolean) => void>();

@@ -23,6 +23,7 @@ import {
 } from "./admin-filter-values.js";
 import { useAdminListControls } from "./admin-list-controls.js";
 import { adminListSearch } from "./admin-list-search.js";
+import { AdminReferenceFilterInput } from "./admin-reference-filter-input.js";
 import { useAdminRouteBindings } from "./admin-route-bindings.js";
 
 import styles from "./admin-collection.module.scss";
@@ -52,6 +53,20 @@ export const AdminCollectionFilters = () => {
           const { input } = command;
           if (!input) {
             return null;
+          }
+          if (input.reference) {
+            return (
+              <AdminReferenceFilterInput
+                key={command.id}
+                reference={input.reference}
+                label={input.label}
+                value={input.value}
+                multiple={input.multiple ?? false}
+                onChange={(value) => {
+                  void execute(command, value);
+                }}
+              />
+            );
           }
           const selection = input.multiple
             ? decodeAdminFilterSelection(input.value)

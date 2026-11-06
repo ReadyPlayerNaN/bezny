@@ -70,7 +70,7 @@ export const normalizeAdminFilterValue = (
       return null;
     }
   }
-  const normalized = value.trim();
+  const normalized = filter.reference ? value : value.trim();
   if (
     normalized.length > valueLengthLimit ||
     (normalized &&

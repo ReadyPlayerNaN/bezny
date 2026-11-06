@@ -1,5 +1,6 @@
 import { useRouter } from "@tanstack/react-router";
 import { useStore } from "jotai";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
 import type { AdminListQuery } from "./admin-data-adapter.js";
@@ -40,24 +41,53 @@ export const useAdminListControls = () => {
   const total = context.data?.status === "ready" ? context.data.total : null;
   const pageCount =
     total === null ? null : Math.max(1, Math.ceil(total / query.pageSize));
+  const entityKey = entity?.key;
+  const requestKey = context.request
+    ? adminDataRequestKey(context.request)
+    : null;
+  const currentQueryKey = queryIdentity(query);
+  const referenceScope = useMemo(
+    () => ({
+      isCurrent: () => {
+        const snapshot = store.get(session.snapshotAtom);
+        const storedQueries = store.get(adminListQueriesAtom);
+        const current =
+          entityKey && Object.hasOwn(storedQueries, entityKey)
+            ? storedQueries[entityKey]
+            : undefined;
+        return Boolean(
+          active &&
+          entityKey &&
+          requestKey &&
+          snapshot.entity === entityKey &&
+          snapshot.key === requestKey &&
+          snapshot.status !== "disposed" &&
+          snapshot.status !== "idle" &&
+          (!current || queryIdentity(current) === currentQueryKey)
+        );
+      },
+      locale: query.locale,
+      subscribe: (notify: () => void) => {
+        const snapshot = store.sub(session.snapshotAtom, notify);
+        const queries = store.sub(adminListQueriesAtom, notify);
+        return () => {
+          snapshot();
+          queries();
+        };
+      },
+    }),
+    [
+      active,
+      entityKey,
+      requestKey,
+      currentQueryKey,
+      query.locale,
+      session,
+      store,
+    ]
+  );
   const update = (next: AdminListQuery) => {
-    const snapshot = store.get(session.snapshotAtom);
-    const storedQueries = store.get(adminListQueriesAtom);
-    const current =
-      entity && Object.hasOwn(storedQueries, entity.key)
-        ? storedQueries[entity.key]
-        : undefined;
-    if (current && queryIdentity(current) !== queryIdentity(query)) {
-      return;
-    }
-    if (
-      !active ||
-      !entity ||
-      snapshot.entity !== entity.key ||
-      !context.request ||
-      snapshot.key !== adminDataRequestKey(context.request) ||
-      snapshot.status === "disposed"
-    ) {
+    if (!entity || !referenceScope.isCurrent()) {
       return;
     }
     return router.navigate({
@@ -105,6 +135,14 @@ export const useAdminListControls = () => {
             label: filter.label,
             ...(filter.multiple ? { multiple: true } : { maxLength: 200 }),
             ...(filter.options ? { options: filter.options } : {}),
+            ...(filter.reference
+              ? {
+                  reference: {
+                    scope: referenceScope,
+                    source: filter.reference,
+                  },
+                }
+              : {}),
             value,
           },
           label: t("filter", { label: filter.label }),
