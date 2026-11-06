@@ -154,13 +154,15 @@ export const AdminDefaultListPage = () => {
                 </dl>
               ) : undefined,
               id: record.id,
-              title: (
+              title: entity.screens.detail ? (
                 <Link
                   to={bindings.detail.path}
                   params={{ entity: entity.key, recordId: record.id }}
                 >
                   {record.label}
                 </Link>
+              ) : (
+                record.label
               ),
             }))}
           />
@@ -325,11 +327,15 @@ const DefaultEntityForm = () => {
           current.entity === entity.key &&
           current.key === data?.key
         ) {
-          await navigate({
-            entity: entity.key,
-            recordId: result.id,
-            view: "detail",
-          });
+          await navigate(
+            entity.screens.detail
+              ? {
+                  entity: entity.key,
+                  recordId: result.id,
+                  view: "detail",
+                }
+              : { entity: entity.key, view: "list" }
+          );
         }
       } catch {
         if (canMutate()) {

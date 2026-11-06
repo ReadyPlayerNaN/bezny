@@ -55,7 +55,9 @@ Pass the definition to `createAdminApplication({ entities: [articles], Root, Not
 - **Create/update:** RHF forms using shared Bezny fields, registered defaults and validation, accessible labels/errors and invalid-field focus, Save/Cancel commands shared with the command palette, submission state, recoverable mutation errors. Save opens the saved record's detail page.
 - **Delete:** record and bulk commands when `adapter.remove` exists, a shared Radix-backed confirmation dialog, cancellation without clearing selection, retryable failures, successful invalidation/refresh and collection navigation.
 
-List/detail pages are available by default. Default create/update pages require `form` metadata and the matching adapter operation. Unsupported operations are not advertised. Custom create/update screens still require their adapter operation, but may provide their own forms instead of `form` metadata.
+List pages are available by default; detail pages require `adapter.get`. For list-only resources, omit `get`: stock row titles become plain text, View/Edit commands and detail/update routes are unavailable, and successful creation returns to the collection. No placeholder read is necessary. Use `AdminCollectionAdapter` for explicitly typed list-only adapters; `AdminDataAdapter` retains its required `get` contract for detail-capable consumers. Explicit detail/update screens and an update operation require a detail read. Existing detail-capable registrations are unchanged.
+
+List/detail capabilities are inferred from adapters. Default create/update pages require `form` metadata and the matching adapter operation. Unsupported operations are not advertised. Custom create/update screens still require their adapter operation, but may provide their own forms instead of `form` metadata.
 
 ## Backend-provided mutation presentation
 

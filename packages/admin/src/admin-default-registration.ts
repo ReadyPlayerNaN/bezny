@@ -72,6 +72,16 @@ export const resolveAdminEntityDefinition = (
   definition: AdminEntityDefinition
 ) => {
   validateEntityFields(definition);
+  if (
+    !definition.adapter.get &&
+    (definition.screens?.detail ||
+      definition.screens?.update ||
+      definition.adapter.update)
+  ) {
+    throw new Error(
+      `Detail and update capabilities require a get adapter: ${definition.key}`
+    );
+  }
   const actions: AdminEntityAction[] = [...(definition.actions ?? [])];
   if (definition.adapter.remove) {
     for (const target of ["record", "selection"] as const) {
@@ -101,7 +111,7 @@ export const resolveAdminEntityDefinition = (
     ...definition,
     actions,
     screens: {
-      detail: AdminDefaultDetailPage,
+      ...(definition.adapter.get ? { detail: AdminDefaultDetailPage } : {}),
       list: AdminDefaultListPage,
       ...(definition.form && definition.adapter.create
         ? { create: AdminDefaultFormPage }

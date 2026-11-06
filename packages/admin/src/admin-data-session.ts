@@ -155,6 +155,9 @@ const loadAdapterData = async (
       signal
     );
   }
+  if (!entity.adapter.get) {
+    throw new Error(`Detail unavailable: ${entity.key}`);
+  }
   const record = await abortable(
     entity.adapter.get(request.recordId ?? "", {
       locale: request.query.locale,

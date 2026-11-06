@@ -72,12 +72,13 @@ export type AdminEntitySubscription = (
 ) => () => void;
 
 /** Data belongs to an adapter/backend, not a permanently registered collection atom. */
-export interface AdminDataAdapter<TRecord, TValues> {
+export interface AdminCollectionAdapter<TRecord, TValues> {
   list: (
     query: AdminListQuery,
     request: AdminAdapterRequest
   ) => Promise<AdminListResult<TRecord>>;
-  get: (id: string, request: AdminAdapterRequest) => Promise<TRecord | null>;
+  /** Omit for a collection with no record-detail capability. */
+  get?: (id: string, request: AdminAdapterRequest) => Promise<TRecord | null>;
   create?: (values: TValues, request: AdminAdapterRequest) => Promise<TRecord>;
   update?: (
     id: string,
@@ -92,6 +93,13 @@ export interface AdminDataAdapter<TRecord, TValues> {
   subscribe?: AdminEntitySubscription;
   dispose?: () => void;
 }
+/** Detail-capable adapter; retains its original required get contract. */
+export interface AdminDataAdapter<
+  TRecord,
+  TValues,
+> extends AdminCollectionAdapter<TRecord, TValues> {
+  get: (id: string, request: AdminAdapterRequest) => Promise<TRecord | null>;
+}
 export interface AdminRecordEnvelope extends AdminRecordReference {
   data: unknown;
 }
@@ -105,10 +113,12 @@ export interface AdminEntityAdapter {
     query: AdminListQuery,
     request: AdminAdapterRequest
   ) => Promise<AdminListResult<AdminRecordEnvelope>>;
-  get: (
-    id: string,
-    request: AdminAdapterRequest
-  ) => Promise<AdminRecordEnvelope | null>;
+  get?:
+    | ((
+        id: string,
+        request: AdminAdapterRequest
+      ) => Promise<AdminRecordEnvelope | null>)
+    | undefined;
   create?: (
     values: unknown,
     request: AdminAdapterRequest
@@ -158,7 +168,7 @@ export type AdminEntityConfiguration<TRecord, TValues> = Omit<
   AdminEntityDefinition,
   "adapter"
 > & {
-  adapter: AdminDataAdapter<TRecord, TValues>;
+  adapter: AdminCollectionAdapter<TRecord, TValues>;
   reference: (record: TRecord) => AdminRecordReference;
   parseValues: (values: unknown) => TValues;
 };
@@ -182,25 +192,33 @@ export const defineAdminEntity = <TRecord, TValues>(
     }
     return { ...record, data };
   };
+  const hasDetail = typeof adapter.get === "function";
   const create = adapter.create?.bind(adapter);
   const update = adapter.update?.bind(adapter);
   const remove = adapter.remove?.bind(adapter);
   const dispose = adapter.dispose?.bind(adapter);
   const subscribe = adapter.subscribe?.bind(adapter);
   const normalized: AdminEntityAdapter = {
-    get: async (id, request) => {
-      const record = await adapter.get(id, request);
-      if (record === null) {
-        return null;
-      }
-      const result = envelope(record);
-      if (result.id !== id) {
-        throw new Error(
-          `Adapter returned the wrong record for ${definition.key}/${id}`
-        );
-      }
-      return result;
-    },
+    ...(hasDetail
+      ? {
+          get: async (id: string, request: AdminAdapterRequest) => {
+            if (!adapter.get) {
+              throw new Error(`Detail unavailable: ${definition.key}`);
+            }
+            const record = await adapter.get(id, request);
+            if (record === null) {
+              return null;
+            }
+            const result = envelope(record);
+            if (result.id !== id) {
+              throw new Error(
+                `Adapter returned the wrong record for ${definition.key}/${id}`
+              );
+            }
+            return result;
+          },
+        }
+      : {}),
     list: async (query, request) => {
       const result = await adapter.list(query, request);
       if (
