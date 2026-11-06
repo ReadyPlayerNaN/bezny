@@ -12,6 +12,7 @@ import type { ReactNode, FunctionComponent } from "react";
 import { useEffect } from "react";
 import { I18nextProvider, useTranslation } from "react-i18next";
 
+import { AdminActionDialog } from "./admin-action-dialog.js";
 import { createAdminRuntime } from "./admin-application-runtime.js";
 import type { AdminRuntime } from "./admin-application-runtime.js";
 import type { AdminBuildingBlockOverrides } from "./admin-building-blocks.js";
@@ -62,10 +63,12 @@ export const AdminEntityScreen = () => {
     <AdminFormNavigationLifetime key={scope}>
       <EntityScreenContent />
       <AdminDeleteDialog key={scope} />
+      <AdminActionDialog />
     </AdminFormNavigationLifetime>
   );
 };
 
+export { AdminActionDialog } from "./admin-action-dialog.js";
 export {
   AdminDefaultListPage,
   AdminDefaultDetailPage,

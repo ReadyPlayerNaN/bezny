@@ -79,6 +79,28 @@ A single pagination navigation appears **below** the rows (including empty/loadi
 
 `AdminCollectionFilters`, `AdminCollectionSorting`, and `AdminCollectionPagination` are exported from `@bezny/admin/list` for custom list compositions. Their responsive flex layout uses `--bezny-control-admin-collection-*` aliases for structural surface gap, padding, border, text, and typography. Override shared structural aliases on their declaration scope; component control aliases can be overridden on the filters/pagination boundary after loading `@bezny/admin/style.css`.
 
+### Managed non-CRUD actions
+
+An entity action declares exactly one of legacy host-owned `execute(scope)` or framework-owned `operation`. Default screens mount `AdminActionDialog`; custom screens can mount that export from `@bezny/admin/routing` once per scope.
+
+```ts
+operation: {
+  confirm: scope => `Archive ${scope.records.length} documents?`,
+  input: { fields: [{ key: "reason", label: "Reason", required: true }] },
+  affected: ["documents", "folders"],
+  execute: async (scope, values, { signal, locale }) => {
+    const result = await archiveDocuments(scope.ids, values.reason, { signal, locale });
+    return { failedIds: result.failedIds, message: result.operatorMessage };
+  },
+}
+```
+
+`confirm` and `input` are optional: immediate actions execute without an added confirmation. `destructive` controls appearance, not policy. Input supports registered scalar/custom fields, conditional disabling, defaults, resolver and mapped field errors; record projection and derived-record editing are not action input contracts. Hosts own validation, endpoint mapping, permission checks, idempotency and localized, operator-safe result messages (maximum 4,000 characters). Return `{}` for silent success; results are not cached as entity data.
+
+Targets are captured, then current route/record/selection/availability is checked again before execution. Pending invocations share a session lock per entity/action. Successful operations invalidate only `affected` entities (default: current entity) and refresh an affected active resource. `failedIds` must be a unique subset of the captured targets; partial results retain feedback and retry only that subset. Throwing retains inputs for retry and uses the safe generic/mapped error contract. Hosts must report partial completion rather than throwing after known successes.
+
+Closing or leaving the dialog aborts its signal and fences late UI results; pausing/disposal aborts session operations and clears requests. Cancellation cannot undo a server-side operation that already committed. Specialized screens can call `session.execute(entity, operationId, callback, affected?, signal?)` directly for the same abort/deduplication/invalidation lifecycle, with their own feedback presentation.
+
 ### Typed scalar and paired range filters
 
 Use `type: "number"` with `min`, `max`, `step`, or `type: "date"` with ISO `minDate`/`maxDate`. The default collection and palette share an RHF editor using Base number/calendar fields; Apply commits, Cancel/Escape discards. Empty values clear the filter. Values remain strings in the native nested `filters` URL and adapter query. Optional `maxLength` is bounded to 1–200 characters.

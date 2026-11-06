@@ -4,6 +4,7 @@ import { atom, useAtomValue, useSetAtom, useStore } from "jotai";
 import { useCallback, useEffect, useId, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
+import { requestAdminAction } from "./admin-action-request.js";
 import { defaultAdminListQuery } from "./admin-data-session.js";
 import {
   useAdminEntityContext,
@@ -133,7 +134,10 @@ const actionCommand = (
     if (action.isAvailable && !action.isAvailable(current)) {
       return;
     }
-    return action.execute(current);
+    if (action.operation) {
+      return requestAdminAction(action, current);
+    }
+    return action.execute?.(current);
   },
 });
 

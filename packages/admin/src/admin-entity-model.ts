@@ -2,9 +2,17 @@ import type { TFunction } from "i18next";
 import { atom } from "jotai";
 import type { Atom, PrimitiveAtom, createStore } from "jotai";
 
-import type { AdminEntityDefinition } from "./admin-data-adapter.js";
+import type {
+  AdminEntityDefinition,
+  AdminAdapterRequest,
+} from "./admin-data-adapter.js";
 import type { AdminDataSession } from "./admin-data-session.js";
 import { resolveAdminEntityDefinition } from "./admin-default-registration.js";
+import type {
+  AdminEntityForm,
+  AdminEntityField,
+  AdminFormValues,
+} from "./admin-entity-fields.js";
 import type { AdminReferenceFilterInput } from "./admin-reference-filter-model.js";
 import { validateAdminReferenceRegistration } from "./admin-reference-filter-model.js";
 import { validateAdminSorting } from "./admin-sort-model.js";
@@ -62,13 +70,37 @@ export interface AdminActionScope {
   navigate: AdminEntityNavigate;
   translate?: TFunction;
 }
+export interface AdminActionResult {
+  /** Host-localized operator feedback; never raw transport diagnostics. */
+  message?: string;
+  /** A subset of the captured targets; retry executes only these IDs. */
+  failedIds?: readonly string[];
+}
+export interface AdminActionInput extends Pick<
+  AdminEntityForm,
+  "defaultValues" | "resolver" | "errors"
+> {
+  fields: readonly Omit<AdminEntityField, "deriveValues">[];
+}
+export interface AdminManagedAction {
+  confirm?: (scope: AdminActionScope) => string;
+  input?: AdminActionInput;
+  affected?: readonly string[];
+  execute: (
+    scope: AdminActionScope,
+    values: AdminFormValues,
+    request: AdminAdapterRequest
+  ) => Promise<AdminActionResult>;
+}
 export interface AdminEntityAction {
   id: string;
   target: "record" | "selection";
   label: (scope: AdminActionScope) => string;
   /** Optional contextual-menu label, falling back to label. */
   menuLabel?: (scope: AdminActionScope) => string;
-  execute: (scope: AdminActionScope) => void | Promise<void>;
+  /** Legacy host-owned execution. Mutually exclusive with operation. */
+  execute?: (scope: AdminActionScope) => void | Promise<void>;
+  operation?: AdminManagedAction;
   destructive?: boolean;
   enabled?: Atom<boolean>;
   isAvailable?: (scope: AdminActionScope) => boolean;
@@ -148,6 +180,11 @@ export const createAdminEntityRegistry = (
         throw new Error(`Duplicate action ${action.id} for ${entity.key}`);
       }
       actionIds.add(action.id);
+      if (Boolean(action.execute) === Boolean(action.operation)) {
+        throw new Error(
+          `Action requires exactly one execution contract: ${entity.key}/${action.id}`
+        );
+      }
     }
     if (entity.screens.create && !entity.adapter.create) {
       throw new Error(`Create screen requires a create adapter: ${entity.key}`);

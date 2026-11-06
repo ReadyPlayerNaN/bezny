@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 import type { Atom } from "jotai";
 
+import { adminActionRequestAtom } from "./admin-action-request.js";
 import type {
   AdminListQuery,
   AdminRecordEnvelope,
@@ -195,6 +196,7 @@ export const createAdminDataSession = (
     { snapshot: AdminDataSnapshot; expires: number; bytes: number }
   >();
   const mutationControllers = new Set<AbortController>();
+  const operations = new Map<string, symbol>();
   const disposalCallbacks = new Set<() => void>();
   let expiryTimer: ReturnType<typeof setTimeout> | undefined;
   let controller: AbortController | null = null;
@@ -440,7 +442,8 @@ export const createAdminDataSession = (
   };
   const mutate = async <T>(
     entity: AdminEntity,
-    operation: (signal: AbortSignal) => Promise<T>
+    operation: (signal: AbortSignal) => Promise<T>,
+    affected: readonly string[] = [entity.key]
   ): Promise<T> => {
     if (disposed) {
       throw new Error("The admin application has been disposed.");
@@ -455,8 +458,10 @@ export const createAdminDataSession = (
       if (disposed || pending.signal.aborted) {
         throw new DOMException("Request cancelled", "AbortError");
       }
-      invalidate(entity.key);
-      if (active?.entity === entity.key) {
+      for (const key of affected) {
+        invalidate(key);
+      }
+      if (active && affected.includes(active.entity)) {
         await activate(active, true);
       }
       if (disposed || pending.signal.aborted) {
@@ -481,6 +486,7 @@ export const createAdminDataSession = (
       pending.abort();
     }
     mutationControllers.clear();
+    operations.clear();
     clearTimeout(expiryTimer);
     expiryTimer = undefined;
     cache.clear();
@@ -488,6 +494,7 @@ export const createAdminDataSession = (
     publish({ ...emptySnapshot(), status: disposed ? "disposed" : "idle" });
     store.set(adminSelectionAtom, null);
     store.set(adminPageCommandsAtom, null);
+    store.set(adminActionRequestAtom, null);
     store.set(adminListQueriesAtom, {});
   };
   const boundedMutationRecord = (record: AdminRecordEnvelope) => {
@@ -539,6 +546,51 @@ export const createAdminDataSession = (
       ];
       disposalCallbacks.clear();
       disposeResources(listeners);
+    },
+    /** Abortable host operations share mutation bounds; results are never cached. */
+    execute: async <T>(
+      key: string,
+      operationId: string,
+      operation: (request: {
+        signal: AbortSignal;
+        locale: string;
+      }) => Promise<T>,
+      affected: readonly string[] = [key],
+      callerSignal?: AbortSignal
+    ): Promise<T> => {
+      const entity = findEntity(key);
+      for (const affectedKey of affected) {
+        findEntity(affectedKey);
+      }
+      const identity = JSON.stringify([key, operationId]);
+      if (operations.has(identity)) {
+        throw new Error("Operation already pending.");
+      }
+      const owner = Symbol(identity);
+      operations.set(identity, owner);
+      try {
+        return await mutate(
+          entity,
+          (signal) => {
+            const combined = callerSignal
+              ? AbortSignal.any([signal, callerSignal])
+              : signal;
+            combined.throwIfAborted();
+            return abortable(
+              operation({
+                locale: store.get(snapshotAtom).query.locale,
+                signal: combined,
+              }),
+              combined
+            );
+          },
+          affected
+        );
+      } finally {
+        if (operations.get(identity) === owner) {
+          operations.delete(identity);
+        }
+      }
     },
     invalidate,
     onDispose: (listener: () => void) => {
