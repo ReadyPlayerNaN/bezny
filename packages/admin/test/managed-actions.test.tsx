@@ -138,6 +138,34 @@ describe("managed registered actions", () => {
     ]);
   });
 
+  it("focuses a mapped server error after action inputs are re-enabled", async () => {
+    const { promise, reject } = Promise.withResolvers<{ message: string }>();
+    execute.mockReturnValueOnce(promise);
+    await setup({
+      input: {
+        errors: () => ({ reason: "Choose another reason" }),
+        fields: [{ key: "reason", label: "Reason" }],
+      },
+    });
+    await open();
+    const user = userEvent.setup();
+    const reason = await screen.findByRole("textbox", { name: "Reason" });
+    await user.type(reason, "Draft");
+    await user.click(
+      within(screen.getByRole("dialog")).getByRole("button", {
+        name: "Archive",
+      })
+    );
+    await waitFor(() =>
+      expect((reason as HTMLInputElement).disabled).toBeTruthy()
+    );
+    act(() => reject(new Error("conflict")));
+    await screen.findByText("Choose another reason");
+    await waitFor(() => expect(document.activeElement).toBe(reason));
+    expect((reason as HTMLInputElement).disabled).toBeFalsy();
+    expect((reason as HTMLInputElement).value).toBe("Draft");
+  });
+
   it("revalidates availability at confirmation without calling transport", async () => {
     let available = true;
     await setup({ confirm: () => "Confirm?" }, "record", () => available);

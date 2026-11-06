@@ -32,7 +32,7 @@ import {
 } from "./admin-entity-fields.js";
 import { adminSelectionAtom } from "./admin-entity-model.js";
 import type { AdminCommand } from "./admin-entity-model.js";
-import { applyAdminFormErrors } from "./admin-form-errors.js";
+import { useAdminFormErrors } from "./admin-form-errors.js";
 import { createAdminFormFieldCommands } from "./admin-form-field-commands.js";
 import {
   useAdminFormLifetime,
@@ -265,6 +265,11 @@ const DefaultEntityForm = () => {
   });
   const watchedValues = useWatch({ control: form.control });
   const [deriving, setDeriving] = useState(0);
+  const applyErrors = useAdminFormErrors(form, configured, {
+    disabled: form.formState.isSubmitting || deriving > 0,
+    isCurrent: canMutate,
+    record: record?.data,
+  });
   const deriveValues = useCallback(
     async (field: AdminEntityField) => {
       if (
@@ -354,9 +359,7 @@ const DefaultEntityForm = () => {
         }
       } catch (error) {
         if (canMutate()) {
-          applyAdminFormErrors(
-            form,
-            configured,
+          applyErrors(
             error,
             t("defaults.saveError", {
               defaultValue: "Could not save. Check the values and try again.",
@@ -369,12 +372,11 @@ const DefaultEntityForm = () => {
       }
     },
     [
+      applyErrors,
       canMutate,
-      configured,
       data,
       deriving,
       entity,
-      form,
       initialRecord,
       isAlive,
       isNavigationAlive,

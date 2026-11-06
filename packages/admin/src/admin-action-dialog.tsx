@@ -24,7 +24,7 @@ import {
 } from "./admin-entity-fields.js";
 import { adminSelectionAtom } from "./admin-entity-model.js";
 import type { AdminActionResult } from "./admin-entity-model.js";
-import { applyAdminFormErrors } from "./admin-form-errors.js";
+import { useAdminFormErrors } from "./admin-form-errors.js";
 import { AdminRegisteredField } from "./admin-registered-field.js";
 
 import styles from "./admin-chrome.module.scss";
@@ -72,6 +72,13 @@ const ActionForm = ({
   const [result, setResult] = useState<AdminActionResult | null>(null);
   const controller = useRef<AbortController | null>(null);
   const locked = useRef(false);
+  const complete = result !== null && !result.failedIds?.length;
+  const applyErrors = useAdminFormErrors(form, operation?.input, {
+    disabled: busy || complete || form.formState.isSubmitting,
+    isCurrent: () =>
+      scope.store.get(adminActionRequestAtom) === request &&
+      controller.current?.signal.aborted === false,
+  });
   const submit = async (values: AdminFormValues) => {
     if (
       locked.current ||
@@ -134,12 +141,7 @@ const ActionForm = ({
         !owner.signal.aborted &&
         scope.store.get(adminActionRequestAtom) === request
       ) {
-        applyAdminFormErrors(
-          form,
-          operation.input,
-          error,
-          t("chrome.commandError")
-        );
+        applyErrors(error, t("chrome.commandError"));
       }
     }
     if (controller.current === owner && !owner.signal.aborted) {
@@ -162,7 +164,6 @@ const ActionForm = ({
     }
     return () => owner.abort();
   }, [operation]);
-  const complete = result !== null && !result.failedIds?.length;
   return (
     <FormProvider {...form}>
       <form

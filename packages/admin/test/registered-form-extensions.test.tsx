@@ -53,6 +53,7 @@ const setup = async (form: AdminEntityForm, path = "/documents/create") => {
           password: "server-secret",
         }),
       list: () => Promise.resolve({ items: [], total: 0 }),
+      update: (_id, values) => create(values),
     },
     form,
     key: "documents",
@@ -171,6 +172,98 @@ describe("registered form extensions", () => {
     await user.type(screen.getByRole("textbox", { name: "Title" }), "Revised");
     await user.click(screen.getByRole("button", { name: "Save" }));
     await waitFor(() => expect(create).toHaveBeenCalledTimes(2));
+  });
+
+  it.each(["/documents/create", "/documents/1/edit"])(
+    "focuses mapped server errors only after %s fields are enabled",
+    async (path) => {
+      const { promise, reject } = Promise.withResolvers<{
+        id: string;
+        label: string;
+      }>();
+      create.mockReturnValueOnce(promise);
+      await setup(
+        {
+          errors: () => ({ confirm: "Review this too", title: "Already used" }),
+          fields: [
+            { key: "title", label: "Title" },
+            { key: "confirm", label: "Confirm" },
+          ],
+        },
+        path
+      );
+      const user = userEvent.setup();
+      const title = await screen.findByRole("textbox", { name: "Title" });
+      await user.type(title, "Draft");
+      await user.click(screen.getByRole("button", { name: "Save" }));
+      await waitFor(() =>
+        expect(title.closest("fieldset")?.disabled).toBeTruthy()
+      );
+      act(() => reject(new Error("conflict")));
+      await screen.findByText("Already used");
+      await waitFor(() => expect(document.activeElement).toBe(title));
+      expect(title.closest("fieldset")?.disabled).toBeFalsy();
+      expect(title.getAttribute("aria-invalid")).toBe("true");
+      expect((title as HTMLInputElement).value).toBe("Draft");
+      // A later unrelated render must not steal focus back to the server error.
+      const confirm = screen.getByRole("textbox", { name: "Confirm" });
+      await user.type(confirm, "Reviewed");
+      expect(document.activeElement).toBe(confirm);
+    }
+  );
+
+  it("skips disabled mapped fields when choosing the first server-error focus target", async () => {
+    const { promise, reject } = Promise.withResolvers<{
+      id: string;
+      label: string;
+    }>();
+    create.mockReturnValueOnce(promise);
+    await setup({
+      errors: () => ({ locked: "Unavailable", title: "Already used" }),
+      fields: [
+        { disabled: true, key: "locked", label: "Locked" },
+        { key: "title", label: "Title" },
+      ],
+    });
+    const user = userEvent.setup();
+    const title = await screen.findByRole("textbox", { name: "Title" });
+    await user.type(title, "Draft");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() =>
+      expect(title.closest("fieldset")?.disabled).toBeTruthy()
+    );
+    act(() => reject(new Error("conflict")));
+    await screen.findByText("Already used");
+    await waitFor(() => expect(document.activeElement).toBe(title));
+  });
+
+  it("does not focus a server error after the submitting form was abandoned", async () => {
+    const { promise, reject } = Promise.withResolvers<{
+      id: string;
+      label: string;
+    }>();
+    create.mockReturnValueOnce(promise);
+    const app = await setup({
+      errors: () => ({ title: "Too late" }),
+      fields: [{ key: "title", label: "Title" }],
+    });
+    const user = userEvent.setup();
+    const title = await screen.findByRole("textbox", { name: "Title" });
+    const focus = vi.spyOn(title, "focus");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() =>
+      expect(title.closest("fieldset")?.disabled).toBeTruthy()
+    );
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+    await screen.findByRole("heading", { name: "Documents" });
+    focus.mockClear();
+    await act(async () => {
+      reject(new Error("conflict"));
+      await Promise.resolve();
+    });
+    expect(focus).not.toHaveBeenCalled();
+    expect(screen.queryByText("Too late")).toBeNull();
+    expect(app.router.state.location.pathname).toBe("/documents");
   });
 
   it("masks password inputs and never copies their values into palette editors", async () => {
