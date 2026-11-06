@@ -79,6 +79,27 @@ A single pagination navigation appears **below** the rows (including empty/loadi
 
 `AdminCollectionFilters`, `AdminCollectionSorting`, and `AdminCollectionPagination` are exported from `@bezny/admin/list` for custom list compositions. Their responsive flex layout uses `--bezny-control-admin-collection-*` aliases for structural surface gap, padding, border, text, and typography. Override shared structural aliases on their declaration scope; component control aliases can be overridden on the filters/pagination boundary after loading `@bezny/admin/style.css`.
 
+### Connected remote command search
+
+Pass `searchSources` to `createAdminRuntime` or `createAdminApplication`. The connected palette keeps the registered command catalog and adds grouped remote results; it does not preload records or add a second entity-data owner.
+
+```ts
+searchSources: [{
+  id: "directory", label: "Directory",
+  search: async ({ query, limit, locale, signal }) => {
+    const rows = await directory.search({ query, limit, locale, signal });
+    return rows.map(row => ({
+      id: row.id, label: row.name,
+      execute: () => hostRouter.navigate({ to: "/profiles/$id", params: { id: row.id } }),
+    }));
+  },
+}],
+```
+
+Requests begin only for nonempty queries after 250 ms debounce. Queries are trimmed and bounded to 200 characters. Sources are bounded to 20, each returning at most 20 unique results; IDs are nonempty strings up to 200 characters and labels up to 1,000. Hosts own transport, authorization, ranking, locale-specific labels and navigation destinations. Server-ranked results are not filtered a second time by client substring matching. An optional result `isAvailable()` rechecks eligibility at selection, without replacing server-side authorization.
+
+Each source has independent loading/empty/error/retry state. New queries, palette closure/editor entry, route changes, locale changes and pause/disposal abort or fence outstanding requests. Results are transient, scoped to the open palette, and never enter the entity cache. Errors use safe localized feedback, not transport exceptions. Explicit `commands` palettes remain host-owned and do not implicitly attach runtime sources. Search types are exported from `@bezny/admin/runtime`.
+
 ### Managed non-CRUD actions
 
 An entity action declares exactly one of legacy host-owned `execute(scope)` or framework-owned `operation`. Default screens mount `AdminActionDialog`; custom screens can mount that export from `@bezny/admin/routing` once per scope.

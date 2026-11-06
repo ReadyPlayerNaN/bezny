@@ -8,13 +8,17 @@ import {
 } from "@bezny/base";
 import type { DialogContentProps } from "@bezny/base";
 import { Command as CommandMenu } from "cmdk";
+import { useAtomValue } from "jotai";
 import { Command, Search, ChevronRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AdminCommandInput } from "./admin-command-input.js";
 import { useAdminEntityCommands } from "./admin-entity-commands.js";
 import type { AdminCommand } from "./admin-entity-model.js";
+import { adminSearchContextAtom } from "./admin-remote-search.js";
+import type { AdminSearchContext } from "./admin-remote-search.js";
+import { AdminSearchGroup } from "./admin-search-group.js";
 
 import styles from "./admin-chrome.module.scss";
 
@@ -31,15 +35,36 @@ const CommandPalette = ({
   triggerId = adminCommandPaletteTriggerId,
   shortcut = true,
   container,
-}: AdminCommandPaletteProps & { commands: readonly AdminCommand[] }) => {
+  searchContext,
+}: AdminCommandPaletteProps & {
+  commands: readonly AdminCommand[];
+  searchContext?: AdminSearchContext | null;
+}) => {
   const { t, i18n } = useTranslation("beznyAdmin", { keyPrefix: "chrome" });
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const [failure, setFailure] = useState(false);
   const [editing, setEditing] = useState<AdminCommand | null>(null);
+  const closeSearch = useEffectEvent(() => {
+    if (!editing) {
+      setOpen(false);
+      setQuery("");
+      setFailure(false);
+    }
+  });
+  useEffect(() => {
+    if (!searchContext?.sources.length) {
+      return;
+    }
+    const abort = () => closeSearch();
+    searchContext.signal.addEventListener("abort", abort);
+    return () => searchContext.signal.removeEventListener("abort", abort);
+  }, [searchContext]);
   const pendingCommand = useRef<AdminCommand | null>(null);
   const trigger = useRef<HTMLButtonElement>(null);
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
+    setFailure(false);
     if (nextOpen) {
       setQuery("");
       setEditing(null);
@@ -99,13 +124,19 @@ const CommandPalette = ({
           if (command) {
             event.preventDefault();
             trigger.current?.focus();
-            await command.execute();
+            try {
+              await command.execute();
+            } catch {
+              setFailure(true);
+              setOpen(true);
+            }
           }
         }}
       >
         <DialogTitle className={styles.paletteTitle}>
           {t("palette")}
         </DialogTitle>
+        {failure && <p role="alert">{t("commandError")}</p>}
         {editing ? (
           <div className={styles.paletteEditor}>
             <AdminCommandInput
@@ -131,6 +162,7 @@ const CommandPalette = ({
                 aria-label={t("searchCommands")}
                 placeholder={t("searchCommands")}
                 value={query}
+                maxLength={200}
                 onValueChange={setQuery}
               />
               <DialogClose asChild>
@@ -144,9 +176,11 @@ const CommandPalette = ({
               </DialogClose>
             </div>
             <CommandMenu.List className={styles.commands} label={t("commands")}>
-              <CommandMenu.Empty className={styles.paletteEmpty}>
-                <output>{t("noCommands")}</output>
-              </CommandMenu.Empty>
+              {(!searchContext?.sources.length || !query.trim()) && (
+                <CommandMenu.Empty className={styles.paletteEmpty}>
+                  <output>{t("noCommands")}</output>
+                </CommandMenu.Empty>
+              )}
               {commands.map((command) => (
                 <CommandMenu.Item
                   key={command.id}
@@ -177,6 +211,18 @@ const CommandPalette = ({
                   )}
                 </CommandMenu.Item>
               ))}
+              {searchContext?.sources.map((source) => (
+                <AdminSearchGroup
+                  key={source.id}
+                  source={source}
+                  context={searchContext}
+                  query={open ? query : ""}
+                  select={(command) => {
+                    pendingCommand.current = command;
+                    setOpen(false);
+                  }}
+                />
+              ))}
             </CommandMenu.List>
           </CommandMenu>
         )}
@@ -187,7 +233,14 @@ const CommandPalette = ({
 
 const ConnectedPalette = (props: AdminCommandPaletteProps) => {
   const { paletteCommands } = useAdminEntityCommands();
-  return <CommandPalette {...props} commands={paletteCommands} />;
+  const searchContext = useAtomValue(adminSearchContextAtom);
+  return (
+    <CommandPalette
+      {...props}
+      commands={paletteCommands}
+      searchContext={searchContext}
+    />
+  );
 };
 export const AdminCommandPalette = (props: AdminCommandPaletteProps) =>
   props.commands === undefined ? (

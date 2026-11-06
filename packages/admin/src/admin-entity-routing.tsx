@@ -34,6 +34,7 @@ import { adminEntityPaths } from "./admin-entity-paths.js";
 import { AdminFormNavigationLifetime } from "./admin-form-lifetime.js";
 import { AdminProvider } from "./admin-provider.js";
 import type { AdminProviderProps } from "./admin-provider.js";
+import type { AdminSearchSource } from "./admin-remote-search.js";
 import { AdminDefaultCollectionLoadingPage } from "./admin-resource-states.js";
 import { AdminRouteBindingsContext } from "./admin-route-bindings.js";
 import type { AdminToastOptions } from "./admin-toasts.js";
@@ -79,6 +80,7 @@ export {
 
 export interface AdminApplicationOptions {
   entities: readonly AdminEntityDefinition[];
+  searchSources?: readonly AdminSearchSource[];
   cache?: Partial<AdminCachePolicy>;
   realtime?: boolean;
   Root: FunctionComponent;
@@ -97,6 +99,7 @@ export const createAdminApplication = ({
   cache,
   realtime = true,
   i18n: translations,
+  searchSources,
 }: AdminApplicationOptions) => {
   const runtime = createAdminRuntime({
     NotFound,
@@ -105,6 +108,7 @@ export const createAdminApplication = ({
     ...(store ? { store } : {}),
     ...(cache ? { cache } : {}),
     ...(translations ? { i18n: translations } : {}),
+    ...(searchSources ? { searchSources } : {}),
   });
   const [firstEntity] = runtime.registry.entities;
   if (!firstEntity) {

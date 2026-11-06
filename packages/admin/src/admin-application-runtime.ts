@@ -25,10 +25,20 @@ import { createAdminI18n } from "./admin-i18n.js";
 import { adminListSearch, readAdminListSearch } from "./admin-list-search.js";
 import { adminListQueriesAtom } from "./admin-list-state.js";
 import {
+  adminSearchContextAtom,
+  validateAdminSearchSources,
+} from "./admin-remote-search.js";
+import type { AdminSearchSource } from "./admin-remote-search.js";
+import {
   adminRouteLocation,
   defaultAdminRouteBindings,
 } from "./admin-route-bindings.js";
 import type { AdminRouteBindings } from "./admin-route-bindings.js";
+
+export type {
+  AdminSearchSource,
+  AdminSearchResult,
+} from "./admin-remote-search.js";
 
 export interface AdminRuntimeOptions {
   entities: readonly AdminEntityDefinition[];
@@ -38,6 +48,7 @@ export interface AdminRuntimeOptions {
   store?: AdminStore;
   i18n?: i18n;
   routes?: AdminRouteBindings;
+  searchSources?: readonly AdminSearchSource[];
 }
 
 /** One data/command authority, independent of how the host creates its routes. */
@@ -49,7 +60,25 @@ export const createAdminRuntime = ({
   store = createStore(),
   i18n: translations = createAdminI18n(),
   routes = defaultAdminRouteBindings,
+  searchSources = [],
 }: AdminRuntimeOptions) => {
+  const sources = validateAdminSearchSources(searchSources);
+  let searchController: AbortController | null = null;
+  const resetSearch = (active: boolean) => {
+    searchController?.abort();
+    searchController = active ? new AbortController() : null;
+    store.set(
+      adminSearchContextAtom,
+      searchController
+        ? {
+            locale:
+              translations.resolvedLanguage ?? translations.language ?? "en",
+            signal: searchController.signal,
+            sources,
+          }
+        : null
+    );
+  };
   registerAdminDefaultTranslations(translations);
   const registry = createAdminEntityRegistry(entities);
   const session = createAdminDataSession(registry, store, cache, { realtime });
@@ -171,15 +200,18 @@ export const createAdminRuntime = ({
     }
   };
   const languageChanged = () => {
+    resetSearch(true);
     void activate();
   };
   const connect = () => {
     if (disconnect || !router || session.diagnostics().disposed) {
       return;
     }
+    resetSearch(true);
     const currentRouter = router;
     const subscriptions = [
       currentRouter.subscribe("onBeforeLoad", (event) => {
+        resetSearch(true);
         navigation += 1;
         destinationHref = event.toLocation.href;
         destination = adminRouteLocation(
@@ -203,6 +235,7 @@ export const createAdminRuntime = ({
       location = null;
     });
     disconnect = () => {
+      resetSearch(false);
       unregister();
       for (const unsubscribe of subscriptions) {
         unsubscribe();
