@@ -1,6 +1,6 @@
 # Registered collection sorting
 
-Status: implementation and source validation complete; independent review and matching patch publication remain pending.
+Status: implementation, source validation and independent review complete; matching patch publication and downstream adoption remain pending.
 
 ## Contract
 
@@ -30,6 +30,8 @@ Parent-executed checks (2026-11-06), with evidence under ignored `.tmp/registere
 Behavioral tests execute both programmatic and host file-route applications, default pages, actual router/store/session and adapter callbacks. They cover defaults, invalid URLs/commands/registrations, explicit empty rules, cache direction/priority identity, copied URLs, Back/Forward, page/selection reset, preserved filters/page sizes, pagination, locale, refresh/mutation, paused/disposed commands and late response cancellation. Tests do not substitute source matching for runtime behavior.
 
 Preserved initial failures: the browser test initially sent Enter before Radix's deferred End-key focus settled; it now awaits the actual focused option before Enter, without sleeps/timeouts. Stricter assertions initially compared router null-prototype search objects against ordinary objects; assertions now compare copied search entries while retaining exact key/value checks. No production behavior was changed to accommodate those test issues. Existing build directive, router CLI circular-dependency and npm user-config warnings remain; no dependency or CI changes were introduced.
+
+Independent read-only reviewer `6d34f68c-912e-4910-9df0-1c717802c1b3` reviewed the complete `5972016..244de68` diff, relevant source, parent-executed logs and all eight screenshots. Verdict: **OK with notes**, no issues found. The reviewer did not rerun checks. The notes identify publication and downstream frozen-installation gates as outstanding, not source defects.
 
 This is not publication or downstream-adoption evidence. Those gates remain separate.
 
