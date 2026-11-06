@@ -2,6 +2,7 @@ import { createMemoryHistory, Outlet } from "@tanstack/react-router";
 import {
   act,
   cleanup,
+  fireEvent,
   render,
   screen,
   waitFor,
@@ -233,6 +234,81 @@ describe("managed registered actions", () => {
     });
     expect(screen.queryByText("Late result")).toBeNull();
     expect(app.session.diagnostics().pendingRequests).toBe(0);
+  });
+
+  it("fences an abort-ignoring transport after close and reopening", async () => {
+    const obsolete = Promise.withResolvers<{ message: string }>();
+    const current = Promise.withResolvers<{ message: string }>();
+    execute
+      .mockReturnValueOnce(obsolete.promise)
+      .mockReturnValueOnce(current.promise);
+    const app = await setup();
+    await open();
+    await waitFor(() => expect(execute).toHaveBeenCalledOnce());
+    const signal = execute.mock.calls[0]?.[2].signal;
+    await userEvent.click(
+      within(await screen.findByRole("dialog")).getByRole("button", {
+        name: "Cancel",
+      })
+    );
+    expect(signal?.aborted).toBeTruthy();
+    await open();
+    await waitFor(() => expect(execute).toHaveBeenCalledTimes(2));
+    await act(async () => {
+      obsolete.resolve({ message: "Obsolete result" });
+      await obsolete.promise;
+    });
+    expect({
+      obsolete: screen.queryByText("Obsolete result"),
+      pending: app.session.diagnostics().pendingRequests,
+    }).toStrictEqual({ obsolete: null, pending: 1 });
+    await act(async () => {
+      current.resolve({ message: "Current result" });
+      await current.promise;
+    });
+    await expect(screen.findByText("Current result")).resolves.toBeTruthy();
+  });
+
+  it("executes once when duplicate submissions await asynchronous validation", async () => {
+    const validation = Promise.withResolvers<{
+      errors: Record<string, never>;
+      values: { reason: string };
+    }>();
+    const transport = Promise.withResolvers<{ message: string }>();
+    const resolver = vi
+      .fn<NonNullable<NonNullable<AdminManagedAction["input"]>["resolver"]>>()
+      .mockReturnValue(validation.promise);
+    execute.mockReturnValueOnce(transport.promise);
+    await setup({
+      input: { fields: [{ key: "reason", label: "Reason" }], resolver },
+    });
+    await open();
+    const dialog = await screen.findByRole("dialog");
+    const form = dialog.querySelector("form");
+    if (!form) {
+      throw new Error("Missing action form");
+    }
+    fireEvent.submit(form);
+    fireEvent.submit(form);
+    await waitFor(() => expect(resolver).toHaveBeenCalledTimes(2));
+    expect(execute).not.toHaveBeenCalled();
+    await act(async () => {
+      validation.resolve({ errors: {}, values: { reason: "Validated" } });
+      await validation.promise;
+    });
+    await waitFor(() => expect(execute).toHaveBeenCalledOnce());
+    expect(
+      within(dialog)
+        .getByRole("button", { name: "Archive" })
+        .hasAttribute("disabled")
+    ).toBeTruthy();
+    await act(async () => {
+      transport.resolve({ message: "Completed" });
+      await transport.promise;
+    });
+    expect(execute.mock.calls.map((call) => call[1])).toStrictEqual([
+      { reason: "Validated" },
+    ]);
   });
 
   it("deduplicates public session operations and releases locks after completion", async () => {
