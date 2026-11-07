@@ -121,7 +121,7 @@ const ActionForm = ({
       const failed = remainingIds(response, targets);
       if (failed.length) {
         setTargets(failed);
-        if (action.target === "selection") {
+        if (request.targetSource === "selection") {
           scope.store.set(adminSelectionAtom, {
             entity: scope.entity.key,
             ids: failed,

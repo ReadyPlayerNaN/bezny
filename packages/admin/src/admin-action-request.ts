@@ -6,8 +6,11 @@ import type {
 } from "./admin-entity-model.js";
 import { adminSelectionAtom } from "./admin-entity-model.js";
 
+export type AdminActionTargetSource = "record" | "selection" | "explicit";
+
 export interface AdminActionRequest {
   action: AdminEntityAction;
+  targetSource: AdminActionTargetSource;
   scope: AdminActionScope;
   key: string;
   returnFocus: HTMLElement | null;
@@ -33,7 +36,7 @@ export const currentAdminActionScope = (
   if (records.length !== ids.length) {
     return null;
   }
-  if (action.target === "selection") {
+  if (request.targetSource === "selection") {
     const selection = scope.store.get(adminSelectionAtom);
     if (
       selection?.entity !== scope.entity.key ||
@@ -54,14 +57,18 @@ export const currentAdminActionScope = (
 };
 export const requestAdminAction = (
   action: AdminEntityAction,
-  scope: AdminActionScope
+  scope: AdminActionScope,
+  targetSource: AdminActionTargetSource = action.target,
+  returnFocus?: HTMLElement | null
 ) => {
   if (scope.store.get(adminActionRequestAtom)) {
     return;
   }
   const active = document.activeElement;
   const row =
-    active instanceof HTMLElement && active.closest('[role="menu"]')
+    targetSource !== "explicit" &&
+    active instanceof HTMLElement &&
+    active.closest('[role="menu"]')
       ? [...document.querySelectorAll<HTMLElement>("[data-selection-id]")].find(
           (element) => element.dataset.selectionId === scope.ids[0]
         )
@@ -69,7 +76,9 @@ export const requestAdminAction = (
   scope.store.set(adminActionRequestAtom, {
     action,
     key: scope.store.get(scope.session.snapshotAtom).key,
-    returnFocus: row ?? (active instanceof HTMLElement ? active : null),
+    returnFocus:
+      returnFocus ?? row ?? (active instanceof HTMLElement ? active : null),
     scope,
+    targetSource,
   });
 };

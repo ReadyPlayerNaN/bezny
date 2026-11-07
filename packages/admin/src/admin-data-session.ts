@@ -431,7 +431,8 @@ export const createAdminDataSession = (
     }
     const cached = cachedSnapshot(key, force);
     if (cached) {
-      publish(cached);
+      // A cache hit reuses data, never the identity of an abandoned presentation.
+      publish(Object.freeze({ ...cached }));
       return;
     }
     cache.delete(key);

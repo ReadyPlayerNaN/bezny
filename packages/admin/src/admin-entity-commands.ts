@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 
 import { requestAdminAction } from "./admin-action-request.js";
 import { defaultAdminListQuery } from "./admin-data-session.js";
+import type { AdminDataSnapshot } from "./admin-data-session.js";
 import {
   useAdminEntityContext,
   useAdminEntityRegistry,
@@ -95,22 +96,37 @@ const routeCommand = (
   location: { entity: entity.key, view },
 });
 
+export interface AdminExplicitActionOptions {
+  /** Stable group/menu trigger to restore focus to when the dialog closes. */
+  returnFocus?: HTMLElement | null;
+}
+type ExplicitActionOrigin = AdminExplicitActionOptions & {
+  snapshot: AdminDataSnapshot;
+};
+
 const actionCommand = (
   action: AdminEntityAction,
-  scope: AdminActionScope
+  scope: AdminActionScope,
+  explicit?: ExplicitActionOrigin
 ): AdminCommand => ({
-  id: `${scope.entity.key}.action.${action.id}.${JSON.stringify(scope.ids)}`,
+  id: `${scope.entity.key}${explicit ? ".explicit" : ""}.action.${action.id}.${JSON.stringify(scope.ids)}`,
   label: action.label(scope),
   ...(action.menuLabel ? { menuLabel: action.menuLabel(scope) } : {}),
   ...(action.destructive ? { destructive: true } : {}),
   execute: () => {
+    if (
+      explicit &&
+      scope.store.get(scope.session.snapshotAtom) !== explicit.snapshot
+    ) {
+      return;
+    }
     // Revalidate availability and target existence, including stale palette items.
     const targetIds = new Set(scope.ids);
     const availableRecords = scope.store.get(scope.entity.records);
     const records = availableRecords.filter((record) =>
       targetIds.has(record.id)
     );
-    if (action.target === "selection") {
+    if (!explicit && action.target === "selection") {
       const selection = scope.store.get(adminSelectionAtom);
       const existingIds = new Set(availableRecords.map((record) => record.id));
       const selectedIds =
@@ -135,7 +151,12 @@ const actionCommand = (
       return;
     }
     if (action.operation) {
-      return requestAdminAction(action, current);
+      return requestAdminAction(
+        action,
+        current,
+        explicit ? "explicit" : action.target,
+        explicit?.returnFocus
+      );
     }
     return action.execute?.(current);
   },
@@ -235,7 +256,8 @@ export const useAdminEntityCommands = () => {
   const create = createCommand(entity);
   const customCommands = (
     target: "record" | "selection",
-    records: readonly AdminRecordReference[]
+    records: readonly AdminRecordReference[],
+    explicit?: ExplicitActionOrigin
   ): AdminCommand[] => {
     if (
       !context.view ||
@@ -258,9 +280,10 @@ export const useAdminEntityCommands = () => {
     };
     return (entity.actions ?? []).flatMap((action) =>
       action.target === target &&
+      (!explicit || action.operation) &&
       (!action.enabled || store.get(action.enabled)) &&
       (!action.isAvailable || action.isAvailable(scope))
-        ? [actionCommand(action, scope)]
+        ? [actionCommand(action, scope, explicit)]
         : []
     );
   };
@@ -314,6 +337,32 @@ export const useAdminEntityCommands = () => {
       }
     }
     return [...routeCommands, ...customCommands("record", [record])];
+  };
+  /** Managed bulk actions for an explicit subset of the current ready page.
+   * Invalid target sets produce no commands; global selection is never changed.
+   */
+  const forRecords = (
+    recordIds: readonly string[],
+    options?: AdminExplicitActionOptions
+  ): AdminCommand[] => {
+    if (
+      context.view !== "list" ||
+      !context.entity ||
+      context.data?.status !== "ready" ||
+      recordIds.length === 0 ||
+      recordIds.length > context.records.length
+    ) {
+      return [];
+    }
+    const ids = new Set(recordIds);
+    const records = context.records.filter((record) => ids.has(record.id));
+    if (ids.size !== recordIds.length || records.length !== recordIds.length) {
+      return [];
+    }
+    return customCommands("selection", records, {
+      ...options,
+      snapshot: context.data,
+    });
   };
   const forSelection = (recordId: string): AdminCommand => {
     const record = context.records.find((item) => item.id === recordId);
@@ -377,6 +426,7 @@ export const useAdminEntityCommands = () => {
   return {
     create,
     forRecord,
+    forRecords,
     forSelection,
     languageCommands,
     list,

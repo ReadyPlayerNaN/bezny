@@ -79,6 +79,30 @@ A single pagination navigation appears **below** the rows (including empty/loadi
 
 `AdminCollectionFilters`, `AdminCollectionSorting`, and `AdminCollectionPagination` are exported from `@bezny/admin/list` for custom list compositions. Their responsive flex layout uses `--bezny-control-admin-collection-*` aliases for structural surface gap, padding, border, text, and typography. Override shared structural aliases on their declaration scope; component control aliases can be overridden on the filters/pagination boundary after loading `@bezny/admin/style.css`.
 
+### Explicit groups of managed action targets
+
+Custom collection presentations can use `useAdminEntityCommands().forRecords(ids, options?)` to obtain **managed** actions registered with `target: "selection"` for an explicit group. This does not select those records, and is not a second mutation/dialog implementation:
+
+```tsx
+const commands = useAdminEntityCommands().forRecords(memberIds);
+return commands.map((command) => (
+  <Button
+    key={command.id}
+    onClick={() => {
+      void command.execute();
+    }}
+  >
+    {command.menuLabel ?? command.label}
+  </Button>
+));
+```
+
+Use your registered command identity/label consistently in custom controls. The returned catalog contains only selection-capable actions with `operation`, not legacy `execute` callbacks, row actions, navigation or stock delete commands. `AdminExplicitActionOptions` is exported from `@bezny/admin/commands`. Its optional `returnFocus` is a stable element to focus after closing; supply the group trigger when invoking from an unmounting menu item. Otherwise the current focused element is used. Detached focus targets are ignored by the dialog.
+
+All IDs must be distinct members of the **current ready collection page**. Empty, duplicate, missing/off-page or reserved IDs produce no commands, rather than a partially accepted group. The factory copies targets in current record order and never fetches missing records. Explicit command IDs differ from ordinary selection commands. Refresh, route/query changes, pause and disposal invalidate retained commands; returning to cached data cannot revive them. Rebuild controls from the current hook result. Target membership and action availability are checked again at confirmation and retry. Backend authorization remains mandatory.
+
+The same managed RHF input, confirmation, pending lock, abort/error handling and failed-target-only retry contract applies. Unlike native selection commands, explicit commands neither consult nor update global selection, including after partial success. Changes to unrelated selection do not retarget or cancel the group. `failedIds` must still be a subset of the captured group. This API does not supply grouped rendering, unbounded/all-results targeting or backend group rules.
+
 ### Connected remote command search
 
 Pass `searchSources` to `createAdminRuntime` or `createAdminApplication`. The connected palette keeps the registered command catalog and adds grouped remote results; it does not preload records or add a second entity-data owner.
