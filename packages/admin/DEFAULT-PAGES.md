@@ -57,7 +57,7 @@ Pass the definition to `createAdminApplication({ entities: [articles], Root, Not
 
 List pages are available by default; detail pages require `adapter.get`. For list-only resources, omit `get`: stock row titles become plain text, View/Edit commands and detail/update routes are unavailable, and successful creation returns to the collection. No placeholder read is necessary. Use `AdminCollectionAdapter` for explicitly typed list-only adapters; `AdminDataAdapter` retains its required `get` contract for detail-capable consumers. Explicit detail/update screens and an update operation require a detail read. Existing detail-capable registrations are unchanged.
 
-List/detail capabilities are inferred from adapters. Default create/update pages require `form` metadata and the matching adapter operation. Unsupported operations are not advertised. Custom create/update screens still require their adapter operation, but may provide their own forms instead of `form` metadata.
+List/detail capabilities are inferred from adapters. Default create/update pages require an effective form (`forms.create`/`forms.update`, falling back to `form`) and the matching adapter operation. Unsupported operations are not advertised. Custom create/update screens still require their adapter operation, but may provide their own forms instead of `form` metadata.
 
 ## Backend-provided mutation presentation
 
@@ -202,6 +202,25 @@ Search starts after 250 ms of inactivity for a nonempty trimmed query, pauses du
 
 Query changes, popup dismissal, locale/entity/list-query changes, pause/disposal and unmount abort obsolete requests. Results from transports that ignore cancellation are fenced before presentation. Selected-label resolution remains active while its owner is mounted even when suggestions are closed. No unbounded reference cache or parallel list session is introduced. Host callbacks should honor `signal`, but remain responsible for backend access checks. The `beznyAdmin.referenceFilter` namespace supplies English, Czech and Arabic status/action text.
 
+## View-specific forms
+
+Use `forms.create` and `forms.update` when creation and editing have different fields, validation or projection requirements. Each is a complete `AdminEntityForm`, not a partial merge. An omitted override falls back to the shared `form`:
+
+```ts
+// Both forms can be supplied without a shared form.
+forms: {
+  create: creationForm,
+  update: revisionForm,
+},
+// Alternatively: form: revisionForm, forms: { create: creationForm }
+```
+
+`AdminEntityForms` is exported from `@bezny/admin/adapters`. The active view selects one configuration for fields, defaults/readValues, resolver, error mapping, numeric coercion and palette commands. For example, creation can require matching sensitive credentials while editing has no credential fields and uses a different schema. There is still one default screen implementation, RHF owner and mutation session; no hidden mode field or second form is needed. The shared `parseValues` adapter boundary is unchanged: it must accept the validated values produced by each view and preserve host domain/authorization rules.
+
+Keys need only be unique within each form. Every configured form is validated, even if an override replaces it. A form does not grant adapter capabilities; without a matching operation the default screen/commands remain unavailable. Existing `form` registrations work unchanged. Leaving a view/record discards its draft and field commands; retained commands, late errors and derived values cannot modify the next form. Sensitive inputs are still excluded from record projection and palette value editors. Never return secrets in adapter records.
+
+Explicit `columns` remain the detail display. Without columns, detail uses `form` when present, otherwise `forms.update`; it never infers detail fields from a creation-only form. This prevents creation-only inputs from becoming read views. Custom `screens` overrides remain independent of form configuration.
+
 ## Fields and display
 
 Field keys are unique flat names, not dotted RHF paths. Supported types are `text` (default), `textarea`, `number`, `checkbox`, `select`, `email`, `url`, `password` and `date`. Fields accept labels/`labelKey`, help, required state, `minLength`/`maxLength`, numeric bounds and `step` (positive number or `"any"`), `autoComplete`, calendar `minDate`/`maxDate` ISO dates and choice options. Email/URL/date/number fields validate through RHF; application-specific schemes or business restrictions remain host policy. Select options must have unique non-empty values; the default form owns its empty placeholder.
@@ -210,7 +229,7 @@ For flat records, editable values are read from matching record properties. Miss
 
 For nested or domain-specific payloads, supply `form.readValues(data: unknown)` to validate/project the adapter payload into flat scalar form values. `parseValues` validates/transforms submitted form values into typed mutation values; it remains the domain validation boundary. Adapter failures or parser failures preserve the form and show an error.
 
-Optional `columns: [{ key, label, labelKey?, render(data: unknown) }]` provide list metadata and detail values. These callbacks should validate payloads with the application's domain schema. Without columns, the detail page uses the registered form fields. The row title always comes from `reference(record).label`.
+Optional `columns: [{ key, label, labelKey?, render(data: unknown) }]` provide list metadata and detail values. These callbacks should validate payloads with the application's domain schema. Without columns, the detail page uses shared `form` fields or, if absent, `forms.update` fields; sensitive fields are excluded. The row title always comes from `reference(record).label`.
 
 Each registered field also produces a palette command: text/number/choice inputs edit its value and checkbox commands toggle it. Password, sensitive, date and custom-component commands focus the actual form field instead of creating a second editor. Password fields are automatically sensitive; other fields can set `sensitive: true`. Sensitive fields never project values from loaded records or appear in automatic detail output/palette input values. Hosts must not return secrets in adapter records, columns or labels: the session is not a secret store. Explicit form defaults remain application-owned.
 

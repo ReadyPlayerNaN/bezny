@@ -5,7 +5,10 @@ import {
   AdminDefaultFormPage,
 } from "./admin-default-pages.js";
 import { adminDeletionRequestAtom } from "./admin-delete-dialog.js";
-import { validateAdminFormFields } from "./admin-entity-fields.js";
+import {
+  resolveAdminEntityForm,
+  validateAdminEntityForms,
+} from "./admin-entity-fields.js";
 import type {
   AdminActionScope,
   AdminEntityAction,
@@ -48,7 +51,7 @@ const deletionLabel = (
 export const resolveAdminEntityDefinition = (
   definition: AdminEntityDefinition
 ) => {
-  validateAdminFormFields(definition.form?.fields ?? [], definition.key);
+  validateAdminEntityForms(definition, definition.key);
   if (
     !definition.adapter.get &&
     (definition.screens?.detail ||
@@ -90,10 +93,12 @@ export const resolveAdminEntityDefinition = (
     screens: {
       ...(definition.adapter.get ? { detail: AdminDefaultDetailPage } : {}),
       list: AdminDefaultListPage,
-      ...(definition.form && definition.adapter.create
+      ...(resolveAdminEntityForm(definition, "create") &&
+      definition.adapter.create
         ? { create: AdminDefaultFormPage }
         : {}),
-      ...(definition.form && definition.adapter.update
+      ...(resolveAdminEntityForm(definition, "update") &&
+      definition.adapter.update
         ? { update: AdminDefaultFormPage }
         : {}),
       ...definition.screens,

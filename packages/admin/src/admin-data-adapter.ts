@@ -2,6 +2,7 @@ import type { ComponentType } from "react";
 
 import type {
   AdminEntityForm,
+  AdminEntityForms,
   AdminEntityColumn,
 } from "./admin-entity-fields.js";
 import type {
@@ -29,6 +30,7 @@ export type {
 export type {
   AdminEntityField,
   AdminEntityForm,
+  AdminEntityForms,
   AdminEntityColumn,
   AdminFormValues,
   AdminFieldScope,
@@ -160,7 +162,10 @@ export interface AdminEntityDefinition {
   labelKey?: string;
   singularLabelKey?: string;
   adapter: AdminEntityAdapter;
+  /** Shared form, also used for detail fallback when columns are absent. */
   form?: AdminEntityForm;
+  /** Complete create/update overrides, not shallow merges with form. */
+  forms?: AdminEntityForms;
   columns?: readonly AdminEntityColumn[];
   screens?: {
     list?: ComponentType;

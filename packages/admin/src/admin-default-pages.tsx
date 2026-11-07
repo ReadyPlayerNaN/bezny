@@ -27,6 +27,7 @@ import type {
 } from "./admin-entity-fields.js";
 import {
   readAdminFormValues,
+  resolveAdminEntityForm,
   isAdminSensitiveField,
   isAdminFieldDisabled,
 } from "./admin-entity-fields.js";
@@ -182,9 +183,11 @@ export const AdminDefaultDetailPage = () => {
   if (!entity || !record) {
     return null;
   }
-  const values = entity.form
-    ? readAdminFormValues(entity.form, record.data)
-    : undefined;
+  const detailForm = entity.form ?? entity.forms?.update;
+  const values =
+    !entity.columns && detailForm
+      ? readAdminFormValues(detailForm, record.data)
+      : undefined;
   return (
     <AdminPage
       heading={record.label}
@@ -211,7 +214,7 @@ export const AdminDefaultDetailPage = () => {
                 <dd>{column.render(record.data, "detail")}</dd>
               </div>
             ))
-          : entity.form?.fields.flatMap((field) =>
+          : detailForm?.fields.flatMap((field) =>
               isAdminSensitiveField(field)
                 ? []
                 : [
@@ -256,7 +259,10 @@ const DefaultEntityForm = () => {
   // replace it with newer hints or treat it as current mutation authority.
   // oxlint-disable-next-line react/hook-use-state -- Read-only edit origin, deliberately never replaced by newer hints.
   const [initialRecord] = useState(() => record?.data);
-  const configured = entity?.form;
+  const configured =
+    entity && (view === "create" || view === "update")
+      ? resolveAdminEntityForm(entity, view)
+      : undefined;
   const form = useForm<AdminFormValues>({
     ...(configured?.resolver ? { resolver: configured.resolver } : {}),
     defaultValues: configured
@@ -324,7 +330,7 @@ const DefaultEntityForm = () => {
       const parsedValues = Object.fromEntries(
         Object.entries(values).map(([key, value]) => [
           key,
-          entity.form?.fields.some(
+          configured?.fields.some(
             (field) => field.key === key && field.type === "number"
           ) && value !== ""
             ? Number(value)
@@ -374,6 +380,7 @@ const DefaultEntityForm = () => {
     [
       applyErrors,
       canMutate,
+      configured,
       data,
       deriving,
       entity,

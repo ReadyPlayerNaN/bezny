@@ -58,6 +58,16 @@ export interface AdminEntityForm {
   /** Project a complete adapter payload into the registered editable fields. */
   readValues?: (data: unknown) => AdminFormValues;
 }
+/** Complete per-view overrides; omitted views fall back to the shared form. */
+export interface AdminEntityForms {
+  create?: AdminEntityForm;
+  update?: AdminEntityForm;
+}
+export const resolveAdminEntityForm = (
+  definition: { form?: AdminEntityForm; forms?: AdminEntityForms },
+  view: "create" | "update"
+): AdminEntityForm | undefined => definition.forms?.[view] ?? definition.form;
+
 export const isAdminSensitiveField = (field: AdminEntityField) =>
   field.sensitive === true || field.type === "password";
 
@@ -126,6 +136,19 @@ export const validateAdminFormFields = (
     fields.add(field.key);
   }
 };
+export const validateAdminEntityForms = (
+  definition: { form?: AdminEntityForm; forms?: AdminEntityForms },
+  owner: string
+) => {
+  validateAdminFormFields(definition.form?.fields ?? [], owner);
+  for (const view of ["create", "update"] as const) {
+    validateAdminFormFields(
+      definition.forms?.[view]?.fields ?? [],
+      `${owner}/${view}`
+    );
+  }
+};
+
 export interface AdminEntityColumn {
   key: string;
   label: string;
