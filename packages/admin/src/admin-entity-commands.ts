@@ -356,7 +356,11 @@ export const useAdminEntityCommands = () => {
     }
     const ids = new Set(recordIds);
     const records = context.records.filter((record) => ids.has(record.id));
-    if (ids.size !== recordIds.length || records.length !== recordIds.length) {
+    if (
+      ids.size !== recordIds.length ||
+      records.length !== recordIds.length ||
+      records.some((record) => record.id.toLowerCase() === "create")
+    ) {
       return [];
     }
     return customCommands("selection", records, {

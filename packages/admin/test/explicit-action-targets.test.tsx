@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { defineAdminEntity } from "../src/admin-data-adapter.js";
+import type { AdminEntityAdapter } from "../src/admin-data-adapter.js";
 import { useAdminEntityCommands } from "../src/admin-entity-commands.js";
 import type {
   AdminCommand,
@@ -40,7 +41,10 @@ const legacy = vi.fn<() => void>();
 const enabled = atom(true);
 const first = "a,1";
 const second = 'b"]';
-const setup = async (operation: Omit<AdminManagedAction, "execute"> = {}) => {
+const setup = async (
+  operation: Omit<AdminManagedAction, "execute"> = {},
+  rawAdapter?: AdminEntityAdapter
+) => {
   const state = { available: true, ids: [first, second, "other"], reads: 0 };
   const entity = defineAdminEntity({
     actions: [
@@ -86,7 +90,10 @@ const setup = async (operation: Omit<AdminManagedAction, "execute"> = {}) => {
   });
   const app = createAdminApplication({
     Root,
-    entities: [entity, { ...entity, key: "others" }],
+    entities: [
+      rawAdapter ? { ...entity, adapter: rawAdapter } : entity,
+      { ...entity, key: "others" },
+    ],
     history: createMemoryHistory({ initialEntries: ["/documents"] }),
   });
   apps.push(app);
@@ -198,6 +205,35 @@ describe("explicit-target managed commands", () => {
     expect(commands?.forRecords(ids)).toStrictEqual([]);
     expect(execute).not.toHaveBeenCalled();
   });
+
+  it.each(["create", "CREATE"])(
+    "rejects reserved target %s from a raw envelope adapter without dropping it from a mixed group",
+    async (reservedId) => {
+      const ids = [first, second, "other", reservedId];
+      const { app } = await setup(
+        {},
+        {
+          list: () =>
+            Promise.resolve({
+              items: ids.map((id) => ({ data: { id }, id, label: id })),
+              total: ids.length,
+            }),
+        }
+      );
+      expect(
+        app.store
+          .get(app.session.snapshotAtom)
+          .items.some((item) => item.id === reservedId)
+      ).toBeTruthy();
+      expect(commands?.forRecords([reservedId])).toStrictEqual([]);
+      expect(commands?.forRecords([first, reservedId])).toStrictEqual([]);
+      expect(commands?.forRecords([first])).toHaveLength(1);
+      expect({
+        executions: execute.mock.calls.length,
+        selected: app.store.get(adminSelectionAtom)?.ids,
+      }).toStrictEqual({ executions: 0, selected: ["other"] });
+    }
+  );
 
   it("keeps IDs distinct from native selection commands and does not depend on selection at confirmation", async () => {
     const { app } = await setup();
