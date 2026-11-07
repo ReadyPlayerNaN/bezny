@@ -20,4 +20,11 @@ Local evidence is retained under `.tmp/release-0.3.4/` in the release worktree, 
 
 ## Delivery state
 
-This document records the validated release candidate, not successful publication. Create the release tag only on the reviewed source plus this documentation, wait for the existing workflow, and verify registry metadata, integrity and package bytes before consumer installation. Preserve any delivery failures; do not replace an existing tag or overwrite a published version. Downstream production migrations remain separate acceptance work even after the packages are adopted.
+Tag `v0.3.4` points to `cf82483b03f0435e24cc31ab6473583853632b78`. The existing [release workflow](https://github.com/ReadyPlayerNaN/bezny/actions/runs/42375199659) verified and packed successfully, but its npm publish step failed. Local npm authentication initially returned 401. After operator web login and separate publication approvals, interactive publication of the locally verified tagged-source tarballs succeeded for Base and Admin, in that order. No tag was moved, version overwritten, or CI configuration changed.
+
+Both registry packages were subsequently verified against the release commit, package names/versions, repository metadata, `latest`, exact Admin-to-Base dependency, SHA-512/SHA-1 and byte identity with the local tagged-source artifacts. Admin metadata initially returned 404 during registry processing; those attempts are retained along with the successful final verification.
+
+- Base: 291680 bytes, `sha512-00hr0jhXzG8xc5Luv7DH0dQCWbi6qWF0kD1waxE8Q1yvEaBcn6q+ZUoHR3IRLoP2v16v+vcoPmOuyLh3U44GJg==`.
+- Admin: 545904 bytes, `sha512-jue+tsPueLQ5y36sUyeNGI9/kDHN3cMdWC02AlZGuskNQtraDDuYr9LITqhA2rbOdv5M+2SrnoNob8ghDosp6g==`.
+
+This delivery record follows the immutable release tag. Registry delivery does not imply acceptance of any consumer's production resource migrations.
